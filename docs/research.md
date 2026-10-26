@@ -349,11 +349,11 @@ Resolved on 2026-10-26:
 - ~~Multi-user?~~ Users with roles (Admin / Gardener / Viewer) in the MVP; OIDC later.
 - ~~Open-Meteo's non-commercial terms?~~ Acceptable: the project targets self-hosting.
 - ~~Care data source?~~ Analyzed in [care-data-sources.md](care-data-sources.md).
-  Recommendation: our own open care archetype dataset, plus optional providers.
+  Decided: our own open care archetype dataset (Option C), plus optional providers.
+- ~~Data license for our care dataset?~~ CC BY-SA 4.0.
 
 Still open:
-1. Data license for our own care dataset: CC0 or CC BY-SA 4.0?
-2. Name and visual identity.
+1. Name and visual identity.
 
 ## Sources
 

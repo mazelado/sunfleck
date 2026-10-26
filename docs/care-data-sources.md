@@ -1,6 +1,6 @@
 # Care Data Sources and Licensing
 
-> **Status:** Draft analysis · **Last updated:** 2026-10-26
+> **Status:** Decided: Option C, dataset licensed CC BY-SA 4.0 · **Last updated:** 2026-10-26
 >
 > *This is a technical analysis, not legal advice. Before bundling any third-party data,
 > confirm its license from the provider's own current terms, ideally in writing.*
@@ -94,8 +94,11 @@ A layered approach, where each layer fills in what the one below lacks:
 **Recommendation: Option C.** It's the only option where the core feature is guaranteed to
 keep working, and it fits the "everything optional stays optional" principle. The dataset
 should live in its own folder (or later its own repository) with its own data license, so
-other projects can reuse it. **CC BY-SA 4.0** keeps improvements open, and **CC0** maximizes
-reuse; this is the maintainer's choice.
+other projects can reuse it.
+
+> **Decided (2026-10-26):** Option C. Our care dataset is licensed **CC BY-SA 4.0**, so anyone
+> may reuse it with attribution, and improvements must be shared under the same license. It
+> is kept separate from the AGPL-3.0 code, with its own `LICENSE` file in the dataset folder.
 
 ## How this feeds care prediction
 
@@ -119,7 +122,7 @@ added later as plugins, once real usage data exists.
 
 ## Next steps
 
-1. Decide the data license for our own dataset (CC0 or CC BY-SA 4.0).
+1. ~~Decide the data license for our own dataset.~~ CC BY-SA 4.0.
 2. Draft the archetype schema and the first ~30 archetypes, citing general horticultural
    references for each value (and writing every value ourselves, not copying).
 3. Contact the **Open Plantbook** maintainer to ask for a formal data license.
