@@ -14,6 +14,7 @@ plant care app for hobbyists, licensed under the [AGPL-3.0](LICENSE).
 - Keep pull requests focused: one feature or fix per PR.
 - New behavior needs tests. Bug fixes should include a test that fails without the fix.
 - All checks (linting, type checks, tests) must pass before a PR is reviewed.
+- Follow the [style guide](docs/STYLE_GUIDE.md) and fill in the pull request template.
 
 ## AI-assisted contributions
 
