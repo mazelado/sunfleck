@@ -82,28 +82,58 @@ Examples:
 ### Formatting and linting
 - **Python 3.12+.**
 - **Ruff** formats and lints. Line length is 100. Don't argue with the formatter.
+- Ruff replaces Black (formatting), isort (import sorting), Flake8 and its plugins (linting),
+  and pyupgrade. **Don't add those tools**: they would duplicate Ruff and could fight over
+  formatting.
 - Imports are sorted by Ruff. Use absolute imports within the project.
 
 ### Type hints
 - All functions, methods, and module-level variables have type hints, **including return
   types**.
-- **mypy** (with the django-stubs plugin) runs in CI. New code must type-check without
-  `# type: ignore`. If an ignore is truly needed, add an error code and a reason:
+- **mypy** with the **django-stubs mypy plugin** is the type checker that runs in CI, and CI
+  is the source of truth. We chose mypy over pyright because only the mypy plugin understands
+  Django's dynamic behavior: the types of model fields, managers, related objects
+  (`plant.care_events`), and querysets. Pyright can read django-stubs but not its plugin, so
+  it reports false errors or misses real ones in Django code.
+- Using **Pylance/pyright in your editor** is fine for completions and quick feedback. If the
+  editor and mypy disagree, mypy wins.
+- New code must type-check without `# type: ignore`. If an ignore is truly needed, add an
+  error code and a reason:
   `# type: ignore[attr-defined]  # django-stubs doesn't know about X`.
 - Prefer precise types (`list[Plant]`, `Literal["indoor", "outdoor"]`) over `Any`.
 
 ### Naming
-| Thing | Style | Example |
-|---|---|---|
-| Modules, packages | `snake_case` | `care_schedules.py` |
-| Functions, variables | `snake_case` | `next_due_date()` |
-| Classes | `PascalCase` | `CareSchedule` |
-| Constants | `UPPER_SNAKE_CASE` | `DEFAULT_WATERING_DAYS` |
-| Private helpers | leading underscore | `_clamp_interval()` |
-| Booleans | read as a yes/no question | `is_outdoor`, `has_grow_light` |
+We follow the [PEP 8 naming conventions](https://peps.python.org/pep-0008/#naming-conventions),
+enforced by Ruff's `pep8-naming` (`N`) rules.
 
-Use full words (`location`, not `loc`). Units belong in names when ambiguous:
-`interval_days`, `ppfd_umol_m2_s`, `pot_diameter_cm`.
+| Thing | PEP 8 style | Example |
+|---|---|---|
+| Packages | short, all lowercase; avoid underscores | `plants`, `care` |
+| Modules | short, all lowercase; underscores if they help readability | `schedules.py`, `care_events.py` |
+| Classes | `CapWords` (also called PascalCase) | `CareSchedule` |
+| Exceptions | `CapWords`, ending in `Error` | `ScheduleConflictError` |
+| Functions, methods | `lowercase_with_underscores` | `next_due_date()` |
+| Variables, arguments | `lowercase_with_underscores` | `due_date`, `plant_id` |
+| Instance / class method first argument | always `self` / `cls` | `def from_dict(cls, data)` |
+| Constants (module level) | `UPPER_CASE_WITH_UNDERSCORES` | `DEFAULT_WATERING_DAYS` |
+| Type variables | short `CapWords`; `_co`/`_contra` suffix for variance | `T`, `PlantT`, `T_co` |
+| Non-public names | one leading underscore | `_clamp_interval()` |
+| Name clashing with a keyword or builtin | one trailing underscore | `class_`, `type_` |
+
+More PEP 8 rules:
+- Never use `l` (lowercase L), `O` (uppercase o), or `I` (uppercase i) as single-character
+  names. They look like `1` and `0`.
+- Don't use a double leading underscore (`__name`) unless you specifically need name
+  mangling to avoid clashes in subclasses.
+- Never invent `__dunder__` names. Those are reserved for Python itself.
+- Acronyms in `CapWords` are all capitals: `HTTPClient`, `OIDCProvider` (not `HttpClient`).
+
+Project conventions (on top of PEP 8):
+- Booleans read as a yes/no question: `is_outdoor`, `has_grow_light`.
+- Use full words (`location`, not `loc`). Put units in names when they're ambiguous:
+  `interval_days`, `ppfd_umol_m2_s`, `pot_diameter_cm`.
+- Django apps are packages, so their names follow the package rule: `plants`, `locations`,
+  `care`.
 
 ### Docstrings and comments
 - Public modules, classes, and functions get a docstring in
@@ -293,9 +323,9 @@ Use full words (`location`, not `loc`). Units belong in names when ambiguous:
 | Purpose | Backend | Frontend |
 |---|---|---|
 | Package manager | uv | npm |
-| Formatter | Ruff | Prettier |
-| Linter | Ruff | ESLint |
-| Type checker | mypy + django-stubs | TypeScript (`tsc --noEmit`) |
+| Formatter | Ruff (Black-compatible; replaces Black) | Prettier |
+| Linter | Ruff (replaces Flake8, isort, pyupgrade) | ESLint |
+| Type checker | mypy + django-stubs plugin (CI); pyright/Pylance OK in editors | TypeScript (`tsc --noEmit`) |
 | Unit tests | pytest, pytest-django, factory_boy | Vitest, React Testing Library |
 | End-to-end tests | Playwright | Playwright |
 | Pre-commit hooks | pre-commit (runs all of the above on changed files) | |
