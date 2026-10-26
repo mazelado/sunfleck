@@ -167,12 +167,13 @@ and the app works without any of them.
 | **Trefle** | Botanical data (backed by Kew's POWO); appears active as of 2026. Strong on taxonomy, weak on houseplant care guidance. |
 | **OpenPlantbook** | Free account; sensor thresholds per species (moisture, light, temperature). Used by Home Assistant. |
 | **GBIF / Wikidata / Wikipedia** | Open data for taxonomy, common names, and descriptions. |
-| **Perenual** | Commercial plant care API with a free tier. Terms and status not yet verified. |
+| **Perenual** | Commercial plant care API; free tier is non-commercial and limited (100 requests/day). Optional plugin only. |
 | **User-defined care profiles** | Always available; the app's own built-in defaults per plant type (succulent, tropical, herb…). |
 
-> Licensing check needed: before bundling any species data in the app, confirm its license
-> is compatible with AGPL-3.0. Fetching data at runtime with the user's own key avoids most
-> redistribution issues.
+> **Licensing:** see [care-data-sources.md](care-data-sources.md) for the full analysis. In
+> short, no openly licensed source has houseplant-quality care data we can bundle, so we
+> plan to build our own open "care archetype" dataset and treat the APIs above as optional
+> enhancements.
 
 ### Weather
 | Provider | Notes |
@@ -238,8 +239,10 @@ The goal is **a beautiful, reliable daily-use app for logging care and getting r
 for indoor and outdoor plants, with a working plugin system proven by two built-in plugins.**
 
 ### Core
-- [ ] **Accounts:** sign-in, a single-user setup wizard, and simple household sharing
-  (several users, one shared collection).
+- [ ] **Accounts and permissions:** sign-in, a first-run setup wizard, and users with
+  **roles**: *Admin* (manage users and settings), *Gardener* (add/edit plants and log care),
+  *Viewer* (read-only). The user model is designed so that **OIDC** single sign-on can be
+  added later without restructuring.
 - [ ] **Sites and locations:** sites with lat/lon (picked on a map or entered manually);
   indoor and outdoor locations; window direction; grow lights with photoperiod.
 - [ ] **Plants:** create, edit, and archive plants; species as free text with optional lookup;
@@ -249,6 +252,13 @@ for indoor and outdoor plants, with a working plugin system proven by two built-
   dashboard**; backdating; notes.
 - [ ] **Schedules and reminders:** an interval per plant per care type; a "Today / Upcoming /
   Overdue" dashboard; complete, snooze, or skip; "water all plants in this location".
+- [ ] **Suggested care routine:** when you add a plant, the app proposes a complete care
+  schedule (watering, fertilizing, light) from the plant's care profile and its location.
+  You review it, then accept it with one tap. Uses our own open care archetype dataset (see
+  [care-data-sources.md](care-data-sources.md)), so it works without AI or external accounts.
+- [ ] **Care prediction (first version):** due dates are adjusted for season, light (window
+  or grow light DLI), and, for outdoor plants, weather. Each prediction explains *why* it
+  changed. Simple "soil was still wet / too dry" feedback tunes future predictions.
 - [ ] **Notifications:** through Apprise (email, ntfy, Gotify, etc.), with a daily digest
   and/or per-task notifications, plus in-app notifications.
 - [ ] **Data ownership:** full export (JSON + photos in a zip) and import; a documented
@@ -271,29 +281,35 @@ for indoor and outdoor plants, with a working plugin system proven by two built-
 - [ ] Unit and API tests (pytest), frontend tests (Vitest), CI with GitHub Actions.
 
 ### Deliberately *not* in the MVP
-Garden maps, sensors, LLM features, adaptive watering math, inventory, propagation tracking,
-native apps, offline mode, UI plugins. They're on the roadmap below. Keeping the MVP small is
-what gets it finished.
+Garden maps, sensors, chat/LLM features, evapotranspiration-based watering math, OIDC,
+inventory, propagation tracking, native apps, offline mode, UI plugins. They're on the
+roadmap below. Keeping the MVP small is what gets it finished.
 
-> **Decision point:** you said AI is a priority. Plant identification (Pl@ntNet) is in the
-> MVP. If you'd rather include one **LLM** feature in the MVP too, the best candidate is
-> "suggest a care profile when adding a plant": it fills in watering interval, light needs,
-> and toxicity from the species name, and it directly improves the core scheduling feature.
+> **Decided (2026-10-26):** the MVP's "AI" focus is **predicting when plants need care**
+> (water, fertilizer, light) and **suggesting a care routine** that sets up the schedule
+> automatically. Chat-style features come later. See
+> [care-data-sources.md](care-data-sources.md#how-this-feeds-care-prediction) for how
+> prediction works.
 
 ## 9. Roadmap (after MVP)
 
 Order and scope are open for discussion. Each phase is meant to be a usable release.
 
-### v0.2: AI assistant and smarter care
+### v0.2: Smarter care and AI providers
+- **Adaptive intervals** that learn from your actual care history ("you usually water
+  this every 9 days, not 7: update the schedule?").
+- **Grow light tools:** DLI calculator, light schedule recommendations, "is this spot bright
+  enough?" estimates for windows.
 - AI provider plugins: OpenAI-compatible (covers Ollama and other local models), Anthropic.
-- **Care profile suggestions** when adding a plant (watering, light, humidity, toxicity).
+- **AI care profile suggestions** for unusual plants that don't match a built-in archetype
+  (always reviewed by the user).
+- Optional care data provider plugins: Open Plantbook, Perenual, Trefle.
+- Toxicity flags (pets/children) with sources.
+
+### Later: AI assistant
 - **Photo diagnosis**: "what's wrong with my plant?", with likely causes and next steps,
   clearly labeled as suggestions.
 - **Ask about this plant**: chat with the plant's history and conditions as context.
-- **Adaptive intervals** that learn from your actual watering history ("you usually water
-  this every 9 days, not 7: update the schedule?").
-- **DLI calculator** for grow lights and window light estimates.
-- Toxicity flags (pets/children) with sources.
 
 ### v0.3: Integrations and environment-aware care
 - **Home Assistant / MQTT** sensor readings (soil moisture, light, temperature, humidity);
@@ -302,6 +318,7 @@ Order and scope are open for discussion. Each phase is meant to be a usable rele
   documented formula).
 - Seasonal adjustments (dormancy, reduced winter watering, fertilizing pauses).
 - **Web Push** notifications; **iCal** feed of tasks.
+- **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID, etc.).
 - **Import from HortusFox and Plant-it** to make migrating easy.
 - Public REST API docs and personal API tokens.
 
@@ -326,14 +343,17 @@ Order and scope are open for discussion. Each phase is meant to be a usable rele
 
 ## 10. Open questions
 
-1. Should **one LLM feature** be in the MVP (see the decision point in section 8)?
-2. How much do we want **household multi-user** in the MVP: shared collection only, or
-   per-user permissions?
-3. Are **Open-Meteo's non-commercial terms** acceptable as the default? (Personal self-hosting
-   fits; a commercial host would need their own plan or a self-hosted Open-Meteo instance.)
-4. Which species/care data source can we use under AGPL-compatible terms? This needs a
-   licensing check before we bundle anything.
-5. Name and visual identity: still to be decided.
+Resolved on 2026-10-26:
+- ~~LLM feature in the MVP?~~ No. The MVP's AI focus is care prediction and suggested care
+  routines; chat comes later.
+- ~~Multi-user?~~ Users with roles (Admin / Gardener / Viewer) in the MVP; OIDC later.
+- ~~Open-Meteo's non-commercial terms?~~ Acceptable: the project targets self-hosting.
+- ~~Care data source?~~ Analyzed in [care-data-sources.md](care-data-sources.md).
+  Decided: our own open care archetype dataset (Option C), plus optional providers.
+- ~~Data license for our care dataset?~~ CC BY-SA 4.0.
+
+Still open:
+1. Name and visual identity.
 
 ## Sources
 

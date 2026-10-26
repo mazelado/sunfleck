@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an idea or improvement
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! Please check the [roadmap](https://github.com/mazelado/Unnamed-plant-app/blob/main/docs/research.md) and existing issues first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation or need, not just the solution. "When I ..., I want to ..., so that ..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Could this be a plugin instead of a core feature?
+      options:
+        - Not sure
+        - Yes, this could be a plugin
+        - No, it belongs in the core app
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to help implement this
