@@ -1,0 +1,42 @@
+name: Docker
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and smoke-test the image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build
+        run: docker build --file docker/Dockerfile --tag sunfleck:ci .
+      - name: Start a container
+        run: docker run --detach --name sunfleck --publish 8000:8000 --env SECRET_KEY=ci-only sunfleck:ci
+      - name: Wait until Docker reports it healthy
+        run: |
+          for _ in $(seq 1 30); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' sunfleck)
+            echo "Health: $status"
+            [ "$status" = healthy ] && exit 0
+            sleep 5
+          done
+          docker logs sunfleck
+          exit 1
+      - name: Check the API and the frontend respond
+        run: |
+          curl --fail --silent http://localhost:8000/api/v1/health
+          curl --fail --silent http://localhost:8000/ | grep --quiet '<div id="root">'
+          curl --fail --silent http://localhost:8000/plants/1 | grep --quiet '<div id="root">'
+      - name: Show logs
+        if: always()
+        run: docker logs sunfleck || true

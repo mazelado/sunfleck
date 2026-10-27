@@ -1,0 +1,26 @@
+import "@mantine/core/styles.css";
+import "./i18n";
+
+import { MantineProvider } from "@mantine/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { type ReactNode, useState } from "react";
+
+import { theme } from "./theme";
+
+interface AppProvidersProps {
+  children: ReactNode;
+  /** Tests pass their own client, e.g. one that doesn't retry failed requests. */
+  queryClient?: QueryClient;
+}
+
+/** Everything the app needs around it: theme, server-state cache, translations. */
+export function AppProviders({ children, queryClient: providedClient }: AppProvidersProps) {
+  const [queryClient] = useState(() => providedClient ?? new QueryClient());
+  return (
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider theme={theme} defaultColorScheme="auto">
+        {children}
+      </MantineProvider>
+    </QueryClientProvider>
+  );
+}

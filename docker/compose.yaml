@@ -1,0 +1,15 @@
+# Example Docker Compose setup for running Sunfleck.
+#   1. Copy this file and env.example (renamed to .env) into a folder.
+#   2. Fill in the values in .env.
+#   3. Run: docker compose up -d
+# Sunfleck is then available at http://localhost:8000. For access from other devices, put it
+# behind a reverse proxy with HTTPS (Caddy, Traefik, Nginx Proxy Manager, ...).
+services:
+  sunfleck:
+    image: ghcr.io/mazelado/sunfleck:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    env_file: .env

@@ -1,20 +1,30 @@
 # Common development commands. Run `make help` to list them.
 
 BACKEND := cd backend &&
+FRONTEND := cd frontend &&
 DEV_ENV := DEBUG=true
 
 .DEFAULT_GOAL := help
-.PHONY: help setup dev migrate migrations superuser test lint format
+.PHONY: help setup dev dev-backend dev-frontend migrate migrations superuser test test-backend \
+	test-frontend lint lint-backend lint-frontend format api-types docker
 
 help: ## Show this help
-	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-12s %s\n", $$1, $$2}'
+	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
 
 setup: ## Install dependencies and the pre-commit hooks
 	$(BACKEND) uv sync
+	$(FRONTEND) npm ci
 	uv run --project backend pre-commit install
 
-dev: migrate ## Run the development server at http://localhost:8000
+dev: migrate ## Run the app at http://localhost:5173 (Ctrl+C stops it)
+	@echo "Starting... open http://localhost:5173 once Vite reports it's ready."
+	@$(MAKE) --no-print-directory -j2 dev-backend dev-frontend
+
+dev-backend: ## Run only the Django server (port 8000)
 	$(BACKEND) $(DEV_ENV) uv run python manage.py runserver
+
+dev-frontend: ## Run only the Vite dev server (port 5173)
+	$(FRONTEND) npm run dev
 
 migrate: ## Apply database migrations
 	$(BACKEND) $(DEV_ENV) uv run python manage.py migrate
@@ -25,15 +35,37 @@ migrations: ## Create migrations after changing models
 superuser: ## Create an admin account for the Django admin (/admin)
 	$(BACKEND) $(DEV_ENV) uv run python manage.py createsuperuser
 
-test: ## Run the test suite
+test: test-backend test-frontend ## Run all tests
+
+test-backend: ## Run the backend tests
 	$(BACKEND) uv run pytest
 
-lint: ## Check formatting, lint rules, types, and migrations
+test-frontend: ## Run the frontend tests
+	$(FRONTEND) npm test
+
+lint: lint-backend lint-frontend ## Run every check that CI runs (except tests)
+
+lint-backend: ## Check backend formatting, lint rules, types, and migrations
 	$(BACKEND) uv run ruff format --check .
 	$(BACKEND) uv run ruff check .
 	$(BACKEND) uv run mypy .
 	$(BACKEND) $(DEV_ENV) uv run python manage.py makemigrations --check --dry-run
 
+lint-frontend: ## Check frontend formatting, lint rules, and types
+	$(FRONTEND) npm run format:check
+	$(FRONTEND) npm run lint
+	$(FRONTEND) npm run typecheck
+
 format: ## Fix formatting and auto-fixable lint problems
 	$(BACKEND) uv run ruff format .
 	$(BACKEND) uv run ruff check --fix .
+	$(FRONTEND) npm run format
+	$(FRONTEND) npx eslint --fix .
+
+api-types: ## Regenerate frontend API types after changing the backend API
+	$(BACKEND) $(DEV_ENV) uv run python manage.py export_openapi_schema \
+		--api sunfleck.config.api.api --indent 2 --sorted --output ../frontend/src/api/openapi.json
+	$(FRONTEND) npm run api-types
+
+docker: ## Build the production Docker image as sunfleck:dev
+	docker build --file docker/Dockerfile --tag sunfleck:dev .

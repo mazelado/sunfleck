@@ -1,0 +1,4 @@
+dist
+package-lock.json
+src/api/openapi.json
+src/api/schema.d.ts
