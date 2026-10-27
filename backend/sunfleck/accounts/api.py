@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.http import HttpRequest
+from django.middleware.csrf import get_token
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from ninja import Router, Schema, Status
@@ -233,7 +234,13 @@ def _send_invitation_email(request: HttpRequest, invitation: Invitation, url: st
 
 @router.get("/setup", response=SetupStatusOut, auth=None)
 def setup_status(request: HttpRequest) -> SetupStatusOut:
-    """Report whether Sunfleck still needs its first account."""
+    """Report whether Sunfleck still needs its first account.
+
+    The app calls this before anything else, so it also sets the CSRF cookie that every later
+    change must send back. (The page itself can't always do that: during development, Vite
+    serves it instead of Django.)
+    """
+    get_token(request)
     return SetupStatusOut(needs_setup=services.needs_setup())
 
 

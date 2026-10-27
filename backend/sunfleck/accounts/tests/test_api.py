@@ -67,6 +67,17 @@ def test_setup_creates_the_first_admin_and_signs_in() -> None:
 
 
 @pytest.mark.django_db
+def test_setup_status_sets_the_csrf_cookie_needed_to_complete_setup() -> None:
+    # During development Vite serves the page, so this API call is where the cookie comes from.
+    client = Client(enforce_csrf_checks=True)
+    client.get("/api/v1/setup")
+
+    response = csrf_post(client, "/api/v1/setup", SETUP_DATA)
+
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
 def test_setup_requires_the_csrf_token() -> None:
     client = csrf_client()
 
