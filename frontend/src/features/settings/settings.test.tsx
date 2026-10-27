@@ -72,8 +72,13 @@ describe("profile", () => {
     await user.type(screen.getByLabelText(/^New password/), "a fresh passphrase");
     await user.click(screen.getByRole("button", { name: "Change password" }));
 
-    expect(await screen.findByText("Please type your current password.")).toBeVisible();
-    expect(screen.getByRole("alert")).toHaveTextContent("Your current password is incorrect.");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Your current password is incorrect.",
+    );
+    // The same translated message is attached to the field, for screen readers too.
+    expect(screen.getByLabelText(/Current password/)).toHaveAccessibleDescription(
+      "Your current password is incorrect.",
+    );
   });
 });
 

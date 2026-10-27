@@ -8,10 +8,11 @@ import { useResetPassword } from "../../api/accounts";
 import { AuthCard } from "../../components/AuthCard";
 import { PasswordField } from "../../components/PasswordField";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { applyFieldErrors } from "./serverErrors";
+import { useApplyFieldErrors } from "./serverErrors";
 
 export function ResetPasswordPage() {
   const { t } = useTranslation();
+  const applyFieldErrors = useApplyFieldErrors();
   const navigate = useNavigate();
   const { key = "" } = useParams();
   const resetPassword = useResetPassword();

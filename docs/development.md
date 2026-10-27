@@ -159,6 +159,13 @@ uv sync --extra postgres
 DEBUG=true DATABASE_URL=postgres://user:password@localhost:5432/sunfleck uv run python manage.py migrate
 ```
 
+### The map
+
+The site form shows a map from **OpenStreetMap**. While it's open, the browser downloads map
+images from `tile.openstreetmap.org` (that's the only outside service Sunfleck contacts so far).
+The map is optional: coordinates can always be typed in. It's loaded only when a site form
+opens, so the rest of the app stays small.
+
 ## 8. Docker
 
 `make docker` builds the production image as `sunfleck:dev`: one container that serves both the

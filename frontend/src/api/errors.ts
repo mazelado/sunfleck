@@ -42,6 +42,9 @@ export function toApiError(status: number, body: unknown): ApiError {
     if (Array.isArray(details?.password)) {
       fieldErrors.password = details.password as string[];
     }
+    if (typeof details?.field === "string") {
+      fieldErrors[details.field] = [message];
+    }
     return new ApiError(status, code, message, fieldErrors);
   }
   if (isAllauthError(body) && body.errors.length > 0) {

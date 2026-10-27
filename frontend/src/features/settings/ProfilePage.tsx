@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { type Me, useChangePassword, useMe, useUpdateMe } from "../../api/accounts";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PasswordField } from "../../components/PasswordField";
-import { applyFieldErrors } from "../auth/serverErrors";
+import { useApplyFieldErrors } from "../auth/serverErrors";
 
 /** Languages the app is translated into. More arrive as translations are contributed. */
 const LANGUAGES = [{ value: "en", label: "English" }];
@@ -104,6 +104,7 @@ function ProfileForm({ me }: { me: Me }) {
 
 function ChangePasswordForm() {
   const { t } = useTranslation();
+  const applyFieldErrors = useApplyFieldErrors();
   const changePassword = useChangePassword();
   const form = useForm({
     // Field names match allauth's, so its error messages land on the right field.
