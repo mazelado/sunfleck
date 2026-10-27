@@ -13,6 +13,9 @@ import { LocationPage } from "./features/places/LocationPage";
 import { PlacesPage } from "./features/places/PlacesPage";
 import { SiteFormPage } from "./features/places/SiteFormPage";
 import { SitePage } from "./features/places/SitePage";
+import { PlantFormPage } from "./features/plants/PlantFormPage";
+import { PlantPage } from "./features/plants/PlantPage";
+import { PlantsPage } from "./features/plants/PlantsPage";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
 import { HouseholdPage } from "./features/settings/HouseholdPage";
@@ -34,6 +37,10 @@ export const routes: RouteObject[] = [
             element: <AppLayout />,
             children: [
               { path: "/", element: <HomePage /> },
+              { path: "/plants", element: <PlantsPage /> },
+              { path: "/plants/new", element: <PlantFormPage /> },
+              { path: "/plants/:plantId", element: <PlantPage /> },
+              { path: "/plants/:plantId/edit", element: <PlantFormPage /> },
               { path: "/places", element: <PlacesPage /> },
               { path: "/places/new", element: <SiteFormPage /> },
               { path: "/places/:siteId", element: <SitePage /> },

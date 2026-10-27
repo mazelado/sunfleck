@@ -110,12 +110,14 @@ def _taken_at(exif: Image.Exif) -> datetime | None:
     if isinstance(offset, str):
         with contextlib.suppress(ValueError):
             taken_at = datetime.strptime(f"{raw.strip()} {offset.strip()}", "%Y:%m:%d %H:%M:%S %z")
+    return taken_at if is_plausible_date(taken_at) else None
+
+
+def is_plausible_date(taken_at: datetime) -> bool:
+    """Whether a photo could really have been taken then; cameras' clocks are often wrong."""
     if taken_at.year < EARLIEST_PLAUSIBLE_YEAR:
-        return None
-    # A date in the future means the camera's clock is wrong. (A day's margin covers naive
-    # local times ahead of UTC.)
+        return False
+    # A date in the future means the clock is wrong. (A day's margin covers naive local times
+    # ahead of UTC.)
     latest = timezone.now() + timedelta(days=1)
-    compare_to = latest if taken_at.tzinfo else latest.replace(tzinfo=None)
-    if taken_at > compare_to:
-        return None
-    return taken_at
+    return taken_at <= (latest if taken_at.tzinfo else latest.replace(tzinfo=None))

@@ -319,13 +319,17 @@ def add_photo(
     plant_id: int,
     file: File[UploadedFile],
     caption: Form[str] = "",
+    taken_at: Form[datetime | None] = None,
 ) -> Status[PhotoOut]:
     """Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,
-    such as GPS position, is removed. A plant's first photo becomes its cover photo."""
+    such as GPS position, is removed. A plant's first photo becomes its cover photo.
+
+    `taken_at` is used only if the photo itself doesn't say when it was taken. Without a time
+    zone, it's taken to be local time at the plant's site."""
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant(household, plant_id)
     try:
-        photo = services.add_photo(plant, file, file.size or 0, caption)
+        photo = services.add_photo(plant, file, file.size or 0, caption, taken_at)
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return Status(201, _photo_out(photo))

@@ -222,7 +222,7 @@ describe("light sources", () => {
 
     // Most people don't know their light's PPFD, so a typical shelf light is preselected.
     expect(within(dialog).getByRole("combobox", { name: /How bright is it/ })).toHaveValue(
-      "Shelf light or light bar, the most common (about 200 µmol/m²/s)",
+      "Shelf light or light bar (about 200)",
     );
     expect(within(dialog).queryByLabelText(/PPFD/)).not.toBeInTheDocument();
     expect(within(dialog).getByRole("status")).toHaveTextContent(
