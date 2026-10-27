@@ -178,6 +178,32 @@ describe("logging care", () => {
   });
 });
 
+describe("custom watering types", () => {
+  it("ask how the soil was, like Water", async () => {
+    signInAs(gardener);
+    withPlant();
+    const bottom = { ...water, id: 9, key: null, name: "Bottom water", is_builtin: false };
+    server.use(
+      http.get("*/api/v1/care-types", () => HttpResponse.json([...builtinCareTypes, bottom])),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "More care" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Log care" });
+    const careType = within(dialog).getByRole("combobox", { name: "What did you do?" });
+    await user.click(careType);
+    const listbox = document.getElementById(careType.getAttribute("aria-controls") ?? "");
+    if (!listbox) throw new Error("The care type dropdown didn't open");
+    await user.click(within(listbox).getByRole("option", { name: "Mist", hidden: true }));
+    expect(within(dialog).queryByText("How was the soil?")).not.toBeInTheDocument();
+    await user.click(careType);
+    await user.click(within(listbox).getByRole("option", { name: "Bottom water", hidden: true }));
+
+    expect(within(dialog).getByText("How was the soil?")).toBeVisible();
+  });
+});
+
 describe("history", () => {
   it("shows care and photos, and asks about the soil after the latest watering", async () => {
     signInAs(gardener);
@@ -254,6 +280,33 @@ describe("history", () => {
 });
 
 describe("care types settings", () => {
+  it("marks a care type as watering", async () => {
+    signInAs(gardener);
+    let created: Record<string, unknown> = {};
+    server.use(
+      http.post("*/api/v1/care-types", async ({ request }) => {
+        created = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          { ...water, id: 9, key: null, is_builtin: false },
+          { status: 201 },
+        );
+      }),
+    );
+    const { user } = renderApp("/settings/care-types");
+
+    // The built-in Water is marked as watering.
+    expect(await screen.findByText("Watering")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Add a care type" }));
+    const dialog = await screen.findByRole("dialog", { name: "New care type" });
+    await user.type(within(dialog).getByLabelText(/Name/), "Bottom water");
+    await user.click(within(dialog).getByRole("switch", { name: /Counts as watering/ }));
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(created.counts_as_watering).toBe(true);
+    });
+  });
+
   it("adds a care type with an icon", async () => {
     signInAs(gardener);
     let created: unknown;
@@ -268,6 +321,7 @@ describe("care types settings", () => {
             icon: "basket",
             is_builtin: false,
             affects_prediction: false,
+            counts_as_watering: false,
           },
           { status: 201 },
         );
@@ -283,7 +337,7 @@ describe("care types settings", () => {
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
-      expect(created).toEqual({ name: "Harvest", icon: "basket" });
+      expect(created).toEqual({ name: "Harvest", icon: "basket", counts_as_watering: false });
     });
   });
 

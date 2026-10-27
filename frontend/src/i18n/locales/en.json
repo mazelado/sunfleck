@@ -438,7 +438,10 @@
       "delete": "Delete {{name}}",
       "deleteTitle": "Delete {{name}}?",
       "deleteConfirm": "You can only delete care types that haven't been used.",
-      "deleted": "{{name}} was deleted."
+      "deleted": "{{name}} was deleted.",
+      "countsAsWatering": "Counts as watering",
+      "countsAsWateringHelp": "Updates when a plant was last watered, and asks how the soil was. For example, bottom watering.",
+      "wateringBadge": "Watering"
     },
     "icons": {
       "droplet": "Water drop",

@@ -21,6 +21,7 @@ export const builtinCareTypes: CareType[] = [
   icon: icon as string,
   is_builtin: true,
   affects_prediction: affects as boolean,
+  counts_as_watering: key === "water",
 }));
 
 /** A fake backend for tests. By default: setup is done, nobody is signed in, no places, plants, or care. */

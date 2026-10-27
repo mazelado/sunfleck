@@ -35,7 +35,7 @@
                 "type": "null"
               }
             ],
-            "description": "Watering only: how the soil was beforehand."
+            "description": "Care types that count as watering only: how the soil was beforehand."
           },
           "notes": {
             "default": "",
@@ -309,6 +309,12 @@
       },
       "CareTypeIn": {
         "properties": {
+          "counts_as_watering": {
+            "default": false,
+            "description": "It's a kind of watering, e.g. bottom watering.",
+            "title": "Counts As Watering",
+            "type": "boolean"
+          },
           "icon": {
             "default": "sparkles",
             "maxLength": 32,
@@ -334,6 +340,10 @@
         "properties": {
           "affects_prediction": {
             "title": "Affects Prediction",
+            "type": "boolean"
+          },
+          "counts_as_watering": {
+            "title": "Counts As Watering",
             "type": "boolean"
           },
           "icon": {
@@ -371,7 +381,8 @@
           "name",
           "icon",
           "is_builtin",
-          "affects_prediction"
+          "affects_prediction",
+          "counts_as_watering"
         ],
         "title": "CareTypeOut",
         "type": "object"

@@ -23,6 +23,9 @@ class CareType(models.Model):
     icon = models.CharField(_("icon"), max_length=32, default="sparkles")
     # Whether this care changes when other care is due (used by the prediction engine).
     affects_prediction = models.BooleanField(_("affects predictions"), default=False)
+    # Whether this is a kind of watering (the built-in "Water", or e.g. "Bottom water"): it
+    # updates when a plant was last watered, and can carry soil feedback.
+    counts_as_watering = models.BooleanField(_("counts as watering"), default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
