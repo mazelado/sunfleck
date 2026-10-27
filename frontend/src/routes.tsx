@@ -5,6 +5,7 @@ import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { SetupPage } from "./features/auth/SetupPage";
 import { SignInPage } from "./features/auth/SignInPage";
+import { CareTypesPage } from "./features/care/CareTypesPage";
 import { HomePage } from "./features/home/HomePage";
 import { AppLayout } from "./features/layout/AppLayout";
 import { NotFoundPage } from "./features/layout/NotFoundPage";
@@ -53,6 +54,7 @@ export const routes: RouteObject[] = [
               },
               { path: "/settings/profile", element: <ProfilePage /> },
               { path: "/settings/household", element: <HouseholdPage /> },
+              { path: "/settings/care-types", element: <CareTypesPage /> },
             ],
           },
         ],

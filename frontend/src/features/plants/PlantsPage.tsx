@@ -20,6 +20,7 @@ import { Link } from "react-router";
 import { useSites } from "../../api/places";
 import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { relativeDay } from "../../lib/relativeTime";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { PlantImage } from "./PlantImage";
 import { PlantStatusBadge } from "./PlantStatusBadge";
@@ -135,7 +136,7 @@ export function PlantsPage() {
 }
 
 function PlantCard({ plant }: { plant: PlantSummary }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <Card
       component={Link}
@@ -155,6 +156,11 @@ function PlantCard({ plant }: { plant: PlantSummary }) {
         </Group>
         <Text size="xs" c="dimmed" truncate>
           {plant.location ? plant.location.name : t("plants.noLocation")}
+        </Text>
+        <Text size="xs" c="dimmed" truncate>
+          {plant.last_watered_at
+            ? t("care.lastWatered", { when: relativeDay(plant.last_watered_at, i18n.language) })
+            : t("care.neverWatered")}
         </Text>
       </Stack>
     </Card>

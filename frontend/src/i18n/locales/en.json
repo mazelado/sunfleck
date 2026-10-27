@@ -37,7 +37,8 @@
     "signOut": "Sign out",
     "openMenu": "Open the account menu",
     "places": "Places",
-    "plants": "Plants"
+    "plants": "Plants",
+    "careTypes": "Care types"
   },
   "setup": {
     "title": "Welcome to Sunfleck",
@@ -169,7 +170,15 @@
     "invalid_image": "This file isn't a photo we can read.",
     "unsupported_image": "Upload a JPEG, PNG, WebP, or HEIC photo.",
     "image_too_large": "This photo has too many pixels.",
-    "caption_too_long": "Captions can be up to 200 characters."
+    "caption_too_long": "Captions can be up to 200 characters.",
+    "care_type_exists": "There's already a care type with this name.",
+    "builtin_care_type": "Built-in care types can't be changed.",
+    "care_type_in_use": "Care of this type has been logged, so it can't be deleted.",
+    "care_in_future": "Care can't be logged in the future.",
+    "feedback_only_for_watering": "Soil feedback is only for watering.",
+    "care_type_not_found": "This care type doesn't exist, or it was deleted.",
+    "care_event_not_found": "This doesn't exist, or it was deleted.",
+    "invalid_cursor": "Something went wrong. Reload the page and try again."
   },
   "places": {
     "title": "Places",
@@ -357,5 +366,95 @@
     "deletePhotoConfirm": "This can't be undone.",
     "photoDeleted": "Photo deleted.",
     "taken": "Taken {{date}}"
+  },
+  "care": {
+    "types": {
+      "water": "Water",
+      "fertilize": "Fertilize",
+      "repot": "Repot",
+      "prune": "Prune",
+      "mist": "Mist",
+      "rotate": "Rotate",
+      "clean_leaves": "Clean leaves",
+      "pest_check": "Check for pests"
+    },
+    "done": {
+      "water": "Watered",
+      "fertilize": "Fertilized",
+      "repot": "Repotted",
+      "prune": "Pruned",
+      "mist": "Misted",
+      "rotate": "Rotated",
+      "clean_leaves": "Cleaned leaves",
+      "pest_check": "Checked for pests"
+    },
+    "feedback": {
+      "too_dry": "Too dry",
+      "just_right": "Just right",
+      "still_wet": "Still wet"
+    },
+    "soil": "Soil: {{feedback}}",
+    "howWasSoil": "How was the soil?",
+    "howWasSoilHelp": "Before watering. This helps Sunfleck learn when this plant needs water.",
+    "quickActions": "Log care",
+    "more": "More care",
+    "logWithDetails": "Log with details…",
+    "logCare": "Log care",
+    "editCare": "Edit care",
+    "careType": "What did you do?",
+    "when": "When",
+    "notes": "Notes",
+    "skipped": "Skipped",
+    "skippedLabel": "I checked, but didn't need to",
+    "skippedHelp": "For example, the soil was still wet.",
+    "logged": "{{action}}: {{plant}}",
+    "undo": "Undo",
+    "undone": "Removed.",
+    "history": "History",
+    "noHistory": "Nothing logged yet.",
+    "by": "by {{name}}",
+    "photo": "Photo",
+    "editEvent": "Edit",
+    "deleteEvent": "Delete",
+    "eventMenu": "Options for {{action}}",
+    "eventDeleted": "Deleted.",
+    "lastWatered": "Watered {{when}}",
+    "neverWatered": "Not watered yet",
+    "settings": {
+      "title": "Care types",
+      "intro": "The kinds of care you can log. Add your own for anything the built-in ones don't cover.",
+      "builtIn": "Built in",
+      "yours": "Your own",
+      "noneYet": "You haven't added any yet.",
+      "add": "Add a care type",
+      "new": "New care type",
+      "edit": "Edit {{name}}",
+      "name": "Name",
+      "namePlaceholder": "e.g. Bottom water, Harvest",
+      "icon": "Icon",
+      "delete": "Delete {{name}}",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteConfirm": "You can only delete care types that haven't been used.",
+      "deleted": "{{name}} was deleted."
+    },
+    "icons": {
+      "droplet": "Water drop",
+      "flask": "Bottle",
+      "bucket": "Pot",
+      "scissors": "Scissors",
+      "spray": "Spray",
+      "rotate": "Turn",
+      "sparkles": "Sparkles",
+      "bug": "Bug",
+      "leaf": "Leaf",
+      "seedling": "Seedling",
+      "flower": "Flower",
+      "shovel": "Shovel",
+      "basket": "Basket",
+      "sun": "Sun",
+      "temperature": "Thermometer",
+      "heart": "Heart",
+      "note": "Note"
+    }
   }
 }
