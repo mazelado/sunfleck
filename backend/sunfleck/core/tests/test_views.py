@@ -47,3 +47,18 @@ def test_missing_frontend_build_explains_what_to_do(
 
     assert response.status_code == 404
     assert b"make dev" in response.content
+
+
+@pytest.mark.usefixtures("built_frontend")
+def test_frontend_sets_the_csrf_cookie(client: Client) -> None:
+    response = client.get("/")
+
+    assert "csrftoken" in response.cookies
+
+
+@pytest.mark.usefixtures("built_frontend")
+def test_sign_in_api_urls_are_not_handled_by_the_frontend(client: Client) -> None:
+    response = client.get("/_allauth/browser/v1/config")
+
+    assert response.status_code == 200
+    assert b"<div id='root'>" not in response.content

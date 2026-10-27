@@ -145,6 +145,9 @@ Settings come from environment variables (see
 [technical-plan.md](technical-plan.md#configuration-environment-variables)). For development,
 `make` sets `DEBUG=true`, which provides safe local defaults, so no configuration is needed.
 
+**Emails during development:** there's no email server, so emails (password resets,
+invitations) are printed in the `make dev` terminal instead. Copy links from there.
+
 To try PostgreSQL locally, set `DATABASE_URL` and install the driver:
 
 ```bash
@@ -192,6 +195,7 @@ Published images (`ghcr.io/mazelado/sunfleck`) will start with the first release
 | `uv: command not found` | Open a new terminal after installing uv, or follow the PATH hint the installer printed |
 | `The SECRET_KEY environment variable must be set` | You ran `manage.py` directly. Use the `make` commands, or prefix the command with `DEBUG=true` |
 | `Error: That port is already in use` | Another `make dev` is still running. Stop it with Ctrl+C in that terminal |
+| `no such table` or `InconsistentMigrationHistory` after pulling | Until the first release, migrations may be rewritten. Delete your local database (`rm -r backend/data`) and, for Docker, its volume (`cd docker && docker compose down --volumes`) |
 | The page says "Can't reach the server" | The Django server isn't running or crashed. Check its output in the `make dev` terminal |
 | The Django output shows `Not Found: /health` (or other URLs Sunfleck doesn't use) | Another program on your computer is polling port 8000, usually because it expects its own server there. Sunfleck is unaffected. To find the program, run `sudo ss -tnp 'dport = :8000'` a few times while `make dev` is running |
 | Docker says `/data isn't writable` | You replaced the volume with a folder. Give it to the app's user: `sudo chown 1000 <folder>` |

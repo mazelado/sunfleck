@@ -8,9 +8,14 @@ from pathlib import Path
 from typing import Any
 
 import dj_database_url
+import django_stubs_ext
 from django.core.exceptions import ImproperlyConfigured
 
-from sunfleck.config.env import env_bool, env_list, env_str
+from sunfleck.config.env import env_bool, env_list, env_str, parse_email_url
+
+# Lets Django classes take type parameters at runtime (e.g. admin.ModelAdmin[Plant]), which
+# the type checker requires.
+django_stubs_ext.monkeypatch()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = Path(env_str("SUNFLECK_DATA_DIR", str(BASE_DIR / "data")))
@@ -27,6 +32,12 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = [*env_list("ALLOWED_HOSTS"), "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
+# Behind a reverse proxy (Caddy, Traefik, ...) that terminates HTTPS, trust its headers so that
+# links in emails and invitations use the public https:// address.
+if env_bool("SUNFLECK_BEHIND_PROXY", default=False):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    USE_X_FORWARDED_HOST = True
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -34,6 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "allauth",
+    "allauth.account",
+    "allauth.headless",
     "ninja",
     "sunfleck.core",
     "sunfleck.accounts",
@@ -49,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "sunfleck.config.urls"
@@ -97,6 +112,28 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # --- Accounts ---------------------------------------------------------------------------------
 
 AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  # the Django admin site
+    "allauth.account.auth_backends.AuthenticationBackend",  # the app
+]
+
+# Signing in is handled by django-allauth's "headless" JSON API, used by the React app.
+# People sign in with email and password. Nobody can sign up on their own: the first account
+# is created by the setup screen, and everyone else is invited by an Admin.
+ACCOUNT_ADAPTER = "sunfleck.accounts.adapters.AccountAdapter"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_LOGIN_BY_CODE_ENABLED = False
+HEADLESS_ONLY = True
+HEADLESS_CLIENTS = ("browser",)
+HEADLESS_FRONTEND_URLS = {
+    "account_reset_password": "/forgot-password",
+    "account_reset_password_from_key": "/reset-password/{key}",
+    "account_signup": "/sign-in",
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -104,6 +141,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# --- Email ------------------------------------------------------------------------------------
+# Optional. Without EMAIL_URL, emails (password resets, invitations) are written to the log
+# instead, and Admins can share links themselves.
+
+EMAIL_URL = env_str("EMAIL_URL")
+SUNFLECK_EMAIL_CONFIGURED = bool(EMAIL_URL)
+MAILERS = {
+    "default": (
+        parse_email_url(EMAIL_URL)
+        if EMAIL_URL
+        else {"BACKEND": "django.core.mail.backends.console.EmailBackend"}
+    )
+}
+DEFAULT_FROM_EMAIL = env_str("EMAIL_FROM", "Sunfleck <sunfleck@localhost>")
 
 # --- Internationalization ---------------------------------------------------------------------
 

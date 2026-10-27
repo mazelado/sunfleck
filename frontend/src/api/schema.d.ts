@@ -26,10 +26,207 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/household": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Household */
+        get: operations["sunfleck_accounts_api_get_household"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Household */
+        patch: operations["sunfleck_accounts_api_update_household"];
+        trace?: never;
+    };
+    "/api/v1/household/invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Invitations */
+        get: operations["sunfleck_accounts_api_list_invitations"];
+        put?: never;
+        /** Create Invitation */
+        post: operations["sunfleck_accounts_api_create_invitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/household/invitations/{invitation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke Invitation */
+        delete: operations["sunfleck_accounts_api_revoke_invitation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/household/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Members */
+        get: operations["sunfleck_accounts_api_list_members"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/household/members/{member_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Member */
+        delete: operations["sunfleck_accounts_api_remove_member"];
+        options?: never;
+        head?: never;
+        /** Update Member */
+        patch: operations["sunfleck_accounts_api_update_member"];
+        trace?: never;
+    };
+    "/api/v1/household/members/{member_id}/password-reset-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Password Reset Link
+         * @description Create a link that lets a member choose a new password, for when email isn't set up.
+         */
+        post: operations["sunfleck_accounts_api_create_password_reset_link"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invitations/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview Invitation
+         * @description Show who invited whom, so the invite page can greet the person. No sign-in needed.
+         */
+        get: operations["sunfleck_accounts_api_preview_invitation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invitations/{token}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept Invitation
+         * @description Create the invited person's account, then sign them in.
+         */
+        post: operations["sunfleck_accounts_api_accept_invitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Me */
+        get: operations["sunfleck_accounts_api_get_me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Me */
+        patch: operations["sunfleck_accounts_api_update_me"];
+        trace?: never;
+    };
+    "/api/v1/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Setup Status
+         * @description Report whether Sunfleck still needs its first account.
+         */
+        get: operations["sunfleck_accounts_api_setup_status"];
+        put?: never;
+        /**
+         * Setup
+         * @description Create the first account (an Admin) and its household, then sign in.
+         */
+        post: operations["sunfleck_accounts_api_setup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AcceptInvitationIn */
+        AcceptInvitationIn: {
+            /** Display Name */
+            display_name: string;
+            /** Password */
+            password: string;
+        };
         /** HealthOut */
         HealthOut: {
             /** Database */
@@ -39,6 +236,149 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** HouseholdOut */
+        HouseholdOut: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+        };
+        /** HouseholdUpdate */
+        HouseholdUpdate: {
+            /** Name */
+            name: string;
+        };
+        /** InvitationCreatedOut */
+        InvitationCreatedOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: string;
+            /** Email Sent */
+            email_sent: boolean;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Id */
+            id: number;
+            /** Invited By */
+            invited_by: string | null;
+            role: components["schemas"]["Role"];
+            /** Url */
+            url: string;
+        };
+        /** InvitationIn */
+        InvitationIn: {
+            /** Email */
+            email: string;
+            /** @default gardener */
+            role: components["schemas"]["Role"];
+        };
+        /** InvitationOut */
+        InvitationOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Id */
+            id: number;
+            /** Invited By */
+            invited_by: string | null;
+            role: components["schemas"]["Role"];
+        };
+        /** InvitationPreviewOut */
+        InvitationPreviewOut: {
+            /** Email */
+            email: string;
+            /** Household Name */
+            household_name: string;
+            /** Invited By */
+            invited_by: string | null;
+            role: components["schemas"]["Role"];
+        };
+        /** LinkOut */
+        LinkOut: {
+            /** Url */
+            url: string;
+        };
+        /** MeOut */
+        MeOut: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            household: components["schemas"]["HouseholdOut"] | null;
+            /** Id */
+            id: number;
+            /** Locale */
+            locale: string;
+            role: components["schemas"]["Role"] | null;
+            unit_system: components["schemas"]["UnitSystem"];
+        };
+        /** MeUpdate */
+        MeUpdate: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Locale */
+            locale?: string | null;
+            unit_system?: components["schemas"]["UnitSystem"] | null;
+        };
+        /** MemberOut */
+        MemberOut: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /** Id */
+            id: number;
+            role: components["schemas"]["Role"];
+            /** User Id */
+            user_id: number;
+        };
+        /** MemberUpdate */
+        MemberUpdate: {
+            role: components["schemas"]["Role"];
+        };
+        /**
+         * Role
+         * @description What a member may do in their household, from least to most access.
+         * @enum {string}
+         */
+        Role: "viewer" | "gardener" | "admin";
+        /** SetupIn */
+        SetupIn: {
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /** Household Name */
+            household_name: string;
+            /** Password */
+            password: string;
+        };
+        /** SetupStatusOut */
+        SetupStatusOut: {
+            /** Needs Setup */
+            needs_setup: boolean;
+        };
+        /**
+         * UnitSystem
+         * @enum {string}
+         */
+        UnitSystem: "metric" | "imperial";
     };
     responses: never;
     parameters: never;
@@ -73,6 +413,338 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_get_household: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HouseholdOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_update_household: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HouseholdUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HouseholdOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_list_invitations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_create_invitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitationIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationCreatedOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_revoke_invitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_accounts_api_list_members: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_remove_member: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                member_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_accounts_api_update_member: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                member_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemberUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_create_password_reset_link: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                member_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinkOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_preview_invitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationPreviewOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_accept_invitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcceptInvitationIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_get_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_update_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MeUpdate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_setup_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetupStatusOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_setup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetupIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
                 };
             };
         };
