@@ -129,6 +129,184 @@
         "title": "CareEventOut",
         "type": "object"
       },
+      "CareProfileOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "dormancy_months_north": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dormancy Months North",
+            "type": "array"
+          },
+          "examples": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Examples",
+            "type": "array"
+          },
+          "fertilizing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FertilizingOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null: don't fertilize."
+          },
+          "genera": {
+            "description": "The genera with this care profile.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Genera",
+            "type": "array"
+          },
+          "humidity": {
+            "enum": [
+              "low",
+              "medium",
+              "medium_high",
+              "high"
+            ],
+            "title": "Humidity",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "light": {
+            "$ref": "#/components/schemas/LightOut"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "setting": {
+            "enum": [
+              "indoor",
+              "outdoor",
+              "either"
+            ],
+            "title": "Setting",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "reviewed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "temperature_c": {
+            "$ref": "#/components/schemas/TemperatureOut"
+          },
+          "watering": {
+            "$ref": "#/components/schemas/WateringOut"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "notes",
+          "setting",
+          "examples",
+          "watering",
+          "light",
+          "humidity",
+          "temperature_c",
+          "fertilizing",
+          "dormancy_months_north",
+          "status",
+          "sources",
+          "genera"
+        ],
+        "title": "CareProfileOut",
+        "type": "object"
+      },
+      "CareProfileRef": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name"
+        ],
+        "title": "CareProfileRef",
+        "type": "object"
+      },
+      "CareProfileSummaryOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "genus_count": {
+            "title": "Genus Count",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "setting": {
+            "enum": [
+              "indoor",
+              "outdoor",
+              "either"
+            ],
+            "title": "Setting",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "setting",
+          "genus_count"
+        ],
+        "title": "CareProfileSummaryOut",
+        "type": "object"
+      },
       "CareTypeIn": {
         "properties": {
           "counts_as_watering": {
@@ -269,6 +447,27 @@
         ],
         "title": "Feedback",
         "type": "string"
+      },
+      "FertilizingOut": {
+        "properties": {
+          "interval_days": {
+            "title": "Interval Days",
+            "type": "integer"
+          },
+          "pause_months_north": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Pause Months North",
+            "type": "array"
+          }
+        },
+        "required": [
+          "interval_days",
+          "pause_months_north"
+        ],
+        "title": "FertilizingOut",
+        "type": "object"
       },
       "HealthOut": {
         "properties": {
@@ -490,6 +689,42 @@
           "invited_by"
         ],
         "title": "InvitationPreviewOut",
+        "type": "object"
+      },
+      "LightOut": {
+        "properties": {
+          "dli_ideal": {
+            "title": "Dli Ideal",
+            "type": "number"
+          },
+          "dli_max": {
+            "title": "Dli Max",
+            "type": "number"
+          },
+          "dli_min": {
+            "title": "Dli Min",
+            "type": "number"
+          },
+          "outdoor_exposure": {
+            "items": {
+              "enum": [
+                "full_sun",
+                "part_shade",
+                "shade"
+              ],
+              "type": "string"
+            },
+            "title": "Outdoor Exposure",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dli_min",
+          "dli_ideal",
+          "dli_max",
+          "outdoor_exposure"
+        ],
+        "title": "LightOut",
         "type": "object"
       },
       "LightSourceIn": {
@@ -1095,6 +1330,30 @@
         "title": "PhotoPage",
         "type": "object"
       },
+      "PlantCareProfileOut": {
+        "properties": {
+          "chosen": {
+            "description": "Chosen for this plant, rather than from its species.",
+            "title": "Chosen",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "chosen"
+        ],
+        "title": "PlantCareProfileOut",
+        "type": "object"
+      },
       "PlantFilters": {
         "properties": {
           "limit": {
@@ -1155,6 +1414,19 @@
               }
             ],
             "title": "Acquired On"
+          },
+          "care_profile_key": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A care profile chosen for it; leave out to use its species' profile.",
+            "title": "Care Profile Key"
           },
           "container_diameter_cm": {
             "anyOf": [
@@ -1229,6 +1501,18 @@
               }
             ],
             "default": "active"
+          },
+          "taxon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its genus or species.",
+            "title": "Taxon Id"
           }
         },
         "required": [
@@ -1334,6 +1618,17 @@
             ],
             "title": "Acquired On"
           },
+          "care_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantCareProfileOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The care profile that applies: chosen for it, or its species'."
+          },
           "container_diameter_cm": {
             "anyOf": [
               {
@@ -1421,6 +1716,16 @@
               }
             ]
           },
+          "species": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantSpeciesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "status": {
             "$ref": "#/components/schemas/PlantStatus"
           }
@@ -1438,6 +1743,8 @@
           "cover_photo",
           "light_sources",
           "last_watered_at",
+          "species",
+          "care_profile",
           "created_at"
         ],
         "title": "PlantOut",
@@ -1463,6 +1770,36 @@
           "count"
         ],
         "title": "PlantPage",
+        "type": "object"
+      },
+      "PlantSpeciesOut": {
+        "properties": {
+          "common_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Common Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "scientific_name": {
+            "title": "Scientific Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "scientific_name",
+          "common_name"
+        ],
+        "title": "PlantSpeciesOut",
         "type": "object"
       },
       "PlantStatus": {
@@ -1518,6 +1855,16 @@
             "title": "Nickname",
             "type": "string"
           },
+          "species": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantSpeciesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "status": {
             "$ref": "#/components/schemas/PlantStatus"
           }
@@ -1528,7 +1875,8 @@
           "status",
           "location",
           "cover_thumbnail_url",
-          "last_watered_at"
+          "last_watered_at",
+          "species"
         ],
         "title": "PlantSummaryOut",
         "type": "object"
@@ -1542,6 +1890,84 @@
         ],
         "title": "Role",
         "type": "string"
+      },
+      "SearchQuery": {
+        "properties": {
+          "limit": {
+            "default": 20,
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "q": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Q",
+            "type": "string"
+          }
+        },
+        "required": [
+          "q"
+        ],
+        "title": "SearchQuery",
+        "type": "object"
+      },
+      "SeasonalDays": {
+        "properties": {
+          "autumn": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autumn"
+          },
+          "spring": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spring"
+          },
+          "summer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summer"
+          },
+          "winter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Winter"
+          }
+        },
+        "required": [
+          "spring",
+          "summer",
+          "autumn",
+          "winter"
+        ],
+        "title": "SeasonalDays",
+        "type": "object"
       },
       "SetupIn": {
         "properties": {
@@ -1674,6 +2100,215 @@
         "title": "SoilType",
         "type": "string"
       },
+      "SpeciesHitOut": {
+        "properties": {
+          "care_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareProfileRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "common_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The most common name in your language.",
+            "title": "Common Name"
+          },
+          "common_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Common Names",
+            "type": "array"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "matched_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The common or older name that matched, if it wasn't the scientific name.",
+            "title": "Matched Name"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rank": {
+            "$ref": "#/components/schemas/TaxonRank"
+          },
+          "scientific_name": {
+            "title": "Scientific Name",
+            "type": "string"
+          },
+          "synonyms": {
+            "description": "Older names.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Synonyms",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "scientific_name",
+          "rank",
+          "family",
+          "common_name",
+          "common_names",
+          "synonyms",
+          "note",
+          "care_profile",
+          "matched_name"
+        ],
+        "title": "SpeciesHitOut",
+        "type": "object"
+      },
+      "SpeciesOut": {
+        "properties": {
+          "care_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareProfileRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "common_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The most common name in your language.",
+            "title": "Common Name"
+          },
+          "common_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Common Names",
+            "type": "array"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rank": {
+            "$ref": "#/components/schemas/TaxonRank"
+          },
+          "scientific_name": {
+            "title": "Scientific Name",
+            "type": "string"
+          },
+          "synonyms": {
+            "description": "Older names.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Synonyms",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "scientific_name",
+          "rank",
+          "family",
+          "common_name",
+          "common_names",
+          "synonyms",
+          "note",
+          "care_profile"
+        ],
+        "title": "SpeciesOut",
+        "type": "object"
+      },
+      "TaxonRank": {
+        "enum": [
+          "genus",
+          "species"
+        ],
+        "title": "TaxonRank",
+        "type": "string"
+      },
+      "TemperatureOut": {
+        "properties": {
+          "ideal_max": {
+            "title": "Ideal Max",
+            "type": "number"
+          },
+          "ideal_min": {
+            "title": "Ideal Min",
+            "type": "number"
+          },
+          "max": {
+            "title": "Max",
+            "type": "number"
+          },
+          "min": {
+            "title": "Min",
+            "type": "number"
+          }
+        },
+        "required": [
+          "min",
+          "ideal_min",
+          "ideal_max",
+          "max"
+        ],
+        "title": "TemperatureOut",
+        "type": "object"
+      },
       "TimelineItemOut": {
         "properties": {
           "at": {
@@ -1780,6 +2415,32 @@
         ],
         "title": "UnitSystem",
         "type": "string"
+      },
+      "WateringOut": {
+        "properties": {
+          "interval_days": {
+            "$ref": "#/components/schemas/SeasonalDays",
+            "description": "Typical days between waterings; null: only in long dry spells, or not while dormant."
+          },
+          "let_dry": {
+            "enum": [
+              "keep_moist",
+              "top_quarter",
+              "top_third",
+              "top_half",
+              "mostly",
+              "completely"
+            ],
+            "title": "Let Dry",
+            "type": "string"
+          }
+        },
+        "required": [
+          "interval_days",
+          "let_dry"
+        ],
+        "title": "WateringOut",
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -1869,6 +2530,75 @@
         "summary": "Update Care Event",
         "tags": [
           "care"
+        ]
+      }
+    },
+    "/api/v1/care-profiles": {
+      "get": {
+        "description": "Every care profile, by name. A short, fixed-size list.",
+        "operationId": "sunfleck_taxonomy_api_list_care_profiles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CareProfileSummaryOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Care Profiles",
+        "tags": [
+          "taxonomy"
+        ]
+      }
+    },
+    "/api/v1/care-profiles/{key}": {
+      "get": {
+        "operationId": "sunfleck_taxonomy_api_get_care_profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareProfileOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Care Profile",
+        "tags": [
+          "taxonomy"
         ]
       }
     },
@@ -3673,6 +4403,99 @@
         "summary": "Create Location",
         "tags": [
           "places"
+        ]
+      }
+    },
+    "/api/v1/species": {
+      "get": {
+        "description": "Genera and species by scientific, older, or common name (in any language), best\nmatches first. At least 2 characters; shorter searches find nothing.",
+        "operationId": "sunfleck_taxonomy_api_search_species",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SpeciesHitOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Search Species",
+        "tags": [
+          "taxonomy"
+        ]
+      }
+    },
+    "/api/v1/species/{taxon_id}": {
+      "get": {
+        "operationId": "sunfleck_taxonomy_api_get_species",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taxon_id",
+            "required": true,
+            "schema": {
+              "title": "Taxon Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeciesOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Species",
+        "tags": [
+          "taxonomy"
         ]
       }
     }

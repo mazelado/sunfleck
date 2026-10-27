@@ -33,6 +33,8 @@ const plant: Plant = {
   cover_photo: null,
   light_sources: [],
   last_watered_at: new Date(Date.now() - DAY).toISOString(),
+  species: null,
+  care_profile: null,
   created_at: "2026-04-01T10:00:00Z",
 };
 
@@ -370,6 +372,7 @@ describe("plant cards", () => {
               status: "active",
               location: null,
               cover_thumbnail_url: null,
+              species: null,
               last_watered_at: new Date(Date.now() - 3 * DAY).toISOString(),
             },
             {
@@ -378,6 +381,7 @@ describe("plant cards", () => {
               status: "active",
               location: null,
               cover_thumbnail_url: null,
+              species: null,
               last_watered_at: null,
             },
           ],

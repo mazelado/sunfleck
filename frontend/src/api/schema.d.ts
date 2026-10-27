@@ -22,6 +22,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Care Profiles
+         * @description Every care profile, by name. A short, fixed-size list.
+         */
+        get: operations["sunfleck_taxonomy_api_list_care_profiles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/care-profiles/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Care Profile */
+        get: operations["sunfleck_taxonomy_api_get_care_profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-types": {
         parameters: {
             query?: never;
@@ -583,6 +620,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/species": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Species
+         * @description Genera and species by scientific, older, or common name (in any language), best
+         *     matches first. At least 2 characters; shorter searches find nothing.
+         */
+        get: operations["sunfleck_taxonomy_api_search_species"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/species/{taxon_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Species */
+        get: operations["sunfleck_taxonomy_api_get_species"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -635,6 +710,71 @@ export interface components {
             plant_id: number;
             /** Skipped */
             skipped: boolean;
+        };
+        /** CareProfileOut */
+        CareProfileOut: {
+            /** Description */
+            description: string;
+            /** Dormancy Months North */
+            dormancy_months_north: number[];
+            /** Examples */
+            examples: string[];
+            /** @description null: don't fertilize. */
+            fertilizing: components["schemas"]["FertilizingOut"] | null;
+            /**
+             * Genera
+             * @description The genera with this care profile.
+             */
+            genera: string[];
+            /**
+             * Humidity
+             * @enum {string}
+             */
+            humidity: "low" | "medium" | "medium_high" | "high";
+            /** Key */
+            key: string;
+            light: components["schemas"]["LightOut"];
+            /** Name */
+            name: string;
+            /** Notes */
+            notes: string | null;
+            /**
+             * Setting
+             * @enum {string}
+             */
+            setting: "indoor" | "outdoor" | "either";
+            /** Sources */
+            sources: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "reviewed";
+            temperature_c: components["schemas"]["TemperatureOut"];
+            watering: components["schemas"]["WateringOut"];
+        };
+        /** CareProfileRef */
+        CareProfileRef: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** CareProfileSummaryOut */
+        CareProfileSummaryOut: {
+            /** Description */
+            description: string;
+            /** Genus Count */
+            genus_count: number;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /**
+             * Setting
+             * @enum {string}
+             */
+            setting: "indoor" | "outdoor" | "either";
         };
         /** CareTypeIn */
         CareTypeIn: {
@@ -699,6 +839,13 @@ export interface components {
          * @enum {string}
          */
         Feedback: "too_dry" | "just_right" | "still_wet";
+        /** FertilizingOut */
+        FertilizingOut: {
+            /** Interval Days */
+            interval_days: number;
+            /** Pause Months North */
+            pause_months_north: number[];
+        };
         /** HealthOut */
         HealthOut: {
             /** Database */
@@ -785,6 +932,17 @@ export interface components {
             /** Invited By */
             invited_by: string | null;
             role: components["schemas"]["Role"];
+        };
+        /** LightOut */
+        LightOut: {
+            /** Dli Ideal */
+            dli_ideal: number;
+            /** Dli Max */
+            dli_max: number;
+            /** Dli Min */
+            dli_min: number;
+            /** Outdoor Exposure */
+            outdoor_exposure: ("full_sun" | "part_shade" | "shade")[];
         };
         /** LightSourceIn */
         LightSourceIn: {
@@ -974,6 +1132,18 @@ export interface components {
             /** Items */
             items: components["schemas"]["PhotoOut"][];
         };
+        /** PlantCareProfileOut */
+        PlantCareProfileOut: {
+            /**
+             * Chosen
+             * @description Chosen for this plant, rather than from its species.
+             */
+            chosen: boolean;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+        };
         /** PlantFilters */
         PlantFilters: {
             /**
@@ -1000,6 +1170,11 @@ export interface components {
         PlantIn: {
             /** Acquired On */
             acquired_on?: string | null;
+            /**
+             * Care Profile Key
+             * @description A care profile chosen for it; leave out to use its species' profile.
+             */
+            care_profile_key?: string | null;
             /** Container Diameter Cm */
             container_diameter_cm?: number | null;
             container_material?: components["schemas"]["ContainerMaterial"] | null;
@@ -1021,6 +1196,11 @@ export interface components {
             soil_type?: components["schemas"]["SoilType"] | null;
             /** @default active */
             status: components["schemas"]["PlantStatus"];
+            /**
+             * Taxon Id
+             * @description Its genus or species.
+             */
+            taxon_id?: number | null;
         };
         /** PlantLightIn */
         PlantLightIn: {
@@ -1054,6 +1234,8 @@ export interface components {
         PlantOut: {
             /** Acquired On */
             acquired_on: string | null;
+            /** @description The care profile that applies: chosen for it, or its species'. */
+            care_profile: components["schemas"]["PlantCareProfileOut"] | null;
             /** Container Diameter Cm */
             container_diameter_cm: number | null;
             container_material: components["schemas"]["ContainerMaterial"] | null;
@@ -1075,6 +1257,7 @@ export interface components {
             /** Notes */
             notes: string;
             soil_type: components["schemas"]["SoilType"] | null;
+            species: components["schemas"]["PlantSpeciesOut"] | null;
             status: components["schemas"]["PlantStatus"];
         };
         /** PlantPage */
@@ -1086,6 +1269,15 @@ export interface components {
             count: number;
             /** Items */
             items: components["schemas"]["PlantSummaryOut"][];
+        };
+        /** PlantSpeciesOut */
+        PlantSpeciesOut: {
+            /** Common Name */
+            common_name: string | null;
+            /** Id */
+            id: number;
+            /** Scientific Name */
+            scientific_name: string;
         };
         /**
          * PlantStatus
@@ -1103,6 +1295,7 @@ export interface components {
             location: components["schemas"]["PlantLocationOut"] | null;
             /** Nickname */
             nickname: string;
+            species: components["schemas"]["PlantSpeciesOut"] | null;
             status: components["schemas"]["PlantStatus"];
         };
         /**
@@ -1111,6 +1304,27 @@ export interface components {
          * @enum {string}
          */
         Role: "viewer" | "gardener" | "admin";
+        /** SearchQuery */
+        SearchQuery: {
+            /**
+             * Limit
+             * @default 20
+             */
+            limit: number;
+            /** Q */
+            q: string;
+        };
+        /** SeasonalDays */
+        SeasonalDays: {
+            /** Autumn */
+            autumn: number | null;
+            /** Spring */
+            spring: number | null;
+            /** Summer */
+            summer: number | null;
+            /** Winter */
+            winter: number | null;
+        };
         /** SetupIn */
         SetupIn: {
             /** Display Name */
@@ -1158,6 +1372,77 @@ export interface components {
          * @enum {string}
          */
         SoilType: "potting_mix" | "aroid_mix" | "cactus_mix" | "orchid_bark" | "sphagnum" | "semi_hydro" | "water" | "garden_soil" | "other";
+        /** SpeciesHitOut */
+        SpeciesHitOut: {
+            care_profile: components["schemas"]["CareProfileRef"] | null;
+            /**
+             * Common Name
+             * @description The most common name in your language.
+             */
+            common_name: string | null;
+            /** Common Names */
+            common_names: string[];
+            /** Family */
+            family: string;
+            /** Id */
+            id: number;
+            /**
+             * Matched Name
+             * @description The common or older name that matched, if it wasn't the scientific name.
+             */
+            matched_name: string | null;
+            /** Note */
+            note: string | null;
+            rank: components["schemas"]["TaxonRank"];
+            /** Scientific Name */
+            scientific_name: string;
+            /**
+             * Synonyms
+             * @description Older names.
+             */
+            synonyms: string[];
+        };
+        /** SpeciesOut */
+        SpeciesOut: {
+            care_profile: components["schemas"]["CareProfileRef"] | null;
+            /**
+             * Common Name
+             * @description The most common name in your language.
+             */
+            common_name: string | null;
+            /** Common Names */
+            common_names: string[];
+            /** Family */
+            family: string;
+            /** Id */
+            id: number;
+            /** Note */
+            note: string | null;
+            rank: components["schemas"]["TaxonRank"];
+            /** Scientific Name */
+            scientific_name: string;
+            /**
+             * Synonyms
+             * @description Older names.
+             */
+            synonyms: string[];
+        };
+        /**
+         * TaxonRank
+         * @enum {string}
+         */
+        TaxonRank: "genus" | "species";
+        /** TemperatureOut */
+        TemperatureOut: {
+            /** Ideal Max */
+            ideal_max: number;
+            /** Ideal Min */
+            ideal_min: number;
+            /** Max */
+            max: number;
+            /** Min */
+            min: number;
+        };
         /** TimelineItemOut */
         TimelineItemOut: {
             /**
@@ -1198,6 +1483,16 @@ export interface components {
          * @enum {string}
          */
         UnitSystem: "metric" | "imperial";
+        /** WateringOut */
+        WateringOut: {
+            /** @description Typical days between waterings; null: only in long dry spells, or not while dormant. */
+            interval_days: components["schemas"]["SeasonalDays"];
+            /**
+             * Let Dry
+             * @enum {string}
+             */
+            let_dry: "keep_moist" | "top_quarter" | "top_third" | "top_half" | "mostly" | "completely";
+        };
     };
     responses: never;
     parameters: never;
@@ -1250,6 +1545,48 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_taxonomy_api_list_care_profiles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareProfileSummaryOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_get_care_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareProfileOut"];
+                };
             };
         };
     };
@@ -2324,6 +2661,51 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LocationOut"];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_search_species: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeciesHitOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_get_species: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taxon_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpeciesOut"];
                 };
             };
         };

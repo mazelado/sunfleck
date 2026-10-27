@@ -20,6 +20,8 @@ from sunfleck.places.api import LightSourceOut, light_source_out
 from sunfleck.places.models import LocationKind
 from sunfleck.plants import services
 from sunfleck.plants.models import ContainerMaterial, Photo, Plant, PlantStatus, SoilType
+from sunfleck.taxonomy.api import care_profile_ref, language
+from sunfleck.taxonomy.models import translated_names
 
 router = Router(tags=["plants"], auth=django_auth)
 
@@ -47,6 +49,12 @@ class PlantIn(Schema):
     notes: str = Field(default="", max_length=5000)
     light_sources: list[PlantLightIn] = Field(
         default=[], max_length=50, description="The windows and grow lights that reach it."
+    )
+    taxon_id: int | None = Field(default=None, description="Its genus or species.")
+    care_profile_key: str | None = Field(
+        default=None,
+        max_length=50,
+        description="A care profile chosen for it; leave out to use its species' profile.",
     )
 
 
@@ -82,6 +90,18 @@ class PlantLightOut(Schema):
     distance_cm: int | None
 
 
+class PlantSpeciesOut(Schema):
+    id: int
+    scientific_name: str
+    common_name: str | None
+
+
+class PlantCareProfileOut(Schema):
+    key: str
+    name: str
+    chosen: bool = Field(description="Chosen for this plant, rather than from its species.")
+
+
 class PlantSummaryOut(Schema):
     id: int
     nickname: str
@@ -89,6 +109,7 @@ class PlantSummaryOut(Schema):
     location: PlantLocationOut | None
     cover_thumbnail_url: str | None
     last_watered_at: datetime | None
+    species: PlantSpeciesOut | None
 
 
 class PlantOut(Schema):
@@ -104,6 +125,10 @@ class PlantOut(Schema):
     cover_photo: PhotoOut | None
     light_sources: list[PlantLightOut]
     last_watered_at: datetime | None
+    species: PlantSpeciesOut | None
+    care_profile: PlantCareProfileOut | None = Field(
+        description="The care profile that applies: chosen for it, or its species'."
+    )
     created_at: datetime
 
 
@@ -167,7 +192,24 @@ def _last_watered_at(plant: Plant) -> datetime | None:
     return value if isinstance(value, datetime) else None
 
 
-def _summary_out(plant: Plant) -> PlantSummaryOut:
+def _species_out(plant: Plant, lang: str) -> PlantSpeciesOut | None:
+    taxon = plant.taxon
+    if taxon is None:
+        return None
+    names = translated_names(taxon.common_names, lang)
+    return PlantSpeciesOut(
+        id=taxon.pk, scientific_name=taxon.scientific_name, common_name=names[0] if names else None
+    )
+
+
+def _care_profile_out(plant: Plant, lang: str) -> PlantCareProfileOut | None:
+    ref = care_profile_ref(plant.effective_care_profile, lang)
+    if ref is None:
+        return None
+    return PlantCareProfileOut(key=ref.key, name=ref.name, chosen=plant.care_profile_id is not None)
+
+
+def _summary_out(plant: Plant, lang: str) -> PlantSummaryOut:
     return PlantSummaryOut(
         id=plant.pk,
         nickname=plant.nickname,
@@ -177,10 +219,11 @@ def _summary_out(plant: Plant) -> PlantSummaryOut:
             _photo_url(plant.cover_photo_id, "thumbnail") if plant.cover_photo_id else None
         ),
         last_watered_at=_last_watered_at(plant),
+        species=_species_out(plant, lang),
     )
 
 
-def _plant_out(plant: Plant) -> PlantOut:
+def _plant_out(plant: Plant, lang: str) -> PlantOut:
     return PlantOut(
         id=plant.pk,
         nickname=plant.nickname,
@@ -201,6 +244,8 @@ def _plant_out(plant: Plant) -> PlantOut:
             for link in plant.light_links.all()
         ],
         last_watered_at=_last_watered_at(plant),
+        species=_species_out(plant, lang),
+        care_profile=_care_profile_out(plant, lang),
         created_at=plant.created_at,
     )
 
@@ -227,7 +272,7 @@ def _plants(household: Household) -> QuerySet[Plant]:
     )
     # The aggregate drops the model's default ordering, so it's repeated here.
     return (
-        household.plants.select_related("location__site")
+        household.plants.select_related("location__site", "taxon__archetype", "care_profile")
         .annotate(last_watered_at=last_watered_at)
         .order_by("nickname", "id")
     )
@@ -266,13 +311,18 @@ def list_plants(request: HttpRequest, filters: Query[PlantFilters]) -> PlantPage
     household = require_role(request, Role.VIEWER).household
     plants = _plants(household)
     if filters.q.strip():
-        plants = plants.filter(Q(nickname__icontains=filters.q.strip()))
+        query = filters.q.strip()
+        # By the plant's name, or its species' names (scientific, older, or common).
+        plants = plants.filter(
+            Q(nickname__icontains=query) | Q(taxon__search_text__contains=query.lower())
+        )
     if filters.location_id is not None:
         plants = plants.filter(location_id=filters.location_id)
     if filters.status is not None:
         plants = plants.filter(status=filters.status)
     page = plants[filters.offset : filters.offset + filters.limit]
-    return PlantPage(items=[_summary_out(plant) for plant in page], count=plants.count())
+    lang = language(request)
+    return PlantPage(items=[_summary_out(plant, lang) for plant in page], count=plants.count())
 
 
 @router.post("/plants", response={201: PlantOut})
@@ -282,13 +332,13 @@ def create_plant(request: HttpRequest, data: PlantIn) -> Status[PlantOut]:
         plant = services.create_plant(household, _plant_data(data))
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
-    return Status(201, _plant_out(_get_plant(household, plant.pk)))
+    return Status(201, _plant_out(_get_plant(household, plant.pk), language(request)))
 
 
 @router.get("/plants/{plant_id}", response=PlantOut)
 def get_plant(request: HttpRequest, plant_id: int) -> PlantOut:
     household = require_role(request, Role.VIEWER).household
-    return _plant_out(_get_plant(household, plant_id))
+    return _plant_out(_get_plant(household, plant_id), language(request))
 
 
 @router.put("/plants/{plant_id}", response=PlantOut)
@@ -299,7 +349,7 @@ def update_plant(request: HttpRequest, plant_id: int, data: PlantIn) -> PlantOut
         services.update_plant(plant, _plant_data(data))
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
-    return _plant_out(_get_plant(household, plant_id))
+    return _plant_out(_get_plant(household, plant_id), language(request))
 
 
 @router.delete("/plants/{plant_id}", response={204: None})
@@ -319,7 +369,7 @@ def set_cover_photo(request: HttpRequest, plant_id: int, data: CoverIn) -> Plant
         services.set_cover_photo(plant, data.photo_id)
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
-    return _plant_out(_get_plant(household, plant_id))
+    return _plant_out(_get_plant(household, plant_id), language(request))
 
 
 # --- Photos -----------------------------------------------------------------------------------

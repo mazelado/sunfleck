@@ -25,6 +25,7 @@ from sunfleck.plants.models import (
     PlantStatus,
     SoilType,
 )
+from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 MAX_CAPTION_LENGTH = 200
 
@@ -59,6 +60,8 @@ class PlantData:
     acquired_on: date | None = None
     notes: str = ""
     light_sources: list[PlantLightData] = field(default_factory=list)
+    taxon_id: int | None = None
+    care_profile_key: str | None = None
 
 
 def _location(household: Household, location_id: int | None) -> Location | None:
@@ -102,6 +105,26 @@ def _light_links(
     ]
 
 
+def _taxon(taxon_id: int | None) -> Taxon | None:
+    if taxon_id is None:
+        return None
+    taxon = Taxon.objects.filter(pk=taxon_id).first()
+    if taxon is None:
+        raise PlantsError("species_not_found", "This species isn't in the list.", "taxon_id")
+    return taxon
+
+
+def _care_profile(key: str | None) -> CareArchetype | None:
+    if not key:
+        return None
+    profile = CareArchetype.objects.filter(key=key).first()
+    if profile is None:
+        raise PlantsError(
+            "care_profile_not_found", "This care profile doesn't exist.", "care_profile_key"
+        )
+    return profile
+
+
 def _apply_plant(plant: Plant, data: PlantData) -> None:
     """Copy `data` onto `plant`, save it, and set which light sources reach it."""
     location = _location(plant.household, data.location_id)
@@ -113,6 +136,8 @@ def _apply_plant(plant: Plant, data: PlantData) -> None:
     plant.soil_type = data.soil_type or ""
     plant.acquired_on = data.acquired_on
     plant.notes = data.notes.strip()
+    plant.taxon = _taxon(data.taxon_id)
+    plant.care_profile = _care_profile(data.care_profile_key)
     plant.save()
     links = _light_links(plant, location, data.light_sources)
     plant.light_links.all().delete()

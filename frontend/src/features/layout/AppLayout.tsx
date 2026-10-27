@@ -1,5 +1,6 @@
 import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "@mantine/core";
 import {
+  IconBook,
   IconDroplet,
   IconHome,
   IconLogout,
@@ -50,6 +51,9 @@ export function AppLayout() {
               </Menu.Item>
               <Menu.Item component={Link} to="/plants" leftSection={<IconPlant2 size={16} />}>
                 {t("nav.plants")}
+              </Menu.Item>
+              <Menu.Item component={Link} to="/guide" leftSection={<IconBook size={16} />}>
+                {t("nav.guide")}
               </Menu.Item>
               <Menu.Item component={Link} to="/places" leftSection={<IconMapPin size={16} />}>
                 {t("nav.places")}

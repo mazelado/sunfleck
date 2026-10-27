@@ -100,6 +100,8 @@ function plant(overrides: Partial<Plant> = {}): Plant {
     cover_photo: null,
     light_sources: [{ light_source: bayWindow, distance_cm: 100 }],
     last_watered_at: null,
+    species: null,
+    care_profile: null,
     created_at: "2026-04-01T10:00:00Z",
     ...overrides,
   };
@@ -114,6 +116,7 @@ function summary(overrides: Partial<PlantSummary> = {}): PlantSummary {
     location,
     cover_thumbnail_url: null,
     last_watered_at: null,
+    species: null,
     ...overrides,
   };
 }
@@ -211,6 +214,8 @@ describe("plant form", () => {
       soil_type: null,
       acquired_on: null,
       notes: "",
+      taxon_id: null,
+      care_profile_key: null,
       light_sources: [
         { light_source_id: 1, distance_cm: 80 },
         { light_source_id: 2, distance_cm: null },
