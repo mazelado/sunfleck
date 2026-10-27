@@ -162,9 +162,28 @@ API and the built frontend. To try it:
 docker run --rm -p 8000:8000 -e SECRET_KEY=try-it-out sunfleck:dev
 ```
 
-Then open <http://localhost:8000>. See `docker/compose.yaml` and `docker/env.example` for a
-longer-lived setup. Published images (`ghcr.io/mazelado/sunfleck`) will start with the first
-release.
+Then open <http://localhost:8000>. Data is thrown away when the container stops.
+
+For a longer-lived setup, use Docker Compose from the `docker/` folder:
+
+```bash
+cd docker
+cp env.example .env       # then edit .env: set SECRET_KEY and TIME_ZONE
+docker compose up -d --build
+```
+
+`--build` rebuilds the image from your current code; drop it to reuse the last build. Data is
+kept in a Docker volume named `docker_sunfleck-data` (the `docker_` prefix comes from the
+folder name), so it survives restarts and rebuilds. Useful commands:
+
+| Command | Does |
+|---|---|
+| `docker compose logs -f` | Follow the app's output (Ctrl+C stops following, not the app) |
+| `docker compose ps` | Show whether it's running and healthy |
+| `docker compose down` | Stop it (data is kept) |
+| `docker compose down --volumes` | Stop it **and delete all its data** |
+
+Published images (`ghcr.io/mazelado/sunfleck`) will start with the first release.
 
 ## 9. Troubleshooting
 
@@ -174,5 +193,7 @@ release.
 | `The SECRET_KEY environment variable must be set` | You ran `manage.py` directly. Use the `make` commands, or prefix the command with `DEBUG=true` |
 | `Error: That port is already in use` | Another `make dev` is still running. Stop it with Ctrl+C in that terminal |
 | The page says "Can't reach the server" | The Django server isn't running or crashed. Check its output in the `make dev` terminal |
+| The Django output shows `Not Found: /health` (or other URLs Sunfleck doesn't use) | Another program on your computer is polling port 8000, usually because it expects its own server there. Sunfleck is unaffected. To find the program, run `sudo ss -tnp 'dport = :8000'` a few times while `make dev` is running |
+| Docker says `/data isn't writable` | You replaced the volume with a folder. Give it to the app's user: `sudo chown 1000 <folder>` |
 | `npm ci` fails with "unsupported engine" | Your Node.js is too old. Install version 22.12 or newer |
 | The pre-commit hooks don't run | Run `make setup` again |
