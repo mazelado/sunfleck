@@ -219,11 +219,11 @@ def _plant_data(data: PlantIn) -> services.PlantData:
 
 
 def _plants(household: Household) -> QuerySet[Plant]:
-    # When the plant was last watered, from the care log (sunfleck.care). Skipped waterings
-    # don't count.
+    # When the plant was last watered, from the care log (sunfleck.care): care of any type
+    # that counts as watering. Skipped waterings don't count.
     last_watered_at = Max(
         "care_events__performed_at",
-        filter=Q(care_events__care_type__key="water", care_events__skipped=False),
+        filter=Q(care_events__care_type__counts_as_watering=True, care_events__skipped=False),
     )
     # The aggregate drops the model's default ordering, so it's repeated here.
     return (

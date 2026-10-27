@@ -49,7 +49,7 @@ export function PlantTimeline({ plantId, canEdit, onOpenPhoto }: PlantTimelinePr
   const [editing, setEditing] = useState<CareEvent | null>(null);
   const items = timeline.data?.pages.flatMap((page) => page.items) ?? [];
   // Only the latest watering asks for soil feedback, so the history doesn't nag.
-  const latestWatering = items.find((item) => item.care_event?.care_type.key === "water");
+  const latestWatering = items.find((item) => item.care_event?.care_type.counts_as_watering);
   const askFeedbackFor =
     canEdit && latestWatering?.care_event && !latestWatering.care_event.feedback
       ? latestWatering.care_event.id

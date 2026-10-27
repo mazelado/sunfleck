@@ -1,11 +1,13 @@
 import {
   ActionIcon,
+  Badge,
   Button,
   Group,
   Modal,
   Paper,
   SimpleGrid,
   Stack,
+  Switch,
   Text,
   TextInput,
   ThemeIcon,
@@ -120,12 +122,18 @@ export function CareTypesPage() {
 }
 
 function CareTypeLabel({ type, label }: { type: CareType; label: string }) {
+  const { t } = useTranslation();
   return (
     <Group gap="sm" wrap="nowrap">
       <ThemeIcon variant="light" radius="xl">
         <CareIcon icon={type.icon} size={16} />
       </ThemeIcon>
       <Text>{label}</Text>
+      {type.counts_as_watering && (
+        <Badge variant="light" color="blue" size="sm">
+          {t("care.settings.wateringBadge")}
+        </Badge>
+      )}
     </Group>
   );
 }
@@ -136,7 +144,11 @@ function CareTypeDialog({ careType, onClose }: { careType?: CareType; onClose: (
   const deleteType = useDeleteCareType();
   const applyFieldErrors = useApplyFieldErrors();
   const form = useForm({
-    initialValues: { name: careType?.name ?? "", icon: careType?.icon ?? "sparkles" },
+    initialValues: {
+      name: careType?.name ?? "",
+      icon: careType?.icon ?? "sparkles",
+      counts_as_watering: careType?.counts_as_watering ?? false,
+    },
     validate: { name: isNotEmpty(t("validation.required")) },
   });
   const icon = form.getValues().icon;
@@ -193,6 +205,11 @@ function CareTypeDialog({ careType, onClose }: { careType?: CareType; onClose: (
               ))}
             </SimpleGrid>
           </Stack>
+          <Switch
+            label={t("care.settings.countsAsWatering")}
+            description={t("care.settings.countsAsWateringHelp")}
+            {...form.getInputProps("counts_as_watering", { type: "checkbox" })}
+          />
           <Group justify="space-between">
             {careType ? (
               <ConfirmDeleteButton

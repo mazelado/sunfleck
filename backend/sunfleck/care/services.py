@@ -17,7 +17,6 @@ from sunfleck.plants.models import Plant
 
 # Phones' and servers' clocks differ a little; allow for it before calling a time "future".
 CLOCK_TOLERANCE = timedelta(minutes=5)
-WATER = "water"
 
 
 class CareError(Exception):
@@ -42,6 +41,7 @@ def care_types_for(household: Household) -> QuerySet[CareType]:
 class CareTypeData:
     name: str
     icon: str = "sparkles"
+    counts_as_watering: bool = False
 
 
 def _apply_care_type(care_type: CareType, household: Household, data: CareTypeData) -> None:
@@ -53,6 +53,7 @@ def _apply_care_type(care_type: CareType, household: Household, data: CareTypeDa
         raise CareError("care_type_exists", "There's already a care type with this name.", "name")
     care_type.name = name
     care_type.icon = data.icon
+    care_type.counts_as_watering = data.counts_as_watering
     care_type.save()
 
 
@@ -126,7 +127,7 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
     performed_at = _aware(event.plant, data.performed_at) if data.performed_at else timezone.now()
     if performed_at > timezone.now() + CLOCK_TOLERANCE:
         raise CareError("care_in_future", "Care can't be logged in the future.", "performed_at")
-    if data.feedback and care_type.key != WATER:
+    if data.feedback and not care_type.counts_as_watering:
         raise CareError(
             "feedback_only_for_watering", "Soil feedback is only for watering.", "feedback"
         )
