@@ -1,0 +1,35 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: tropical_pitcher_plant
+name:
+  en: Tropical pitcher plant
+description:
+  en: 'Nepenthes: warm, humid, bright indirect light, and moist but airy moss-based mix.'
+setting: indoor
+examples:
+- Nepenthes
+watering:
+  interval_days:
+    spring: 4
+    summer: 3
+    autumn: 5
+    winter: 7
+  let_dry: keep_moist
+light:
+  dli_min: 6
+  dli_ideal: 10
+  dli_max: 16
+humidity: high
+temperature_c:
+  min: 15
+  ideal_min: 21
+  ideal_max: 29
+  max: 32
+fertilizing: null
+notes:
+  en: Use rain, distilled, or reverse-osmosis water.
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

@@ -1,0 +1,42 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: humid_tropical_foliage
+name:
+  en: Humid tropical foliage
+description:
+  en: 'Fussy rainforest-floor plants: evenly moist soil, high humidity, no direct sun.'
+setting: indoor
+examples:
+- Calathea
+- Maranta
+- Alocasia
+- Fittonia
+watering:
+  interval_days:
+    spring: 5
+    summer: 4
+    autumn: 6
+    winter: 8
+  let_dry: top_quarter
+light:
+  dli_min: 4
+  dli_ideal: 7
+  dli_max: 12
+humidity: high
+temperature_c:
+  min: 16
+  ideal_min: 18
+  ideal_max: 26
+  max: 30
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

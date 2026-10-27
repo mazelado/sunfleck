@@ -1,0 +1,43 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: bedding_annual
+name:
+  en: Bedding annual
+description:
+  en: 'Flowers grown for one season in beds, pots and baskets: frequent watering in pots,
+    regular feeding, and removing faded flowers.'
+setting: outdoor
+examples:
+- Petunia
+- Tagetes
+- Impatiens
+- Pelargonium
+- Tropaeolum
+watering:
+  interval_days:
+    spring: 3
+    summer: 2
+    autumn: 3
+    winter: 7
+  let_dry: top_quarter
+light:
+  dli_min: 15
+  dli_ideal: 25
+  dli_max: 45
+  outdoor_exposure:
+  - full_sun
+  - part_shade
+humidity: medium
+temperature_c:
+  min: 5
+  ideal_min: 15
+  ideal_max: 27
+  max: 32
+fertilizing:
+  interval_days: 14
+  pause_months_north: []
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

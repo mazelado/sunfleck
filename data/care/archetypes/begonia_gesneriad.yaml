@@ -1,0 +1,41 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: begonia_gesneriad
+name:
+  en: Begonias and African violets
+description:
+  en: 'Flowering and patterned houseplants: lightly moist soil, bright indirect light, water
+    at the soil rather than on the leaves.'
+setting: indoor
+examples:
+- Begonia
+- Streptocarpus
+- Episcia
+- Aeschynanthus
+watering:
+  interval_days:
+    spring: 6
+    summer: 5
+    autumn: 7
+    winter: 10
+  let_dry: top_quarter
+light:
+  dli_min: 4
+  dli_ideal: 8
+  dli_max: 14
+humidity: medium_high
+temperature_c:
+  min: 15
+  ideal_min: 18
+  ideal_max: 24
+  max: 29
+fertilizing:
+  interval_days: 21
+  pause_months_north:
+  - 12
+  - 1
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

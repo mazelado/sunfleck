@@ -1,0 +1,53 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: sun_perennial
+name:
+  en: Sun-loving perennial
+description:
+  en: 'Border perennials that come back every year: full sun, water in dry spells, and cut
+    back after flowering or in early spring.'
+setting: outdoor
+examples:
+- Echinacea
+- Rudbeckia
+- Nepeta
+- Hemerocallis
+- Iris
+watering:
+  interval_days:
+    spring: 7
+    summer: 4
+    autumn: 10
+    winter: null
+  let_dry: top_third
+light:
+  dli_min: 20
+  dli_ideal: 30
+  dli_max: 50
+  outdoor_exposure:
+  - full_sun
+humidity: medium
+temperature_c:
+  min: -20
+  ideal_min: 12
+  ideal_max: 28
+  max: 35
+fertilizing:
+  interval_days: 60
+  pause_months_north:
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 1
+  - 2
+dormancy_months_north:
+- 12
+- 1
+- 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

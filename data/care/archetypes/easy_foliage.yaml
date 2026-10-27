@@ -1,0 +1,43 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: easy_foliage
+name:
+  en: Easy foliage
+description:
+  en: 'Fast-growing, adaptable houseplants: water when the top third is dry; they show thirst
+    by drooping and recover quickly.'
+setting: indoor
+examples:
+- Chlorophytum
+- Tradescantia
+- Pilea
+- Hedera
+watering:
+  interval_days:
+    spring: 8
+    summer: 6
+    autumn: 9
+    winter: 12
+  let_dry: top_third
+light:
+  dli_min: 4
+  dli_ideal: 9
+  dli_max: 18
+humidity: medium
+temperature_c:
+  min: 10
+  ideal_min: 16
+  ideal_max: 26
+  max: 30
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

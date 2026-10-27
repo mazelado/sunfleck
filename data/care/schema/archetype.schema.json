@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mazelado/sunfleck/data/care/schema/archetype.schema.json",
+  "title": "Care profile (archetype)",
+  "description": "Typical care for a group of plants with similar needs. See ../README.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "key",
+    "name",
+    "description",
+    "setting",
+    "examples",
+    "watering",
+    "light",
+    "humidity",
+    "temperature_c",
+    "fertilizing",
+    "status",
+    "sources"
+  ],
+  "properties": {
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 50 },
+    "name": { "$ref": "#/$defs/translated" },
+    "description": { "$ref": "#/$defs/translated" },
+    "notes": { "$ref": "#/$defs/translated" },
+    "setting": { "enum": ["indoor", "outdoor", "either"] },
+    "examples": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Z][a-z]+$" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "watering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interval_days", "let_dry"],
+      "properties": {
+        "interval_days": {
+          "description": "Typical days between waterings per season; null means only in long dry spells (or not at all while dormant).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["spring", "summer", "autumn", "winter"],
+          "properties": {
+            "spring": { "$ref": "#/$defs/days" },
+            "summer": { "$ref": "#/$defs/days" },
+            "autumn": { "$ref": "#/$defs/days" },
+            "winter": { "$ref": "#/$defs/days" }
+          }
+        },
+        "let_dry": {
+          "description": "How much of the soil should dry out before watering again.",
+          "enum": ["keep_moist", "top_quarter", "top_third", "top_half", "mostly", "completely"]
+        }
+      }
+    },
+    "light": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dli_min", "dli_ideal", "dli_max"],
+      "properties": {
+        "dli_min": { "$ref": "#/$defs/dli" },
+        "dli_ideal": { "$ref": "#/$defs/dli" },
+        "dli_max": { "$ref": "#/$defs/dli" },
+        "outdoor_exposure": {
+          "type": "array",
+          "items": { "enum": ["full_sun", "part_shade", "shade"] },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "humidity": { "enum": ["low", "medium", "medium_high", "high"] },
+    "temperature_c": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "ideal_min", "ideal_max", "max"],
+      "properties": {
+        "min": { "$ref": "#/$defs/celsius" },
+        "ideal_min": { "$ref": "#/$defs/celsius" },
+        "ideal_max": { "$ref": "#/$defs/celsius" },
+        "max": { "$ref": "#/$defs/celsius" }
+      }
+    },
+    "fertilizing": {
+      "description": "null means don't fertilize (e.g. carnivorous plants).",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["interval_days", "pause_months_north"],
+          "properties": {
+            "interval_days": { "type": "integer", "minimum": 7, "maximum": 365 },
+            "pause_months_north": { "$ref": "#/$defs/months" }
+          }
+        }
+      ]
+    },
+    "dormancy_months_north": { "$ref": "#/$defs/months" },
+    "status": {
+      "description": "draft: written from general knowledge, needs review; reviewed: checked against the cited sources.",
+      "enum": ["draft", "reviewed"]
+    },
+    "sources": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 10 },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "translated": {
+      "description": "Text per language code; English (en) is required.",
+      "type": "object",
+      "required": ["en"],
+      "propertyNames": { "pattern": "^[a-z]{2}(-[A-Z]{2})?$" },
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 300 }
+    },
+    "days": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1, "maximum": 120 }] },
+    "dli": { "type": "number", "minimum": 0, "maximum": 70 },
+    "celsius": { "type": "number", "minimum": -50, "maximum": 50 },
+    "months": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 12 },
+      "uniqueItems": true
+    }
+  }
+}

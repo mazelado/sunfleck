@@ -1,0 +1,42 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: forest_cactus
+name:
+  en: Forest cactus
+description:
+  en: 'Cacti that grow on trees in rainforests: bright indirect light and more water than
+    desert cacti; many flower after a cool, drier rest.'
+setting: indoor
+examples:
+- Schlumbergera
+- Epiphyllum
+- Rhipsalis
+watering:
+  interval_days:
+    spring: 10
+    summer: 7
+    autumn: 10
+    winter: 14
+  let_dry: top_half
+light:
+  dli_min: 5
+  dli_ideal: 8
+  dli_max: 14
+humidity: medium_high
+temperature_c:
+  min: 10
+  ideal_min: 16
+  ideal_max: 24
+  max: 30
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 10
+  - 11
+  - 12
+  - 1
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

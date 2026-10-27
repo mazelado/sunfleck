@@ -25,13 +25,16 @@ WORKDIR /app/backend
 COPY --from=python-deps /app/.venv /app/.venv
 COPY backend/ ./
 COPY --from=frontend /src/frontend/dist /app/frontend
+# The care dataset (CC BY-SA 4.0): care profiles, genera and species.
+COPY data/care/ /app/data/care/
 COPY --chmod=755 docker/entrypoint.sh /app/entrypoint.sh
 
 ENV PATH=/app/.venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     SUNFLECK_DATA_DIR=/data \
     SUNFLECK_STATIC_ROOT=/app/static \
-    SUNFLECK_FRONTEND_DIR=/app/frontend
+    SUNFLECK_FRONTEND_DIR=/app/frontend \
+    SUNFLECK_CARE_DATA_DIR=/app/data/care
 
 # Static files are collected at build time; the placeholder key is used only for this step.
 RUN SECRET_KEY=build-only python manage.py collectstatic --noinput

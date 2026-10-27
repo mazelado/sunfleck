@@ -62,6 +62,9 @@ Contributions to those features must:
 - present AI output as a suggestion, never as authoritative advice. This matters most
   for plant toxicity to pets and children.
 
+The same care applies to the care dataset: values written with an AI tool's help must be
+checked against real sources, which you cite in the file's `sources`.
+
 ## Reporting bugs and requesting features
 
 Use GitHub Issues. For bugs, include the app version, how you run it (Docker or
@@ -75,4 +78,6 @@ privately through GitHub instead.
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
-[AGPL-3.0](LICENSE).
+[AGPL-3.0](LICENSE), except contributions to the care dataset in `data/care/`, which are
+licensed under [CC BY-SA 4.0](data/care/LICENSE) so other projects can reuse the data. See
+[data/care/README.md](data/care/README.md) for how to contribute plant care values.

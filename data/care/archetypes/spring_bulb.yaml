@@ -1,0 +1,55 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: spring_bulb
+name:
+  en: Spring bulb
+description:
+  en: 'Bulbs that flower in spring and rest underground in summer: water while in leaf, then
+    let them dry off after the foliage yellows.'
+setting: outdoor
+examples:
+- Tulipa
+- Narcissus
+- Hyacinthus
+- Crocus
+- Allium
+watering:
+  interval_days:
+    spring: 7
+    summer: null
+    autumn: 21
+    winter: null
+  let_dry: top_third
+light:
+  dli_min: 15
+  dli_ideal: 25
+  dli_max: 40
+  outdoor_exposure:
+  - full_sun
+  - part_shade
+humidity: medium
+temperature_c:
+  min: -20
+  ideal_min: 5
+  ideal_max: 20
+  max: 27
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 1
+dormancy_months_north:
+- 6
+- 7
+- 8
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

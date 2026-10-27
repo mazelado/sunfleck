@@ -1,0 +1,42 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: citrus
+name:
+  en: Citrus
+description:
+  en: 'Lemons, oranges and kumquats in pots: lots of sun, water deeply when the top third
+    is dry, and keep frost-free in winter.'
+setting: either
+examples:
+- Citrus
+watering:
+  interval_days:
+    spring: 7
+    summer: 4
+    autumn: 8
+    winter: 14
+  let_dry: top_third
+light:
+  dli_min: 20
+  dli_ideal: 30
+  dli_max: 45
+  outdoor_exposure:
+  - full_sun
+humidity: medium
+temperature_c:
+  min: 3
+  ideal_min: 15
+  ideal_max: 29
+  max: 35
+fertilizing:
+  interval_days: 21
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

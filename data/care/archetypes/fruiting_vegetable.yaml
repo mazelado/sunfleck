@@ -1,0 +1,43 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: fruiting_vegetable
+name:
+  en: Fruiting vegetable
+description:
+  en: 'Warm-season crops grown for their fruit: full sun, steady watering (uneven watering
+    causes split or rotten fruit), and regular feeding once flowering.'
+setting: outdoor
+examples:
+- Solanum
+- Capsicum
+- Cucumis
+- Cucurbita
+- Phaseolus
+- Fragaria
+watering:
+  interval_days:
+    spring: 3
+    summer: 2
+    autumn: 3
+    winter: 7
+  let_dry: top_quarter
+light:
+  dli_min: 20
+  dli_ideal: 30
+  dli_max: 50
+  outdoor_exposure:
+  - full_sun
+humidity: medium
+temperature_c:
+  min: 10
+  ideal_min: 18
+  ideal_max: 29
+  max: 35
+fertilizing:
+  interval_days: 14
+  pause_months_north: []
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'
