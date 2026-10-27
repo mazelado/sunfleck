@@ -99,6 +99,7 @@ function plant(overrides: Partial<Plant> = {}): Plant {
     notes: "From the plant swap.",
     cover_photo: null,
     light_sources: [{ light_source: bayWindow, distance_cm: 100 }],
+    last_watered_at: null,
     created_at: "2026-04-01T10:00:00Z",
     ...overrides,
   };
@@ -106,7 +107,15 @@ function plant(overrides: Partial<Plant> = {}): Plant {
 
 function summary(overrides: Partial<PlantSummary> = {}): PlantSummary {
   const { id, nickname, status, location } = plant();
-  return { id, nickname, status, location, cover_thumbnail_url: null, ...overrides };
+  return {
+    id,
+    nickname,
+    status,
+    location,
+    cover_thumbnail_url: null,
+    last_watered_at: null,
+    ...overrides,
+  };
 }
 
 function withSites(sites: Site[]) {

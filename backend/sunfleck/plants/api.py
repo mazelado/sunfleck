@@ -5,7 +5,7 @@ Everyone in the household can see plants; Gardeners and Admins can change them.
 
 from datetime import date, datetime
 
-from django.db.models import Q, QuerySet
+from django.db.models import Max, Q, QuerySet
 from django.http import FileResponse, HttpRequest
 from django.urls import reverse
 from ninja import File, Form, Query, Router, Schema, Status
@@ -88,6 +88,7 @@ class PlantSummaryOut(Schema):
     status: PlantStatus
     location: PlantLocationOut | None
     cover_thumbnail_url: str | None
+    last_watered_at: datetime | None
 
 
 class PlantOut(Schema):
@@ -102,6 +103,7 @@ class PlantOut(Schema):
     notes: str
     cover_photo: PhotoOut | None
     light_sources: list[PlantLightOut]
+    last_watered_at: datetime | None
     created_at: datetime
 
 
@@ -133,7 +135,8 @@ def _photo_url(photo_id: int, variant: str) -> str:
     return reverse(f"api-v1:photo_{variant}", kwargs={"photo_id": photo_id})
 
 
-def _photo_out(photo: Photo) -> PhotoOut:
+def photo_out(photo: Photo) -> PhotoOut:
+    """Convert a photo for the API. Also used by the care timeline."""
     return PhotoOut(
         id=photo.pk,
         plant_id=photo.plant_id,
@@ -159,6 +162,11 @@ def _location_out(plant: Plant) -> PlantLocationOut | None:
     )
 
 
+def _last_watered_at(plant: Plant) -> datetime | None:
+    value = getattr(plant, "last_watered_at", None)  # see _plants
+    return value if isinstance(value, datetime) else None
+
+
 def _summary_out(plant: Plant) -> PlantSummaryOut:
     return PlantSummaryOut(
         id=plant.pk,
@@ -168,6 +176,7 @@ def _summary_out(plant: Plant) -> PlantSummaryOut:
         cover_thumbnail_url=(
             _photo_url(plant.cover_photo_id, "thumbnail") if plant.cover_photo_id else None
         ),
+        last_watered_at=_last_watered_at(plant),
     )
 
 
@@ -184,13 +193,14 @@ def _plant_out(plant: Plant) -> PlantOut:
         soil_type=SoilType(plant.soil_type) if plant.soil_type else None,
         acquired_on=plant.acquired_on,
         notes=plant.notes,
-        cover_photo=_photo_out(plant.cover_photo) if plant.cover_photo else None,
+        cover_photo=photo_out(plant.cover_photo) if plant.cover_photo else None,
         light_sources=[
             PlantLightOut(
                 light_source=light_source_out(link.light_source), distance_cm=link.distance_cm
             )
             for link in plant.light_links.all()
         ],
+        last_watered_at=_last_watered_at(plant),
         created_at=plant.created_at,
     )
 
@@ -209,7 +219,18 @@ def _plant_data(data: PlantIn) -> services.PlantData:
 
 
 def _plants(household: Household) -> QuerySet[Plant]:
-    return household.plants.select_related("location__site")
+    # When the plant was last watered, from the care log (sunfleck.care). Skipped waterings
+    # don't count.
+    last_watered_at = Max(
+        "care_events__performed_at",
+        filter=Q(care_events__care_type__key="water", care_events__skipped=False),
+    )
+    # The aggregate drops the model's default ordering, so it's repeated here.
+    return (
+        household.plants.select_related("location__site")
+        .annotate(last_watered_at=last_watered_at)
+        .order_by("nickname", "id")
+    )
 
 
 def _get_plant(household: Household, plant_id: int) -> Plant:
@@ -310,7 +331,7 @@ def list_photos(request: HttpRequest, plant_id: int, page: Query[PageQuery]) -> 
     household = require_role(request, Role.VIEWER).household
     photos = _get_plant(household, plant_id).photos.all()
     items = photos[page.offset : page.offset + page.limit]
-    return PhotoPage(items=[_photo_out(photo) for photo in items], count=photos.count())
+    return PhotoPage(items=[photo_out(photo) for photo in items], count=photos.count())
 
 
 @router.post("/plants/{plant_id}/photos", response={201: PhotoOut})
@@ -332,14 +353,14 @@ def add_photo(
         photo = services.add_photo(plant, file, file.size or 0, caption, taken_at)
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
-    return Status(201, _photo_out(photo))
+    return Status(201, photo_out(photo))
 
 
 @router.put("/photos/{photo_id}", response=PhotoOut)
 def update_photo(request: HttpRequest, photo_id: int, data: PhotoIn) -> PhotoOut:
     household = require_role(request, Role.GARDENER).household
     photo = services.update_photo(_get_photo(household, photo_id), data.caption)
-    return _photo_out(photo)
+    return photo_out(photo)
 
 
 @router.delete("/photos/{photo_id}", response={204: None})

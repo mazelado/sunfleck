@@ -20,6 +20,184 @@
         "title": "AcceptInvitationIn",
         "type": "object"
       },
+      "CareEventIn": {
+        "properties": {
+          "care_type_id": {
+            "title": "Care Type Id",
+            "type": "integer"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Feedback"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Watering only: how the soil was beforehand."
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out for now.",
+            "title": "Performed At"
+          },
+          "skipped": {
+            "default": false,
+            "description": "Checked, but decided not to (e.g. the soil was still wet).",
+            "title": "Skipped",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "care_type_id"
+        ],
+        "title": "CareEventIn",
+        "type": "object"
+      },
+      "CareEventOut": {
+        "properties": {
+          "care_type": {
+            "$ref": "#/components/schemas/CareTypeOut"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Feedback"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_at": {
+            "format": "date-time",
+            "title": "Performed At",
+            "type": "string"
+          },
+          "performed_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PersonOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          },
+          "skipped": {
+            "title": "Skipped",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "plant_id",
+          "care_type",
+          "performed_at",
+          "performed_by",
+          "notes",
+          "feedback",
+          "skipped"
+        ],
+        "title": "CareEventOut",
+        "type": "object"
+      },
+      "CareTypeIn": {
+        "properties": {
+          "icon": {
+            "default": "sparkles",
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Icon",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CareTypeIn",
+        "type": "object"
+      },
+      "CareTypeOut": {
+        "properties": {
+          "affects_prediction": {
+            "title": "Affects Prediction",
+            "type": "boolean"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_builtin": {
+            "title": "Is Builtin",
+            "type": "boolean"
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Built-in types only, e.g. `water`; used to translate.",
+            "title": "Key"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "is_builtin",
+          "affects_prediction"
+        ],
+        "title": "CareTypeOut",
+        "type": "object"
+      },
       "ContainerMaterial": {
         "description": "What the plant grows in. Porous pots (terracotta, fabric) dry out faster.",
         "enum": [
@@ -69,6 +247,16 @@
           "shade"
         ],
         "title": "Exposure",
+        "type": "string"
+      },
+      "Feedback": {
+        "description": "How the soil was when watering, which tunes future watering predictions.",
+        "enum": [
+          "too_dry",
+          "just_right",
+          "still_wet"
+        ],
+        "title": "Feedback",
         "type": "string"
       },
       "HealthOut": {
@@ -796,6 +984,24 @@
         "title": "PageQuery",
         "type": "object"
       },
+      "PersonOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "display_name"
+        ],
+        "title": "PersonOut",
+        "type": "object"
+      },
       "PhotoIn": {
         "properties": {
           "caption": {
@@ -1157,6 +1363,18 @@
             "title": "Id",
             "type": "integer"
           },
+          "last_watered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Watered At"
+          },
           "light_sources": {
             "items": {
               "$ref": "#/components/schemas/PlantLightOut"
@@ -1208,6 +1426,7 @@
           "notes",
           "cover_photo",
           "light_sources",
+          "last_watered_at",
           "created_at"
         ],
         "title": "PlantOut",
@@ -1262,6 +1481,18 @@
             "title": "Id",
             "type": "integer"
           },
+          "last_watered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Watered At"
+          },
           "location": {
             "anyOf": [
               {
@@ -1285,7 +1516,8 @@
           "nickname",
           "status",
           "location",
-          "cover_thumbnail_url"
+          "cover_thumbnail_url",
+          "last_watered_at"
         ],
         "title": "PlantSummaryOut",
         "type": "object"
@@ -1431,6 +1663,105 @@
         "title": "SoilType",
         "type": "string"
       },
+      "TimelineItemOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "care_event": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareEventOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "enum": [
+              "care",
+              "photo"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "at",
+          "care_event",
+          "photo"
+        ],
+        "title": "TimelineItemOut",
+        "type": "object"
+      },
+      "TimelinePage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pass as `before` to get the next page.",
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "TimelinePage",
+        "type": "object"
+      },
+      "TimelineQuery": {
+        "properties": {
+          "before": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before"
+          },
+          "limit": {
+            "default": 30,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "TimelineQuery",
+        "type": "object"
+      },
       "UnitSystem": {
         "enum": [
           "metric",
@@ -1455,6 +1786,224 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/care-events/{event_id}": {
+      "delete": {
+        "operationId": "sunfleck_care_api_delete_care_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Care Event",
+        "tags": [
+          "care"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_care_api_update_care_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareEventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareEventOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Care Event",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-types": {
+      "get": {
+        "description": "The built-in care types, then the household's own. A short, fixed-size list.",
+        "operationId": "sunfleck_care_api_list_care_types",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CareTypeOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Care Types",
+        "tags": [
+          "care"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_care_api_create_care_type",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareTypeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareTypeOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Care Type",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-types/{care_type_id}": {
+      "delete": {
+        "description": "Delete a household's own care type. Types that have been used can't be deleted.",
+        "operationId": "sunfleck_care_api_delete_care_type",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "care_type_id",
+            "required": true,
+            "schema": {
+              "title": "Care Type Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Care Type",
+        "tags": [
+          "care"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_care_api_update_care_type",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "care_type_id",
+            "required": true,
+            "schema": {
+              "title": "Care Type Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareTypeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareTypeOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Care Type",
+        "tags": [
+          "care"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "description": "Report whether the app is running and can reach its database.\n\nUsed by Docker health checks and uptime monitors, so it needs no sign-in.",
@@ -2539,6 +3088,54 @@
         ]
       }
     },
+    "/api/v1/plants/{plant_id}/care-events": {
+      "post": {
+        "description": "Log care given to a plant: by default just now, by the signed-in person.",
+        "operationId": "sunfleck_care_api_log_care",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareEventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareEventOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Log Care",
+        "tags": [
+          "care"
+        ]
+      }
+    },
     "/api/v1/plants/{plant_id}/cover": {
       "put": {
         "description": "Choose which photo shows on the plant's card.",
@@ -2719,6 +3316,73 @@
         "summary": "Add Photo",
         "tags": [
           "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/timeline": {
+      "get": {
+        "description": "The plant's care and photos, newest first, a page at a time.",
+        "operationId": "sunfleck_care_api_plant_timeline",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelinePage"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Plant Timeline",
+        "tags": [
+          "care"
         ]
       }
     },
