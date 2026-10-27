@@ -1,6 +1,6 @@
 # Technical Plan (MVP, v0.1)
 
-> **Status:** Draft for approval · **Last updated:** 2026-10-26
+> **Status:** Approved (2026-10-27) · **Last updated:** 2026-10-26
 >
 > This document turns the MVP scope in [research.md](research.md#8-proposed-mvp-v01) into a
 > concrete design: architecture, data model, care prediction, plugins, project layout,
@@ -148,14 +148,14 @@ Redis. Users with PostgreSQL or Redis can point Huey at Redis instead.
 ### Storing secrets
 Plugin API keys and Apprise URLs (which often contain tokens) are **encrypted at rest** in the
 database using Fernet (from the `cryptography` library), with a key from the
-`APP_ENCRYPTION_KEY` environment variable. Exports leave secrets out unless the user
+`SUNFLECK_ENCRYPTION_KEY` environment variable. Exports leave secrets out unless the user
 explicitly asks to include them.
 
 ### Configuration (environment variables)
 | Variable | Default | Purpose |
 |---|---|---|
 | `SECRET_KEY` | *(required)* | Django cryptographic signing |
-| `APP_ENCRYPTION_KEY` | *(required)* | Encrypts stored secrets |
+| `SUNFLECK_ENCRYPTION_KEY` | *(required)* | Encrypts stored secrets |
 | `DATABASE_URL` | `sqlite:////data/db.sqlite3` | Database connection |
 | `ALLOWED_HOSTS` / `CSRF_TRUSTED_ORIGINS` | `localhost` | Hostnames the app is served on |
 | `TIME_ZONE` | `UTC` | Server default; each site has its own time zone |
@@ -163,7 +163,7 @@ explicitly asks to include them.
 | `HUEY_REDIS_URL` | *(empty)* | Use Redis for the job queue instead of SQLite |
 | `DEBUG` | `false` | Development mode only |
 
-The `APP_` prefix will change to the project's name once we have one.
+Sunfleck-specific settings use the `SUNFLECK_` prefix; standard Django settings keep their usual names.
 
 ## 4. Data model
 
@@ -316,8 +316,8 @@ intervals (beyond feedback) are on the v0.2/v0.3 roadmap.
 A plugin is a normal Python package that declares an **entry point** in its `pyproject.toml`:
 
 ```toml
-[project.entry-points."plantapp.plugins"]   # group name changes once the project is named
-weather_openmeteo = "plantapp_weather_openmeteo:plugin"
+[project.entry-points."sunfleck.plugins"]
+weather_openmeteo = "sunfleck_weather_openmeteo:plugin"
 ```
 
 At startup, the app reads all installed entry points in that group, checks each plugin's
@@ -333,7 +333,7 @@ plugin = PluginInfo(
     name="Weather (Open-Meteo)",
     version="0.1.0",
     api_version="1",                         # plugin API version it was built for
-    django_app="plantapp_weather_openmeteo",
+    django_app="sunfleck_weather_openmeteo",
     settings_schema=WeatherSettings,         # Pydantic model, rendered as a form in the UI
     sends_data_to=["api.open-meteo.com: site latitude/longitude"],
 )
@@ -418,12 +418,12 @@ Example `docker-compose.yml` for users:
 ```yaml
 services:
   app:
-    image: ghcr.io/mazelado/<app-name>:latest
+    image: ghcr.io/mazelado/sunfleck:latest
     ports: ["8000:8000"]
     volumes: ["./data:/data"]
     env_file: .env
   worker:
-    image: ghcr.io/mazelado/<app-name>:latest
+    image: ghcr.io/mazelado/sunfleck:latest
     command: worker
     volumes: ["./data:/data"]
     env_file: .env
@@ -526,13 +526,15 @@ see. You'll review and merge each PR, and the steps get explained as we go.
 Milestones M5 (dataset content) and M2–M4 (app features) can proceed in parallel. Writing
 archetypes is plant knowledge, not code, and a good way for non-programmers to contribute.
 
-## 12. Decisions needed
+## 12. Decisions
 
-1. **Approve the plan**, or tell me what to change.
-2. **Internal code name.** The Python package, plugin entry-point group, environment variable
-   prefix, and Docker image all need a name. Renaming later is possible but touches many files
-   (and breaks third-party plugins once they exist). Options:
-   - pick the real project name now, or
-   - use a neutral code name until v0.1 (this document uses `plantapp` as a placeholder).
-3. **Branch protection on `main`.** Should I walk you through enabling it on GitHub (requires
-   PRs and passing CI before merging)? Recommended once CI exists in M0.
+Resolved on 2026-10-27:
+- ~~Approve the plan?~~ Approved.
+- ~~Internal code name?~~ The project is named **Sunfleck**: a brief patch of sunlight that
+  reaches the forest floor through the canopy. Python package `sunfleck`, plugin entry-point
+  group `sunfleck.plugins`, environment variable prefix `SUNFLECK_`, Docker image
+  `ghcr.io/mazelado/sunfleck`.
+
+Still open:
+1. **Branch protection on `main`** (requires PRs and passing CI before merging). To be set up
+   once CI exists in M0.

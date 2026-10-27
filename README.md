@@ -1,7 +1,9 @@
-# Unnamed Plant App
+# Sunfleck
 
 A self-hosted, open-source plant care app for hobbyists and enthusiasts, covering indoor
 and outdoor plants.
+
+*A sunfleck is a brief patch of sunlight that reaches the forest floor through the canopy.*
 
 > **Status:** Planning. No code yet.
 > - [docs/research.md](docs/research.md): market research, MVP scope, and roadmap

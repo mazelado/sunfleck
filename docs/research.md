@@ -352,8 +352,10 @@ Resolved on 2026-10-26:
   Decided: our own open care archetype dataset (Option C), plus optional providers.
 - ~~Data license for our care dataset?~~ CC BY-SA 4.0.
 
+- ~~Name?~~ **Sunfleck** (decided 2026-10-27).
+
 Still open:
-1. Name and visual identity.
+1. Visual identity (logo, colors).
 
 ## Sources
 
