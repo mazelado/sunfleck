@@ -16,6 +16,7 @@ import {
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconBulb, IconPhoto, IconWindow } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
 
@@ -39,11 +40,14 @@ import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { preparePhoto } from "../../lib/photos";
+import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, displayToCm, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
+import { useCareProfiles } from "../../api/taxonomy";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { describeLight } from "../places/describe";
+import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
 
 /** Add a plant (`/plants/new`, optionally `?location=<id>`) or edit one (`/plants/:id/edit`). */
@@ -83,6 +87,9 @@ interface PlantFormValues {
   acquiredOn: string;
   notes: string;
   photo: File | null;
+  species: ChosenSpecies | null;
+  /** The care profile chosen for the plant; null uses its species' profile. */
+  careProfileKey: string | null;
 }
 
 function initialLights(plant: Plant | undefined, units: UnitSystem): Record<string, LightChoice> {
@@ -127,11 +134,18 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
       acquiredOn: plant?.acquired_on ?? "",
       notes: plant?.notes ?? "",
       photo: null,
+      species: plant?.species ?? null,
+      careProfileKey: plant?.care_profile?.chosen ? plant.care_profile.key : null,
     },
     validate: { nickname: isNotEmpty(t("validation.required")) },
   });
   const values = form.getValues();
   const location = locations.find((each) => String(each.id) === values.locationId);
+  const careProfiles = useCareProfiles().data ?? [];
+  // The species' own care profile, shown when no other is chosen.
+  const [speciesProfile, setSpeciesProfile] = useState(
+    plant?.care_profile && !plant.care_profile.chosen ? plant.care_profile.name : null,
+  );
 
   const handleSubmit = form.onSubmit(async (formValues) => {
     const chosenLights = (location?.light_sources ?? []).filter(
@@ -149,6 +163,8 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         soil_type: formValues.soil,
         acquired_on: formValues.acquiredOn || null,
         notes: formValues.notes,
+        taxon_id: formValues.species?.id ?? null,
+        care_profile_key: formValues.careProfileKey,
         light_sources: chosenLights.map((light) => {
           const distance = formValues.lights[String(light.id)]?.distance ?? "";
           return {
@@ -166,6 +182,8 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         soil_type: "soil",
         acquired_on: "acquiredOn",
         light_sources: "lights",
+        taxon_id: "species",
+        care_profile_key: "careProfileKey",
       });
       return;
     }
@@ -192,6 +210,19 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <ErrorAlert error={save.error} />
+            <SpeciesPicker
+              value={values.species}
+              error={form.errors.species}
+              onChange={(hit) => {
+                form.setFieldValue("species", hit);
+                setSpeciesProfile(hit?.care_profile?.name ?? null);
+                // Name the plant after its species, unless it already has a name.
+                if (hit && !form.getValues().nickname.trim()) {
+                  const name = hit.common_name ?? hit.scientific_name;
+                  form.setFieldValue("nickname", sentenceCase(name));
+                }
+              }}
+            />
             <TextInput
               label={t("plants.name")}
               placeholder={t("plants.namePlaceholder")}
@@ -208,6 +239,19 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
                 {...form.getInputProps("photo")}
               />
             )}
+            <Select
+              label={t("guide.careProfile")}
+              description={t("guide.careProfileHelp")}
+              placeholder={
+                speciesProfile
+                  ? t("guide.careProfilePlaceholderFromSpecies", { name: speciesProfile })
+                  : t("common.optional")
+              }
+              clearable
+              searchable
+              data={careProfiles.map((profile) => ({ value: profile.key, label: profile.name }))}
+              {...form.getInputProps("careProfileKey")}
+            />
             {locations.length > 0 ? (
               <Select
                 label={t("plants.location")}

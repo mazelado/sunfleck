@@ -20,11 +20,13 @@ import { type Photo, type Plant, usePhotos, usePlant } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { relativeDay } from "../../lib/relativeTime";
+import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { QuickCare } from "../care/QuickCare";
+import { PlantCareCard } from "../taxonomy/PlantCareCard";
 import { describeLight } from "../places/describe";
 import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
@@ -70,6 +72,18 @@ export function PlantPage() {
             </Title>
             <PlantStatusBadge status={data.status} />
           </Group>
+          {data.species && (
+            <Anchor component={Link} to={`/guide/species/${String(data.species.id)}`} size="sm">
+              {/* The common name, unless the plant is already called that. */}
+              {data.species.common_name &&
+              data.species.common_name.toLowerCase() !== data.nickname.toLowerCase() ? (
+                <>{sentenceCase(data.species.common_name)} · </>
+              ) : null}
+              <Text span fs="italic" inherit>
+                {data.species.scientific_name}
+              </Text>
+            </Anchor>
+          )}
           <Text size="sm" c="dimmed">
             {data.last_watered_at
               ? t("care.lastWatered", { when: relativeDay(data.last_watered_at, i18n.language) })
@@ -107,6 +121,7 @@ export function PlantPage() {
 
       {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
 
+      <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />

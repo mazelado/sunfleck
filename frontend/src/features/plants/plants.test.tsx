@@ -214,6 +214,8 @@ describe("plant form", () => {
       soil_type: null,
       acquired_on: null,
       notes: "",
+      taxon_id: null,
+      care_profile_key: null,
       light_sources: [
         { light_source_id: 1, distance_cm: 80 },
         { light_source_id: 2, distance_cm: null },

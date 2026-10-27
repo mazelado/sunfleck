@@ -20,6 +20,9 @@ import { PlantsPage } from "./features/plants/PlantsPage";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
 import { HouseholdPage } from "./features/settings/HouseholdPage";
+import { CareProfilePage } from "./features/taxonomy/CareProfilePage";
+import { GuidePage } from "./features/taxonomy/GuidePage";
+import { SpeciesPage } from "./features/taxonomy/SpeciesPage";
 import { ProfilePage } from "./features/settings/ProfilePage";
 
 export const routes: RouteObject[] = [
@@ -42,6 +45,9 @@ export const routes: RouteObject[] = [
               { path: "/plants/new", element: <PlantFormPage /> },
               { path: "/plants/:plantId", element: <PlantPage /> },
               { path: "/plants/:plantId/edit", element: <PlantFormPage /> },
+              { path: "/guide", element: <GuidePage /> },
+              { path: "/guide/profiles/:key", element: <CareProfilePage /> },
+              { path: "/guide/species/:taxonId", element: <SpeciesPage /> },
               { path: "/places", element: <PlacesPage /> },
               { path: "/places/new", element: <SiteFormPage /> },
               { path: "/places/:siteId", element: <SitePage /> },

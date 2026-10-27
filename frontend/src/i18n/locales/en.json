@@ -38,7 +38,8 @@
     "openMenu": "Open the account menu",
     "places": "Places",
     "plants": "Plants",
-    "careTypes": "Care types"
+    "careTypes": "Care types",
+    "guide": "Care guide"
   },
   "setup": {
     "title": "Welcome to Sunfleck",
@@ -178,7 +179,9 @@
     "feedback_only_for_watering": "Soil feedback is only for watering.",
     "care_type_not_found": "This care type doesn't exist, or it was deleted.",
     "care_event_not_found": "This doesn't exist, or it was deleted.",
-    "invalid_cursor": "Something went wrong. Reload the page and try again."
+    "invalid_cursor": "Something went wrong. Reload the page and try again.",
+    "species_not_found": "This species isn't in the list.",
+    "care_profile_not_found": "This care profile doesn't exist."
   },
   "places": {
     "title": "Places",
@@ -456,5 +459,92 @@
       "heart": "Heart",
       "note": "Note"
     }
+  },
+  "guide": {
+    "title": "Care guide",
+    "intro": "Typical care for groups of plants. Sunfleck starts from these and learns from each plant's history.",
+    "searchLabel": "Search plants",
+    "searchPlaceholder": "e.g. Monstera, snake plant",
+    "searchHint": "Type at least 2 letters.",
+    "noResults": "No plants found. Try the scientific name, or pick a care profile below.",
+    "matched": "also known as {{name}}",
+    "profiles": "Care profiles",
+    "settings": {
+      "indoor": "Indoor",
+      "outdoor": "Outdoor",
+      "either": "Indoor or outdoor"
+    },
+    "genusCount_one": "{{count}} genus",
+    "genusCount_other": "{{count}} genera",
+    "careProfile": "Care profile",
+    "fromSpecies": "From its species",
+    "chosen": "Chosen for this plant",
+    "noProfile": "No care profile yet. Choose its species, or a care profile, when you edit it.",
+    "seeProfile": "See the care profile",
+    "water": "Water",
+    "light": "Light",
+    "humidity": "Humidity",
+    "temperature": "Temperature",
+    "fertilize": "Fertilize",
+    "dormancy": "Rest",
+    "waterEvery": "About every {{min}}–{{max}} days",
+    "waterEveryOne": "About every {{days}} days",
+    "waterOnlyDry": "Only in long dry spells",
+    "letDry": {
+      "keep_moist": "keep the soil lightly moist",
+      "top_quarter": "when the top quarter of the soil is dry",
+      "top_third": "when the top third of the soil is dry",
+      "top_half": "when the top half of the soil is dry",
+      "mostly": "when the soil is mostly dry",
+      "completely": "when the soil is completely dry"
+    },
+    "lightLevel": {
+      "low": "Low light is fine",
+      "medium": "Medium to bright indirect light",
+      "bright": "Bright indirect light",
+      "someSun": "Bright light with some direct sun",
+      "fullSun": "Full sun"
+    },
+    "dli": "DLI {{min}}–{{max}}, ideally {{ideal}} mol/m²/day",
+    "humidityLevel": {
+      "low": "Low (dry air is fine)",
+      "medium": "Medium",
+      "medium_high": "Medium to high",
+      "high": "High"
+    },
+    "temperatureRange": "Best at {{idealMin}}–{{idealMax}}; survives {{min}} to {{max}}",
+    "fertilizeEvery": "Every {{days}} days",
+    "fertilizePause": "Every {{days}} days, but not in {{months}}",
+    "neverFertilize": "Don't fertilize",
+    "restMonths": "Rests in {{months}}",
+    "seasons": {
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn",
+      "winter": "Winter"
+    },
+    "daysShort": "{{days}} d",
+    "seasonalWatering": "Days between waterings",
+    "outdoorExposure": "Outdoors",
+    "exposure": {
+      "full_sun": "full sun",
+      "part_shade": "part shade",
+      "shade": "shade"
+    },
+    "genera": "Plants with this profile",
+    "sources": "Sources",
+    "draft": "Starting values",
+    "draftHelp": "These are reasonable starting values, not yet checked against cited sources. Sunfleck adjusts them for each plant as it learns.",
+    "reviewed": "Reviewed",
+    "species": "Species",
+    "speciesPlaceholder": "Search by name, e.g. Monstera",
+    "speciesHelp": "Optional. Sets its care profile.",
+    "careProfileHelp": "Optional. Choose one if you don't know the species, or it needs different care.",
+    "careProfilePlaceholderFromSpecies": "From its species: {{name}}",
+    "family": "Family",
+    "olderNames": "Older names",
+    "commonNames": "Also called",
+    "genus": "Genus",
+    "notFound": "This plant or care profile doesn't exist."
   }
 }

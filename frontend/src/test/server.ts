@@ -30,6 +30,7 @@ export const server = setupServer(
   http.get("*/api/v1/sites", () => HttpResponse.json([])),
   http.get("*/api/v1/plants", () => HttpResponse.json({ items: [], count: 0 })),
   http.get("*/api/v1/care-types", () => HttpResponse.json(builtinCareTypes)),
+  http.get("*/api/v1/care-profiles", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/timeline", () =>
     HttpResponse.json({ items: [], next_cursor: null }),
   ),
