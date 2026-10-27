@@ -1,0 +1,40 @@
+# Checks that run automatically on `git commit`. Install with `make setup`.
+# All tools come from backend/pyproject.toml (via uv), so versions match CI exactly.
+repos:
+  - repo: local
+    hooks:
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        entry: uv run --project backend trailing-whitespace-fixer
+        language: system
+        types: [text]
+      - id: end-of-file-fixer
+        name: Ensure files end with a newline
+        entry: uv run --project backend end-of-file-fixer
+        language: system
+        types: [text]
+      - id: check-yaml
+        name: Check YAML syntax
+        entry: uv run --project backend check-yaml
+        language: system
+        types: [yaml]
+      - id: check-added-large-files
+        name: Block large files
+        entry: uv run --project backend check-added-large-files --maxkb=1000
+        language: system
+      - id: ruff-format
+        name: Format Python (Ruff)
+        entry: uv run --project backend ruff format
+        language: system
+        types: [python]
+      - id: ruff-check
+        name: Lint Python (Ruff)
+        entry: uv run --project backend ruff check --fix
+        language: system
+        types: [python]
+      - id: mypy
+        name: Type-check Python (mypy)
+        entry: bash -c "cd backend && uv run mypy ."
+        language: system
+        types: [python]
+        pass_filenames: false

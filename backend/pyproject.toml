@@ -1,0 +1,90 @@
+[project]
+name = "sunfleck"
+version = "0.1.0.dev0"
+description = "Self-hosted plant care for indoor and outdoor plants."
+readme = "../README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.1,<6.2",
+    "django-ninja>=1.7",
+    "dj-database-url>=3.1",
+    "whitenoise>=6.12",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.3"]
+
+[dependency-groups]
+dev = [
+    "django-stubs[compatible-mypy]>=6.1",
+    "factory-boy>=3.3",
+    "mypy>=2.4",
+    "pre-commit>=4.7",
+    "pre-commit-hooks>=6.0",
+    "pytest>=9.1",
+    "pytest-cov>=7.1",
+    "pytest-django>=4.14",
+    "ruff>=0.17",
+]
+
+[tool.uv]
+package = false
+
+# --- Ruff: formatting and linting -------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle
+    "F",       # pyflakes
+    "I",       # import sorting
+    "N",       # PEP 8 naming
+    "UP",      # modern Python syntax
+    "B",       # likely bugs
+    "SIM",     # simplifications
+    "C4",      # comprehensions
+    "DJ",      # Django conventions
+    "DTZ",     # timezone-naive datetimes
+    "S",       # security
+    "T20",     # print statements
+    "PT",      # pytest style
+    "RUF",     # Ruff-specific rules
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101"]  # assert is how pytest works
+"**/migrations/**" = ["E501", "RUF012"]
+
+# --- mypy: type checking ----------------------------------------------------------------------
+
+[tool.mypy]
+strict = true
+plugins = ["mypy_django_plugin.main"]
+exclude = ["/migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["factory", "factory.*"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "sunfleck.config.test_settings"
+
+# --- pytest and coverage ----------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "sunfleck.config.test_settings"
+addopts = "--strict-markers --cov=sunfleck --cov-report=term-missing"
+filterwarnings = ["error"]  # a warning today is a bug tomorrow; fix or explicitly ignore it
+testpaths = ["sunfleck"]
+
+[tool.coverage.run]
+branch = true
+omit = ["*/migrations/*", "*/tests/*", "sunfleck/config/wsgi.py"]
+
+[tool.coverage.report]
+fail_under = 85
+skip_covered = true

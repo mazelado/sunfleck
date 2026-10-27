@@ -5,7 +5,8 @@ and outdoor plants.
 
 *A sunfleck is a brief patch of sunlight that reaches the forest floor through the canopy.*
 
-> **Status:** Planning. No code yet.
+> **Status:** Early development (milestone M0: project setup). Not usable yet.
+> - [docs/development.md](docs/development.md): run it on your computer
 > - [docs/research.md](docs/research.md): market research, MVP scope, and roadmap
 > - [docs/technical-plan.md](docs/technical-plan.md): architecture and build plan
 > - [docs/STYLE_GUIDE.md](docs/STYLE_GUIDE.md): coding and project conventions

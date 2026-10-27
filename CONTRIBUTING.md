@@ -3,8 +3,8 @@
 Thanks for your interest in contributing! This project is a self-hosted, open-source
 plant care app for hobbyists, licensed under the [AGPL-3.0](LICENSE).
 
-> **Status:** The project is in its planning stage. Development setup, coding
-> standards, and test commands will be added here as the codebase takes shape.
+> **Getting started:** see the [development guide](docs/development.md) to set up your
+> computer, and the [style guide](docs/STYLE_GUIDE.md) for coding conventions.
 
 ## Ground rules
 
