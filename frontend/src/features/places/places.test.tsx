@@ -205,7 +205,7 @@ describe("location form", () => {
 });
 
 describe("light sources", () => {
-  it("adds a grow light and previews its daily light", async () => {
+  it("adds a grow light with a typical brightness and previews its daily light", async () => {
     signInAs(gardener);
     withSites([site()]);
     let sent: unknown;
@@ -219,8 +219,12 @@ describe("light sources", () => {
 
     await user.click(await screen.findByRole("button", { name: "Add a grow light" }));
     const dialog = await screen.findByRole("dialog", { name: "Add a grow light" });
-    await user.type(within(dialog).getByLabelText(/Brightness/), "200");
 
+    // Most people don't know their light's PPFD, so a typical shelf light is preselected.
+    expect(within(dialog).getByRole("combobox", { name: /How bright is it/ })).toHaveValue(
+      "Shelf light or light bar, the most common (about 200 µmol/m²/s)",
+    );
+    expect(within(dialog).queryByLabelText(/PPFD/)).not.toBeInTheDocument();
     expect(within(dialog).getByRole("status")).toHaveTextContent(
       "About 8.6 mol/m²/day of light (12 hours a day).",
     );
@@ -230,12 +234,42 @@ describe("light sources", () => {
         kind: "grow_light",
         name: "",
         direction: null,
-        distance_cm: null,
         ppfd: 200,
         on_time: "07:00",
         off_time: "19:00",
         enabled: true,
       });
+    });
+  });
+
+  it("accepts an exact brightness for people who know it", async () => {
+    signInAs(gardener);
+    withSites([site()]);
+    let sent: { ppfd?: number } = {};
+    server.use(
+      http.post("*/api/v1/locations/10/light-sources", async ({ request }) => {
+        sent = (await request.json()) as { ppfd?: number };
+        return HttpResponse.json({}, { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/places/1/locations/10");
+
+    await user.click(await screen.findByRole("button", { name: "Add a grow light" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a grow light" });
+    const brightness = within(dialog).getByRole("combobox", { name: /How bright is it/ });
+    await user.click(brightness);
+    const listbox = document.getElementById(brightness.getAttribute("aria-controls") ?? "");
+    if (!listbox) throw new Error("The brightness dropdown didn't open");
+    // Mantine animates the dropdown open, so jsdom still considers the options hidden.
+    await user.click(
+      within(listbox).getByRole("option", { name: /exact brightness/, hidden: true }),
+    );
+    await user.type(within(dialog).getByLabelText(/PPFD/), "300");
+
+    expect(within(dialog).getByRole("status")).toHaveTextContent("About 13 mol/m²/day");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(sent.ppfd).toBe(300);
     });
   });
 
@@ -251,7 +285,6 @@ describe("light sources", () => {
                 kind: "window",
                 name: "Bay window",
                 direction: "SW",
-                distance_cm: 100,
                 ppfd: null,
                 on_time: null,
                 off_time: null,
@@ -264,7 +297,6 @@ describe("light sources", () => {
                 kind: "grow_light",
                 name: "",
                 direction: null,
-                distance_cm: null,
                 ppfd: 200,
                 on_time: "07:00:00",
                 off_time: "19:00:00",
@@ -282,7 +314,6 @@ describe("light sources", () => {
 
     expect(await screen.findByText("Bay window")).toBeVisible();
     expect(screen.getByText("Faces south-west")).toBeVisible();
-    expect(screen.getByText("100 cm from the plants")).toBeVisible();
     expect(screen.getByText("200 µmol/m²/s · 07:00–19:00")).toBeVisible();
     expect(screen.getByText("12 h/day · 8.6 mol/m²/day of light")).toBeVisible();
     expect(screen.getByText("(Not in use)")).toBeVisible();

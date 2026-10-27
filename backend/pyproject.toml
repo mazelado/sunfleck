@@ -13,6 +13,8 @@ dependencies = [
     "django-stubs-ext>=6.1",
     "gunicorn>=26.2",
     "whitenoise>=6.12",
+    "pillow>=13.0",
+    "pillow-heif>=1.8",
 ]
 
 [project.optional-dependencies]

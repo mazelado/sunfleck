@@ -15,11 +15,24 @@ import { useTranslation } from "react-i18next";
 
 import { type Direction, type LightSource, useSaveLightSource } from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { cmToDisplay, dailyLightIntegral, displayToCm, hoursOn, lengthUnit } from "../../lib/units";
-import { useUnits } from "../../lib/useUnits";
+import { dailyLightIntegral, hoursOn } from "../../lib/units";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
 const DIRECTIONS: Direction[] = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+/**
+ * Typical brightness (PPFD, µmol/m²/s) at about 30 cm below common kinds of grow light, for
+ * people who don't know their light's exact figure.
+ */
+const BRIGHTNESS_PRESETS = { small: 100, medium: 200, strong: 400 } as const;
+type Brightness = keyof typeof BRIGHTNESS_PRESETS | "custom";
+const DEFAULT_BRIGHTNESS: Brightness = "medium";
+
+function brightnessOf(ppfd: number | null | undefined): Brightness {
+  const preset = Object.entries(BRIGHTNESS_PRESETS).find(([, value]) => value === ppfd);
+  if (preset) return preset[0] as Brightness;
+  return ppfd ? "custom" : DEFAULT_BRIGHTNESS;
+}
 
 interface LightSourceFormProps {
   locationId: number;
@@ -34,7 +47,8 @@ interface LightFormValues {
   kind: "window" | "grow_light";
   name: string;
   direction: Direction | null;
-  distance: number | "";
+  brightness: Brightness;
+  /** Only used when `brightness` is "custom". */
   ppfd: number | "";
   on_time: string;
   off_time: string;
@@ -50,7 +64,6 @@ export function LightSourceForm({
   onClose,
 }: LightSourceFormProps) {
   const { t } = useTranslation();
-  const units = useUnits();
   const applyFieldErrors = useApplyFieldErrors();
   const save = useSaveLightSource(locationId);
   const form = useForm<LightFormValues>({
@@ -58,7 +71,7 @@ export function LightSourceForm({
       kind: light?.kind ?? kind,
       name: light?.name ?? "",
       direction: light?.direction ?? null,
-      distance: light?.distance_cm === null || !light ? "" : cmToDisplay(light.distance_cm, units),
+      brightness: brightnessOf(light?.ppfd),
       ppfd: light?.ppfd ?? "",
       on_time: light?.on_time?.slice(0, 5) ?? "07:00",
       off_time: light?.off_time?.slice(0, 5) ?? "19:00",
@@ -67,11 +80,9 @@ export function LightSourceForm({
   });
   const values = form.getValues();
   const isWindow = values.kind === "window";
+  const ppfd = ppfdOf(values);
   const hours = hoursOn(values.on_time, values.off_time);
-  const dli =
-    values.ppfd !== "" && hours !== null && hours > 0
-      ? dailyLightIntegral(values.ppfd, hours)
-      : null;
+  const dli = ppfd !== null && hours !== null && hours > 0 ? dailyLightIntegral(ppfd, hours) : null;
 
   function close() {
     save.reset();
@@ -87,9 +98,7 @@ export function LightSourceForm({
           kind: formValues.kind,
           name: formValues.name,
           direction: isWindow ? formValues.direction : null,
-          distance_cm:
-            isWindow && formValues.distance !== "" ? displayToCm(formValues.distance, units) : null,
-          ppfd: !isWindow && formValues.ppfd !== "" ? formValues.ppfd : null,
+          ppfd: isWindow ? null : ppfdOf(formValues),
           on_time: isWindow ? null : formValues.on_time,
           off_time: isWindow ? null : formValues.off_time,
           enabled: formValues.enabled,
@@ -97,7 +106,9 @@ export function LightSourceForm({
       });
       close();
     } catch (error) {
-      applyFieldErrors(form, error, { distance_cm: "distance" });
+      applyFieldErrors(form, error, {
+        ppfd: formValues.brightness === "custom" ? "ppfd" : "brightness",
+      });
     }
   });
 
@@ -133,35 +144,45 @@ export function LightSourceForm({
             {...form.getInputProps("name")}
           />
           {isWindow ? (
-            <>
-              <Select
-                label={t("places.direction")}
-                description={t("places.directionHelp")}
-                required
-                allowDeselect={false}
-                data={DIRECTIONS.map((direction) => ({
-                  value: direction,
-                  label: capitalize(t(`directions.${direction}`)),
-                }))}
-                {...form.getInputProps("direction")}
-              />
-              <NumberInput
-                label={`${t("places.distance")} (${lengthUnit(units)})`}
-                description={t("common.optional")}
-                min={0}
-                {...form.getInputProps("distance")}
-              />
-            </>
+            <Select
+              label={t("places.direction")}
+              description={t("places.directionHelp")}
+              required
+              allowDeselect={false}
+              data={DIRECTIONS.map((direction) => ({
+                value: direction,
+                label: capitalize(t(`directions.${direction}`)),
+              }))}
+              {...form.getInputProps("direction")}
+            />
           ) : (
             <>
-              <NumberInput
-                label={t("places.ppfd")}
-                description={t("places.ppfdHelp")}
+              <Select
+                label={t("places.brightness")}
+                description={t("places.brightnessHelp")}
                 required
-                min={1}
-                max={2500}
-                {...form.getInputProps("ppfd")}
+                allowDeselect={false}
+                data={[
+                  ...Object.entries(BRIGHTNESS_PRESETS).map(([key, value]) => ({
+                    value: key,
+                    label: t(`places.brightness${capitalize(key)}` as "places.brightnessSmall", {
+                      ppfd: value,
+                    }),
+                  })),
+                  { value: "custom", label: t("places.brightnessCustom") },
+                ]}
+                {...form.getInputProps("brightness")}
               />
+              {values.brightness === "custom" && (
+                <NumberInput
+                  label={t("places.ppfd")}
+                  description={t("places.ppfdHelp")}
+                  required
+                  min={1}
+                  max={2500}
+                  {...form.getInputProps("ppfd")}
+                />
+              )}
               <Group grow>
                 <TextInput
                   type="time"
@@ -202,6 +223,11 @@ export function LightSourceForm({
       </form>
     </Modal>
   );
+}
+
+function ppfdOf(values: LightFormValues): number | null {
+  if (values.brightness !== "custom") return BRIGHTNESS_PRESETS[values.brightness];
+  return values.ppfd === "" ? null : values.ppfd;
 }
 
 function capitalize(text: string): string {

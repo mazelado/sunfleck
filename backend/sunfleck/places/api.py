@@ -36,7 +36,6 @@ class LightSourceIn(Schema):
     kind: LightSourceKind
     name: str = Field(default="", max_length=100)
     direction: Direction | None = None
-    distance_cm: int | None = Field(default=None, ge=0, le=10_000)
     ppfd: int | None = Field(default=None, ge=1, le=2500)
     on_time: time | None = None
     off_time: time | None = None
@@ -48,7 +47,6 @@ class LightSourceOut(Schema):
     kind: LightSourceKind
     name: str
     direction: Direction | None
-    distance_cm: int | None
     ppfd: int | None
     on_time: time | None
     off_time: time | None
@@ -97,7 +95,8 @@ class SiteOut(Schema):
 # --- Conversions ------------------------------------------------------------------------------
 
 
-def _light_source_out(light: LightSource) -> LightSourceOut:
+def light_source_out(light: LightSource) -> LightSourceOut:
+    """Convert a light source for the API. Also used by the plants API."""
     hours = dli = None
     if light.kind == LightSourceKind.GROW_LIGHT and light.on_time and light.off_time:
         hours = round(hours_on(light.on_time, light.off_time), 2)
@@ -108,7 +107,6 @@ def _light_source_out(light: LightSource) -> LightSourceOut:
         kind=LightSourceKind(light.kind),
         name=light.name,
         direction=Direction(light.direction) if light.direction else None,
-        distance_cm=light.distance_cm,
         ppfd=light.ppfd,
         on_time=light.on_time,
         off_time=light.off_time,
@@ -128,7 +126,7 @@ def _location_out(location: Location) -> LocationOut:
         temperature_max_c=location.temperature_max_c,
         humidity=Humidity(location.humidity) if location.humidity else None,
         exposure=Exposure(location.exposure) if location.exposure else None,
-        light_sources=[_light_source_out(light) for light in location.light_sources.all()],
+        light_sources=[light_source_out(light) for light in location.light_sources.all()],
     )
 
 
@@ -278,7 +276,7 @@ def create_light_source(
         )
     except services.PlacesError as exc:
         raise _places_error(exc) from exc
-    return Status(201, _light_source_out(light))
+    return Status(201, light_source_out(light))
 
 
 @router.put("/light-sources/{light_id}", response=LightSourceOut)
@@ -289,7 +287,7 @@ def update_light_source(request: HttpRequest, light_id: int, data: LightSourceIn
         services.update_light_source(light, services.LightSourceData(**data.model_dump()))
     except services.PlacesError as exc:
         raise _places_error(exc) from exc
-    return _light_source_out(light)
+    return light_source_out(light)
 
 
 @router.delete("/light-sources/{light_id}", response={204: None})

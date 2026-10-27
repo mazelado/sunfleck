@@ -137,7 +137,6 @@ class LightSourceData:
     kind: LightSourceKind
     name: str = ""
     direction: Direction | None = None
-    distance_cm: int | None = None
     ppfd: int | None = None
     on_time: time | None = None
     off_time: time | None = None
@@ -153,7 +152,6 @@ def _apply_light_source(light: LightSource, data: LightSourceData) -> None:
         if not data.direction:
             raise PlacesError("direction_required", "Choose the direction it faces.", "direction")
         light.direction = data.direction
-        light.distance_cm = data.distance_cm
         light.ppfd = light.on_time = light.off_time = None
     else:
         if data.ppfd is None:
@@ -168,7 +166,6 @@ def _apply_light_source(light: LightSource, data: LightSourceData) -> None:
         light.on_time = data.on_time
         light.off_time = data.off_time
         light.direction = ""
-        light.distance_cm = None
 
 
 @transaction.atomic
@@ -188,7 +185,11 @@ def create_light_source(location: Location, data: LightSourceData) -> LightSourc
     return light
 
 
+@transaction.atomic
 def update_light_source(light: LightSource, data: LightSourceData) -> LightSource:
     _apply_light_source(light, data)
     light.save()
+    if light.kind == LightSourceKind.GROW_LIGHT:
+        # Distances only mean something for windows (see sunfleck.plants.models.PlantLight).
+        light.plant_links.update(distance_cm=None)
     return light

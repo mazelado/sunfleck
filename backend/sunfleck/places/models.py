@@ -116,7 +116,8 @@ class LightSourceKind(models.TextChoices):
 class LightSource(models.Model):
     """A window or grow light that lights an indoor location.
 
-    Windows: the direction they face and how far the plants are from them.
+    Windows: the direction they face. How far each plant is from a window is stored per plant
+    (see sunfleck.plants.models.PlantLight), since plants in one room sit at different spots.
     Grow lights: brightness at plant height (PPFD) and the daily on/off schedule.
     """
 
@@ -127,7 +128,6 @@ class LightSource(models.Model):
     direction = models.CharField(
         _("direction it faces"), max_length=2, choices=Direction.choices, blank=True
     )
-    distance_cm = models.PositiveIntegerField(_("distance from plants (cm)"), null=True, blank=True)
     # Grow lights.
     ppfd = models.PositiveIntegerField(
         _("PPFD at plant height (µmol/m²/s)"),

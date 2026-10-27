@@ -96,7 +96,7 @@ export function LocationPage() {
                           </Text>
                         )}
                       </Text>
-                      {describeLight(light, t, units).map((line) => (
+                      {describeLight(light, t).map((line) => (
                         <Text key={line} size="sm" c="dimmed">
                           {line}
                         </Text>
