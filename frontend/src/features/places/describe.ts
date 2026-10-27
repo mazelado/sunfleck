@@ -1,13 +1,7 @@
 import type { TFunction } from "i18next";
 
 import type { LightSource, Location } from "../../api/places";
-import {
-  celsiusToDisplay,
-  cmToDisplay,
-  lengthUnit,
-  temperatureUnit,
-  type UnitSystem,
-} from "../../lib/units";
+import { celsiusToDisplay, temperatureUnit, type UnitSystem } from "../../lib/units";
 
 /** One-line descriptions of places data, shared by the list and detail pages. */
 export function describeConditions(location: Location, t: TFunction, units: UnitSystem): string[] {
@@ -36,19 +30,9 @@ export function describeConditions(location: Location, t: TFunction, units: Unit
   return parts;
 }
 
-export function describeLight(light: LightSource, t: TFunction, units: UnitSystem): string[] {
+export function describeLight(light: LightSource, t: TFunction): string[] {
   if (light.kind === "window") {
-    const parts = [
-      t("places.windowSummary", { direction: t(`directions.${light.direction ?? "N"}`) }),
-    ];
-    if (light.distance_cm !== null) {
-      parts.push(
-        t("places.windowDistance", {
-          distance: `${String(cmToDisplay(light.distance_cm, units))} ${lengthUnit(units)}`,
-        }),
-      );
-    }
-    return parts;
+    return [t("places.windowSummary", { direction: t(`directions.${light.direction ?? "N"}`) })];
   }
   const parts = [
     t("places.growLightSummary", {

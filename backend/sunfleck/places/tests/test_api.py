@@ -211,11 +211,11 @@ def test_window_has_no_daily_light_figure(client_as: ClientAs, location: Locatio
         client_as(Role.GARDENER),
         "POST",
         f"/api/v1/locations/{location.pk}/light-sources",
-        {"kind": "window", "direction": "E", "distance_cm": 80},
+        {"kind": "window", "direction": "E"},
     )
 
     data = response.json()
-    assert (data["direction"], data["distance_cm"]) == ("E", 80)
+    assert data["direction"] == "E"
     assert (data["hours_per_day"], data["dli"]) == (None, None)
 
 

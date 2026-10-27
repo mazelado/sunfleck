@@ -20,6 +20,34 @@
         "title": "AcceptInvitationIn",
         "type": "object"
       },
+      "ContainerMaterial": {
+        "description": "What the plant grows in. Porous pots (terracotta, fabric) dry out faster.",
+        "enum": [
+          "plastic",
+          "terracotta",
+          "glazed_ceramic",
+          "fabric",
+          "metal",
+          "wood",
+          "other",
+          "in_ground"
+        ],
+        "title": "ContainerMaterial",
+        "type": "string"
+      },
+      "CoverIn": {
+        "properties": {
+          "photo_id": {
+            "title": "Photo Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "photo_id"
+        ],
+        "title": "CoverIn",
+        "type": "object"
+      },
       "Direction": {
         "enum": [
           "N",
@@ -277,19 +305,6 @@
               }
             ]
           },
-          "distance_cm": {
-            "anyOf": [
-              {
-                "maximum": 10000,
-                "minimum": 0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Distance Cm"
-          },
           "enabled": {
             "default": true,
             "title": "Enabled",
@@ -367,17 +382,6 @@
                 "type": "null"
               }
             ]
-          },
-          "distance_cm": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Distance Cm"
           },
           "dli": {
             "anyOf": [
@@ -459,7 +463,6 @@
           "kind",
           "name",
           "direction",
-          "distance_cm",
           "ppfd",
           "on_time",
           "off_time",
@@ -774,6 +777,519 @@
         "title": "MemberUpdate",
         "type": "object"
       },
+      "PageQuery": {
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "PageQuery",
+        "type": "object"
+      },
+      "PhotoIn": {
+        "properties": {
+          "caption": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Caption",
+            "type": "string"
+          }
+        },
+        "title": "PhotoIn",
+        "type": "object"
+      },
+      "PhotoOut": {
+        "properties": {
+          "caption": {
+            "title": "Caption",
+            "type": "string"
+          },
+          "height": {
+            "title": "Height",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "image_url": {
+            "title": "Image Url",
+            "type": "string"
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          },
+          "taken_at": {
+            "format": "date-time",
+            "title": "Taken At",
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "title": "Thumbnail Url",
+            "type": "string"
+          },
+          "width": {
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "plant_id",
+          "caption",
+          "taken_at",
+          "width",
+          "height",
+          "image_url",
+          "thumbnail_url"
+        ],
+        "title": "PhotoOut",
+        "type": "object"
+      },
+      "PhotoPage": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "PhotoPage",
+        "type": "object"
+      },
+      "PlantFilters": {
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Id"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "q": {
+            "default": "",
+            "description": "Search by name.",
+            "maxLength": 100,
+            "title": "Q",
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "PlantFilters",
+        "type": "object"
+      },
+      "PlantIn": {
+        "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
+          "container_diameter_cm": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Diameter Cm"
+          },
+          "container_material": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContainerMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "light_sources": {
+            "default": [],
+            "description": "The windows and grow lights that reach it.",
+            "items": {
+              "$ref": "#/components/schemas/PlantLightIn"
+            },
+            "maxItems": 50,
+            "title": "Light Sources",
+            "type": "array"
+          },
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Id"
+          },
+          "nickname": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Nickname",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 5000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "soil_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SoilType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlantStatus"
+              }
+            ],
+            "default": "active"
+          }
+        },
+        "required": [
+          "nickname"
+        ],
+        "title": "PlantIn",
+        "type": "object"
+      },
+      "PlantLightIn": {
+        "properties": {
+          "distance_cm": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Windows: the plant's distance from it.",
+            "title": "Distance Cm"
+          },
+          "light_source_id": {
+            "title": "Light Source Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "light_source_id"
+        ],
+        "title": "PlantLightIn",
+        "type": "object"
+      },
+      "PlantLightOut": {
+        "properties": {
+          "distance_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Cm"
+          },
+          "light_source": {
+            "$ref": "#/components/schemas/LightSourceOut"
+          }
+        },
+        "required": [
+          "light_source",
+          "distance_cm"
+        ],
+        "title": "PlantLightOut",
+        "type": "object"
+      },
+      "PlantLocationOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LocationKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "site_id": {
+            "title": "Site Id",
+            "type": "integer"
+          },
+          "site_name": {
+            "title": "Site Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "site_id",
+          "site_name"
+        ],
+        "title": "PlantLocationOut",
+        "type": "object"
+      },
+      "PlantOut": {
+        "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
+          "container_diameter_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Diameter Cm"
+          },
+          "container_material": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContainerMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cover_photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "light_sources": {
+            "items": {
+              "$ref": "#/components/schemas/PlantLightOut"
+            },
+            "title": "Light Sources",
+            "type": "array"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantLocationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nickname": {
+            "title": "Nickname",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "soil_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SoilType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlantStatus"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "status",
+          "location",
+          "container_diameter_cm",
+          "container_material",
+          "soil_type",
+          "acquired_on",
+          "notes",
+          "cover_photo",
+          "light_sources",
+          "created_at"
+        ],
+        "title": "PlantOut",
+        "type": "object"
+      },
+      "PlantPage": {
+        "properties": {
+          "count": {
+            "description": "How many plants match, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PlantSummaryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "PlantPage",
+        "type": "object"
+      },
+      "PlantStatus": {
+        "enum": [
+          "active",
+          "dormant",
+          "gifted",
+          "deceased"
+        ],
+        "title": "PlantStatus",
+        "type": "string"
+      },
+      "PlantSummaryOut": {
+        "properties": {
+          "cover_thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Thumbnail Url"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantLocationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nickname": {
+            "title": "Nickname",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlantStatus"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "status",
+          "location",
+          "cover_thumbnail_url"
+        ],
+        "title": "PlantSummaryOut",
+        "type": "object"
+      },
       "Role": {
         "description": "What a member may do in their household, from least to most access.",
         "enum": [
@@ -899,6 +1415,21 @@
         ],
         "title": "SiteOut",
         "type": "object"
+      },
+      "SoilType": {
+        "enum": [
+          "potting_mix",
+          "aroid_mix",
+          "cactus_mix",
+          "orchid_bark",
+          "sphagnum",
+          "semi_hydro",
+          "water",
+          "garden_soil",
+          "other"
+        ],
+        "title": "SoilType",
+        "type": "string"
       },
       "UnitSystem": {
         "enum": [
@@ -1626,6 +2157,556 @@
         "summary": "Update Me",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/api/v1/photos/{photo_id}": {
+      "delete": {
+        "operationId": "sunfleck_plants_api_delete_photo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Photo",
+        "tags": [
+          "plants"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_plants_api_update_photo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/photos/{photo_id}/image": {
+      "get": {
+        "description": "The photo itself (WebP, at most 2048 px on its long edge).",
+        "operationId": "sunfleck_plants_api_get_photo_image",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Photo Image",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/photos/{photo_id}/thumbnail": {
+      "get": {
+        "description": "A small version of the photo (WebP, at most 512 px on its long edge).",
+        "operationId": "sunfleck_plants_api_get_photo_thumbnail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Photo Thumbnail",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants": {
+      "get": {
+        "description": "The household's plants, by name, a page at a time.",
+        "operationId": "sunfleck_plants_api_list_plants",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Search by name.",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Search by name.",
+              "maxLength": 100,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "location_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Location Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/PlantStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantPage"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Plants",
+        "tags": [
+          "plants"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_plants_api_create_plant",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Plant",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}": {
+      "delete": {
+        "description": "Delete a plant and its photos.",
+        "operationId": "sunfleck_plants_api_delete_plant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Plant",
+        "tags": [
+          "plants"
+        ]
+      },
+      "get": {
+        "operationId": "sunfleck_plants_api_get_plant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Plant",
+        "tags": [
+          "plants"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_plants_api_update_plant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Plant",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/cover": {
+      "put": {
+        "description": "Choose which photo shows on the plant's card.",
+        "operationId": "sunfleck_plants_api_set_cover_photo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoverIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Set Cover Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/photos": {
+      "get": {
+        "description": "The plant's photos, newest first.",
+        "operationId": "sunfleck_plants_api_list_photos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoPage"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Photos",
+        "tags": [
+          "plants"
+        ]
+      },
+      "post": {
+        "description": "Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,\nsuch as GPS position, is removed. A plant's first photo becomes its cover photo.",
+        "operationId": "sunfleck_plants_api_add_photo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "caption": {
+                    "default": "",
+                    "title": "Caption",
+                    "type": "string"
+                  },
+                  "file": {
+                    "format": "binary",
+                    "title": "File",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "title": "MultiPartBodyParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Add Photo",
+        "tags": [
+          "plants"
         ]
       }
     },

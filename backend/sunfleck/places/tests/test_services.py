@@ -121,13 +121,12 @@ def test_window_requires_a_direction_and_drops_grow_light_fields() -> None:
         services.LightSourceData(
             kind=LightSourceKind.WINDOW,
             direction="SW",  # type: ignore[arg-type]
-            distance_cm=50,
             ppfd=300,
         ),
     )
 
     assert exc_info.value.code == "direction_required"
-    assert (window.direction, window.distance_cm, window.ppfd) == ("SW", 50, None)
+    assert (window.direction, window.ppfd) == ("SW", None)
 
 
 @pytest.mark.django_db
@@ -173,5 +172,5 @@ def test_switching_a_window_to_a_grow_light_clears_window_fields() -> None:
         ),
     )
 
-    assert (light.direction, light.distance_cm) == ("", None)
+    assert light.direction == ""
     assert light.ppfd == 150

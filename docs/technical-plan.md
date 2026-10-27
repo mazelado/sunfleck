@@ -136,7 +136,9 @@ Adding it later would mean rewriting every query.
 | Recalculate due dates for all active schedules | Nightly, per household time zone, and after any care event or settings change |
 | Send reminders and daily digests | Every 15 minutes (checks who is due for a notification) |
 | Refresh weather per site (plugin) | Every 1–3 hours |
-| Generate photo thumbnails | When a photo is uploaded |
+
+Photo thumbnails are made during the upload instead: the browser has already shrunk the photo,
+so it takes a fraction of a second.
 
 Huey stores its queue in a separate SQLite file by default, so the default install needs no
 Redis. Users with PostgreSQL or Redis can point Huey at Redis instead.
@@ -182,6 +184,8 @@ erDiagram
     Site ||--o{ Location : contains
     Location ||--o{ LightSource : has
     Location ||--o{ Plant : holds
+    Plant ||--o{ PlantLight : "is reached by"
+    LightSource ||--o{ PlantLight : reaches
     Taxon ||--o{ Plant : "identifies (optional)"
     CareArchetype ||--o{ Taxon : "default care for"
     Plant ||--o{ Photo : has
@@ -200,11 +204,12 @@ erDiagram
 | **Membership** | user, household, role (`admin` / `gardener` / `viewer`) | Unique per user + household |
 | **Site** | household, name, latitude, longitude, time zone | A physical place; weather and frost data attach here. (No elevation field: Open-Meteo derives it from the coordinates.) |
 | **Location** | site, name, kind (`indoor` / `outdoor`), typical temperature range (°C), humidity level, outdoor exposure (full sun / part shade / shade) | Indoor fields and outdoor fields are each optional depending on kind; fields that don't fit the kind are cleared |
-| **LightSource** | location, kind (`window` / `grow_light`), name; windows: direction (N, NE, …), distance from plants (cm); grow lights: PPFD (µmol/m²/s), on time, off time; enabled | Indoor locations only. A room can have several windows. Grow lights report their **DLI** |
+| **LightSource** | location, kind (`window` / `grow_light`), name; windows: direction (N, NE, …); grow lights: PPFD (µmol/m²/s), on time, off time; enabled | Indoor locations only. A room can have several windows. Grow lights report their **DLI**. The app suggests typical PPFD values for people who don't know theirs |
 | **CareArchetype** | key (e.g. `tropical_aroid`), name, seasonal watering intervals, DLI range, humidity, temperature range, fertilizing cadence, dormancy months, dataset version | Loaded from our CC BY-SA dataset (section 5); read-only in the app |
 | **Taxon** | scientific name, rank (genus/species), genus, family, accepted name (for synonyms), common names (per language), archetype, source, external IDs (WCVP, GBIF, Wikidata) | Reference data; shared by all households |
-| **Plant** | household, location, nickname, taxon (optional), archetype override, status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant |
-| **Photo** | plant, image, thumbnail, taken at, caption | EXIF stripped by default; HEIC (iPhone) supported |
+| **Plant** | household, location (optional), nickname, taxon (optional), archetype override, status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant. Deleting its location keeps the plant. Taxon and archetype override arrive with the care data (M5) |
+| **PlantLight** | plant, light source, distance from the window (cm) | Which of its location's windows and grow lights reach a plant. Plants in one room get different light, but share the room's fixtures: change a grow light's timer once and every plant under it follows |
+| **Photo** | plant, image, thumbnail, width, height, taken at, caption | Stored as WebP (at most 2048 px, thumbnail 512 px). EXIF stripped; the date taken is read first. HEIC (iPhone) supported. Served through the API with a permission check |
 | **CareType** | household (empty for built-ins), key, name, icon, affects-prediction flag | Built-ins: water, fertilize, repot, prune, mist, rotate, clean leaves, pest check. Users can add custom types |
 | **CareEvent** | plant, care type, performed at, performed by, notes, feedback (`too_dry` / `just_right` / `still_wet`), skipped flag | The care log. Feedback trains predictions |
 | **CareSchedule** | plant, care type, mode (`fixed` / `predicted`), base interval days, current interval days, next due date, snoozed until, origin (`suggested` / `manual`), enabled | One per plant per care type |
@@ -293,8 +298,9 @@ Calculation for the MVP (each factor is a small, separately tested function):
 
 1. **Baseline:** the archetype's interval for the current season. Seasons are derived from the
    date *and* hemisphere (from the site latitude).
-2. **Light factor:** estimated DLI at the location, from window direction and distance or
-   grow-light PPFD × hours, compared with the archetype's ideal. More light means more frequent
+2. **Light factor:** estimated DLI for the plant, from the windows and grow lights that reach
+   it (window direction and the plant's distance from it; grow-light PPFD × hours), compared
+   with the archetype's ideal. More light means more frequent
    watering, within limits.
 3. **Temperature factor:** indoor temperature setting, or outdoor forecast (via the weather
    plugin).

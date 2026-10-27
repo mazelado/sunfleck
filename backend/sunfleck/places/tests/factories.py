@@ -32,4 +32,3 @@ class WindowFactory(DjangoModelFactory[LightSource]):
     location = SubFactory(LocationFactory)
     kind = "window"
     direction = "S"
-    distance_cm = 100

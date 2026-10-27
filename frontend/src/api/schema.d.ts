@@ -246,6 +246,152 @@ export interface paths {
         patch: operations["sunfleck_accounts_api_update_me"];
         trace?: never;
     };
+    "/api/v1/photos/{photo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Photo */
+        put: operations["sunfleck_plants_api_update_photo"];
+        post?: never;
+        /** Delete Photo */
+        delete: operations["sunfleck_plants_api_delete_photo"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/photos/{photo_id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Photo Image
+         * @description The photo itself (WebP, at most 2048 px on its long edge).
+         */
+        get: operations["sunfleck_plants_api_get_photo_image"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/photos/{photo_id}/thumbnail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Photo Thumbnail
+         * @description A small version of the photo (WebP, at most 512 px on its long edge).
+         */
+        get: operations["sunfleck_plants_api_get_photo_thumbnail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plants
+         * @description The household's plants, by name, a page at a time.
+         */
+        get: operations["sunfleck_plants_api_list_plants"];
+        put?: never;
+        /** Create Plant */
+        post: operations["sunfleck_plants_api_create_plant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Plant */
+        get: operations["sunfleck_plants_api_get_plant"];
+        /** Update Plant */
+        put: operations["sunfleck_plants_api_update_plant"];
+        post?: never;
+        /**
+         * Delete Plant
+         * @description Delete a plant and its photos.
+         */
+        delete: operations["sunfleck_plants_api_delete_plant"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/cover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Cover Photo
+         * @description Choose which photo shows on the plant's card.
+         */
+        put: operations["sunfleck_plants_api_set_cover_photo"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Photos
+         * @description The plant's photos, newest first.
+         */
+        get: operations["sunfleck_plants_api_list_photos"];
+        put?: never;
+        /**
+         * Add Photo
+         * @description Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,
+         *     such as GPS position, is removed. A plant's first photo becomes its cover photo.
+         */
+        post: operations["sunfleck_plants_api_add_photo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -344,6 +490,17 @@ export interface components {
             display_name: string;
             /** Password */
             password: string;
+        };
+        /**
+         * ContainerMaterial
+         * @description What the plant grows in. Porous pots (terracotta, fabric) dry out faster.
+         * @enum {string}
+         */
+        ContainerMaterial: "plastic" | "terracotta" | "glazed_ceramic" | "fabric" | "metal" | "wood" | "other" | "in_ground";
+        /** CoverIn */
+        CoverIn: {
+            /** Photo Id */
+            photo_id: number;
         };
         /**
          * Direction
@@ -445,8 +602,6 @@ export interface components {
         /** LightSourceIn */
         LightSourceIn: {
             direction?: components["schemas"]["Direction"] | null;
-            /** Distance Cm */
-            distance_cm?: number | null;
             /**
              * Enabled
              * @default true
@@ -473,8 +628,6 @@ export interface components {
         /** LightSourceOut */
         LightSourceOut: {
             direction: components["schemas"]["Direction"] | null;
-            /** Distance Cm */
-            distance_cm: number | null;
             /**
              * Dli
              * @description Grow lights: daily light integral, mol/m²/day.
@@ -577,6 +730,183 @@ export interface components {
         MemberUpdate: {
             role: components["schemas"]["Role"];
         };
+        /** PageQuery */
+        PageQuery: {
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+            /**
+             * Offset
+             * @default 0
+             */
+            offset: number;
+        };
+        /** PhotoIn */
+        PhotoIn: {
+            /**
+             * Caption
+             * @default
+             */
+            caption: string;
+        };
+        /** PhotoOut */
+        PhotoOut: {
+            /** Caption */
+            caption: string;
+            /** Height */
+            height: number;
+            /** Id */
+            id: number;
+            /** Image Url */
+            image_url: string;
+            /** Plant Id */
+            plant_id: number;
+            /**
+             * Taken At
+             * Format: date-time
+             */
+            taken_at: string;
+            /** Thumbnail Url */
+            thumbnail_url: string;
+            /** Width */
+            width: number;
+        };
+        /** PhotoPage */
+        PhotoPage: {
+            /** Count */
+            count: number;
+            /** Items */
+            items: components["schemas"]["PhotoOut"][];
+        };
+        /** PlantFilters */
+        PlantFilters: {
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+            /** Location Id */
+            location_id?: number | null;
+            /**
+             * Offset
+             * @default 0
+             */
+            offset: number;
+            /**
+             * Q
+             * @description Search by name.
+             * @default
+             */
+            q: string;
+            status?: components["schemas"]["PlantStatus"] | null;
+        };
+        /** PlantIn */
+        PlantIn: {
+            /** Acquired On */
+            acquired_on?: string | null;
+            /** Container Diameter Cm */
+            container_diameter_cm?: number | null;
+            container_material?: components["schemas"]["ContainerMaterial"] | null;
+            /**
+             * Light Sources
+             * @description The windows and grow lights that reach it.
+             * @default []
+             */
+            light_sources: components["schemas"]["PlantLightIn"][];
+            /** Location Id */
+            location_id?: number | null;
+            /** Nickname */
+            nickname: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            soil_type?: components["schemas"]["SoilType"] | null;
+            /** @default active */
+            status: components["schemas"]["PlantStatus"];
+        };
+        /** PlantLightIn */
+        PlantLightIn: {
+            /**
+             * Distance Cm
+             * @description Windows: the plant's distance from it.
+             */
+            distance_cm?: number | null;
+            /** Light Source Id */
+            light_source_id: number;
+        };
+        /** PlantLightOut */
+        PlantLightOut: {
+            /** Distance Cm */
+            distance_cm: number | null;
+            light_source: components["schemas"]["LightSourceOut"];
+        };
+        /** PlantLocationOut */
+        PlantLocationOut: {
+            /** Id */
+            id: number;
+            kind: components["schemas"]["LocationKind"];
+            /** Name */
+            name: string;
+            /** Site Id */
+            site_id: number;
+            /** Site Name */
+            site_name: string;
+        };
+        /** PlantOut */
+        PlantOut: {
+            /** Acquired On */
+            acquired_on: string | null;
+            /** Container Diameter Cm */
+            container_diameter_cm: number | null;
+            container_material: components["schemas"]["ContainerMaterial"] | null;
+            cover_photo: components["schemas"]["PhotoOut"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** Light Sources */
+            light_sources: components["schemas"]["PlantLightOut"][];
+            location: components["schemas"]["PlantLocationOut"] | null;
+            /** Nickname */
+            nickname: string;
+            /** Notes */
+            notes: string;
+            soil_type: components["schemas"]["SoilType"] | null;
+            status: components["schemas"]["PlantStatus"];
+        };
+        /** PlantPage */
+        PlantPage: {
+            /**
+             * Count
+             * @description How many plants match, across all pages.
+             */
+            count: number;
+            /** Items */
+            items: components["schemas"]["PlantSummaryOut"][];
+        };
+        /**
+         * PlantStatus
+         * @enum {string}
+         */
+        PlantStatus: "active" | "dormant" | "gifted" | "deceased";
+        /** PlantSummaryOut */
+        PlantSummaryOut: {
+            /** Cover Thumbnail Url */
+            cover_thumbnail_url: string | null;
+            /** Id */
+            id: number;
+            location: components["schemas"]["PlantLocationOut"] | null;
+            /** Nickname */
+            nickname: string;
+            status: components["schemas"]["PlantStatus"];
+        };
         /**
          * Role
          * @description What a member may do in their household, from least to most access.
@@ -625,6 +955,11 @@ export interface components {
             /** Timezone */
             timezone: string;
         };
+        /**
+         * SoilType
+         * @enum {string}
+         */
+        SoilType: "potting_mix" | "aroid_mix" | "cactus_mix" | "orchid_bark" | "sphagnum" | "semi_hydro" | "water" | "garden_soil" | "other";
         /**
          * UnitSystem
          * @enum {string}
@@ -1092,6 +1427,299 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_update_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_delete_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_plants_api_get_photo_image: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_plants_api_get_photo_thumbnail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_plants_api_list_plants: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                /** @description Search by name. */
+                q?: string;
+                location_id?: number | null;
+                status?: components["schemas"]["PlantStatus"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantPage"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_create_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlantIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_get_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_update_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlantIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_delete_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_plants_api_set_cover_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CoverIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_list_photos: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoPage"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_add_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Caption
+                     * @default
+                     */
+                    caption?: string;
+                    /**
+                     * File
+                     * Format: binary
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoOut"];
                 };
             };
         };
