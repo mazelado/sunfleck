@@ -31,11 +31,15 @@ class CareTypeOut(Schema):
     icon: str
     is_builtin: bool
     affects_prediction: bool
+    counts_as_watering: bool
 
 
 class CareTypeIn(Schema):
     name: str = Field(min_length=1, max_length=50)
     icon: str = Field(default="sparkles", min_length=1, max_length=32, pattern=r"^[a-z0-9-]+$")
+    counts_as_watering: bool = Field(
+        default=False, description="It's a kind of watering, e.g. bottom watering."
+    )
 
 
 class PersonOut(Schema):
@@ -59,7 +63,8 @@ class CareEventIn(Schema):
     performed_at: datetime | None = Field(default=None, description="Leave out for now.")
     notes: str = Field(default="", max_length=2000)
     feedback: Feedback | None = Field(
-        default=None, description="Watering only: how the soil was beforehand."
+        default=None,
+        description="Care types that count as watering only: how the soil was beforehand.",
     )
     skipped: bool = Field(
         default=False, description="Checked, but decided not to (e.g. the soil was still wet)."
@@ -94,6 +99,7 @@ def _care_type_out(care_type: CareType) -> CareTypeOut:
         icon=care_type.icon,
         is_builtin=care_type.is_builtin,
         affects_prediction=care_type.affects_prediction,
+        counts_as_watering=care_type.counts_as_watering,
     )
 
 

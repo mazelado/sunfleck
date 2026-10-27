@@ -598,7 +598,7 @@ export interface components {
         CareEventIn: {
             /** Care Type Id */
             care_type_id: number;
-            /** @description Watering only: how the soil was beforehand. */
+            /** @description Care types that count as watering only: how the soil was beforehand. */
             feedback?: components["schemas"]["Feedback"] | null;
             /**
              * Notes
@@ -639,6 +639,12 @@ export interface components {
         /** CareTypeIn */
         CareTypeIn: {
             /**
+             * Counts As Watering
+             * @description It's a kind of watering, e.g. bottom watering.
+             * @default false
+             */
+            counts_as_watering: boolean;
+            /**
              * Icon
              * @default sparkles
              */
@@ -650,6 +656,8 @@ export interface components {
         CareTypeOut: {
             /** Affects Prediction */
             affects_prediction: boolean;
+            /** Counts As Watering */
+            counts_as_watering: boolean;
             /** Icon */
             icon: string;
             /** Id */

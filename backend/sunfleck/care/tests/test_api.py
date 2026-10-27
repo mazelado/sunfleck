@@ -49,6 +49,7 @@ def test_care_types_list_builtins_then_the_households_own(
         "icon": "droplet",
         "is_builtin": True,
         "affects_prediction": True,
+        "counts_as_watering": True,
     }
     assert [t["name"] for t in types if not t["is_builtin"]] == ["Harvest"]
 
@@ -254,3 +255,26 @@ def test_plants_show_when_they_were_last_watered(client_as: ClientAs, plant: Pla
 
     assert [p["last_watered_at"] for p in listed] == ["2026-05-03T00:00:00Z", None]
     assert detail["last_watered_at"] == "2026-05-03T00:00:00Z"
+
+
+@pytest.mark.django_db
+def test_custom_watering_types_count_as_watering(client_as: ClientAs, plant: Plant) -> None:
+    client = client_as(Role.GARDENER)
+    bottom = send(
+        client,
+        "POST",
+        "/api/v1/care-types",
+        {"name": "Bottom water", "icon": "droplet", "counts_as_watering": True},
+    ).json()
+
+    logged = send(
+        client,
+        "POST",
+        f"/api/v1/plants/{plant.pk}/care-events",
+        {"care_type_id": bottom["id"], "feedback": "still_wet"},
+    )
+
+    assert bottom["counts_as_watering"] is True
+    assert logged.json()["feedback"] == "still_wet"
+    detail = client.get(f"/api/v1/plants/{plant.pk}").json()
+    assert detail["last_watered_at"] == logged.json()["performed_at"]

@@ -61,7 +61,7 @@ export function CareEventDialog({ plantId, event, onClose }: CareEventDialogProp
   });
   const values = form.getValues();
   const isWatering =
-    careTypes.find((type) => String(type.id) === values.careTypeId)?.key === "water";
+    careTypes.find((type) => String(type.id) === values.careTypeId)?.counts_as_watering ?? false;
 
   const handleSubmit = form.onSubmit(async (formValues) => {
     const body = {

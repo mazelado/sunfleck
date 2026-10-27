@@ -180,3 +180,34 @@ def test_a_time_without_a_zone_is_local_time_at_the_plants_site() -> None:
     )
 
     assert event.performed_at == datetime(2026, 5, 1, 10, tzinfo=UTC)
+
+
+@pytest.mark.django_db
+def test_only_watering_types_take_soil_feedback(household: Household) -> None:
+    plant = PlantFactory.create(household=household)
+    bottom = services.create_care_type(
+        household, services.CareTypeData("Bottom water", counts_as_watering=True)
+    )
+    harvest = services.create_care_type(household, services.CareTypeData("Harvest"))
+
+    event = services.log_care(
+        plant,
+        services.CareEventData(care_type_id=bottom.pk, feedback="too_dry"),  # type: ignore[arg-type]
+        None,
+    )
+    with pytest.raises(services.CareError) as exc_info:
+        services.log_care(
+            plant,
+            services.CareEventData(care_type_id=harvest.pk, feedback="too_dry"),  # type: ignore[arg-type]
+            None,
+        )
+
+    assert event.feedback == "too_dry"
+    assert exc_info.value.code == "feedback_only_for_watering"
+
+
+@pytest.mark.django_db
+def test_only_builtin_water_counts_as_watering() -> None:
+    watering = CareType.objects.filter(household=None, counts_as_watering=True)
+
+    assert [care_type.key for care_type in watering] == ["water"]
