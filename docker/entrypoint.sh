@@ -15,7 +15,8 @@ case "$1" in
     exec gunicorn sunfleck.config.wsgi \
       --bind 0.0.0.0:8000 \
       --workers "${WEB_CONCURRENCY:-2}" \
-      --access-logfile -
+      --access-logfile - \
+      --no-control-socket
     ;;
   manage)
     shift

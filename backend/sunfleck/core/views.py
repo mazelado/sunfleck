@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_safe
 
 FRONTEND_MISSING_MESSAGE = (
@@ -11,11 +12,13 @@ FRONTEND_MISSING_MESSAGE = (
 
 
 @require_safe
+@ensure_csrf_cookie
 def frontend_index(request: HttpRequest) -> HttpResponse:
     """Return the React app's index.html for any URL the app handles itself.
 
     The React app does its own routing (e.g. /plants/42), so every such URL must return the
-    same page. Browsers must always revalidate it so they pick up new releases.
+    same page. Browsers must always revalidate it so they pick up new releases. It also sets
+    the CSRF cookie, which the app sends back with every change it makes.
     """
     index_file = settings.FRONTEND_DIR / "index.html"
     if not index_file.is_file():

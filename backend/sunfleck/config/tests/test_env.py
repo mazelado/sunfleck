@@ -1,6 +1,6 @@
 import pytest
 
-from sunfleck.config.env import env_bool, env_list, env_str
+from sunfleck.config.env import env_bool, env_list, env_str, parse_email_url
 
 
 def test_env_str_returns_value_when_set(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -56,3 +56,34 @@ def test_env_list_returns_copy_of_default_when_unset(monkeypatch: pytest.MonkeyP
 
     assert result == ["localhost"]
     assert result is not default
+
+
+@pytest.mark.parametrize(
+    ("url", "port", "use_tls", "use_ssl"),
+    [
+        ("smtp://mail.example.com", 25, False, False),
+        ("smtp+tls://mail.example.com", 587, True, False),
+        ("smtps://mail.example.com", 465, False, True),
+        ("smtp+tls://mail.example.com:2525", 2525, True, False),
+    ],
+)
+def test_parse_email_url_picks_port_and_encryption(
+    url: str, port: int, use_tls: bool, use_ssl: bool
+) -> None:
+    options = parse_email_url(url)["OPTIONS"]
+
+    assert options["host"] == "mail.example.com"
+    assert (options["port"], options["use_tls"], options["use_ssl"]) == (port, use_tls, use_ssl)
+
+
+def test_parse_email_url_decodes_credentials() -> None:
+    options = parse_email_url("smtps://me%40example.com:p%40ss%2Fword@mail.example.com")["OPTIONS"]
+
+    assert options["username"] == "me@example.com"
+    assert options["password"] == "p@ss/word"
+
+
+@pytest.mark.parametrize("url", ["http://mail.example.com", "smtp://", "mail.example.com"])
+def test_parse_email_url_rejects_invalid_urls(url: str) -> None:
+    with pytest.raises(ValueError, match="EMAIL_URL"):
+        parse_email_url(url)

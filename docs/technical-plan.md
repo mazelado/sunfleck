@@ -159,7 +159,9 @@ explicitly asks to include them.
 | `DATABASE_URL` | `sqlite:////data/db.sqlite3` | Database connection |
 | `ALLOWED_HOSTS` / `CSRF_TRUSTED_ORIGINS` | `localhost` | Hostnames the app is served on |
 | `TIME_ZONE` | `UTC` | Server default; each site has its own time zone |
-| `EMAIL_URL` | *(empty)* | SMTP for password resets and invitations |
+| `EMAIL_URL` | *(empty)* | SMTP server for password resets and invitations, e.g. `smtp+tls://user:password@mail.example.com:587` (also `smtp://` and `smtps://`). Without it, emails are written to the log |
+| `EMAIL_FROM` | `Sunfleck <sunfleck@localhost>` | Sender address for emails |
+| `SUNFLECK_BEHIND_PROXY` | `false` | Trust `X-Forwarded-Proto`/`-Host` from a reverse proxy, so links in emails use the public `https://` address |
 | `HUEY_REDIS_URL` | *(empty)* | Use Redis for the job queue instead of SQLite |
 | `DEBUG` | `false` | Development mode only |
 
