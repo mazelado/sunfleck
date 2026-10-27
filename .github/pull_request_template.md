@@ -33,7 +33,7 @@ Closes #
 ## Checklist
 
 - [ ] My PR title follows [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `feat(reminders): add snooze`)
-- [ ] I have read the [style guide](https://github.com/mazelado/Unnamed-plant-app/blob/main/docs/STYLE_GUIDE.md)
+- [ ] I have read the [style guide](https://github.com/mazelado/sunfleck/blob/main/docs/STYLE_GUIDE.md)
 - [ ] Lint, type checks, and tests pass locally
 - [ ] I added tests for new behavior (or explained above why none are needed)
 - [ ] New user-visible text is translatable
