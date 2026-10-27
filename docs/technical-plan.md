@@ -295,33 +295,54 @@ archetype, adjusted for the location. The user sees the proposal ("Water about e
 fertilize monthly from March to October") and accepts it, edits it, or skips it.
 
 ### Prediction engine
-`backend/prediction/` is plain Python: it receives simple data objects and returns results,
-with no database access. That makes it fast to test thoroughly, including with property-based
-tests (Hypothesis) that check rules like "intervals always stay within sensible bounds".
+`backend/sunfleck/prediction/` is plain Python: it receives simple data objects and returns
+results, with no database access. That makes it fast to test thoroughly, including with
+property-based tests (Hypothesis) that check rules like "intervals always stay within sensible
+bounds", "more light never means watering less often" and "fertilizing is never due in a pause
+month".
 
 ```
-inputs:  archetype, plant (container, status), location (indoor/outdoor, light, temperature),
-         date and hemisphere, recent care events with feedback,
-         plugin-provided factors (e.g. weather)
-output:  interval in days, next due date, list of factors with plain-language explanations
+inputs:  care profile, plant (pot, dormant or not), location (indoor/outdoor, light,
+         temperature), date and hemisphere, when the care was last done, feedback,
+         plugin-provided factors (e.g. weather, from M8)
+output:  interval in days, next due date, list of factors that explain them
 ```
 
-Calculation for the MVP (each factor is a small, separately tested function):
+**Watering** (each factor is a small, separately tested function; its multiplier applies to
+the interval, and factors under 2% are left out):
 
-1. **Baseline:** the archetype's interval for the current season. Seasons are derived from the
-   date *and* hemisphere (from the site latitude).
-2. **Light factor:** estimated DLI for the plant, from the windows and grow lights that reach
-   it (window direction and the plant's distance from it; grow-light PPFD × hours), compared
-   with the archetype's ideal. More light means more frequent
-   watering, within limits.
-3. **Temperature factor:** indoor temperature setting, or outdoor forecast (via the weather
-   plugin).
-4. **Container factor:** small and terracotta pots dry faster than large or plastic ones.
-5. **Plugin factors:** for example, the weather plugin postpones outdoor watering after
+1. **Baseline:** the profile's interval for the current season. Seasons are meteorological
+   (whole months: spring is March to May in the north) and follow the hemisphere of the site.
+   A season with no interval (e.g. spring bulbs in summer) means no watering: it's due again
+   when the next season with an interval starts.
+2. **Light:** the plant's estimated DLI, from the windows and grow lights that reach it
+   (window direction relative to the equator, falling off with distance: to about a third at
+   1 m, which is also assumed when the distance isn't known; grow-light PPFD × hours) or from
+   an outdoor location's exposure. It's compared with the profile's ideal DLI for that season,
+   since the seasonal intervals already allow for darker winter days. Twice the light waters
+   about 16% sooner (ratio^−0.25), within 0.8×–1.25×. Unknown light changes nothing, and the
+   explanation says that adding windows or grow lights would refine it.
+3. **Temperature:** an indoor location's typical temperature compared with the middle of the
+   profile's ideal range: 2.5% sooner per °C warmer, within 0.8×–1.2×. Outdoor temperature comes
+   from the weather plugin.
+4. **Pot:** size compared with a typical 15 cm pot ((diameter/15)^0.35, within 0.8×–1.3×), and
+   material (terracotta 0.85×, fabric 0.8×, wood 0.95×, in the ground 1.3×).
+5. **Dormant plants** (status "dormant") are watered 1.5× less often.
+6. **Learning from feedback:** each "still wet" lengthens the interval by 12.5% and each "too
+   dry" shortens it by 10%, counting the last 10 answers, within 0.6×–1.6×, so that one unusual
+   week doesn't swing the schedule.
+7. **Plugin factors** (M8): for example, the weather plugin postpones outdoor watering after
    significant rain or before forecast rain, and raises frost alerts.
-6. **Learning from feedback:** "still wet" lengthens the interval and "too dry" shortens it,
-   using exponential smoothing so that one unusual week doesn't swing the schedule.
-7. **Clamp:** the result always stays within the archetype's allowed range.
+8. **Limits:** together, the factors stay within half and twice the season's interval (and
+   1–180 days).
+
+The next due date counts from the last watering (or from when the routine started, until
+watering is logged). If that falls in a season without watering, it moves to when the season
+ends.
+
+**Fertilizing** follows the profile's interval, except in its pause months (mirrored for the
+southern hemisphere): a date in a pause moves to the first month after it. Profiles without
+fertilizing (carnivorous plants) and dormant plants have no due date.
 
 Every factor produces an explanation that's stored in `ScheduleAdjustment` and shown in the
 UI, for example: *"Watering moved 2 days later: cooler weather (−15%), lower winter light
