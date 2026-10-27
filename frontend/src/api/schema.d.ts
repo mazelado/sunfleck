@@ -174,6 +174,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/light-sources/{light_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Light Source */
+        put: operations["sunfleck_places_api_update_light_source"];
+        post?: never;
+        /** Delete Light Source */
+        delete: operations["sunfleck_places_api_delete_light_source"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/{location_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Location */
+        get: operations["sunfleck_places_api_get_location"];
+        /** Update Location */
+        put: operations["sunfleck_places_api_update_location"];
+        post?: never;
+        /** Delete Location */
+        delete: operations["sunfleck_places_api_delete_location"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/locations/{location_id}/light-sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Light Source */
+        post: operations["sunfleck_places_api_create_light_source"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -220,6 +274,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sites
+         * @description All of the household's sites, with their locations and light sources.
+         */
+        get: operations["sunfleck_places_api_list_sites"];
+        put?: never;
+        /** Create Site */
+        post: operations["sunfleck_places_api_create_site"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{site_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Site */
+        get: operations["sunfleck_places_api_get_site"];
+        /** Update Site */
+        put: operations["sunfleck_places_api_update_site"];
+        post?: never;
+        /**
+         * Delete Site
+         * @description Delete a site, with all its locations and light sources.
+         */
+        delete: operations["sunfleck_places_api_delete_site"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{site_id}/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Location */
+        post: operations["sunfleck_places_api_create_location"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -231,6 +345,16 @@ export interface components {
             /** Password */
             password: string;
         };
+        /**
+         * Direction
+         * @enum {string}
+         */
+        Direction: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
+        /**
+         * Exposure
+         * @enum {string}
+         */
+        Exposure: "full_sun" | "part_shade" | "shade";
         /** HealthOut */
         HealthOut: {
             /** Database */
@@ -252,6 +376,11 @@ export interface components {
             /** Name */
             name: string;
         };
+        /**
+         * Humidity
+         * @enum {string}
+         */
+        Humidity: "low" | "medium" | "high";
         /** InvitationCreatedOut */
         InvitationCreatedOut: {
             /**
@@ -313,10 +442,102 @@ export interface components {
             invited_by: string | null;
             role: components["schemas"]["Role"];
         };
+        /** LightSourceIn */
+        LightSourceIn: {
+            direction?: components["schemas"]["Direction"] | null;
+            /** Distance Cm */
+            distance_cm?: number | null;
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            kind: components["schemas"]["LightSourceKind"];
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /** Off Time */
+            off_time?: string | null;
+            /** On Time */
+            on_time?: string | null;
+            /** Ppfd */
+            ppfd?: number | null;
+        };
+        /**
+         * LightSourceKind
+         * @enum {string}
+         */
+        LightSourceKind: "window" | "grow_light";
+        /** LightSourceOut */
+        LightSourceOut: {
+            direction: components["schemas"]["Direction"] | null;
+            /** Distance Cm */
+            distance_cm: number | null;
+            /**
+             * Dli
+             * @description Grow lights: daily light integral, mol/m²/day.
+             */
+            dli: number | null;
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Hours Per Day
+             * @description Grow lights: hours on per day.
+             */
+            hours_per_day: number | null;
+            /** Id */
+            id: number;
+            kind: components["schemas"]["LightSourceKind"];
+            /** Name */
+            name: string;
+            /** Off Time */
+            off_time: string | null;
+            /** On Time */
+            on_time: string | null;
+            /** Ppfd */
+            ppfd: number | null;
+        };
         /** LinkOut */
         LinkOut: {
             /** Url */
             url: string;
+        };
+        /** LocationIn */
+        LocationIn: {
+            exposure?: components["schemas"]["Exposure"] | null;
+            humidity?: components["schemas"]["Humidity"] | null;
+            kind: components["schemas"]["LocationKind"];
+            /** Name */
+            name: string;
+            /** Temperature Max C */
+            temperature_max_c?: number | null;
+            /** Temperature Min C */
+            temperature_min_c?: number | null;
+        };
+        /**
+         * LocationKind
+         * @enum {string}
+         */
+        LocationKind: "indoor" | "outdoor";
+        /** LocationOut */
+        LocationOut: {
+            exposure: components["schemas"]["Exposure"] | null;
+            humidity: components["schemas"]["Humidity"] | null;
+            /** Id */
+            id: number;
+            kind: components["schemas"]["LocationKind"];
+            /** Light Sources */
+            light_sources: components["schemas"]["LightSourceOut"][];
+            /** Name */
+            name: string;
+            /** Site Id */
+            site_id: number;
+            /** Temperature Max C */
+            temperature_max_c: number | null;
+            /** Temperature Min C */
+            temperature_min_c: number | null;
         };
         /** MeOut */
         MeOut: {
@@ -377,6 +598,32 @@ export interface components {
         SetupStatusOut: {
             /** Needs Setup */
             needs_setup: boolean;
+        };
+        /** SiteIn */
+        SiteIn: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /** Name */
+            name: string;
+            /** Timezone */
+            timezone: string;
+        };
+        /** SiteOut */
+        SiteOut: {
+            /** Id */
+            id: number;
+            /** Latitude */
+            latitude: number;
+            /** Locations */
+            locations: components["schemas"]["LocationOut"][];
+            /** Longitude */
+            longitude: number;
+            /** Name */
+            name: string;
+            /** Timezone */
+            timezone: string;
         };
         /**
          * UnitSystem
@@ -665,6 +912,146 @@ export interface operations {
             };
         };
     };
+    sunfleck_places_api_update_light_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                light_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LightSourceIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LightSourceOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_delete_light_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                light_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_places_api_get_location: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                location_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_update_location: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                location_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocationIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_delete_location: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                location_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_places_api_create_light_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                location_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LightSourceIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LightSourceOut"];
+                };
+            };
+        };
+    };
     sunfleck_accounts_api_get_me: {
         parameters: {
             query?: never;
@@ -749,6 +1136,144 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_list_sites: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_create_site: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SiteIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_get_site: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_update_site: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SiteIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteOut"];
+                };
+            };
+        };
+    };
+    sunfleck_places_api_delete_site: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_places_api_create_location: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocationIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationOut"];
                 };
             };
         };
