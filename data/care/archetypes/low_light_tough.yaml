@@ -1,0 +1,43 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: low_light_tough
+name:
+  en: Tough low-light foliage
+description:
+  en: 'Very forgiving plants that store water: tolerate low light and long dry spells; overwatering
+    is the main risk.'
+setting: indoor
+examples:
+- Zamioculcas
+- Sansevieria
+- Aspidistra
+watering:
+  interval_days:
+    spring: 21
+    summer: 14
+    autumn: 21
+    winter: 30
+  let_dry: completely
+light:
+  dli_min: 2
+  dli_ideal: 6
+  dli_max: 15
+humidity: low
+temperature_c:
+  min: 10
+  ideal_min: 18
+  ideal_max: 27
+  max: 32
+fertilizing:
+  interval_days: 60
+  pause_months_north:
+  - 10
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

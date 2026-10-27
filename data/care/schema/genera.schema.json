@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mazelado/sunfleck/data/care/schema/genera.schema.json",
+  "title": "Genera and species",
+  "description": "Genera and common species, each linked to a care profile. See ../README.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["genera"],
+  "properties": {
+    "genera": { "type": "array", "items": { "$ref": "#/$defs/genus" }, "minItems": 1 }
+  },
+  "$defs": {
+    "genus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["genus", "family", "archetype"],
+      "properties": {
+        "genus": { "$ref": "#/$defs/genusName" },
+        "family": { "type": "string", "pattern": "^[A-Z][a-z]+aceae$" },
+        "archetype": { "$ref": "#/$defs/archetypeKey" },
+        "common_names": { "$ref": "#/$defs/commonNames" },
+        "synonyms": { "type": "array", "items": { "$ref": "#/$defs/genusName" }, "uniqueItems": true },
+        "note": { "$ref": "#/$defs/translated" },
+        "species": { "type": "array", "items": { "$ref": "#/$defs/species" } }
+      }
+    },
+    "species": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "$ref": "#/$defs/speciesName" },
+        "common_names": { "$ref": "#/$defs/commonNames" },
+        "synonyms": { "type": "array", "items": { "$ref": "#/$defs/speciesName" }, "uniqueItems": true },
+        "archetype": { "$ref": "#/$defs/archetypeKey" },
+        "note": { "$ref": "#/$defs/translated" }
+      }
+    },
+    "genusName": { "type": "string", "pattern": "^[A-Z][a-z]+$" },
+    "speciesName": {
+      "description": "Genus and species epithet; hybrids are written with ×, e.g. Mentha × piperita.",
+      "type": "string",
+      "pattern": "^[A-Z][a-z]+ (× )?[a-z][a-z-]+$"
+    },
+    "archetypeKey": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "commonNames": {
+      "description": "Common names per language code, most common first.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z]{2}(-[A-Z]{2})?$" },
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    "translated": {
+      "type": "object",
+      "required": ["en"],
+      "propertyNames": { "pattern": "^[a-z]{2}(-[A-Z]{2})?$" },
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 300 }
+    }
+  }
+}

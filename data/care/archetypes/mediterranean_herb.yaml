@@ -1,0 +1,49 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: mediterranean_herb
+name:
+  en: Mediterranean herbs and shrubs
+description:
+  en: 'Sun-loving, drought-tolerant herbs and shrubs: full sun, free-draining soil, water
+    only when mostly dry.'
+setting: either
+examples:
+- Salvia
+- Thymus
+- Lavandula
+- Origanum
+- Laurus
+- Olea
+watering:
+  interval_days:
+    spring: 7
+    summer: 5
+    autumn: 9
+    winter: 14
+  let_dry: mostly
+light:
+  dli_min: 15
+  dli_ideal: 22
+  dli_max: 40
+  outdoor_exposure:
+  - full_sun
+humidity: low
+temperature_c:
+  min: -10
+  ideal_min: 15
+  ideal_max: 28
+  max: 35
+fertilizing:
+  interval_days: 60
+  pause_months_north:
+  - 10
+  - 11
+  - 12
+  - 1
+  - 2
+  - 3
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

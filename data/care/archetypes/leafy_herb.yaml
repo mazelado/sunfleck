@@ -1,0 +1,45 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: leafy_herb
+name:
+  en: Leafy herb
+description:
+  en: 'Soft, fast-growing herbs: keep the soil lightly moist, plenty of light, and pick often.'
+setting: either
+examples:
+- Ocimum
+- Petroselinum
+- Coriandrum
+- Mentha
+watering:
+  interval_days:
+    spring: 4
+    summer: 2
+    autumn: 4
+    winter: 7
+  let_dry: top_quarter
+light:
+  dli_min: 12
+  dli_ideal: 17
+  dli_max: 30
+  outdoor_exposure:
+  - full_sun
+  - part_shade
+humidity: medium
+temperature_c:
+  min: 7
+  ideal_min: 16
+  ideal_max: 26
+  max: 32
+fertilizing:
+  interval_days: 21
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

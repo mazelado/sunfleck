@@ -1,0 +1,41 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: air_plant
+name:
+  en: Air plant
+description:
+  en: 'Tillandsias that need no soil: soak or mist, then let them dry within a few hours.'
+setting: indoor
+examples:
+- Tillandsia
+watering:
+  interval_days:
+    spring: 7
+    summer: 5
+    autumn: 7
+    winter: 10
+  let_dry: completely
+light:
+  dli_min: 5
+  dli_ideal: 10
+  dli_max: 20
+humidity: medium
+temperature_c:
+  min: 10
+  ideal_min: 15
+  ideal_max: 30
+  max: 35
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+notes:
+  en: Watering means soaking for 20–30 minutes, then drying upside down.
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

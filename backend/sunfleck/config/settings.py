@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "sunfleck.places",
     "sunfleck.plants",
     "sunfleck.care",
+    "sunfleck.taxonomy",
 ]
 
 MIDDLEWARE = [
@@ -176,6 +177,11 @@ STORAGES = {
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 MEDIA_ROOT = DATA_DIR / "media"
+
+# --- Care data -------------------------------------------------------------------------------
+# The care dataset (data/care in the repository; CC BY-SA 4.0). The Docker image sets this.
+
+CARE_DATA_DIR = Path(env_str("SUNFLECK_CARE_DATA_DIR", str(BASE_DIR.parent / "data" / "care")))
 
 # --- Frontend ---------------------------------------------------------------------------------
 # The built React app (frontend/dist). WhiteNoise serves its files from the site root, and

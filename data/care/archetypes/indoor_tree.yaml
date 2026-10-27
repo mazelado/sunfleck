@@ -1,0 +1,44 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: indoor_tree
+name:
+  en: Indoor tree
+description:
+  en: 'Tree-like houseplants: bright light (some direct sun is welcome), water when the top
+    third is dry, and avoid moving them often.'
+setting: indoor
+examples:
+- Ficus
+- Schefflera
+- Dracaena
+- Pachira
+- Strelitzia
+watering:
+  interval_days:
+    spring: 9
+    summer: 7
+    autumn: 10
+    winter: 14
+  let_dry: top_third
+light:
+  dli_min: 8
+  dli_ideal: 14
+  dli_max: 25
+humidity: medium
+temperature_c:
+  min: 12
+  ideal_min: 18
+  ideal_max: 27
+  max: 32
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

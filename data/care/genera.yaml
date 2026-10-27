@@ -1,0 +1,1862 @@
+# Genera and common species, each with a care profile, for the Sunfleck care dataset.
+# CC BY-SA 4.0: see LICENSE. Field reference: README.md.
+#
+# A species gets its genus's care profile unless it names its own (`archetype`).
+# `synonyms` are older names people still search by.
+genera:
+- genus: Monstera
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - monstera
+  species:
+  - name: Monstera deliciosa
+    common_names:
+      en:
+      - Swiss cheese plant
+      - split-leaf philodendron
+  - name: Monstera adansonii
+    common_names:
+      en:
+      - Swiss cheese vine
+      - monkey mask
+- genus: Philodendron
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - philodendron
+  species:
+  - name: Philodendron hederaceum
+    common_names:
+      en:
+      - heartleaf philodendron
+    synonyms:
+    - Philodendron scandens
+  - name: Philodendron erubescens
+    common_names:
+      en:
+      - blushing philodendron
+- genus: Thaumatophyllum
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - tree philodendron
+  species:
+  - name: Thaumatophyllum bipinnatifidum
+    common_names:
+      en:
+      - lacy tree philodendron
+      - split-leaf philodendron
+    synonyms:
+    - Philodendron bipinnatifidum
+    - Philodendron selloum
+- genus: Epipremnum
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - pothos
+  species:
+  - name: Epipremnum aureum
+    common_names:
+      en:
+      - golden pothos
+      - devil's ivy
+      - pothos
+    synonyms:
+    - Scindapsus aureus
+- genus: Scindapsus
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - scindapsus
+  species:
+  - name: Scindapsus pictus
+    common_names:
+      en:
+      - satin pothos
+      - silver pothos
+- genus: Rhaphidophora
+  family: Araceae
+  archetype: tropical_aroid
+  species:
+  - name: Rhaphidophora tetrasperma
+    common_names:
+      en:
+      - mini monstera
+- genus: Anthurium
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - anthurium
+    - flamingo flower
+  species:
+  - name: Anthurium andraeanum
+    common_names:
+      en:
+      - flamingo flower
+      - laceleaf
+- genus: Syngonium
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - arrowhead plant
+  species:
+  - name: Syngonium podophyllum
+    common_names:
+      en:
+      - arrowhead plant
+      - arrowhead vine
+- genus: Aglaonema
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - Chinese evergreen
+  species:
+  - name: Aglaonema commutatum
+    common_names:
+      en:
+      - Chinese evergreen
+- genus: Dieffenbachia
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - dumb cane
+  species:
+  - name: Dieffenbachia seguine
+    common_names:
+      en:
+      - dumb cane
+- genus: Spathiphyllum
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - peace lily
+  species:
+  - name: Spathiphyllum wallisii
+    common_names:
+      en:
+      - peace lily
+- genus: Homalomena
+  family: Araceae
+  archetype: tropical_aroid
+  common_names:
+    en:
+    - homalomena
+- genus: Calathea
+  family: Marantaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - calathea
+- genus: Goeppertia
+  family: Marantaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - calathea
+  species:
+  - name: Goeppertia orbifolia
+    common_names:
+      en:
+      - round-leaf calathea
+    synonyms:
+    - Calathea orbifolia
+  - name: Goeppertia makoyana
+    common_names:
+      en:
+      - peacock plant
+    synonyms:
+    - Calathea makoyana
+- genus: Maranta
+  family: Marantaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - prayer plant
+  species:
+  - name: Maranta leuconeura
+    common_names:
+      en:
+      - prayer plant
+- genus: Ctenanthe
+  family: Marantaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - never-never plant
+- genus: Stromanthe
+  family: Marantaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - stromanthe
+- genus: Alocasia
+  family: Araceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - elephant ear
+    - alocasia
+  species:
+  - name: Alocasia zebrina
+    common_names:
+      en:
+      - zebra alocasia
+- genus: Colocasia
+  family: Araceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - elephant ear
+    - taro
+  species:
+  - name: Colocasia esculenta
+    common_names:
+      en:
+      - taro
+      - elephant ear
+- genus: Caladium
+  family: Araceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - angel wings
+- genus: Fittonia
+  family: Acanthaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - nerve plant
+  species:
+  - name: Fittonia albivenis
+    common_names:
+      en:
+      - nerve plant
+      - mosaic plant
+- genus: Hypoestes
+  family: Acanthaceae
+  archetype: humid_tropical_foliage
+  common_names:
+    en:
+    - polka dot plant
+  species:
+  - name: Hypoestes phyllostachya
+    common_names:
+      en:
+      - polka dot plant
+- genus: Zamioculcas
+  family: Araceae
+  archetype: low_light_tough
+  common_names:
+    en:
+    - ZZ plant
+  species:
+  - name: Zamioculcas zamiifolia
+    common_names:
+      en:
+      - ZZ plant
+      - Zanzibar gem
+- genus: Sansevieria
+  family: Asparagaceae
+  archetype: low_light_tough
+  note:
+    en: 'Now included in Dracaena, but kept separate here: snake plants need much drier care than cane
+      dracaenas.'
+  common_names:
+    en:
+    - snake plant
+    - mother-in-law's tongue
+- genus: Aspidistra
+  family: Asparagaceae
+  archetype: low_light_tough
+  common_names:
+    en:
+    - cast-iron plant
+  species:
+  - name: Aspidistra elatior
+    common_names:
+      en:
+      - cast-iron plant
+- genus: Chlorophytum
+  family: Asparagaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - spider plant
+  species:
+  - name: Chlorophytum comosum
+    common_names:
+      en:
+      - spider plant
+      - airplane plant
+- genus: Tradescantia
+  family: Commelinaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - spiderwort
+    - inch plant
+  species:
+  - name: Tradescantia zebrina
+    common_names:
+      en:
+      - inch plant
+      - wandering dude
+  - name: Tradescantia fluminensis
+    common_names:
+      en:
+      - small-leaf spiderwort
+- genus: Pilea
+  family: Urticaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - pilea
+  species:
+  - name: Pilea peperomioides
+    common_names:
+      en:
+      - Chinese money plant
+      - pancake plant
+      - UFO plant
+- genus: Hedera
+  family: Araliaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - ivy
+  species:
+  - name: Hedera helix
+    common_names:
+      en:
+      - English ivy
+      - common ivy
+- genus: Plectranthus
+  family: Lamiaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - Swedish ivy
+- genus: Cissus
+  family: Vitaceae
+  archetype: easy_foliage
+  common_names:
+    en:
+    - grape ivy
+- genus: Hoya
+  family: Apocynaceae
+  archetype: semi_succulent_epiphyte
+  common_names:
+    en:
+    - wax plant
+    - hoya
+  species:
+  - name: Hoya carnosa
+    common_names:
+      en:
+      - wax plant
+      - porcelain flower
+  - name: Hoya kerrii
+    common_names:
+      en:
+      - sweetheart plant
+      - valentine hoya
+- genus: Peperomia
+  family: Piperaceae
+  archetype: semi_succulent_epiphyte
+  common_names:
+    en:
+    - radiator plant
+    - peperomia
+  species:
+  - name: Peperomia obtusifolia
+    common_names:
+      en:
+      - baby rubber plant
+  - name: Peperomia argyreia
+    common_names:
+      en:
+      - watermelon peperomia
+- genus: Dischidia
+  family: Apocynaceae
+  archetype: semi_succulent_epiphyte
+  common_names:
+    en:
+    - dischidia
+- genus: Ficus
+  family: Moraceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - fig
+  species:
+  - name: Ficus lyrata
+    common_names:
+      en:
+      - fiddle-leaf fig
+  - name: Ficus elastica
+    common_names:
+      en:
+      - rubber plant
+      - rubber tree
+  - name: Ficus benjamina
+    common_names:
+      en:
+      - weeping fig
+- genus: Schefflera
+  family: Araliaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - umbrella tree
+  species:
+  - name: Schefflera arboricola
+    common_names:
+      en:
+      - dwarf umbrella tree
+- genus: Dracaena
+  family: Asparagaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - dragon tree
+    - dracaena
+  species:
+  - name: Dracaena fragrans
+    common_names:
+      en:
+      - corn plant
+  - name: Dracaena trifasciata
+    common_names:
+      en:
+      - snake plant
+      - mother-in-law's tongue
+    synonyms:
+    - Sansevieria trifasciata
+    archetype: low_light_tough
+- genus: Pachira
+  family: Malvaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - money tree
+  species:
+  - name: Pachira aquatica
+    common_names:
+      en:
+      - money tree
+      - Guiana chestnut
+- genus: Strelitzia
+  family: Strelitziaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - bird of paradise
+  species:
+  - name: Strelitzia reginae
+    common_names:
+      en:
+      - bird of paradise
+      - crane flower
+  - name: Strelitzia nicolai
+    common_names:
+      en:
+      - white bird of paradise
+      - giant bird of paradise
+- genus: Cordyline
+  family: Asparagaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - ti plant
+    - cabbage tree
+- genus: Polyscias
+  family: Araliaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - aralia
+- genus: Fatsia
+  family: Araliaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - Japanese aralia
+  species:
+  - name: Fatsia japonica
+    common_names:
+      en:
+      - Japanese aralia
+      - fatsi
+- genus: Codiaeum
+  family: Euphorbiaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - croton
+  species:
+  - name: Codiaeum variegatum
+    common_names:
+      en:
+      - croton
+      - garden croton
+- genus: Araucaria
+  family: Araucariaceae
+  archetype: indoor_tree
+  species:
+  - name: Araucaria heterophylla
+    common_names:
+      en:
+      - Norfolk Island pine
+- genus: Coffea
+  family: Rubiaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - coffee plant
+  species:
+  - name: Coffea arabica
+    common_names:
+      en:
+      - coffee plant
+      - Arabian coffee
+- genus: Musa
+  family: Musaceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - banana
+- genus: Chamaedorea
+  family: Arecaceae
+  archetype: indoor_palm
+  common_names:
+    en:
+    - parlour palm
+  species:
+  - name: Chamaedorea elegans
+    common_names:
+      en:
+      - parlour palm
+      - parlor palm
+- genus: Howea
+  family: Arecaceae
+  archetype: indoor_palm
+  common_names:
+    en:
+    - kentia palm
+  species:
+  - name: Howea forsteriana
+    common_names:
+      en:
+      - kentia palm
+      - thatch palm
+- genus: Dypsis
+  family: Arecaceae
+  archetype: indoor_palm
+  common_names:
+    en:
+    - areca palm
+  species:
+  - name: Dypsis lutescens
+    common_names:
+      en:
+      - areca palm
+      - butterfly palm
+- genus: Rhapis
+  family: Arecaceae
+  archetype: indoor_palm
+  common_names:
+    en:
+    - lady palm
+- genus: Ravenea
+  family: Arecaceae
+  archetype: indoor_palm
+  common_names:
+    en:
+    - majesty palm
+- genus: Nephrolepis
+  family: Nephrolepidaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - sword fern
+  species:
+  - name: Nephrolepis exaltata
+    common_names:
+      en:
+      - Boston fern
+      - sword fern
+- genus: Adiantum
+  family: Pteridaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - maidenhair fern
+  species:
+  - name: Adiantum raddianum
+    common_names:
+      en:
+      - delta maidenhair fern
+- genus: Asplenium
+  family: Aspleniaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - spleenwort
+  species:
+  - name: Asplenium nidus
+    common_names:
+      en:
+      - bird's nest fern
+- genus: Platycerium
+  family: Polypodiaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - staghorn fern
+  species:
+  - name: Platycerium bifurcatum
+    common_names:
+      en:
+      - staghorn fern
+      - elkhorn fern
+- genus: Davallia
+  family: Davalliaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - rabbit's foot fern
+- genus: Pteris
+  family: Pteridaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - brake fern
+- genus: Phlebodium
+  family: Polypodiaceae
+  archetype: tropical_fern
+  common_names:
+    en:
+    - blue star fern
+- genus: Begonia
+  family: Begoniaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - begonia
+  species:
+  - name: Begonia maculata
+    common_names:
+      en:
+      - polka dot begonia
+  - name: Begonia rex
+    common_names:
+      en:
+      - painted-leaf begonia
+      - rex begonia
+- genus: Streptocarpus
+  family: Gesneriaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - Cape primrose
+    - African violet
+  synonyms:
+  - Saintpaulia
+  species:
+  - name: Streptocarpus ionanthus
+    common_names:
+      en:
+      - African violet
+    synonyms:
+    - Saintpaulia ionantha
+- genus: Episcia
+  family: Gesneriaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - flame violet
+- genus: Aeschynanthus
+  family: Gesneriaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - lipstick plant
+- genus: Sinningia
+  family: Gesneriaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - gloxinia
+- genus: Columnea
+  family: Gesneriaceae
+  archetype: begonia_gesneriad
+  common_names:
+    en:
+    - goldfish plant
+- genus: Echeveria
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - echeveria
+  species:
+  - name: Echeveria elegans
+    common_names:
+      en:
+      - Mexican snowball
+- genus: Crassula
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - crassula
+  species:
+  - name: Crassula ovata
+    common_names:
+      en:
+      - jade plant
+      - money plant
+- genus: Sedum
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - stonecrop
+  species:
+  - name: Sedum morganianum
+    common_names:
+      en:
+      - burro's tail
+      - donkey's tail
+- genus: Kalanchoe
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - kalanchoe
+  species:
+  - name: Kalanchoe blossfeldiana
+    common_names:
+      en:
+      - flaming Katy
+- genus: Aeonium
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - aeonium
+- genus: Sempervivum
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - houseleek
+    - hens and chicks
+- genus: Pachyphytum
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - moonstones
+- genus: Graptopetalum
+  family: Crassulaceae
+  archetype: succulent
+  common_names:
+    en:
+    - ghost plant
+- genus: Aloe
+  family: Asphodelaceae
+  archetype: succulent
+  common_names:
+    en:
+    - aloe
+  species:
+  - name: Aloe vera
+    common_names:
+      en:
+      - aloe vera
+      - medicinal aloe
+- genus: Haworthiopsis
+  family: Asphodelaceae
+  archetype: succulent
+  common_names:
+    en:
+    - zebra plant
+  species:
+  - name: Haworthiopsis attenuata
+    common_names:
+      en:
+      - zebra plant
+      - zebra haworthia
+    synonyms:
+    - Haworthia attenuata
+  - name: Haworthiopsis fasciata
+    common_names:
+      en:
+      - zebra haworthia
+    synonyms:
+    - Haworthia fasciata
+- genus: Haworthia
+  family: Asphodelaceae
+  archetype: succulent
+  common_names:
+    en:
+    - haworthia
+- genus: Gasteria
+  family: Asphodelaceae
+  archetype: succulent
+  common_names:
+    en:
+    - ox tongue
+- genus: Agave
+  family: Asparagaceae
+  archetype: succulent
+  common_names:
+    en:
+    - agave
+    - century plant
+- genus: Yucca
+  family: Asparagaceae
+  archetype: succulent
+  common_names:
+    en:
+    - yucca
+- genus: Beaucarnea
+  family: Asparagaceae
+  archetype: succulent
+  common_names:
+    en:
+    - ponytail palm
+  species:
+  - name: Beaucarnea recurvata
+    common_names:
+      en:
+      - ponytail palm
+      - elephant's foot
+- genus: Curio
+  family: Asteraceae
+  archetype: succulent
+  species:
+  - name: Curio rowleyanus
+    common_names:
+      en:
+      - string of pearls
+    synonyms:
+    - Senecio rowleyanus
+- genus: Senecio
+  family: Asteraceae
+  archetype: succulent
+  common_names:
+    en:
+    - senecio
+- genus: Lithops
+  family: Aizoaceae
+  archetype: succulent
+  common_names:
+    en:
+    - living stones
+- genus: Euphorbia
+  family: Euphorbiaceae
+  archetype: succulent
+  common_names:
+    en:
+    - spurge
+  species:
+  - name: Euphorbia milii
+    common_names:
+      en:
+      - crown of thorns
+  - name: Euphorbia trigona
+    common_names:
+      en:
+      - African milk tree
+- genus: Portulacaria
+  family: Didiereaceae
+  archetype: succulent
+  common_names:
+    en:
+    - elephant bush
+  species:
+  - name: Portulacaria afra
+    common_names:
+      en:
+      - elephant bush
+      - dwarf jade
+- genus: Ceropegia
+  family: Apocynaceae
+  archetype: succulent
+  species:
+  - name: Ceropegia woodii
+    common_names:
+      en:
+      - string of hearts
+      - rosary vine
+- genus: Adenium
+  family: Apocynaceae
+  archetype: succulent
+  common_names:
+    en:
+    - desert rose
+  species:
+  - name: Adenium obesum
+    common_names:
+      en:
+      - desert rose
+- genus: Mammillaria
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - pincushion cactus
+- genus: Opuntia
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - prickly pear
+  species:
+  - name: Opuntia microdasys
+    common_names:
+      en:
+      - bunny ears cactus
+- genus: Echinopsis
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - sea urchin cactus
+- genus: Gymnocalycium
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - chin cactus
+- genus: Astrophytum
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - star cactus
+    - bishop's cap
+- genus: Ferocactus
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - barrel cactus
+- genus: Echinocactus
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - barrel cactus
+- genus: Parodia
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - ball cactus
+- genus: Cereus
+  family: Cactaceae
+  archetype: desert_cactus
+  common_names:
+    en:
+    - column cactus
+- genus: Schlumbergera
+  family: Cactaceae
+  archetype: forest_cactus
+  common_names:
+    en:
+    - Christmas cactus
+    - holiday cactus
+  species:
+  - name: Schlumbergera truncata
+    common_names:
+      en:
+      - Thanksgiving cactus
+      - crab cactus
+- genus: Epiphyllum
+  family: Cactaceae
+  archetype: forest_cactus
+  common_names:
+    en:
+    - orchid cactus
+- genus: Rhipsalis
+  family: Cactaceae
+  archetype: forest_cactus
+  common_names:
+    en:
+    - mistletoe cactus
+  species:
+  - name: Rhipsalis baccifera
+    common_names:
+      en:
+      - mistletoe cactus
+- genus: Selenicereus
+  family: Cactaceae
+  archetype: forest_cactus
+  common_names:
+    en:
+    - dragon fruit
+    - moonflower cactus
+- genus: Phalaenopsis
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - moth orchid
+- genus: Dendrobium
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - dendrobium
+- genus: Oncidium
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - dancing lady orchid
+- genus: Cattleya
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - cattleya
+- genus: Vanda
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - vanda
+- genus: Cymbidium
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - boat orchid
+- genus: Paphiopedilum
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - slipper orchid
+- genus: Ludisia
+  family: Orchidaceae
+  archetype: epiphytic_orchid
+  common_names:
+    en:
+    - jewel orchid
+- genus: Guzmania
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - guzmania
+- genus: Vriesea
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - flaming sword
+- genus: Aechmea
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - urn plant
+  species:
+  - name: Aechmea fasciata
+    common_names:
+      en:
+      - urn plant
+      - silver vase
+- genus: Neoregelia
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - neoregelia
+- genus: Billbergia
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - queen's tears
+- genus: Cryptanthus
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - earth star
+- genus: Ananas
+  family: Bromeliaceae
+  archetype: bromeliad
+  common_names:
+    en:
+    - pineapple
+  species:
+  - name: Ananas comosus
+    common_names:
+      en:
+      - pineapple
+- genus: Tillandsia
+  family: Bromeliaceae
+  archetype: air_plant
+  common_names:
+    en:
+    - air plant
+  species:
+  - name: Tillandsia ionantha
+    common_names:
+      en:
+      - sky plant
+  - name: Tillandsia usneoides
+    common_names:
+      en:
+      - Spanish moss
+- genus: Dionaea
+  family: Droseraceae
+  archetype: bog_carnivore
+  common_names:
+    en:
+    - Venus flytrap
+  species:
+  - name: Dionaea muscipula
+    common_names:
+      en:
+      - Venus flytrap
+- genus: Drosera
+  family: Droseraceae
+  archetype: bog_carnivore
+  common_names:
+    en:
+    - sundew
+  species:
+  - name: Drosera capensis
+    common_names:
+      en:
+      - Cape sundew
+- genus: Sarracenia
+  family: Sarraceniaceae
+  archetype: bog_carnivore
+  common_names:
+    en:
+    - pitcher plant
+    - trumpet pitcher
+  species:
+  - name: Sarracenia purpurea
+    common_names:
+      en:
+      - purple pitcher plant
+- genus: Nepenthes
+  family: Nepenthaceae
+  archetype: tropical_pitcher_plant
+  common_names:
+    en:
+    - tropical pitcher plant
+    - monkey cup
+- genus: Salvia
+  family: Lamiaceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - sage
+  synonyms:
+  - Rosmarinus
+  species:
+  - name: Salvia rosmarinus
+    common_names:
+      en:
+      - rosemary
+    synonyms:
+    - Rosmarinus officinalis
+  - name: Salvia officinalis
+    common_names:
+      en:
+      - common sage
+      - garden sage
+- genus: Thymus
+  family: Lamiaceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - thyme
+  species:
+  - name: Thymus vulgaris
+    common_names:
+      en:
+      - common thyme
+      - garden thyme
+- genus: Lavandula
+  family: Lamiaceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - lavender
+  species:
+  - name: Lavandula angustifolia
+    common_names:
+      en:
+      - English lavender
+- genus: Origanum
+  family: Lamiaceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - oregano
+    - marjoram
+  species:
+  - name: Origanum vulgare
+    common_names:
+      en:
+      - oregano
+- genus: Laurus
+  family: Lauraceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - bay
+  species:
+  - name: Laurus nobilis
+    common_names:
+      en:
+      - bay laurel
+      - sweet bay
+- genus: Olea
+  family: Oleaceae
+  archetype: mediterranean_herb
+  common_names:
+    en:
+    - olive
+  species:
+  - name: Olea europaea
+    common_names:
+      en:
+      - olive tree
+- genus: Ocimum
+  family: Lamiaceae
+  archetype: leafy_herb
+  common_names:
+    en:
+    - basil
+  species:
+  - name: Ocimum basilicum
+    common_names:
+      en:
+      - basil
+      - sweet basil
+- genus: Petroselinum
+  family: Apiaceae
+  archetype: leafy_herb
+  common_names:
+    en:
+    - parsley
+  species:
+  - name: Petroselinum crispum
+    common_names:
+      en:
+      - parsley
+- genus: Coriandrum
+  family: Apiaceae
+  archetype: leafy_herb
+  common_names:
+    en:
+    - coriander
+    - cilantro
+  species:
+  - name: Coriandrum sativum
+    common_names:
+      en:
+      - coriander
+      - cilantro
+- genus: Mentha
+  family: Lamiaceae
+  archetype: leafy_herb
+  common_names:
+    en:
+    - mint
+  species:
+  - name: Mentha spicata
+    common_names:
+      en:
+      - spearmint
+  - name: Mentha × piperita
+    common_names:
+      en:
+      - peppermint
+- genus: Anethum
+  family: Apiaceae
+  archetype: leafy_herb
+  common_names:
+    en:
+    - dill
+  species:
+  - name: Anethum graveolens
+    common_names:
+      en:
+      - dill
+- genus: Solanum
+  family: Solanaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - nightshade
+  species:
+  - name: Solanum lycopersicum
+    common_names:
+      en:
+      - tomato
+  - name: Solanum melongena
+    common_names:
+      en:
+      - aubergine
+      - eggplant
+  - name: Solanum tuberosum
+    common_names:
+      en:
+      - potato
+    archetype: root_vegetable
+- genus: Capsicum
+  family: Solanaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - pepper
+    - chili
+  species:
+  - name: Capsicum annuum
+    common_names:
+      en:
+      - sweet pepper
+      - bell pepper
+      - chili pepper
+- genus: Cucumis
+  family: Cucurbitaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - cucumber
+    - melon
+  species:
+  - name: Cucumis sativus
+    common_names:
+      en:
+      - cucumber
+  - name: Cucumis melo
+    common_names:
+      en:
+      - melon
+- genus: Cucurbita
+  family: Cucurbitaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - squash
+    - pumpkin
+  species:
+  - name: Cucurbita pepo
+    common_names:
+      en:
+      - courgette
+      - zucchini
+      - pumpkin
+- genus: Phaseolus
+  family: Fabaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - bean
+  species:
+  - name: Phaseolus vulgaris
+    common_names:
+      en:
+      - French bean
+      - green bean
+  - name: Phaseolus coccineus
+    common_names:
+      en:
+      - runner bean
+- genus: Pisum
+  family: Fabaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - pea
+  species:
+  - name: Pisum sativum
+    common_names:
+      en:
+      - pea
+      - garden pea
+- genus: Fragaria
+  family: Rosaceae
+  archetype: fruiting_vegetable
+  common_names:
+    en:
+    - strawberry
+  species:
+  - name: Fragaria × ananassa
+    common_names:
+      en:
+      - garden strawberry
+- genus: Lactuca
+  family: Asteraceae
+  archetype: leafy_vegetable
+  common_names:
+    en:
+    - lettuce
+  species:
+  - name: Lactuca sativa
+    common_names:
+      en:
+      - lettuce
+- genus: Spinacia
+  family: Amaranthaceae
+  archetype: leafy_vegetable
+  common_names:
+    en:
+    - spinach
+  species:
+  - name: Spinacia oleracea
+    common_names:
+      en:
+      - spinach
+- genus: Brassica
+  family: Brassicaceae
+  archetype: leafy_vegetable
+  common_names:
+    en:
+    - cabbage
+    - kale
+  species:
+  - name: Brassica oleracea
+    common_names:
+      en:
+      - cabbage
+      - kale
+      - broccoli
+- genus: Eruca
+  family: Brassicaceae
+  archetype: leafy_vegetable
+  common_names:
+    en:
+    - rocket
+    - arugula
+  species:
+  - name: Eruca vesicaria
+    common_names:
+      en:
+      - rocket
+      - arugula
+- genus: Daucus
+  family: Apiaceae
+  archetype: root_vegetable
+  common_names:
+    en:
+    - carrot
+  species:
+  - name: Daucus carota
+    common_names:
+      en:
+      - carrot
+- genus: Raphanus
+  family: Brassicaceae
+  archetype: root_vegetable
+  common_names:
+    en:
+    - radish
+  species:
+  - name: Raphanus sativus
+    common_names:
+      en:
+      - radish
+- genus: Beta
+  family: Amaranthaceae
+  archetype: root_vegetable
+  common_names:
+    en:
+    - beet
+    - chard
+  species:
+  - name: Beta vulgaris
+    common_names:
+      en:
+      - beetroot
+      - chard
+      - beet
+- genus: Citrus
+  family: Rutaceae
+  archetype: citrus
+  common_names:
+    en:
+    - citrus
+  synonyms:
+  - Fortunella
+  species:
+  - name: Citrus × limon
+    common_names:
+      en:
+      - lemon
+  - name: Citrus × sinensis
+    common_names:
+      en:
+      - sweet orange
+  - name: Citrus japonica
+    common_names:
+      en:
+      - kumquat
+    synonyms:
+    - Fortunella japonica
+- genus: Hydrangea
+  family: Hydrangeaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - hydrangea
+  species:
+  - name: Hydrangea macrophylla
+    common_names:
+      en:
+      - bigleaf hydrangea
+      - mophead hydrangea
+- genus: Rosa
+  family: Rosaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - rose
+- genus: Buxus
+  family: Buxaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - box
+    - boxwood
+  species:
+  - name: Buxus sempervirens
+    common_names:
+      en:
+      - common box
+      - boxwood
+- genus: Rhododendron
+  family: Ericaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - rhododendron
+    - azalea
+- genus: Camellia
+  family: Theaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - camellia
+- genus: Syringa
+  family: Oleaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - lilac
+- genus: Viburnum
+  family: Viburnaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - viburnum
+- genus: Ilex
+  family: Aquifoliaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - holly
+- genus: Vaccinium
+  family: Ericaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - blueberry
+  species:
+  - name: Vaccinium corymbosum
+    common_names:
+      en:
+      - highbush blueberry
+- genus: Rubus
+  family: Rosaceae
+  archetype: temperate_shrub
+  common_names:
+    en:
+    - raspberry
+    - blackberry
+  species:
+  - name: Rubus idaeus
+    common_names:
+      en:
+      - raspberry
+- genus: Echinacea
+  family: Asteraceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - coneflower
+  species:
+  - name: Echinacea purpurea
+    common_names:
+      en:
+      - purple coneflower
+- genus: Rudbeckia
+  family: Asteraceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - coneflower
+    - black-eyed Susan
+  species:
+  - name: Rudbeckia hirta
+    common_names:
+      en:
+      - black-eyed Susan
+- genus: Nepeta
+  family: Lamiaceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - catmint
+- genus: Achillea
+  family: Asteraceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - yarrow
+- genus: Geranium
+  family: Geraniaceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - cranesbill
+    - hardy geranium
+- genus: Hemerocallis
+  family: Asphodelaceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - daylily
+- genus: Iris
+  family: Iridaceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - iris
+- genus: Paeonia
+  family: Paeoniaceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - peony
+- genus: Leucanthemum
+  family: Asteraceae
+  archetype: sun_perennial
+  common_names:
+    en:
+    - daisy
+    - Shasta daisy
+- genus: Hosta
+  family: Asparagaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - hosta
+    - plantain lily
+- genus: Heuchera
+  family: Saxifragaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - coral bells
+- genus: Astilbe
+  family: Saxifragaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - astilbe
+    - false goat's beard
+- genus: Helleborus
+  family: Ranunculaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - hellebore
+- genus: Dryopteris
+  family: Dryopteridaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - wood fern
+- genus: Polystichum
+  family: Dryopteridaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - shield fern
+- genus: Brunnera
+  family: Boraginaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - Siberian bugloss
+- genus: Epimedium
+  family: Berberidaceae
+  archetype: shade_perennial
+  common_names:
+    en:
+    - barrenwort
+- genus: Petunia
+  family: Solanaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - petunia
+- genus: Tagetes
+  family: Asteraceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - marigold
+  species:
+  - name: Tagetes patula
+    common_names:
+      en:
+      - French marigold
+- genus: Impatiens
+  family: Balsaminaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - busy Lizzie
+    - impatiens
+  species:
+  - name: Impatiens walleriana
+    common_names:
+      en:
+      - busy Lizzie
+- genus: Pelargonium
+  family: Geraniaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - geranium
+    - pelargonium
+- genus: Lobelia
+  family: Campanulaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - lobelia
+- genus: Calibrachoa
+  family: Solanaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - million bells
+- genus: Tropaeolum
+  family: Tropaeolaceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - nasturtium
+  species:
+  - name: Tropaeolum majus
+    common_names:
+      en:
+      - nasturtium
+- genus: Zinnia
+  family: Asteraceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - zinnia
+- genus: Cosmos
+  family: Asteraceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - cosmos
+- genus: Helianthus
+  family: Asteraceae
+  archetype: bedding_annual
+  common_names:
+    en:
+    - sunflower
+  species:
+  - name: Helianthus annuus
+    common_names:
+      en:
+      - sunflower
+- genus: Tulipa
+  family: Liliaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - tulip
+- genus: Narcissus
+  family: Amaryllidaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - daffodil
+- genus: Hyacinthus
+  family: Asparagaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - hyacinth
+  species:
+  - name: Hyacinthus orientalis
+    common_names:
+      en:
+      - hyacinth
+- genus: Crocus
+  family: Iridaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - crocus
+- genus: Muscari
+  family: Asparagaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - grape hyacinth
+- genus: Allium
+  family: Amaryllidaceae
+  archetype: spring_bulb
+  common_names:
+    en:
+    - ornamental onion
+  species:
+  - name: Allium schoenoprasum
+    common_names:
+      en:
+      - chives
+    archetype: leafy_herb
+  - name: Allium cepa
+    common_names:
+      en:
+      - onion
+    archetype: root_vegetable
+  - name: Allium sativum
+    common_names:
+      en:
+      - garlic
+    archetype: root_vegetable

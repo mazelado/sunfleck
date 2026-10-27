@@ -1,0 +1,41 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: epiphytic_orchid
+name:
+  en: Epiphytic orchid
+description:
+  en: 'Orchids that grow on trees, potted in bark: water when the bark is nearly dry and never
+    leave the roots standing in water.'
+setting: indoor
+examples:
+- Phalaenopsis
+- Dendrobium
+- Oncidium
+- Cattleya
+watering:
+  interval_days:
+    spring: 7
+    summer: 6
+    autumn: 8
+    winter: 12
+  let_dry: mostly
+light:
+  dli_min: 4
+  dli_ideal: 7
+  dli_max: 12
+humidity: medium_high
+temperature_c:
+  min: 15
+  ideal_min: 18
+  ideal_max: 28
+  max: 32
+fertilizing:
+  interval_days: 14
+  pause_months_north:
+  - 12
+  - 1
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

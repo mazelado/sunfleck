@@ -1,0 +1,41 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: leafy_vegetable
+name:
+  en: Leafy vegetable
+description:
+  en: 'Cool-season salad and leaf crops: evenly moist soil and some shade in hot weather.'
+setting: outdoor
+examples:
+- Lactuca
+- Spinacia
+- Brassica
+- Eruca
+watering:
+  interval_days:
+    spring: 3
+    summer: 2
+    autumn: 3
+    winter: 5
+  let_dry: keep_moist
+light:
+  dli_min: 12
+  dli_ideal: 17
+  dli_max: 25
+  outdoor_exposure:
+  - full_sun
+  - part_shade
+humidity: medium
+temperature_c:
+  min: 2
+  ideal_min: 10
+  ideal_max: 21
+  max: 27
+fertilizing:
+  interval_days: 21
+  pause_months_north: []
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

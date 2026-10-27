@@ -231,14 +231,21 @@ the AGPL code (see [care-data-sources.md](care-data-sources.md)).
 ```
 data/care/
 ├── LICENSE                 # CC BY-SA 4.0
-├── README.md               # how to contribute, sources policy, attribution
-├── schema.json             # JSON Schema that every file is validated against in CI
-├── archetypes/
+├── README.md               # field reference, how to contribute, sources policy
+├── dataset.yaml            # the dataset's version (bumped with every change)
+├── schema/                 # JSON Schema that every file is validated against in CI
+│   ├── archetype.schema.json
+│   └── genera.schema.json
+├── archetypes/             # 28 care profiles, one per file
 │   ├── succulent.yaml
 │   ├── tropical_aroid.yaml
 │   └── ...
-└── genera.yaml             # genus → archetype mapping, with overrides and toxicity
+└── genera.yaml             # genera and common species → care profile, names, synonyms
 ```
+
+Names and descriptions are stored per language (`name: {en: ...}`), so translations live in
+the dataset too. Toxicity is left out for now: it will be added only with a citation per
+plant, because a wrong "non-toxic" could hurt a pet.
 
 Example archetype (values illustrative):
 

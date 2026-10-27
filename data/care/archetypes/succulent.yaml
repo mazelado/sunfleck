@@ -1,0 +1,48 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: succulent
+name:
+  en: Succulent
+description:
+  en: 'Water-storing plants from dry places: lots of light, gritty soil, and water only when
+    the soil has dried out completely.'
+setting: either
+examples:
+- Echeveria
+- Crassula
+- Aloe
+- Haworthiopsis
+- Sedum
+watering:
+  interval_days:
+    spring: 14
+    summer: 10
+    autumn: 18
+    winter: 28
+  let_dry: completely
+light:
+  dli_min: 10
+  dli_ideal: 18
+  dli_max: 35
+  outdoor_exposure:
+  - full_sun
+  - part_shade
+humidity: low
+temperature_c:
+  min: 5
+  ideal_min: 15
+  ideal_max: 27
+  max: 35
+fertilizing:
+  interval_days: 60
+  pause_months_north:
+  - 10
+  - 11
+  - 12
+  - 1
+  - 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

@@ -1,0 +1,53 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: shade_perennial
+name:
+  en: Shade perennial
+description:
+  en: 'Perennials for shady gardens: moist, rich soil and protection from midday sun.'
+setting: outdoor
+examples:
+- Hosta
+- Heuchera
+- Astilbe
+- Helleborus
+- Dryopteris
+watering:
+  interval_days:
+    spring: 5
+    summer: 3
+    autumn: 7
+    winter: null
+  let_dry: top_quarter
+light:
+  dli_min: 5
+  dli_ideal: 10
+  dli_max: 20
+  outdoor_exposure:
+  - part_shade
+  - shade
+humidity: medium_high
+temperature_c:
+  min: -25
+  ideal_min: 10
+  ideal_max: 24
+  max: 30
+fertilizing:
+  interval_days: 60
+  pause_months_north:
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 1
+  - 2
+dormancy_months_north:
+- 12
+- 1
+- 2
+status: draft
+sources:
+- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
+  add a citable source when you refine them.'

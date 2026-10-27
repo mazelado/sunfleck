@@ -15,6 +15,8 @@ dependencies = [
     "whitenoise>=6.12",
     "pillow>=13.0",
     "pillow-heif>=1.8",
+    "pyyaml>=6.0.3",
+    "jsonschema>=4.26",
 ]
 
 [project.optional-dependencies]
@@ -32,6 +34,8 @@ dev = [
     "pytest-django>=4.14",
     "time-machine>=3.6",
     "ruff>=0.17",
+    "types-pyyaml>=6.0.12.20260906",
+    "types-jsonschema>=4.26.0.20261006",
 ]
 
 [tool.uv]
