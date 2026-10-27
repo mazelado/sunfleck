@@ -2648,7 +2648,7 @@
         ]
       },
       "post": {
-        "description": "Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,\nsuch as GPS position, is removed. A plant's first photo becomes its cover photo.",
+        "description": "Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,\nsuch as GPS position, is removed. A plant's first photo becomes its cover photo.\n\n`taken_at` is used only if the photo itself doesn't say when it was taken. Without a time\nzone, it's taken to be local time at the plant's site.",
         "operationId": "sunfleck_plants_api_add_photo",
         "parameters": [
           {
@@ -2675,6 +2675,18 @@
                     "format": "binary",
                     "title": "File",
                     "type": "string"
+                  },
+                  "taken_at": {
+                    "anyOf": [
+                      {
+                        "format": "date-time",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Taken At"
                   }
                 },
                 "required": [

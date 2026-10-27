@@ -311,3 +311,50 @@ def test_failed_photo_save_leaves_no_files_behind(monkeypatch: pytest.MonkeyPatc
 
     assert len(saved) == 2
     assert not any(default_storage.exists(name) for name in saved)
+
+
+@pytest.mark.django_db
+def test_date_sent_by_the_browser_is_used_when_the_photo_has_none() -> None:
+    site = SiteFactory.create(timezone="Europe/Amsterdam")
+    plant = PlantFactory.create(
+        household=site.household, location=LocationFactory.create(site=site)
+    )
+    data = image_bytes()
+
+    photo = services.add_photo(
+        plant,
+        io.BytesIO(data),
+        len(data),
+        taken_at=datetime(2026, 5, 1, 12),  # noqa: DTZ001
+    )
+
+    assert photo.taken_at == datetime(2026, 5, 1, 10, tzinfo=UTC)
+
+
+@pytest.mark.django_db
+def test_photos_own_date_wins_over_the_one_sent() -> None:
+    data = image_bytes(exif_details={ExifTags.Base.DateTimeOriginal: "2025:01:01 08:00:00"})
+
+    photo = services.add_photo(
+        PlantFactory.create(),
+        io.BytesIO(data),
+        len(data),
+        taken_at=datetime(2026, 5, 1, tzinfo=UTC),
+    )
+
+    assert photo.taken_at.year == 2025
+
+
+@pytest.mark.django_db
+@time_machine.travel(datetime(2026, 6, 1, 9, tzinfo=UTC), tick=False)
+def test_implausible_date_sent_is_ignored() -> None:
+    data = image_bytes()
+
+    photo = services.add_photo(
+        PlantFactory.create(),
+        io.BytesIO(data),
+        len(data),
+        taken_at=datetime(2030, 1, 1, tzinfo=UTC),
+    )
+
+    assert photo.taken_at == datetime(2026, 6, 1, 9, tzinfo=UTC)

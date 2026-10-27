@@ -384,6 +384,9 @@ export interface paths {
          * Add Photo
          * @description Upload a photo (JPEG, PNG, WebP, or HEIC, up to 20 MB). It's resized and its metadata,
          *     such as GPS position, is removed. A plant's first photo becomes its cover photo.
+         *
+         *     `taken_at` is used only if the photo itself doesn't say when it was taken. Without a time
+         *     zone, it's taken to be local time at the plant's site.
          */
         post: operations["sunfleck_plants_api_add_photo"];
         delete?: never;
@@ -1709,6 +1712,8 @@ export interface operations {
                      * Format: binary
                      */
                     file: string;
+                    /** Taken At */
+                    taken_at?: string | null;
                 };
             };
         };

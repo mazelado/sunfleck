@@ -154,8 +154,23 @@ def _local_time(plant: Plant, taken_at: datetime) -> datetime:
     return taken_at.replace(tzinfo=ZoneInfo(zone))
 
 
-def add_photo(plant: Plant, file: IO[bytes], size: int, caption: str = "") -> Photo:
+def _taken_at(plant: Plant, taken_at: datetime | None) -> datetime:
+    if taken_at is None or not images.is_plausible_date(taken_at):
+        return timezone.now()
+    return _local_time(plant, taken_at)
+
+
+def add_photo(
+    plant: Plant,
+    file: IO[bytes],
+    size: int,
+    caption: str = "",
+    taken_at: datetime | None = None,
+) -> Photo:
     """Resize and store a photo of `plant`. Its first photo becomes its cover photo.
+
+    `taken_at` is used when the file itself doesn't say when it was taken: browsers lose that
+    when they shrink a photo before uploading it, so they send it separately.
 
     Raises:
         PlantsError: If the file is too large or isn't a usable image.
@@ -174,7 +189,7 @@ def add_photo(plant: Plant, file: IO[bytes], size: int, caption: str = "") -> Ph
         plant=plant,
         width=processed.width,
         height=processed.height,
-        taken_at=_local_time(plant, processed.taken_at) if processed.taken_at else timezone.now(),
+        taken_at=_taken_at(plant, processed.taken_at or taken_at),
         caption=caption.strip(),
     )
     name = uuid.uuid4().hex

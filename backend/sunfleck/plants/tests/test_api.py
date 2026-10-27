@@ -1,6 +1,7 @@
 import io
 import json
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -22,9 +23,9 @@ def send(client: Client, method: str, url: str, data: dict[str, Any] | None = No
     return client.generic(method, url, json.dumps(data or {}), content_type="application/json")
 
 
-def upload(client: Client, plant_id: int, data: bytes | None = None, caption: str = "") -> Any:
+def upload(client: Client, plant_id: int, data: bytes | None = None, **fields: str) -> Any:
     file = SimpleUploadedFile("leaf.jpg", data or image_bytes(), content_type="image/jpeg")
-    return client.post(f"/api/v1/plants/{plant_id}/photos", {"file": file, "caption": caption})
+    return client.post(f"/api/v1/plants/{plant_id}/photos", {"file": file, **fields})
 
 
 @pytest.fixture
@@ -214,6 +215,14 @@ def test_gardener_uploads_a_photo_and_views_it(client_as: ClientAs, plant: Plant
     assert detail["cover_photo"]["id"] == photo["id"]
     listed = client.get("/api/v1/plants").json()["items"][0]
     assert listed["cover_thumbnail_url"] == photo["thumbnail_url"]
+
+
+@pytest.mark.django_db
+def test_upload_accepts_the_date_taken(client_as: ClientAs, plant: Plant) -> None:
+    response = upload(client_as(Role.GARDENER), plant.pk, taken_at="2026-05-01T12:00:00+02:00")
+
+    taken_at = datetime.fromisoformat(response.json()["taken_at"])
+    assert taken_at == datetime(2026, 5, 1, 10, tzinfo=UTC)
 
 
 @pytest.mark.django_db

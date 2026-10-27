@@ -144,17 +144,22 @@ export function LightSourceForm({
             {...form.getInputProps("name")}
           />
           {isWindow ? (
-            <Select
-              label={t("places.direction")}
-              description={t("places.directionHelp")}
-              required
-              allowDeselect={false}
-              data={DIRECTIONS.map((direction) => ({
-                value: direction,
-                label: capitalize(t(`directions.${direction}`)),
-              }))}
-              {...form.getInputProps("direction")}
-            />
+            <>
+              <Select
+                label={t("places.direction")}
+                description={t("places.directionHelp")}
+                required
+                allowDeselect={false}
+                data={DIRECTIONS.map((direction) => ({
+                  value: direction,
+                  label: capitalize(t(`directions.${direction}`)),
+                }))}
+                {...form.getInputProps("direction")}
+              />
+              <Text size="xs" c="dimmed">
+                {t("places.windowPlantsNote")}
+              </Text>
+            </>
           ) : (
             <>
               <Select

@@ -59,3 +59,7 @@ class ResizeObserverStub {
 }
 window.ResizeObserver = ResizeObserverStub;
 Element.prototype.scrollIntoView = () => undefined;
+// Textareas that grow with their text listen for web fonts loading.
+Object.defineProperty(document, "fonts", {
+  value: { addEventListener: () => undefined, removeEventListener: () => undefined },
+});

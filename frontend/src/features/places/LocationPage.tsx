@@ -9,6 +9,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
+import { LocationPlants } from "../plants/LocationPlants";
 import { LocationKindBadge } from "./LocationKindBadge";
 import { describeConditions, describeLight } from "./describe";
 import { LightSourceForm } from "./LightSourceForm";
@@ -156,6 +157,8 @@ export function LocationPage() {
           </Stack>
         </Paper>
       )}
+
+      <LocationPlants locationId={location.id} />
 
       {dialog && (
         <LightSourceForm

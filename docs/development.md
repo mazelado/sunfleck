@@ -76,8 +76,8 @@ and shown on the page. Other useful pages:
 - <http://localhost:5173/admin/>: the Django admin. Create an account for it first with
   `make superuser`
 
-Stop both servers with **Ctrl+C**. Your local database lives in `backend/data/db.sqlite3`. To
-start fresh, stop the servers and delete that folder.
+Stop both servers with **Ctrl+C**. Your local database lives in `backend/data/db.sqlite3`, and
+plant photos in `backend/data/media/`. To start fresh, stop the servers and delete that folder.
 
 ## 4. Everyday commands
 
@@ -192,7 +192,8 @@ docker compose up -d --build
 
 `--build` rebuilds the image from your current code; drop it to reuse the last build. Data is
 kept in a Docker volume named `docker_sunfleck-data` (the `docker_` prefix comes from the
-folder name), so it survives restarts and rebuilds. Useful commands:
+folder name), so it survives restarts and rebuilds. It holds both the database and the plant
+photos (`/data/media`), so back up the whole volume. Useful commands:
 
 | Command | Does |
 |---|---|
