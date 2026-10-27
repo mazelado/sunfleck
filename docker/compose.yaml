@@ -1,15 +1,26 @@
-# Example Docker Compose setup for running Sunfleck.
-#   1. Copy this file and env.example (renamed to .env) into a folder.
-#   2. Fill in the values in .env.
-#   3. Run: docker compose up -d
+# Docker Compose setup for running Sunfleck from this repository.
+#   1. In this folder, copy env.example to .env and fill in the values.
+#   2. Run: docker compose up -d --build
 # Sunfleck is then available at http://localhost:8000. For access from other devices, put it
 # behind a reverse proxy with HTTPS (Caddy, Traefik, Nginx Proxy Manager, ...).
+#
+# Until the first release, there's no published image: Compose builds it from the source code.
 services:
   sunfleck:
-    image: ghcr.io/mazelado/sunfleck:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: sunfleck:local
+    pull_policy: build
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - ./data:/data
+      # A named volume, managed by Docker, holds the database and uploaded photos.
+      # To use a folder instead (e.g. ./data), create it first and give it to user ID 1000,
+      # which the app runs as:  mkdir data && sudo chown 1000 data
+      - sunfleck-data:/data
     env_file: .env
+
+volumes:
+  sunfleck-data:
