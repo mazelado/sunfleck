@@ -4,6 +4,66 @@
  */
 
 export interface paths {
+    "/api/v1/care-events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Care Event */
+        put: operations["sunfleck_care_api_update_care_event"];
+        post?: never;
+        /** Delete Care Event */
+        delete: operations["sunfleck_care_api_delete_care_event"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/care-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Care Types
+         * @description The built-in care types, then the household's own. A short, fixed-size list.
+         */
+        get: operations["sunfleck_care_api_list_care_types"];
+        put?: never;
+        /** Create Care Type */
+        post: operations["sunfleck_care_api_create_care_type"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/care-types/{care_type_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Care Type */
+        put: operations["sunfleck_care_api_update_care_type"];
+        post?: never;
+        /**
+         * Delete Care Type
+         * @description Delete a household's own care type. Types that have been used can't be deleted.
+         */
+        delete: operations["sunfleck_care_api_delete_care_type"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -347,6 +407,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plants/{plant_id}/care-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Log Care
+         * @description Log care given to a plant: by default just now, by the signed-in person.
+         */
+        post: operations["sunfleck_care_api_log_care"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plants/{plant_id}/cover": {
         parameters: {
             query?: never;
@@ -389,6 +469,26 @@ export interface paths {
          *     zone, it's taken to be local time at the plant's site.
          */
         post: operations["sunfleck_plants_api_add_photo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Plant Timeline
+         * @description The plant's care and photos, newest first, a page at a time.
+         */
+        get: operations["sunfleck_care_api_plant_timeline"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -494,6 +594,76 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** CareEventIn */
+        CareEventIn: {
+            /** Care Type Id */
+            care_type_id: number;
+            /** @description Watering only: how the soil was beforehand. */
+            feedback?: components["schemas"]["Feedback"] | null;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Performed At
+             * @description Leave out for now.
+             */
+            performed_at?: string | null;
+            /**
+             * Skipped
+             * @description Checked, but decided not to (e.g. the soil was still wet).
+             * @default false
+             */
+            skipped: boolean;
+        };
+        /** CareEventOut */
+        CareEventOut: {
+            care_type: components["schemas"]["CareTypeOut"];
+            feedback: components["schemas"]["Feedback"] | null;
+            /** Id */
+            id: number;
+            /** Notes */
+            notes: string;
+            /**
+             * Performed At
+             * Format: date-time
+             */
+            performed_at: string;
+            performed_by: components["schemas"]["PersonOut"] | null;
+            /** Plant Id */
+            plant_id: number;
+            /** Skipped */
+            skipped: boolean;
+        };
+        /** CareTypeIn */
+        CareTypeIn: {
+            /**
+             * Icon
+             * @default sparkles
+             */
+            icon: string;
+            /** Name */
+            name: string;
+        };
+        /** CareTypeOut */
+        CareTypeOut: {
+            /** Affects Prediction */
+            affects_prediction: boolean;
+            /** Icon */
+            icon: string;
+            /** Id */
+            id: number;
+            /** Is Builtin */
+            is_builtin: boolean;
+            /**
+             * Key
+             * @description Built-in types only, e.g. `water`; used to translate.
+             */
+            key: string | null;
+            /** Name */
+            name: string;
+        };
         /**
          * ContainerMaterial
          * @description What the plant grows in. Porous pots (terracotta, fabric) dry out faster.
@@ -515,6 +685,12 @@ export interface components {
          * @enum {string}
          */
         Exposure: "full_sun" | "part_shade" | "shade";
+        /**
+         * Feedback
+         * @description How the soil was when watering, which tunes future watering predictions.
+         * @enum {string}
+         */
+        Feedback: "too_dry" | "just_right" | "still_wet";
         /** HealthOut */
         HealthOut: {
             /** Database */
@@ -746,6 +922,13 @@ export interface components {
              */
             offset: number;
         };
+        /** PersonOut */
+        PersonOut: {
+            /** Display Name */
+            display_name: string;
+            /** Id */
+            id: number;
+        };
         /** PhotoIn */
         PhotoIn: {
             /**
@@ -874,6 +1057,8 @@ export interface components {
             created_at: string;
             /** Id */
             id: number;
+            /** Last Watered At */
+            last_watered_at: string | null;
             /** Light Sources */
             light_sources: components["schemas"]["PlantLightOut"][];
             location: components["schemas"]["PlantLocationOut"] | null;
@@ -905,6 +1090,8 @@ export interface components {
             cover_thumbnail_url: string | null;
             /** Id */
             id: number;
+            /** Last Watered At */
+            last_watered_at: string | null;
             location: components["schemas"]["PlantLocationOut"] | null;
             /** Nickname */
             nickname: string;
@@ -963,6 +1150,41 @@ export interface components {
          * @enum {string}
          */
         SoilType: "potting_mix" | "aroid_mix" | "cactus_mix" | "orchid_bark" | "sphagnum" | "semi_hydro" | "water" | "garden_soil" | "other";
+        /** TimelineItemOut */
+        TimelineItemOut: {
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            care_event: components["schemas"]["CareEventOut"] | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "care" | "photo";
+            photo: components["schemas"]["PhotoOut"] | null;
+        };
+        /** TimelinePage */
+        TimelinePage: {
+            /** Items */
+            items: components["schemas"]["TimelineItemOut"][];
+            /**
+             * Next Cursor
+             * @description Pass as `before` to get the next page.
+             */
+            next_cursor: string | null;
+        };
+        /** TimelineQuery */
+        TimelineQuery: {
+            /** Before */
+            before?: string | null;
+            /**
+             * Limit
+             * @default 30
+             */
+            limit: number;
+        };
         /**
          * UnitSystem
          * @enum {string}
@@ -977,6 +1199,142 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    sunfleck_care_api_update_care_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareEventIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareEventOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_delete_care_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_care_api_list_care_types: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareTypeOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_create_care_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareTypeIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareTypeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_update_care_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                care_type_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareTypeIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareTypeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_delete_care_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                care_type_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     sunfleck_core_api_health: {
         parameters: {
             query?: never;
@@ -1639,6 +1997,32 @@ export interface operations {
             };
         };
     };
+    sunfleck_care_api_log_care: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareEventIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareEventOut"];
+                };
+            };
+        };
+    };
     sunfleck_plants_api_set_cover_photo: {
         parameters: {
             query?: never;
@@ -1725,6 +2109,31 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PhotoOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_plant_timeline: {
+        parameters: {
+            query?: {
+                before?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimelinePage"];
                 };
             };
         };

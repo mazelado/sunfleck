@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "sunfleck.accounts",
     "sunfleck.places",
     "sunfleck.plants",
+    "sunfleck.care",
 ]
 
 MIDDLEWARE = [

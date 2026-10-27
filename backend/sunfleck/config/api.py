@@ -4,6 +4,7 @@ from ninja import NinjaAPI
 
 from sunfleck import __version__
 from sunfleck.accounts.api import router as accounts_router
+from sunfleck.care.api import router as care_router
 from sunfleck.core.api import router as core_router
 from sunfleck.core.errors import register_error_handlers
 from sunfleck.places.api import router as places_router
@@ -15,3 +16,4 @@ api.add_router("/", core_router)
 api.add_router("/", accounts_router)
 api.add_router("/", places_router)
 api.add_router("/", plants_router)
+api.add_router("/", care_router)
