@@ -202,6 +202,10 @@ export interface paths {
         /**
          * Setup Status
          * @description Report whether Sunfleck still needs its first account.
+         *
+         *     The app calls this before anything else, so it also sets the CSRF cookie that every later
+         *     change must send back. (The page itself can't always do that: during development, Vite
+         *     serves it instead of Django.)
          */
         get: operations["sunfleck_accounts_api_setup_status"];
         put?: never;

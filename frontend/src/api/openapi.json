@@ -936,7 +936,7 @@
     },
     "/api/v1/setup": {
       "get": {
-        "description": "Report whether Sunfleck still needs its first account.",
+        "description": "Report whether Sunfleck still needs its first account.\n\nThe app calls this before anything else, so it also sets the CSRF cookie that every later\nchange must send back. (The page itself can't always do that: during development, Vite\nserves it instead of Django.)",
         "operationId": "sunfleck_accounts_api_setup_status",
         "parameters": [],
         "responses": {
