@@ -1,0 +1,11 @@
+{
+  "app": {
+    "name": "Sunfleck",
+    "tagline": "Plant care for your home and garden"
+  },
+  "health": {
+    "checking": "Connecting to the server…",
+    "ok": "Connected · version {{version}}",
+    "error": "Can't reach the server"
+  }
+}

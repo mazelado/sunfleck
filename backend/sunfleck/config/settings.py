@@ -23,7 +23,8 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("The SECRET_KEY environment variable must be set.")
     SECRET_KEY = "django-insecure-development-only"  # noqa: S105 - only used with DEBUG on
 
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", ["localhost", "127.0.0.1"])
+# localhost is always allowed so that health checks from inside the container keep working.
+ALLOWED_HOSTS = [*env_list("ALLOWED_HOSTS"), "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
 INSTALLED_APPS = [
@@ -33,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "ninja",
     "sunfleck.core",
     "sunfleck.accounts",
 ]
@@ -113,12 +115,23 @@ USE_TZ = True
 # --- Static files -----------------------------------------------------------------------------
 
 STATIC_URL = "static/"
-STATIC_ROOT: Path | None = DATA_DIR / "static"
+STATIC_ROOT: Path | None = Path(env_str("SUNFLECK_STATIC_ROOT", str(DATA_DIR / "static")))
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 MEDIA_ROOT = DATA_DIR / "media"
+
+# --- Frontend ---------------------------------------------------------------------------------
+# The built React app (frontend/dist). WhiteNoise serves its files from the site root, and
+# every other non-API URL returns its index.html (see sunfleck.core.views.frontend_index).
+
+FRONTEND_DIR = Path(env_str("SUNFLECK_FRONTEND_DIR", str(BASE_DIR.parent / "frontend" / "dist")))
+if FRONTEND_DIR.is_dir():
+    WHITENOISE_ROOT = FRONTEND_DIR
+# Files with a content hash in their name can be cached by browsers forever: Vite's assets
+# ("/assets/index-Bx3k2_aZ.js") and Django's collected static files ("base.1a2b3c4d5e6f.css").
+WHITENOISE_IMMUTABLE_FILE_TEST = r"^/assets/.+-[\w-]{8,}\.\w+$|\.[0-9a-f]{12}\.\w+$"
 
 # --- Logging ----------------------------------------------------------------------------------
 
