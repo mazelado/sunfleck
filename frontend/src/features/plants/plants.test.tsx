@@ -1,12 +1,23 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { LightSource, Location, Site } from "../../api/places";
 import type { Photo, Plant, PlantSummary } from "../../api/plants";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
+
+// Uploads are checked in api/plants.test.ts: jsdom's FormData doesn't survive Node's fetch.
+const { uploadPhoto } = vi.hoisted(() => ({ uploadPhoto: vi.fn() }));
+vi.mock("../../api/plants", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../api/plants")>()),
+  uploadPhoto,
+}));
+
+afterEach(() => {
+  uploadPhoto.mockReset();
+});
 
 const gardener: Me = { ...ada, role: "gardener" };
 const viewer: Me = { ...ada, role: "viewer" };
@@ -201,14 +212,8 @@ describe("plant form", () => {
   it("uploads the photo chosen with a new plant", async () => {
     signInAs(gardener);
     withSites([home]);
-    let uploaded: File | null = null;
-    server.use(
-      http.post("*/api/v1/plants", () => HttpResponse.json(plant(), { status: 201 })),
-      http.post("*/api/v1/plants/7/photos", async ({ request }) => {
-        uploaded = (await request.formData()).get("file") as File;
-        return HttpResponse.json(photo, { status: 201 });
-      }),
-    );
+    uploadPhoto.mockResolvedValue(photo);
+    server.use(http.post("*/api/v1/plants", () => HttpResponse.json(plant(), { status: 201 })));
     withPlant(plant());
     const { user } = renderApp("/plants/new");
 
@@ -216,14 +221,17 @@ describe("plant form", () => {
     // Mantine's file picker is a button; the real file input is hidden next to it.
     const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]');
     if (!fileInput) throw new Error("No file input");
-    await user.upload(
-      fileInput,
-      new File(["not really a jpeg"], "monty.jpg", { type: "image/jpeg" }),
-    );
+    const chosen = new File(["not really a jpeg"], "monty.jpg", { type: "image/jpeg" });
+    await user.upload(fileInput, chosen);
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
-    expect(await (uploaded as File | null)?.text()).toBe("not really a jpeg");
+    // The test environment can't decode images, so the photo is sent as chosen.
+    expect(uploadPhoto).toHaveBeenCalledWith(7, {
+      file: chosen,
+      filename: "monty.jpg",
+      takenAt: null,
+    });
   });
 
   it("shows server errors next to the field", async () => {
