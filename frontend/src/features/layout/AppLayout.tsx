@@ -1,5 +1,6 @@
 import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "@mantine/core";
 import {
+  IconDroplet,
   IconHome,
   IconLogout,
   IconMapPin,
@@ -60,6 +61,13 @@ export function AppLayout() {
                 leftSection={<IconUser size={16} />}
               >
                 {t("nav.profile")}
+              </Menu.Item>
+              <Menu.Item
+                component={Link}
+                to="/settings/care-types"
+                leftSection={<IconDroplet size={16} />}
+              >
+                {t("nav.careTypes")}
               </Menu.Item>
               <Menu.Item
                 component={Link}

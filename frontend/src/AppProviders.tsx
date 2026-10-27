@@ -21,7 +21,9 @@ export function AppProviders({ children, queryClient: providedClient }: AppProvi
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="auto">
-        <Notifications position="top-center" />
+        {/* At the bottom, like phone "snackbars": within thumb reach for "Undo", and clear of
+            dialog titles. */}
+        <Notifications position="bottom-center" limit={3} />
         {children}
       </MantineProvider>
     </QueryClientProvider>

@@ -16,12 +16,15 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
-import { type Plant, usePhotos, usePlant } from "../../api/plants";
+import { type Photo, type Plant, usePhotos, usePlant } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
+import { relativeDay } from "../../lib/relativeTime";
 import { cmToDisplay, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
+import { PlantTimeline } from "../care/PlantTimeline";
+import { QuickCare } from "../care/QuickCare";
 import { describeLight } from "../places/describe";
 import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
@@ -31,11 +34,13 @@ import { PlantImage } from "./PlantImage";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 
 export function PlantPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const plantId = Number(useParams().plantId);
   const plant = usePlant(plantId);
   const canEdit = useCanEdit();
   const units = useUnits();
+  // Photos open from the gallery or from the history.
+  const [openPhoto, setOpenPhoto] = useState<Photo | null>(null);
 
   if (plant.isPending) {
     return <FullPageLoader />;
@@ -65,6 +70,11 @@ export function PlantPage() {
             </Title>
             <PlantStatusBadge status={data.status} />
           </Group>
+          <Text size="sm" c="dimmed">
+            {data.last_watered_at
+              ? t("care.lastWatered", { when: relativeDay(data.last_watered_at, i18n.language) })
+              : t("care.neverWatered")}
+          </Text>
           {location ? (
             <Group gap="xs">
               <Anchor
@@ -95,9 +105,24 @@ export function PlantPage() {
         )}
       </Group>
 
+      {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
+
       <PlantDetails plant={data} units={units} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
-      <PlantPhotos plant={data} canEdit={canEdit} />
+      <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
+      <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />
+      {openPhoto && (
+        <PhotoViewer
+          key={openPhoto.id}
+          photo={openPhoto}
+          plantName={data.nickname}
+          isCover={data.cover_photo?.id === openPhoto.id}
+          canEdit={canEdit}
+          onClose={() => {
+            setOpenPhoto(null);
+          }}
+        />
+      )}
     </Stack>
   );
 }
@@ -196,12 +221,16 @@ function PlantLight({ plant, units }: { plant: Plant; units: UnitSystem }) {
   );
 }
 
-function PlantPhotos({ plant, canEdit }: { plant: Plant; canEdit: boolean }) {
+interface PlantPhotosProps {
+  plant: Plant;
+  canEdit: boolean;
+  onOpen: (photo: Photo) => void;
+}
+
+function PlantPhotos({ plant, canEdit, onOpen }: PlantPhotosProps) {
   const { t, i18n } = useTranslation();
   const photos = usePhotos(plant.id);
-  const [openId, setOpenId] = useState<number | null>(null);
   const items = photos.data?.pages.flatMap((page) => page.items) ?? [];
-  const open = items.find((photo) => photo.id === openId);
 
   return (
     <Paper withBorder radius="lg" p="lg">
@@ -227,7 +256,7 @@ function PlantPhotos({ plant, canEdit }: { plant: Plant; canEdit: boolean }) {
                 t("plants.photoTakenOn", { date: formatDateTime(photo.taken_at, i18n.language) })
               }
               onClick={() => {
-                setOpenId(photo.id);
+                onOpen(photo);
               }}
             >
               <Image src={photo.thumbnail_url} alt="" radius="md" h={100} fit="cover" />
@@ -247,18 +276,6 @@ function PlantPhotos({ plant, canEdit }: { plant: Plant; canEdit: boolean }) {
           </Center>
         )}
       </Stack>
-      {open && (
-        <PhotoViewer
-          key={open.id}
-          photo={open}
-          plantName={plant.nickname}
-          isCover={plant.cover_photo?.id === open.id}
-          canEdit={canEdit}
-          onClose={() => {
-            setOpenId(null);
-          }}
-        />
-      )}
     </Paper>
   );
 }
