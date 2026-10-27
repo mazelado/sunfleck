@@ -17,7 +17,7 @@ jobs:
     name: Build and smoke-test the image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Validate the Compose file
         working-directory: docker
         run: cp env.example .env && docker compose config --quiet
