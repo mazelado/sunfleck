@@ -159,6 +159,19 @@ uv sync --extra postgres
 DEBUG=true DATABASE_URL=postgres://user:password@localhost:5432/sunfleck uv run python manage.py migrate
 ```
 
+### The care dataset
+
+Care profiles and plant names live in `data/care/` (see its README). They're loaded into the
+database by `make migrate` and `make dev` whenever the dataset's version changes. After editing
+the dataset, bump the version in `data/care/dataset.yaml`, or reload it by hand:
+
+```bash
+cd backend
+DEBUG=true uv run python manage.py load_care_data --force
+```
+
+`make test` checks the dataset and lists every problem with its file.
+
 ### The map
 
 The site form shows a map from **OpenStreetMap**. While it's open, the browser downloads map

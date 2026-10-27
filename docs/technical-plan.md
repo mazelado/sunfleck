@@ -205,9 +205,9 @@ erDiagram
 | **Site** | household, name, latitude, longitude, time zone | A physical place; weather and frost data attach here. (No elevation field: Open-Meteo derives it from the coordinates.) |
 | **Location** | site, name, kind (`indoor` / `outdoor`), typical temperature range (°C), humidity level, outdoor exposure (full sun / part shade / shade) | Indoor fields and outdoor fields are each optional depending on kind; fields that don't fit the kind are cleared |
 | **LightSource** | location, kind (`window` / `grow_light`), name; windows: direction (N, NE, …); grow lights: PPFD (µmol/m²/s), on time, off time; enabled | Indoor locations only. A room can have several windows. Grow lights report their **DLI**. The app suggests typical PPFD values for people who don't know theirs |
-| **CareArchetype** | key (e.g. `tropical_aroid`), name, seasonal watering intervals, DLI range, humidity, temperature range, fertilizing cadence, dormancy months, dataset version | Loaded from our CC BY-SA dataset (section 5); read-only in the app |
-| **Taxon** | scientific name, rank (genus/species), genus, family, accepted name (for synonyms), common names (per language), archetype, source, external IDs (WCVP, GBIF, Wikidata) | Reference data; shared by all households |
-| **Plant** | household, location (optional), nickname, taxon (optional), archetype override, status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant. Deleting its location keeps the plant. Taxon and archetype override arrive with the care data (M5) |
+| **CareArchetype** | key (e.g. `tropical_aroid`), name (per language), profile (the whole YAML profile: seasonal watering intervals, how dry to let the soil get, DLI range, humidity, temperature range, fertilizing, dormancy, status, sources) | Loaded from our CC BY-SA dataset (section 5); read-only in the app. Shown to people as a "care profile" |
+| **Taxon** | scientific name, rank (genus/species), genus, family, common names (per language), older names (synonyms), note, care profile, search text | Reference data from the dataset; shared by all households. A plant whose species the dataset later drops keeps it |
+| **Plant** | household, location (optional), nickname, species (taxon, optional), chosen care profile (optional), status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant. Deleting its location keeps the plant. Its care profile is the chosen one, else its species' |
 | **PlantLight** | plant, light source, distance from the window (cm) | Which of its location's windows and grow lights reach a plant. Plants in one room get different light, but share the room's fixtures: change a grow light's timer once and every plant under it follows |
 | **Photo** | plant, image, thumbnail, width, height, taken at, caption | Stored as WebP (at most 2048 px, thumbnail 512 px). EXIF stripped; the date taken is read first. HEIC (iPhone) supported. Served through the API with a permission check |
 | **CareType** | household (empty for built-ins), key (built-ins only), name, icon, affects-prediction flag | Built-ins: water, fertilize, repot, prune, mist, rotate, clean leaves, check for pests; the app translates their names by key. Households can add their own, and rename or delete them until they've been used |
@@ -270,15 +270,20 @@ sources:
 ```
 
 YAML is easy for non-programmers to edit and review. CI validates every file against the
-schema. A management command (`load_care_data`) loads the dataset into the database on
-startup when the dataset version changes.
+schema. The dataset is loaded into the database after every `migrate` (so on every start of
+the Docker image) when its version differs from the one loaded last; `manage.py
+load_care_data` does it by hand.
 
 ### Taxonomy and search
-- **Bundled:** a compact index of genera plus a few thousand common species (scientific names,
-  synonyms, and common names in several languages). It's built from WCVP (CC BY) and Wikidata
-  (CC0) by a script in `scripts/`, so it stays small enough for a Raspberry Pi.
-- **Online (optional):** search falls back to the free GBIF species API for anything not in the
-  bundled index, and caches the result locally.
+- **Bundled (today):** the genera and common species in `genera.yaml`, written by hand with
+  their common and older names. Search matches scientific, older and common names in any
+  language, best matches first.
+- **Bundled (later):** a larger index of genera and a few thousand common species, with common
+  names in many languages, built from WCVP (CC BY) and Wikidata (CC0) by a script in
+  `scripts/`, still small enough for a Raspberry Pi.
+- **Online (optional, later):** search falls back to the free GBIF species API for anything
+  not in the bundled index, and caches the result locally. This sends the search words to
+  GBIF, so it'll be an opt-in plugin (M8).
 - A species maps to an archetype through its genus (via `genera.yaml`), unless a species-level
   override exists. A plant with no species, or an unknown genus, picks an archetype directly
   ("Looks like a succulent").

@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from sunfleck.accounts.models import Household
 from sunfleck.places.models import LightSource, Location
+from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 
 class PlantStatus(models.TextChoices):
@@ -52,6 +53,23 @@ class Plant(models.Model):
         Location, on_delete=models.SET_NULL, null=True, blank=True, related_name="plants"
     )
     nickname = models.CharField(_("name"), max_length=100)
+    taxon = models.ForeignKey(
+        Taxon,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="plants",
+        verbose_name=_("species"),
+    )
+    # The care profile chosen for this plant; without one, its species' profile applies.
+    care_profile = models.ForeignKey(
+        CareArchetype,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="plants",
+        verbose_name=_("care profile"),
+    )
     status = models.CharField(
         _("status"), max_length=16, choices=PlantStatus.choices, default=PlantStatus.ACTIVE
     )
@@ -83,6 +101,11 @@ class Plant(models.Model):
 
     def __str__(self) -> str:
         return self.nickname
+
+    @property
+    def effective_care_profile(self) -> CareArchetype | None:
+        """The chosen care profile, else the species' profile."""
+        return self.care_profile or (self.taxon.archetype if self.taxon else None)
 
 
 class PlantLight(models.Model):

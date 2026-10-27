@@ -1,4 +1,3 @@
-import shutil
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -10,14 +9,6 @@ from django.conf import settings
 from sunfleck.taxonomy.dataset import DatasetError, load_dataset
 
 Edit = Callable[[Path], None]
-
-
-@pytest.fixture
-def dataset_copy(tmp_path: Path) -> Path:
-    """A copy of the real dataset that a test can break."""
-    copy = tmp_path / "care"
-    shutil.copytree(settings.CARE_DATA_DIR, copy)
-    return copy
 
 
 def _edit_yaml(file: Path, change: Callable[[Any], None]) -> None:
