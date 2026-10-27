@@ -3,10 +3,11 @@ import { setupServer } from "msw/node";
 
 import type { Me, Member } from "../api/accounts";
 
-/** A fake backend for tests. By default: setup is done and nobody is signed in. */
+/** A fake backend for tests. By default: setup is done, nobody is signed in, no places. */
 export const server = setupServer(
   http.get("*/api/v1/setup", () => HttpResponse.json({ needs_setup: false })),
   http.get("*/api/v1/me", () => notSignedIn()),
+  http.get("*/api/v1/sites", () => HttpResponse.json([])),
 );
 
 export function notSignedIn() {

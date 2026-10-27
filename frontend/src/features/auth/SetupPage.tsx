@@ -7,10 +7,11 @@ import { useSetup } from "../../api/accounts";
 import { AuthCard } from "../../components/AuthCard";
 import { PasswordField } from "../../components/PasswordField";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { applyFieldErrors } from "./serverErrors";
+import { useApplyFieldErrors } from "./serverErrors";
 
 export function SetupPage() {
   const { t } = useTranslation();
+  const applyFieldErrors = useApplyFieldErrors();
   const navigate = useNavigate();
   const setup = useSetup();
   const form = useForm({

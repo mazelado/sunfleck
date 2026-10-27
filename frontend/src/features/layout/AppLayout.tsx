@@ -1,5 +1,5 @@
 import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "@mantine/core";
-import { IconHome, IconLogout, IconUser, IconUsers } from "@tabler/icons-react";
+import { IconHome, IconLogout, IconMapPin, IconUser, IconUsers } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigate } from "react-router";
 
@@ -40,6 +40,10 @@ export function AppLayout() {
               <Menu.Item component={Link} to="/" leftSection={<IconHome size={16} />}>
                 {t("nav.home")}
               </Menu.Item>
+              <Menu.Item component={Link} to="/places" leftSection={<IconMapPin size={16} />}>
+                {t("nav.places")}
+              </Menu.Item>
+              <Menu.Divider />
               <Menu.Item
                 component={Link}
                 to="/settings/profile"

@@ -8,10 +8,11 @@ import { AuthCard } from "../../components/AuthCard";
 import { PasswordField } from "../../components/PasswordField";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
-import { applyFieldErrors } from "./serverErrors";
+import { useApplyFieldErrors } from "./serverErrors";
 
 export function AcceptInvitationPage() {
   const { t } = useTranslation();
+  const applyFieldErrors = useApplyFieldErrors();
   const navigate = useNavigate();
   const { token = "" } = useParams();
   const preview = useInvitationPreview(token);
