@@ -198,9 +198,9 @@ erDiagram
 | **User** | email, display name, locale, unit system (metric/imperial) | Custom user model from day one (a Django best practice; very hard to change later) |
 | **Household** | name | Owns all plant data |
 | **Membership** | user, household, role (`admin` / `gardener` / `viewer`) | Unique per user + household |
-| **Site** | household, name, latitude, longitude, time zone, elevation (optional) | A physical place; weather and frost data attach here |
-| **Location** | site, name, kind (`indoor` / `outdoor`), window direction (N, NE, …), distance from window, typical temperature range, humidity level, outdoor exposure (full sun / part shade / shade) | Indoor fields and outdoor fields are each optional depending on kind |
-| **LightSource** | location, kind (`window` / `grow_light`), PPFD (µmol/m²/s), on time, off time, enabled | Used to estimate **DLI** for the location |
+| **Site** | household, name, latitude, longitude, time zone | A physical place; weather and frost data attach here. (No elevation field: Open-Meteo derives it from the coordinates.) |
+| **Location** | site, name, kind (`indoor` / `outdoor`), typical temperature range (°C), humidity level, outdoor exposure (full sun / part shade / shade) | Indoor fields and outdoor fields are each optional depending on kind; fields that don't fit the kind are cleared |
+| **LightSource** | location, kind (`window` / `grow_light`), name; windows: direction (N, NE, …), distance from plants (cm); grow lights: PPFD (µmol/m²/s), on time, off time; enabled | Indoor locations only. A room can have several windows. Grow lights report their **DLI** |
 | **CareArchetype** | key (e.g. `tropical_aroid`), name, seasonal watering intervals, DLI range, humidity, temperature range, fertilizing cadence, dormancy months, dataset version | Loaded from our CC BY-SA dataset (section 5); read-only in the app |
 | **Taxon** | scientific name, rank (genus/species), genus, family, accepted name (for synonyms), common names (per language), archetype, source, external IDs (WCVP, GBIF, Wikidata) | Reference data; shared by all households |
 | **Plant** | household, location, nickname, taxon (optional), archetype override, status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant |

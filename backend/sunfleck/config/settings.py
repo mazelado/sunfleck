@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "ninja",
     "sunfleck.core",
     "sunfleck.accounts",
+    "sunfleck.places",
 ]
 
 MIDDLEWARE = [

@@ -20,6 +20,29 @@
         "title": "AcceptInvitationIn",
         "type": "object"
       },
+      "Direction": {
+        "enum": [
+          "N",
+          "NE",
+          "E",
+          "SE",
+          "S",
+          "SW",
+          "W",
+          "NW"
+        ],
+        "title": "Direction",
+        "type": "string"
+      },
+      "Exposure": {
+        "enum": [
+          "full_sun",
+          "part_shade",
+          "shade"
+        ],
+        "title": "Exposure",
+        "type": "string"
+      },
       "HealthOut": {
         "properties": {
           "database": {
@@ -75,6 +98,15 @@
         ],
         "title": "HouseholdUpdate",
         "type": "object"
+      },
+      "Humidity": {
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "title": "Humidity",
+        "type": "string"
       },
       "InvitationCreatedOut": {
         "properties": {
@@ -233,6 +265,211 @@
         "title": "InvitationPreviewOut",
         "type": "object"
       },
+      "LightSourceIn": {
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Direction"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "distance_cm": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Cm"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LightSourceKind"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Name",
+            "type": "string"
+          },
+          "off_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Time"
+          },
+          "on_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Time"
+          },
+          "ppfd": {
+            "anyOf": [
+              {
+                "maximum": 2500,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppfd"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "LightSourceIn",
+        "type": "object"
+      },
+      "LightSourceKind": {
+        "enum": [
+          "window",
+          "grow_light"
+        ],
+        "title": "LightSourceKind",
+        "type": "string"
+      },
+      "LightSourceOut": {
+        "properties": {
+          "direction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Direction"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "distance_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Cm"
+          },
+          "dli": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Grow lights: daily light integral, mol/m²/day.",
+            "title": "Dli"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "hours_per_day": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Grow lights: hours on per day.",
+            "title": "Hours Per Day"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LightSourceKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "off_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off Time"
+          },
+          "on_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Time"
+          },
+          "ppfd": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppfd"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "direction",
+          "distance_cm",
+          "ppfd",
+          "on_time",
+          "off_time",
+          "enabled",
+          "hours_per_day",
+          "dli"
+        ],
+        "title": "LightSourceOut",
+        "type": "object"
+      },
       "LinkOut": {
         "properties": {
           "url": {
@@ -244,6 +481,160 @@
           "url"
         ],
         "title": "LinkOut",
+        "type": "object"
+      },
+      "LocationIn": {
+        "properties": {
+          "exposure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Exposure"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "humidity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Humidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LocationKind"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "temperature_max_c": {
+            "anyOf": [
+              {
+                "maximum": 60,
+                "minimum": -50,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature Max C"
+          },
+          "temperature_min_c": {
+            "anyOf": [
+              {
+                "maximum": 60,
+                "minimum": -50,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature Min C"
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "LocationIn",
+        "type": "object"
+      },
+      "LocationKind": {
+        "enum": [
+          "indoor",
+          "outdoor"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "LocationOut": {
+        "properties": {
+          "exposure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Exposure"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "humidity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Humidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LocationKind"
+          },
+          "light_sources": {
+            "items": {
+              "$ref": "#/components/schemas/LightSourceOut"
+            },
+            "title": "Light Sources",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "site_id": {
+            "title": "Site Id",
+            "type": "integer"
+          },
+          "temperature_max_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature Max C"
+          },
+          "temperature_min_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature Min C"
+          }
+        },
+        "required": [
+          "id",
+          "site_id",
+          "name",
+          "kind",
+          "temperature_min_c",
+          "temperature_max_c",
+          "humidity",
+          "exposure",
+          "light_sources"
+        ],
+        "title": "LocationOut",
         "type": "object"
       },
       "MeOut": {
@@ -435,6 +826,78 @@
           "needs_setup"
         ],
         "title": "SetupStatusOut",
+        "type": "object"
+      },
+      "SiteIn": {
+        "properties": {
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "timezone": {
+            "maxLength": 64,
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "latitude",
+          "longitude",
+          "timezone"
+        ],
+        "title": "SiteIn",
+        "type": "object"
+      },
+      "SiteOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "latitude": {
+            "title": "Latitude",
+            "type": "number"
+          },
+          "locations": {
+            "items": {
+              "$ref": "#/components/schemas/LocationOut"
+            },
+            "title": "Locations",
+            "type": "array"
+          },
+          "longitude": {
+            "title": "Longitude",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "latitude",
+          "longitude",
+          "timezone",
+          "locations"
+        ],
+        "title": "SiteOut",
         "type": "object"
       },
       "UnitSystem": {
@@ -872,6 +1335,238 @@
         ]
       }
     },
+    "/api/v1/light-sources/{light_id}": {
+      "delete": {
+        "operationId": "sunfleck_places_api_delete_light_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "light_id",
+            "required": true,
+            "schema": {
+              "title": "Light Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Light Source",
+        "tags": [
+          "places"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_places_api_update_light_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "light_id",
+            "required": true,
+            "schema": {
+              "title": "Light Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LightSourceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LightSourceOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Light Source",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/locations/{location_id}": {
+      "delete": {
+        "operationId": "sunfleck_places_api_delete_location",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "location_id",
+            "required": true,
+            "schema": {
+              "title": "Location Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Location",
+        "tags": [
+          "places"
+        ]
+      },
+      "get": {
+        "operationId": "sunfleck_places_api_get_location",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "location_id",
+            "required": true,
+            "schema": {
+              "title": "Location Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Location",
+        "tags": [
+          "places"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_places_api_update_location",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "location_id",
+            "required": true,
+            "schema": {
+              "title": "Location Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Location",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/locations/{location_id}/light-sources": {
+      "post": {
+        "operationId": "sunfleck_places_api_create_light_source",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "location_id",
+            "required": true,
+            "schema": {
+              "title": "Location Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LightSourceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LightSourceOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Light Source",
+        "tags": [
+          "places"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "sunfleck_accounts_api_get_me",
@@ -985,6 +1680,231 @@
         "summary": "Setup",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/api/v1/sites": {
+      "get": {
+        "description": "All of the household's sites, with their locations and light sources.",
+        "operationId": "sunfleck_places_api_list_sites",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SiteOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Sites",
+        "tags": [
+          "places"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_places_api_create_site",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Site",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/sites/{site_id}": {
+      "delete": {
+        "description": "Delete a site, with all its locations and light sources.",
+        "operationId": "sunfleck_places_api_delete_site",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "title": "Site Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Site",
+        "tags": [
+          "places"
+        ]
+      },
+      "get": {
+        "operationId": "sunfleck_places_api_get_site",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "title": "Site Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Site",
+        "tags": [
+          "places"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_places_api_update_site",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "title": "Site Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Site",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/sites/{site_id}/locations": {
+      "post": {
+        "operationId": "sunfleck_places_api_create_location",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "title": "Site Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Location",
+        "tags": [
+          "places"
         ]
       }
     }
