@@ -1,7 +1,9 @@
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import "./i18n";
 
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
 
@@ -13,12 +15,13 @@ interface AppProvidersProps {
   queryClient?: QueryClient;
 }
 
-/** Everything the app needs around it: theme, server-state cache, translations. */
+/** Everything the app needs around it: theme, notifications, server-state cache, translations. */
 export function AppProviders({ children, queryClient: providedClient }: AppProvidersProps) {
   const [queryClient] = useState(() => providedClient ?? new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="auto">
+        <Notifications position="top-center" />
         {children}
       </MantineProvider>
     </QueryClientProvider>

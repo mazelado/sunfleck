@@ -68,8 +68,10 @@ This starts two servers side by side:
   a file.
 - **Django** on port 8000 serves the API. Vite forwards `/api`, `/admin`, and `/static` to it.
 
-Open <http://localhost:5173>. You should see the Sunfleck page with a green
-"Connected · version …" badge. Other useful pages:
+Open <http://localhost:5173>. The first time, Sunfleck shows its **setup page**: create your
+account there (you become the household's Admin). To try other roles, invite yourself at a
+second address from **Household**; the invitation link is printed in the `make dev` terminal
+and shown on the page. Other useful pages:
 - <http://localhost:5173/api/v1/docs>: interactive API documentation
 - <http://localhost:5173/admin/>: the Django admin. Create an account for it first with
   `make superuser`
@@ -137,7 +139,8 @@ docker/                   # Dockerfile, entry point, and Compose example
 ```
 
 Backend tests live in a `tests/` folder in each Django app. Frontend tests sit next to the
-code they test, as `*.test.tsx`.
+code they test, as `*.test.tsx`. They run the real screens against a fake API (MSW,
+`src/test/server.ts`); any request a test didn't set up a fake response for fails the test.
 
 ## 7. Configuration
 

@@ -3,9 +3,133 @@
     "name": "Sunfleck",
     "tagline": "Plant care for your home and garden"
   },
-  "health": {
-    "checking": "Connecting to the server…",
-    "ok": "Connected · version {{version}}",
-    "error": "Can't reach the server"
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "saved": "Saved",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Your name",
+    "backToSignIn": "Back to sign in",
+    "togglePasswordVisibility": "Show or hide the password"
+  },
+  "roles": {
+    "admin": "Admin",
+    "gardener": "Gardener",
+    "viewer": "Viewer",
+    "adminDescription": "Everything, plus managing the household and its members",
+    "gardenerDescription": "Add and edit plants, log care",
+    "viewerDescription": "See everything, change nothing"
+  },
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "household": "Household",
+    "signOut": "Sign out",
+    "openMenu": "Open the account menu"
+  },
+  "setup": {
+    "title": "Welcome to Sunfleck",
+    "intro": "Let's create your account. You'll be the Admin of your household and can invite others later.",
+    "householdName": "Household name",
+    "householdNamePlaceholder": "e.g. The Fern House",
+    "submit": "Create account"
+  },
+  "signIn": {
+    "title": "Sign in",
+    "submit": "Sign in",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "No account? Ask your household's Admin for an invitation."
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "intro": "Enter your email address and we'll send you a link to choose a new password.",
+    "submit": "Send link",
+    "sent": "If an account exists for {{email}}, a link is on its way. No email arriving? Your household's Admin can create a reset link for you."
+  },
+  "resetPassword": {
+    "title": "Choose a new password",
+    "newPassword": "New password",
+    "confirmPassword": "Repeat the new password",
+    "submit": "Save password",
+    "done": "Your password has been changed."
+  },
+  "invite": {
+    "title": "Join {{household}}",
+    "intro": "{{inviter}} invited you to Sunfleck as a {{role}}. Create your account to get started.",
+    "introNoInviter": "You've been invited to Sunfleck as a {{role}}. Create your account to get started.",
+    "submit": "Create account",
+    "invalid": "This invitation link is invalid, already used, or expired. Ask your household's Admin for a new one."
+  },
+  "home": {
+    "welcome": "Welcome, {{name}}!",
+    "comingSoon": "Your plants will live here. Adding plants, locations, and care schedules is coming in the next milestones."
+  },
+  "profile": {
+    "title": "Profile",
+    "language": "Language",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "passwordChanged": "Your password has been changed.",
+    "metricHint": "Centimeters, °C, liters",
+    "imperialHint": "Inches, °F, gallons"
+  },
+  "household": {
+    "title": "Household",
+    "name": "Household name",
+    "members": "Members",
+    "you": "you",
+    "role": "Role",
+    "actions": "Actions for {{name}}",
+    "resetLink": "Create password reset link",
+    "resetLinkTitle": "Password reset link for {{name}}",
+    "resetLinkHelp": "Send this link to {{name}}. It works once, and stops working when they change their password.",
+    "remove": "Remove from household",
+    "removeTitle": "Remove {{name}}?",
+    "removeConfirm": "Their account will be deleted. Their plants and care history stay in the household.",
+    "removed": "{{name}} was removed.",
+    "invitations": "Invitations",
+    "inviteSomeone": "Invite someone",
+    "inviteEmail": "Their email address",
+    "sendInvitation": "Create invitation",
+    "invitationCreated": "Invitation created",
+    "invitationEmailed": "We emailed the link to {{email}}. You can also send it yourself:",
+    "invitationNotEmailed": "No email server is set up, so send this link to {{email}} yourself:",
+    "invitationExpires": "Expires {{date}}",
+    "noInvitations": "No pending invitations.",
+    "revoke": "Revoke invitation for {{email}}"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "home": "Go to the home page"
+  },
+  "validation": {
+    "required": "Required",
+    "email": "Enter a valid email address",
+    "passwordsDiffer": "The passwords don't match"
+  },
+  "errors": {
+    "setup_already_completed": "Sunfleck has already been set up. Sign in instead.",
+    "weak_password": "Please choose a stronger password.",
+    "email_in_use": "Someone already has an account with this email address.",
+    "invitation_invalid": "This invitation link is invalid, already used, or expired.",
+    "last_admin": "A household needs at least one Admin.",
+    "permission_denied": "Your role doesn't allow this.",
+    "csrf_failed": "Your session expired. Reload the page and try again.",
+    "email_password_mismatch": "The email address or password is incorrect.",
+    "invalid_password_reset": "This password reset link is invalid or has already been used.",
+    "incorrect_password": "Your current password is incorrect.",
+    "too_many_requests": "Too many attempts. Please wait a few minutes and try again.",
+    "too_many_login_attempts": "Too many failed sign-in attempts. Please wait a few minutes and try again.",
+    "rate_limited": "Too many attempts. Please wait a few minutes and try again.",
+    "unexpected": "Something went wrong. Please try again.",
+    "enter_current_password": "Your current password is incorrect."
   }
 }
