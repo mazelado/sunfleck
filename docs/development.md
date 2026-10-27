@@ -166,6 +166,11 @@ images from `tile.openstreetmap.org` (that's the only outside service Sunfleck c
 The map is optional: coordinates can always be typed in. It's loaded only when a site form
 opens, so the rest of the app stays small.
 
+OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/)
+requires each request to say which site it comes from (the `Referer` header). Sunfleck sends
+just its address (e.g. `https://plants.example.com/`), never the page path. If the map shows
+"Access blocked", that header is missing.
+
 ## 8. Docker
 
 `make docker` builds the production image as `sunfleck:dev`: one container that serves both the

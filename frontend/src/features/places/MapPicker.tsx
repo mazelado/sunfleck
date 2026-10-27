@@ -29,6 +29,10 @@ export default function MapPicker({ latitude, longitude, onPick, label }: MapPic
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        // OpenStreetMap blocks tile requests that don't say which site they come from. The
+        // server tells browsers to send no referrer to other sites ("same-origin"); for the
+        // tiles, send just this site's address (not the page path).
+        referrerPolicy="strict-origin-when-cross-origin"
       />
       {position && (
         <CircleMarker
