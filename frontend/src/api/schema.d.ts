@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v1/care-events/bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Log Care For Plants
+         * @description Log the same care for several plants at once, e.g. watering a whole room; all or none.
+         */
+        post: operations["sunfleck_care_api_log_care_for_plants"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-events/{event_id}": {
         parameters: {
             query?: never;
@@ -75,6 +95,26 @@ export interface paths {
         post?: never;
         /** Delete Schedule */
         delete: operations["sunfleck_care_api_delete_schedule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/care-schedules/{schedule_id}/snooze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Snooze Schedule
+         * @description Put off due care until a day (up to two months ahead), or stop putting it off.
+         */
+        put: operations["sunfleck_care_api_snooze_schedule"];
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -741,6 +781,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Today
+         * @description The household's overdue care and care due in the next few days, soonest first.
+         */
+        get: operations["sunfleck_care_api_today"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -751,6 +811,31 @@ export interface components {
             display_name: string;
             /** Password */
             password: string;
+        };
+        /** BulkCareIn */
+        BulkCareIn: {
+            /** Care Type Id */
+            care_type_id: number;
+            /** @description Care types that count as watering only: how the soil was beforehand. */
+            feedback?: components["schemas"]["Feedback"] | null;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Performed At
+             * @description Leave out for now.
+             */
+            performed_at?: string | null;
+            /** Plant Ids */
+            plant_ids: number[];
+            /**
+             * Skipped
+             * @description Checked, but decided not to (e.g. the soil was still wet).
+             * @default false
+             */
+            skipped: boolean;
         };
         /** CareEventIn */
         CareEventIn: {
@@ -1452,6 +1537,11 @@ export interface components {
         /** ScheduleOut */
         ScheduleOut: {
             care_type: components["schemas"]["CareTypeOut"];
+            /**
+             * Due On
+             * @description When it's due, after any snooze; none if paused.
+             */
+            due_on: string | null;
             /** Enabled */
             enabled: boolean;
             /**
@@ -1474,6 +1564,8 @@ export interface components {
             origin: components["schemas"]["ScheduleOrigin"];
             /** Plant Id */
             plant_id: number;
+            /** Snoozed Until */
+            snoozed_until: string | null;
             /**
              * Started On
              * Format: date
@@ -1542,6 +1634,14 @@ export interface components {
             name: string;
             /** Timezone */
             timezone: string;
+        };
+        /** SnoozeIn */
+        SnoozeIn: {
+            /**
+             * Until
+             * @description Put the care off until this day; null to stop.
+             */
+            until: string | null;
         };
         /**
          * SoilType
@@ -1627,6 +1727,39 @@ export interface components {
              */
             recommended: boolean;
         };
+        /** TaskOut */
+        TaskOut: {
+            care_type: components["schemas"]["CareTypeOut"];
+            /**
+             * Days Until
+             * @description Days until it's due, in the plant's time zone: 0 today, negative overdue.
+             */
+            days_until: number;
+            /**
+             * Due On
+             * Format: date
+             * @description When it's due, after any snooze.
+             */
+            due_on: string;
+            /** Interval Days */
+            interval_days: number | null;
+            mode: components["schemas"]["ScheduleMode"];
+            plant: components["schemas"]["TaskPlantOut"];
+            /** Schedule Id */
+            schedule_id: number;
+            /** Snoozed Until */
+            snoozed_until: string | null;
+        };
+        /** TaskPlantOut */
+        TaskPlantOut: {
+            /** Cover Thumbnail Url */
+            cover_thumbnail_url: string | null;
+            /** Id */
+            id: number;
+            location: components["schemas"]["PlantLocationOut"] | null;
+            /** Nickname */
+            nickname: string;
+        };
         /**
          * TaxonRank
          * @enum {string}
@@ -1678,6 +1811,27 @@ export interface components {
              */
             limit: number;
         };
+        /** TodayOut */
+        TodayOut: {
+            /**
+             * Tasks
+             * @description Overdue care, then care due soonest.
+             */
+            tasks: components["schemas"]["TaskOut"][];
+            /**
+             * Unscheduled Plants
+             * @description Plants being looked after with no schedule.
+             */
+            unscheduled_plants: number;
+        };
+        /** TodayQuery */
+        TodayQuery: {
+            /**
+             * Days Ahead
+             * @default 7
+             */
+            days_ahead: number;
+        };
         /**
          * UnitSystem
          * @enum {string}
@@ -1702,6 +1856,30 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    sunfleck_care_api_log_care_for_plants: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BulkCareIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareEventOut"][];
+                };
+            };
+        };
+    };
     sunfleck_care_api_update_care_event: {
         parameters: {
             query?: never;
@@ -1833,6 +2011,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_care_api_snooze_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SnoozeIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
+                };
             };
         };
     };
@@ -3048,6 +3252,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpeciesOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_today: {
+        parameters: {
+            query?: {
+                days_ahead?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TodayOut"];
                 };
             };
         };

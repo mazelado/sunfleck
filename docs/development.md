@@ -175,9 +175,10 @@ DEBUG=true uv run python manage.py load_care_data --force
 ### Care predictions
 
 The prediction engine is plain Python in `backend/sunfleck/prediction/`; the care app's
-`schedules.py` feeds it from the database and stores the results. Schedules recalculate
-whenever they're read or changed. To bring them all up to date at once (the nightly job will do
-this), run:
+`schedules.py` feeds it from the database and stores the results. Saving anything a prediction
+depends on marks the affected schedules out of date (`care/signals.py`); they recalculate when
+next read, or when read on a new day. To bring them all up to date at once (the nightly job will
+do this), run:
 
 ```bash
 cd backend

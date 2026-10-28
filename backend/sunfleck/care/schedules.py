@@ -1,15 +1,15 @@
 """Care schedules: suggesting a routine, and keeping each schedule's prediction up to date.
 
 The prediction engine (sunfleck.prediction) does the calculation; this module gathers its
-inputs from the database and stores the results. Schedules are recalculated when they're
-created or changed, whenever they're read, and by `manage.py recalculate_schedules` (which the
-nightly job will run), so they follow changes to the plant, its location and light, its care
-log, and the date.
+inputs from the database and stores the results. A schedule is recalculated when it's created
+or changed, and when it's read if it's out of date: on a new day, or after something it
+depends on changed (its plant, location, light, care log, or care profile; see signals.py).
+`manage.py recalculate_schedules` (which the nightly job will run) recalculates them all.
 """
 
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -18,6 +18,7 @@ from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
+from sunfleck.accounts.models import Household
 from sunfleck.care.models import (
     CareEvent,
     CareSchedule,
@@ -167,12 +168,21 @@ def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedu
     )
     if not changed and schedule.calculated_on == today:
         return schedule
+    if prediction.next_due != schedule.next_due:
+        schedule.snoozed_until = None  # a snooze puts off one due date, not the next
     schedule.interval_days = prediction.interval_days
     schedule.next_due = prediction.next_due
     schedule.factors = factors
     schedule.calculated_on = today
     schedule.save(
-        update_fields=["interval_days", "next_due", "factors", "calculated_on", "updated_at"]
+        update_fields=[
+            "interval_days",
+            "next_due",
+            "factors",
+            "calculated_on",
+            "snoozed_until",
+            "updated_at",
+        ]
     )
     if changed:
         ScheduleAdjustment.objects.create(
@@ -182,6 +192,13 @@ def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedu
             next_due=prediction.next_due,
             factors=factors,
         )
+    return schedule
+
+
+def refresh(schedule: CareSchedule, today: date) -> CareSchedule:
+    """Recalculate the schedule if it's out of date."""
+    if schedule.calculated_on != today:
+        recalculate(schedule, today)
     return schedule
 
 
@@ -195,7 +212,7 @@ def schedules_for(plant: Plant) -> list[CareSchedule]:
     )
     for schedule in schedules:
         schedule.plant = plant  # already loaded, with its location and profile
-        recalculate(schedule, today)
+        refresh(schedule, today)
     return schedules
 
 
@@ -208,6 +225,93 @@ def recalculate_all() -> int:
     ).iterator():
         count += len(schedules_for(plant))
     return count
+
+
+# --- Due care ---------------------------------------------------------------------------------
+
+# Plants that are still being looked after.
+CARED_FOR = [PlantStatus.ACTIVE, PlantStatus.DORMANT]
+
+
+@dataclass(frozen=True)
+class Task:
+    """Care that's due: a schedule, and how many days until it's due (negative: overdue)."""
+
+    schedule: CareSchedule
+    due_on: date
+    days_until: int
+
+
+def due_tasks(household: Household, days_ahead: int = 7) -> list[Task]:
+    """The household's care due within `days_ahead` days (and overdue care), soonest first.
+
+    "Today" is each plant's own, in its site's time zone.
+    """
+    schedules = (
+        CareSchedule.objects.filter(
+            plant__household=household, plant__status__in=CARED_FOR, enabled=True
+        )
+        .select_related(
+            "care_type",
+            "plant__location__site",
+            "plant__taxon__archetype",
+            "plant__care_profile",
+            "plant__cover_photo",
+        )
+        .order_by("plant_id", "care_type_id")
+    )
+    tasks = []
+    todays: dict[int, date] = {}
+    for schedule in schedules:
+        plant = schedule.plant
+        today = todays.setdefault(plant.pk, local_today(plant))
+        refresh(schedule, today)
+        due_on = schedule.due_on
+        if due_on is None:
+            continue
+        days_until = (due_on - today).days
+        if days_until <= days_ahead:
+            tasks.append(Task(schedule, due_on, days_until))
+    return sorted(
+        tasks,
+        key=lambda task: (
+            task.days_until,
+            task.schedule.plant.location.name if task.schedule.plant.location else "",
+            task.schedule.plant.nickname.lower(),
+            task.schedule.care_type_id,
+        ),
+    )
+
+
+def unscheduled_plants(household: Household) -> int:
+    """How many plants being looked after have no care schedule."""
+    return Plant.objects.filter(
+        household=household, status__in=CARED_FOR, schedules__isnull=True
+    ).count()
+
+
+MAX_SNOOZE_DAYS = 60
+
+
+def snooze(schedule: CareSchedule, until: date | None) -> CareSchedule:
+    """Put off due care until a day (or, with None, stop putting it off).
+
+    Raises:
+        CareError: If nothing is due, or the day isn't between tomorrow and two months ahead.
+    """
+    if until is not None:
+        today = local_today(schedule.plant)
+        if schedule.due_on is None:
+            raise CareError("nothing_to_snooze", "This care isn't due, so it can't be put off.")
+        if not today < until <= today + timedelta(days=MAX_SNOOZE_DAYS):
+            raise CareError(
+                "invalid_snooze",
+                "Choose a day between tomorrow and two months from now.",
+                "until",
+            )
+    schedule.snoozed_until = until
+    schedule.save(update_fields=["snoozed_until", "updated_at"])
+    return schedule
 
 
 # --- The suggested routine --------------------------------------------------------------------

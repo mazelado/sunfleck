@@ -115,12 +115,13 @@ function DueBadge({ schedule }: { schedule: Schedule }) {
       </Badge>
     );
   }
-  if (schedule.next_due === null) {
+  // When it's due after any snooze.
+  if (schedule.due_on === null) {
     return null;
   }
   return (
-    <Badge variant="light" tt="none" color={URGENCY_COLORS[urgency(daysUntil(schedule.next_due))]}>
-      {describeDue(schedule.next_due, t, i18n.language)}
+    <Badge variant="light" tt="none" color={URGENCY_COLORS[urgency(daysUntil(schedule.due_on))]}>
+      {describeDue(schedule.due_on, t, i18n.language)}
     </Badge>
   );
 }

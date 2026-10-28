@@ -1,4 +1,6 @@
-"""Care types (watering, fertilizing, ...) and the care log."""
+"""Care types (watering, fertilizing, ...), the care log, and care schedules."""
+
+from datetime import date
 
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -131,7 +133,10 @@ class CareSchedule(models.Model):
     interval_days = models.PositiveSmallIntegerField(null=True, blank=True)
     next_due = models.DateField(null=True, blank=True)
     factors = models.JSONField(default=list, blank=True)
+    # Empty when something the prediction depends on changed: it's recalculated when next read.
     calculated_on = models.DateField(null=True, blank=True)
+    # Put off until this day. A new due date (e.g. after the care is logged) ends the snooze.
+    snoozed_until = models.DateField(_("snoozed until"), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -152,6 +157,15 @@ class CareSchedule(models.Model):
 
     def __str__(self) -> str:
         return f"{self.care_type} · {self.plant}"
+
+    @property
+    def due_on(self) -> date | None:
+        """When the care is due, after any snooze; None if it isn't (or it's paused)."""
+        if not self.enabled or self.next_due is None:
+            return None
+        if self.snoozed_until and self.snoozed_until > self.next_due:
+            return self.snoozed_until
+        return self.next_due
 
 
 class ScheduleAdjustment(models.Model):

@@ -24,7 +24,7 @@ from sunfleck.care.models import (
     ScheduleOrigin,
 )
 from sunfleck.core.errors import ApiError
-from sunfleck.plants.api import PhotoOut, photo_out
+from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
 
 router = Router(tags=["care"], auth=django_auth)
@@ -122,6 +122,8 @@ class ScheduleOut(PredictionFields):
     origin: ScheduleOrigin
     enabled: bool
     started_on: date
+    snoozed_until: date | None
+    due_on: date | None = Field(description="When it's due, after any snooze; none if paused.")
 
 
 class SuggestionOut(PredictionFields):
@@ -145,6 +147,43 @@ class ScheduleIn(ScheduleChangeIn):
 
 class RoutineIn(Schema):
     items: list[ScheduleIn] = Field(min_length=1, max_length=20)
+
+
+class SnoozeIn(Schema):
+    until: date | None = Field(description="Put the care off until this day; null to stop.")
+
+
+class BulkCareIn(CareEventIn):
+    plant_ids: list[int] = Field(min_length=1, max_length=200)
+
+
+class TaskPlantOut(Schema):
+    id: int
+    nickname: str
+    cover_thumbnail_url: str | None
+    location: PlantLocationOut | None
+
+
+class TaskOut(Schema):
+    schedule_id: int
+    plant: TaskPlantOut
+    care_type: CareTypeOut
+    mode: ScheduleMode
+    interval_days: int | None
+    due_on: date = Field(description="When it's due, after any snooze.")
+    days_until: int = Field(
+        description="Days until it's due, in the plant's time zone: 0 today, negative overdue."
+    )
+    snoozed_until: date | None
+
+
+class TodayOut(Schema):
+    tasks: list[TaskOut] = Field(description="Overdue care, then care due soonest.")
+    unscheduled_plants: int = Field(description="Plants being looked after with no schedule.")
+
+
+class TodayQuery(Schema):
+    days_ahead: int = Field(default=7, ge=0, le=31)
 
 
 # --- Conversions ------------------------------------------------------------------------------
@@ -195,9 +234,33 @@ def _schedule_out(schedule: CareSchedule) -> ScheduleOut:
         origin=ScheduleOrigin(schedule.origin),
         enabled=schedule.enabled,
         started_on=schedule.started_on,
+        snoozed_until=schedule.snoozed_until,
+        due_on=schedule.due_on,
         interval_days=schedule.interval_days,
         next_due=schedule.next_due,
         factors=_factors_out(schedule.factors),
+    )
+
+
+def _task_out(task: schedules.Task) -> TaskOut:
+    schedule = task.schedule
+    plant = schedule.plant
+    return TaskOut(
+        schedule_id=schedule.pk,
+        plant=TaskPlantOut(
+            id=plant.pk,
+            nickname=plant.nickname,
+            cover_thumbnail_url=(
+                photo_out(plant.cover_photo).thumbnail_url if plant.cover_photo else None
+            ),
+            location=location_out(plant),
+        ),
+        care_type=_care_type_out(schedule.care_type),
+        mode=ScheduleMode(schedule.mode),
+        interval_days=schedule.interval_days,
+        due_on=task.due_on,
+        days_until=task.days_until,
+        snoozed_until=schedule.snoozed_until,
     )
 
 
@@ -334,6 +397,23 @@ def log_care(request: HttpRequest, plant_id: int, data: CareEventIn) -> Status[C
     return Status(201, _event_out(event))
 
 
+@router.post("/care-events/bulk", response={201: list[CareEventOut]})
+def log_care_for_plants(request: HttpRequest, data: BulkCareIn) -> Status[list[CareEventOut]]:
+    """Log the same care for several plants at once, e.g. watering a whole room; all or none."""
+    membership = require_role(request, Role.GARDENER)
+    fields = data.model_dump(exclude={"plant_ids"})
+    try:
+        events = services.log_care_for_plants(
+            membership.household,
+            data.plant_ids,
+            services.CareEventData(**fields),
+            membership.user,
+        )
+    except services.CareError as exc:
+        raise _care_error(exc) from exc
+    return Status(201, [_event_out(event) for event in events])
+
+
 @router.put("/care-events/{event_id}", response=CareEventOut)
 def update_care_event(request: HttpRequest, event_id: int, data: CareEventIn) -> CareEventOut:
     household = require_role(request, Role.GARDENER).household
@@ -443,3 +523,28 @@ def delete_schedule(request: HttpRequest, schedule_id: int) -> Status[None]:
     household = require_role(request, Role.GARDENER).household
     schedules.delete_schedule(_get_schedule(household, schedule_id))
     return Status(204, None)
+
+
+@router.put("/care-schedules/{schedule_id}/snooze", response=ScheduleOut)
+def snooze_schedule(request: HttpRequest, schedule_id: int, data: SnoozeIn) -> ScheduleOut:
+    """Put off due care until a day (up to two months ahead), or stop putting it off."""
+    household = require_role(request, Role.GARDENER).household
+    schedule = _get_schedule(household, schedule_id)
+    try:
+        schedules.snooze(schedule, data.until)
+    except services.CareError as exc:
+        raise _care_error(exc) from exc
+    return _schedule_out(schedule)
+
+
+# --- Today ------------------------------------------------------------------------------------
+
+
+@router.get("/today", response=TodayOut)
+def today(request: HttpRequest, query: Query[TodayQuery]) -> TodayOut:
+    """The household's overdue care and care due in the next few days, soonest first."""
+    household = require_role(request, Role.VIEWER).household
+    return TodayOut(
+        tasks=[_task_out(task) for task in schedules.due_tasks(household, query.days_ahead)],
+        unscheduled_plants=schedules.unscheduled_plants(household),
+    )

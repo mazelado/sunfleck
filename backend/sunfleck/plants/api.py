@@ -174,7 +174,8 @@ def photo_out(photo: Photo) -> PhotoOut:
     )
 
 
-def _location_out(plant: Plant) -> PlantLocationOut | None:
+def location_out(plant: Plant) -> PlantLocationOut | None:
+    """The plant's location for the API. Also used by the Today list."""
     location = plant.location
     if location is None:
         return None
@@ -214,7 +215,7 @@ def _summary_out(plant: Plant, lang: str) -> PlantSummaryOut:
         id=plant.pk,
         nickname=plant.nickname,
         status=PlantStatus(plant.status),
-        location=_location_out(plant),
+        location=location_out(plant),
         cover_thumbnail_url=(
             _photo_url(plant.cover_photo_id, "thumbnail") if plant.cover_photo_id else None
         ),
@@ -228,7 +229,7 @@ def _plant_out(plant: Plant, lang: str) -> PlantOut:
         id=plant.pk,
         nickname=plant.nickname,
         status=PlantStatus(plant.status),
-        location=_location_out(plant),
+        location=location_out(plant),
         container_diameter_cm=plant.container_diameter_cm,
         container_material=(
             ContainerMaterial(plant.container_material) if plant.container_material else None
