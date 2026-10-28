@@ -1,17 +1,14 @@
-# Docker Compose setup for running Sunfleck from this repository.
+# Docker Compose setup for running Sunfleck (see docs/install.md).
 #   1. In this folder, copy env.example to .env and fill in the values.
-#   2. Run: docker compose up -d --build
+#   2. Run: docker compose up -d
 # Sunfleck is then available at http://localhost:8000. For access from other devices, put it
 # behind a reverse proxy with HTTPS (Caddy, Traefik, Nginx Proxy Manager, ...).
 #
-# Until the first release, there's no published image: Compose builds it from the source code.
+# It uses the latest release. To stay on a version, set SUNFLECK_VERSION in .env (e.g. 0.1).
+# To build the image from the source code instead, see compose.build.yaml.
 services:
   sunfleck:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-    image: sunfleck:local
-    pull_policy: build
+    image: ghcr.io/mazelado/sunfleck:${SUNFLECK_VERSION:-latest}
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -24,8 +21,7 @@ services:
 
   # Background jobs (reminders, weather, nightly recalculation), from the same image and data.
   worker:
-    image: sunfleck:local
-    pull_policy: never
+    image: ghcr.io/mazelado/sunfleck:${SUNFLECK_VERSION:-latest}
     command: worker
     restart: unless-stopped
     depends_on:
