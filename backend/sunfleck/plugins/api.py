@@ -27,7 +27,11 @@ class PluginOut(Schema):
     description: str
     sends_data_to: list[str] = Field(description="Outside services it sends data to, and what.")
     enabled: bool
-    settings: dict[str, Any] | None
+    settings: dict[str, Any] | None = Field(
+        description="Secret settings (API keys) are never sent: they're empty here, and listed "
+        "in `secrets_set` when they have a value."
+    )
+    secrets_set: list[str] = Field(description="Secret settings that have a value.")
     settings_schema: dict[str, Any] | None = Field(
         description="A JSON Schema of the settings, to make a form from."
     )
@@ -47,7 +51,19 @@ class PluginsOut(Schema):
 
 class PluginIn(Schema):
     enabled: bool
-    settings: dict[str, Any] = Field(default_factory=dict)
+    settings: dict[str, Any] = Field(
+        default_factory=dict, description="Leave a secret setting empty to keep its value."
+    )
+
+
+def _settings_out(state: services.State) -> dict[str, Any] | None:
+    if state.settings is None:
+        return None
+    secrets = services.secret_fields(state.info.settings_schema)
+    return {
+        **state.settings.model_dump(mode="json", exclude=secrets),
+        **dict.fromkeys(secrets, ""),
+    }
 
 
 def _plugin_out(state: services.State) -> PluginOut:
@@ -59,7 +75,8 @@ def _plugin_out(state: services.State) -> PluginOut:
         description=info.description,
         sends_data_to=list(info.sends_data_to),
         enabled=state.enabled,
-        settings=state.settings.model_dump(mode="json") if state.settings else None,
+        settings=_settings_out(state),
+        secrets_set=sorted(state.secrets_set),
         settings_schema=info.settings_schema.model_json_schema() if info.settings_schema else None,
         last_error=state.last_error or None,
         last_error_at=state.last_error_at,

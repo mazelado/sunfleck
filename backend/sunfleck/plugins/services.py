@@ -1,16 +1,25 @@
-"""Turning plugins on and off for a household, and their settings."""
+"""Turning plugins on and off for a household, and their settings.
 
+Settings typed `SecretStr` (such as API keys) are stored encrypted, apart from the others, and
+are never sent back to the browser: an empty value keeps the stored one.
+"""
+
+import logging
+import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
 from django.utils import timezone
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, SecretStr, ValidationError
 
 from sunfleck.accounts.models import Household
+from sunfleck.core.crypto import DecryptionError, decrypt, encrypt
 from sunfleck.plugins.info import PluginInfo
 from sunfleck.plugins.models import PluginSetting
 from sunfleck.plugins.registry import registry
+
+logger = logging.getLogger(__name__)
 
 MAX_ERROR_LENGTH = 500
 
@@ -33,6 +42,29 @@ class State:
     settings: BaseModel | None
     last_error: str
     last_error_at: Any
+    # The secret settings that have a value.
+    secrets_set: frozenset[str] = frozenset()
+
+
+def secret_fields(schema: type[BaseModel] | None) -> set[str]:
+    """The settings typed `SecretStr` (or `SecretStr | None`)."""
+    if schema is None:
+        return set()
+    return {
+        name
+        for name, field in schema.model_fields.items()
+        if field.annotation is SecretStr or SecretStr in typing.get_args(field.annotation)
+    }
+
+
+def _decrypted(info: PluginInfo, encrypted: dict[str, str]) -> dict[str, str]:
+    values = {}
+    for name, token in encrypted.items():
+        try:
+            values[name] = decrypt(token)
+        except DecryptionError:
+            logger.warning("Plugin %s's %s can't be decrypted; enter it again", info.id, name)
+    return values
 
 
 def _settings(info: PluginInfo, raw: dict[str, Any]) -> BaseModel | None:
@@ -48,8 +80,14 @@ def _settings(info: PluginInfo, raw: dict[str, Any]) -> BaseModel | None:
 def _state(info: PluginInfo, row: PluginSetting | None) -> State:
     if row is None:
         return State(info, info.enabled_by_default, _settings(info, {}), "", None)
+    secrets = _decrypted(info, row.secrets)
     return State(
-        info, row.enabled, _settings(info, row.settings), row.last_error, row.last_error_at
+        info,
+        row.enabled,
+        _settings(info, {**row.settings, **secrets}),
+        row.last_error,
+        row.last_error_at,
+        frozenset(name for name, value in secrets.items() if value),
     )
 
 
@@ -79,17 +117,37 @@ def update(household: Household, plugin_id: str, enabled: bool, settings: dict[s
     if info is None:
         raise PluginError("plugin_not_found", "This plugin isn't installed.")
     values: dict[str, Any] = {}
+    secrets: dict[str, str] = {}
     if info.settings_schema is not None:
+        secret_names = secret_fields(info.settings_schema)
+        settings = {**settings}
+        # A secret left empty keeps its stored value, since the browser never gets it.
+        existing = PluginSetting.objects.filter(household=household, plugin_id=plugin_id).first()
+        stored = _decrypted(info, existing.secrets) if existing else {}
+        for name in secret_names:
+            if not settings.get(name) and stored.get(name):
+                settings[name] = stored[name]
         try:
-            values = info.settings_schema.model_validate(settings).model_dump(mode="json")
+            validated = info.settings_schema.model_validate(settings)
         except ValidationError as exc:
             error = exc.errors()[0]
             field = ".".join(str(part) for part in error["loc"]) or None
             raise PluginError("invalid_plugin_setting", error["msg"], field) from exc
+        values = validated.model_dump(mode="json", exclude=secret_names)
+        for name in secret_names:
+            secret = getattr(validated, name)
+            if secret is not None and secret.get_secret_value():
+                secrets[name] = encrypt(secret.get_secret_value())
     row, _ = PluginSetting.objects.update_or_create(
         household=household,
         plugin_id=plugin_id,
-        defaults={"enabled": enabled, "settings": values, "last_error": "", "last_error_at": None},
+        defaults={
+            "enabled": enabled,
+            "settings": values,
+            "secrets": secrets,
+            "last_error": "",
+            "last_error_at": None,
+        },
     )
     # Plugins can change predictions (e.g. weather), so recalculate the household's.
     from sunfleck.care.signals import mark_out_of_date  # care imports the plugin registry

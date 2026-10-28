@@ -9,7 +9,7 @@ import pytest
 import time_machine
 from django.test import Client, RequestFactory
 from ninja import Router
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.care import schedules
@@ -390,6 +390,7 @@ def test_admins_see_the_installed_plugins(client_as: ClientAs, rain: RainHooks) 
         "sends_data_to": ["rain.example: site latitude and longitude"],
         "enabled": False,
         "settings": {"threshold_mm": 5, "mood": "calm"},
+        "secrets_set": [],
         "last_error": None,
         "last_error_at": None,
     }
@@ -423,3 +424,82 @@ def test_only_admins_manage_plugins(client_as: ClientAs, rain: RainHooks) -> Non
 
     assert gardener.get("/api/v1/plugins").status_code == 403
     assert send(gardener, "PUT", "/api/v1/plugins/rain", {"enabled": True}).status_code == 403
+
+
+# --- Secret settings --------------------------------------------------------------------------
+
+
+class KeySettings(BaseModel):
+    api_key: SecretStr = Field(default=SecretStr(""), title="API key")
+    region: str = "eu"
+
+
+class KeyHooks:
+    def __init__(self) -> None:
+        self.keys: list[str] = []
+
+    @hookimpl
+    def on_plant_created(self, settings: KeySettings) -> None:
+        self.keys.append(settings.api_key.get_secret_value())
+
+
+@pytest.fixture
+def keyed() -> Iterator[KeyHooks]:
+    hooks = KeyHooks()
+    registry.add(PluginInfo("keyed", "Keyed", "1", "1", settings_schema=KeySettings), hooks)
+    yield hooks
+    registry.remove("keyed")
+
+
+def test_secret_settings_are_stored_encrypted_and_never_shown(
+    client_as: ClientAs, household: Household, keyed: KeyHooks
+) -> None:
+    admin = client_as(Role.ADMIN)
+
+    saved = send(
+        admin,
+        "PUT",
+        "/api/v1/plugins/keyed",
+        {"enabled": True, "settings": {"api_key": "s3cret-key", "region": "eu"}},
+    )
+
+    assert saved.json()["settings"] == {"api_key": "", "region": "eu"}
+    assert saved.json()["secrets_set"] == ["api_key"]
+    row = PluginSetting.objects.get(household=household, plugin_id="keyed")
+    assert row.settings == {"region": "eu"}
+    assert "s3cret-key" not in json.dumps(row.secrets)
+    [listed] = [p for p in admin.get("/api/v1/plugins").json()["plugins"] if p["id"] == "keyed"]
+    assert "s3cret-key" not in json.dumps(listed)
+    schema = listed["settings_schema"]["properties"]["api_key"]
+    assert schema["format"] == "password"
+
+    plant_services.create_plant(household, plant_services.PlantData(nickname="Fern"))
+    assert keyed.keys[-1] == "s3cret-key"
+
+
+def test_an_empty_secret_keeps_the_stored_one(household: Household, keyed: KeyHooks) -> None:
+    services.update(household, "keyed", True, {"api_key": "first-key"})
+    services.update(household, "keyed", True, {"api_key": "", "region": "us"})
+
+    state = services.states(household, ["keyed"])["keyed"]
+    assert isinstance(state.settings, KeySettings)
+    assert state.settings.api_key.get_secret_value() == "first-key"
+    assert state.settings.region == "us"
+
+    services.update(household, "keyed", True, {"api_key": "second-key"})
+    state = services.states(household, ["keyed"])["keyed"]
+    assert isinstance(state.settings, KeySettings)
+    assert state.settings.api_key.get_secret_value() == "second-key"
+
+
+def test_a_secret_that_cant_be_decrypted_must_be_entered_again(
+    household: Household, keyed: KeyHooks
+) -> None:
+    services.update(household, "keyed", True, {"api_key": "first-key"})
+    PluginSetting.objects.filter(plugin_id="keyed").update(secrets={"api_key": "garbage"})
+
+    state = services.states(household, ["keyed"])["keyed"]
+
+    assert state.secrets_set == frozenset()
+    assert isinstance(state.settings, KeySettings)
+    assert state.settings.api_key.get_secret_value() == ""

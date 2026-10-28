@@ -73,6 +73,9 @@ plugin = PluginInfo(
   `json_schema_extra={"unit": ...}` (`celsius` for a temperature, `mm` for rain, `cm` for a
   length) and leave the unit out of its title: the form shows it in each person's units (°F
   and inches for people who chose imperial units) and saves it in metric.
+- **Secrets** such as API keys are typed `SecretStr` (from Pydantic). They're stored encrypted,
+  shown as a password field, and never sent back to the browser: the field stays empty, and
+  saving it empty keeps the stored key. Read one with `settings.api_key.get_secret_value()`.
 - **`sends_data_to`** must list every outside service the plugin contacts, and exactly what
   it sends. Admins see this before turning the plugin on.
 - **Plugins are off until an Admin turns them on**, for each household. Only set
@@ -112,6 +115,7 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | `on_plant_created(plant, settings)` | After a plant is added | Nothing |
 | `register_api(router)` | Once, at startup | Nothing: add endpoints to the Django Ninja `router`, served under `/api/v1/plugins/<id>/` |
 | `register_periodic_jobs()` | Once, at startup (from M9) | `PeriodicJob`s to run in the background |
+| `identify_plant(photos, language, settings)` | When someone identifies a plant from photos (1 to 5, of the same plant) | An `Identification`: `Candidate`s by scientific name with a score from 0 to 1, or a `problem` (`missing_api_key`, `invalid_api_key`, `quota_exceeded`, `unavailable`) to tell the person about |
 
 - Hooks are only called for households that turned the plugin on, with that household's
   `settings` (None if the plugin has no settings). `register_api` and `register_periodic_jobs`

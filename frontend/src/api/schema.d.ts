@@ -292,6 +292,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/identify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identify Available
+         * @description Whether plants can be identified from photos (a plugin for it is on).
+         */
+        get: operations["sunfleck_taxonomy_api_identify_available"];
+        put?: never;
+        /**
+         * Identify
+         * @description Identify a plant from 1 to 5 photos of it, through a plugin such as Pl@ntNet.
+         *
+         *     The photos are sent without their metadata (such as where they were taken) and aren't
+         *     kept by Sunfleck.
+         */
+        post: operations["sunfleck_taxonomy_api_identify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invitations/{token}": {
         parameters: {
             query?: never;
@@ -1006,6 +1033,27 @@ export interface components {
              */
             skipped: boolean;
         };
+        /** CandidateOut */
+        CandidateOut: {
+            /** Common Names */
+            common_names: string[];
+            /**
+             * Exact
+             * @description Whether `species` is this species rather than its genus.
+             */
+            exact: boolean;
+            /** Family */
+            family: string;
+            /** Scientific Name */
+            scientific_name: string;
+            /**
+             * Score
+             * @description How likely it is, from 0 to 1.
+             */
+            score: number;
+            /** @description The species in the care guide or, if it isn't there, its genus. */
+            species: components["schemas"]["SpeciesOut"] | null;
+        };
         /** CareEventIn */
         CareEventIn: {
             /** Care Type Id */
@@ -1266,6 +1314,32 @@ export interface components {
          * @enum {string}
          */
         Humidity: "low" | "medium" | "high";
+        /** IdentificationOut */
+        IdentificationOut: {
+            /**
+             * Attribution
+             * @description Who identified it, to show with the results.
+             */
+            attribution: string;
+            /**
+             * Candidates
+             * @description Most likely first; may be empty.
+             */
+            candidates: components["schemas"]["CandidateOut"][];
+            /**
+             * Remaining
+             * @description Identifications left today, if known.
+             */
+            remaining: number | null;
+        };
+        /** IdentifyAvailableOut */
+        IdentifyAvailableOut: {
+            /**
+             * Available
+             * @description Whether a plugin that identifies plants is on.
+             */
+            available: boolean;
+        };
         /** InvitationCreatedOut */
         InvitationCreatedOut: {
             /**
@@ -1709,7 +1783,10 @@ export interface components {
         PluginIn: {
             /** Enabled */
             enabled: boolean;
-            /** Settings */
+            /**
+             * Settings
+             * @description Leave a secret setting empty to keep its value.
+             */
             settings?: {
                 [key: string]: unknown;
             };
@@ -1729,11 +1806,19 @@ export interface components {
             /** Name */
             name: string;
             /**
+             * Secrets Set
+             * @description Secret settings that have a value.
+             */
+            secrets_set: string[];
+            /**
              * Sends Data To
              * @description Outside services it sends data to, and what.
              */
             sends_data_to: string[];
-            /** Settings */
+            /**
+             * Settings
+             * @description Secret settings (API keys) are never sent: they're empty here, and listed in `secrets_set` when they have a value.
+             */
             settings: {
                 [key: string]: unknown;
             } | null;
@@ -2698,6 +2783,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LinkOut"];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_identify_available: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentifyAvailableOut"];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_identify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Photos */
+                    photos: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentificationOut"];
                 };
             };
         };

@@ -44,9 +44,10 @@ import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, displayToCm, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
-import { useCareProfiles } from "../../api/taxonomy";
+import { type Species, useCareProfiles } from "../../api/taxonomy";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { describeLight } from "../places/describe";
+import { IdentifyPlant } from "../taxonomy/IdentifyPlant";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
 
@@ -147,6 +148,15 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
     plant?.care_profile && !plant.care_profile.chosen ? plant.care_profile.name : null,
   );
 
+  function chooseSpecies(species: Species | null, name: string | null) {
+    form.setFieldValue("species", species);
+    setSpeciesProfile(species?.care_profile?.name ?? null);
+    // Name the plant after its species, unless it already has a name.
+    if (name && !form.getValues().nickname.trim()) {
+      form.setFieldValue("nickname", name);
+    }
+  }
+
   const handleSubmit = form.onSubmit(async (formValues) => {
     const chosenLights = (location?.light_sources ?? []).filter(
       (light) => formValues.lights[String(light.id)]?.checked,
@@ -210,17 +220,24 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <ErrorAlert error={save.error} />
+            {!plant && (
+              <>
+                <FileInput
+                  label={t("plants.choosePhoto")}
+                  description={t("plants.choosePhotoHelp")}
+                  accept="image/*"
+                  clearable
+                  leftSection={<IconPhoto size={16} />}
+                  {...form.getInputProps("photo")}
+                />
+                <IdentifyPlant photo={values.photo} onChoose={chooseSpecies} />
+              </>
+            )}
             <SpeciesPicker
               value={values.species}
               error={form.errors.species}
               onChange={(hit) => {
-                form.setFieldValue("species", hit);
-                setSpeciesProfile(hit?.care_profile?.name ?? null);
-                // Name the plant after its species, unless it already has a name.
-                if (hit && !form.getValues().nickname.trim()) {
-                  const name = hit.common_name ?? hit.scientific_name;
-                  form.setFieldValue("nickname", sentenceCase(name));
-                }
+                chooseSpecies(hit, hit && sentenceCase(hit.common_name ?? hit.scientific_name));
               }}
             />
             <TextInput
@@ -229,16 +246,6 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               required
               {...form.getInputProps("nickname")}
             />
-            {!plant && (
-              <FileInput
-                label={t("plants.choosePhoto")}
-                description={t("plants.choosePhotoHelp")}
-                accept="image/*"
-                clearable
-                leftSection={<IconPhoto size={16} />}
-                {...form.getInputProps("photo")}
-              />
-            )}
             <Select
               label={t("guide.careProfile")}
               description={t("guide.careProfileHelp")}

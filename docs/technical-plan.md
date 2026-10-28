@@ -441,7 +441,7 @@ own tables, and document what data they send.
 - **Plugins are turned on per household by an Admin** (Settings → Plugins), off by default,
   since most send data elsewhere; the page shows exactly what each sends. Settings are stored
   per household in `PluginSetting` and validated against the plugin's model. Secrets (API keys)
-  come with the first plugin that needs them (Pl@ntNet, M10).
+  came with the first plugin that needs them (Pl@ntNet, M10; see below).
 - **Hooks are called one plugin at a time**, only for households that turned it on, with their
   settings. An exception is logged, kept as the plugin's latest error (shown on the Plugins
   page), and that plugin's answer is left out; the plugin stays on, since most failures (a
@@ -449,8 +449,15 @@ own tables, and document what data they send.
   listed on the page.
 - `register_api` routers are mounted under `/api/v1/plugins/<id>/`; endpoints check access with
   `require_enabled`. `register_periodic_jobs` is defined now and run from M9.
-- `identify_plant` (M10) and `search_taxa` will be added when their first plugin is; adding
-  hooks doesn't break existing plugins.
+- `search_taxa` will be added when its first plugin is; adding hooks doesn't break existing
+  plugins.
+- **Plant identification (M10):** `POST /api/v1/identify` takes 1 to 5 photos of a plant and
+  passes them to the `identify_plant` hook as JPEG copies of at most 1280 px without metadata
+  (so not where they were taken); Sunfleck keeps nothing. The candidates are matched to the care
+  guide by scientific or older name, else by genus. When adding a plant, a photo can be
+  identified and a candidate chosen as its species. Gardeners and Admins can identify plants.
+- **Secret settings (M10):** plugin settings typed `SecretStr` (API keys) are stored encrypted
+  in `PluginSetting.secrets` and never sent to the browser; an empty value keeps the stored one.
 - **Built-in plugins** live in `plugins/`, each its own package installed by the backend from
   there (and into the Docker image as a regular package), so they go through exactly the same
   entry-point discovery as third-party ones.
