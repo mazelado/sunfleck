@@ -19,3 +19,6 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
+
+# Jobs run right away, in memory, instead of being queued for a worker.
+HUEY = {**HUEY, "immediate": True}  # noqa: F405

@@ -20,10 +20,12 @@ dependencies = [
     "pluggy>=1.7.0",
     # Built-in plugins: separate packages in ../plugins, installed like any other plugin.
     "sunfleck-weather-openmeteo",
+    "huey>=3.5",
 ]
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.3"]
+redis = ["redis>=5.2"]
 
 [dependency-groups]
 dev = [
@@ -91,12 +93,17 @@ plugins = ["mypy_django_plugin.main"]
 exclude = ["/migrations/"]
 
 [[tool.mypy.overrides]]
-module = ["allauth", "allauth.*"]  # no type information published
+module = ["allauth", "allauth.*", "huey", "huey.*"]  # no type information published
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+# Huey's task decorators have no type hints.
+module = ["sunfleck.*.tasks", "sunfleck.plugins.jobs", "sunfleck_weather_openmeteo.hooks"]
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
 # factory_boy's field helpers (Sequence, SubFactory, ...) have no type hints.
-module = ["sunfleck.testing", "sunfleck.*.tests.*", "sunfleck_*.tests.*"]
+module = ["sunfleck.testing", "sunfleck.*.tests.*", "sunfleck_weather_openmeteo.tests.*"]
 disallow_untyped_calls = false
 
 [tool.django-stubs]

@@ -5,7 +5,7 @@ FRONTEND := cd frontend &&
 DEV_ENV := DEBUG=true
 
 .DEFAULT_GOAL := help
-.PHONY: help setup dev dev-backend dev-frontend migrate migrations superuser test test-backend \
+.PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
 	test-frontend lint lint-backend lint-frontend format api-types docker
 
 help: ## Show this help
@@ -18,13 +18,16 @@ setup: ## Install dependencies and the pre-commit hooks
 
 dev: migrate ## Run the app at http://localhost:5173 (Ctrl+C stops it)
 	@echo "Starting... open http://localhost:5173 once Vite reports it's ready."
-	@$(MAKE) --no-print-directory -j2 dev-backend dev-frontend
+	@$(MAKE) --no-print-directory -j3 dev-backend dev-frontend dev-worker
 
 dev-backend: ## Run only the Django server (port 8000)
 	$(BACKEND) $(DEV_ENV) uv run python manage.py runserver
 
 dev-frontend: ## Run only the Vite dev server (port 5173)
 	$(FRONTEND) npm run dev
+
+dev-worker: ## Run only the background worker (reminders, weather, nightly jobs)
+	$(BACKEND) $(DEV_ENV) uv run python manage.py run_huey
 
 migrate: ## Apply database migrations
 	$(BACKEND) $(DEV_ENV) uv run python manage.py migrate

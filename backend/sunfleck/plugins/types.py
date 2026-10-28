@@ -71,4 +71,4 @@ class PeriodicJob:
 
     name: str
     cron: str
-    function: Callable[[], None]
+    function: Callable[[], object]  # what it returns is ignored

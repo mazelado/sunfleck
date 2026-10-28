@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.headless",
     "ninja",
+    "huey.contrib.djhuey",
     "sunfleck.core",
     "sunfleck.accounts",
     "sunfleck.places",
@@ -187,6 +188,24 @@ MEDIA_ROOT = DATA_DIR / "media"
 
 CARE_DATA_DIR = Path(env_str("SUNFLECK_CARE_DATA_DIR", str(BASE_DIR.parent / "data" / "care")))
 
+# --- Background jobs --------------------------------------------------------------------------
+# Huey runs scheduled jobs (reminders, weather, nightly recalculation) in the worker process
+# (`manage.py run_huey`; in Docker, the `worker` command). Its queue is a SQLite file next to
+# the database, so no other server is needed; set HUEY_REDIS_URL to use Redis instead.
+
+_huey_redis_url = env_str("HUEY_REDIS_URL", "")
+HUEY: dict[str, Any] = {
+    "name": "sunfleck",
+    "utc": True,  # periodic jobs' times are in UTC
+    "immediate": False,
+    "consumer": {"workers": 2, "worker_type": "thread"},
+}
+if _huey_redis_url:
+    HUEY.update({"huey_class": "huey.RedisHuey", "url": _huey_redis_url})
+else:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    HUEY.update({"huey_class": "huey.SqliteHuey", "filename": str(DATA_DIR / "huey.sqlite3")})
+
 # --- Frontend ---------------------------------------------------------------------------------
 # The built React app (frontend/dist). WhiteNoise serves its files from the site root, and
 # every other non-API URL returns its index.html (see sunfleck.core.views.frontend_index).
@@ -203,6 +222,12 @@ WHITENOISE_IMMUTABLE_FILE_TEST = r"^/assets/.+-[\w-]{8,}\.\w+$|\.[0-9a-f]{12}\.\
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "formatters": {"timed": {"format": "[{asctime}] {levelname} {name}: {message}", "style": "{"}},
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "timed": {"class": "logging.StreamHandler", "formatter": "timed"},
+    },
     "root": {"handlers": ["console"], "level": env_str("LOG_LEVEL", "INFO")},
+    # The worker's log, with times. (Configured here, Huey doesn't add a second handler.)
+    "loggers": {"huey": {"handlers": ["timed"], "level": "INFO", "propagate": False}},
 }

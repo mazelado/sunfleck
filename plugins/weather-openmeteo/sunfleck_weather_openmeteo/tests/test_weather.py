@@ -16,7 +16,7 @@ from sunfleck.plants.tests.factories import PlantFactory
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareArchetype
 
-from sunfleck_weather_openmeteo import weather
+from sunfleck_weather_openmeteo import hooks, weather
 from sunfleck_weather_openmeteo.models import SiteWeather
 
 ClientAs = Callable[[Role], Client]
@@ -370,3 +370,40 @@ def test_without_weather_watering_is_predicted_as_usual(
     recalculated(rose)
 
     assert rose.next_due == date(2026, 4, 19)
+
+
+# --- Background refresh -----------------------------------------------------------------------
+
+
+def test_forecasts_are_refreshed_in_the_background_every_hour() -> None:
+    [job] = hooks.register_periodic_jobs()
+
+    assert (job.name, job.cron, job.function) == ("refresh", "7 * * * *", hooks.refresh_forecasts)
+
+
+def test_only_households_that_turned_it_on_are_refreshed(
+    service: FakeOpenMeteo, household: Household, site: Site
+) -> None:
+    other = SiteFactory.create(latitude=-33.87, longitude=151.21)
+    turn_on(household)
+
+    assert hooks.refresh_forecasts() == 1
+    assert len(service.urls) == 1
+    assert "latitude=52.37" in service.urls[0]
+    assert not SiteWeather.objects.filter(site=other).exists()
+
+    # Not fetched again while it's recent.
+    assert hooks.refresh_forecasts() == 1
+    assert len(service.urls) == 1
+
+
+def test_a_failed_refresh_is_tried_again_next_time(
+    service: FakeOpenMeteo, household: Household, site: Site
+) -> None:
+    service.answer = OSError("Network is unreachable")
+    turn_on(household)
+
+    assert hooks.refresh_forecasts() == 0
+    service.answer = open_meteo()
+    with time_machine.travel(NOW + timedelta(minutes=15), tick=False):
+        assert hooks.refresh_forecasts() == 1

@@ -18,9 +18,9 @@ Admins turn it on for their household in **Settings → Plugins**. It's off unti
 ## What it sends
 
 To `api.open-meteo.com`, for each of the household's sites: **the site's latitude and longitude,
-rounded to 2 decimals (about 1 km)**. Nothing else, and no account or key. A site's forecast is
-fetched when the Today page or a plant's schedule needs it and the stored one is more than 3
-hours old (from M9, a background job will fetch it instead). See Open-Meteo's
+rounded to 2 decimals (about 1 km)**. Nothing else, and no account or key. The worker refreshes
+each site's forecast once it's 3 hours old (it checks hourly); the Today page and plants'
+schedules also fetch one if needed. See Open-Meteo's
 [terms](https://open-meteo.com/en/terms): its free API is for non-commercial use.
 
 If Open-Meteo can't be reached, the latest forecast is used for up to a day, and it isn't asked

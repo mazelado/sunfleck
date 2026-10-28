@@ -10,11 +10,13 @@ from sunfleck.plugins import (
     Alert,
     CareContext,
     Factor,
+    PeriodicJob,
     SiteConditions,
     hookimpl,
+    is_enabled,
 )
 
-from sunfleck_weather_openmeteo import Settings
+from sunfleck_weather_openmeteo import Settings, plugin
 from sunfleck_weather_openmeteo.weather import Forecast, WeatherError, forecast_for
 
 ATTRIBUTION = "Weather data by Open-Meteo.com"
@@ -26,6 +28,10 @@ RAIN_WAIT_DAYS = 2
 HEAT_DAYS = 3
 HEAT_PER_DEGREE = 0.03
 MOST_HEAT = 0.75
+
+
+# Every hour, refresh forecasts that are 3 hours old (see weather.REFRESH_AFTER).
+REFRESH_CRON = "7 * * * *"
 
 
 def site_today(site: Site) -> date:
@@ -134,3 +140,28 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
             )
         )
     return adjustments
+
+
+@hookimpl
+def register_periodic_jobs() -> list[PeriodicJob]:
+    return [PeriodicJob("refresh", REFRESH_CRON, refresh_forecasts)]
+
+
+def refresh_forecasts() -> int:
+    """Refresh the forecasts of sites in households that turned the plugin on (when they're a
+    few hours old), so the Today page and predictions don't wait for Open-Meteo. Returns how
+    many sites have a usable forecast."""
+    usable = 0
+    enabled: dict[int, bool] = {}
+    for site in Site.objects.select_related("household").order_by("pk"):
+        household_id = site.household_id
+        if household_id not in enabled:
+            enabled[household_id] = is_enabled(site.household, plugin.id)
+        if not enabled[household_id]:
+            continue
+        try:
+            forecast_for(site)
+        except WeatherError:
+            continue  # logged in forecast_for; tried again next time
+        usable += 1
+    return usable
