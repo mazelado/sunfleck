@@ -1,0 +1,25 @@
+[project]
+name = "sunfleck-identify-plantnet"
+version = "0.1.0"
+description = "Plant identification for Sunfleck by Pl@ntNet: identify a plant from a photo when adding it."
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.12"
+# Runs inside Sunfleck, which provides Django, Pydantic and the plugin API.
+dependencies = []
+
+[project.entry-points."sunfleck.plugins"]
+identify_plantnet = "sunfleck_identify_plantnet:plugin"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sunfleck_identify_plantnet"]
+
+[tool.ruff]
+extend = "../../backend/pyproject.toml"
+
+[tool.ruff.lint]
+extend-per-file-ignores = { "**/tests/**" = ["S101"] }

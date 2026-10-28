@@ -468,6 +468,11 @@ own tables, and document what data they send.
   fetched on demand when 3 hours old (M9 moves this to a background job), kept per site, and
   used for up to a day when Open-Meteo is down. It sends only each site's location, rounded to
   about 1 km.
+- **Plant identification (Pl@ntNet)**, the second (M10): needs a free API key from
+  my.plantnet.org (500 identifications a day), entered by an Admin and stored encrypted. It
+  sends the photos to identify (without metadata), the person's language and the key, only when
+  someone asks; it uses only the standard library. "Species not found" is an empty result; a
+  rejected key, an exhausted quota or Pl@ntNet being down are explained to the person.
 
 ### Installing third-party plugins
 For the MVP: install the package into the environment (`pip install ...`) and restart. For
@@ -560,8 +565,8 @@ A PostgreSQL variant is provided as an optional Compose profile.
 │   ├── notifications/  pluginhost/  dataio/  core/
 │   └── tests/                  # shared fixtures and factories (app tests live in each app)
 ├── plugins/
-│   ├── weather_openmeteo/      # built-in plugin, its own small Python package
-│   └── identify_plantnet/
+│   ├── weather-openmeteo/      # built-in plugin, its own small Python package
+│   └── identify-plantnet/
 ├── frontend/
 │   ├── package.json
 │   ├── vite.config.ts
