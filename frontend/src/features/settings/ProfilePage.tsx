@@ -15,10 +15,11 @@ import { useTranslation } from "react-i18next";
 import { type Me, useChangePassword, useMe, useUpdateMe } from "../../api/accounts";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PasswordField } from "../../components/PasswordField";
+import { LANGUAGES, languageName } from "../../i18n";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
-/** Languages the app is translated into. More arrive as translations are contributed. */
-const LANGUAGES = [{ value: "en", label: "English" }];
+/** Each language the app is translated into, by its own name. */
+const LANGUAGE_OPTIONS = LANGUAGES.map((code) => ({ value: code, label: languageName(code) }));
 
 export function ProfilePage() {
   const { t } = useTranslation();
@@ -70,7 +71,7 @@ function ProfileForm({ me }: { me: Me }) {
           />
           <Select
             label={t("profile.language")}
-            data={LANGUAGES}
+            data={LANGUAGE_OPTIONS}
             allowDeselect={false}
             {...form.getInputProps("locale")}
           />
