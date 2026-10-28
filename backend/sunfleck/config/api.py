@@ -7,6 +7,7 @@ from sunfleck.accounts.api import router as accounts_router
 from sunfleck.care.api import router as care_router
 from sunfleck.core.api import router as core_router
 from sunfleck.core.errors import register_error_handlers
+from sunfleck.notifications.api import router as notifications_router
 from sunfleck.places.api import router as places_router
 from sunfleck.plants.api import router as plants_router
 from sunfleck.plugins.api import router as plugins_router
@@ -22,6 +23,7 @@ api.add_router("/", plants_router)
 api.add_router("/", care_router)
 api.add_router("/", taxonomy_router)
 api.add_router("/", plugins_router)
+api.add_router("/", notifications_router)
 
 # Each plugin's own endpoints, under /api/v1/plugins/<plugin id>/.
 for plugin_id in registry.implementers("register_api"):

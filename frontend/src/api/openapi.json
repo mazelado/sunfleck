@@ -472,6 +472,116 @@
         "title": "CareTypeOut",
         "type": "object"
       },
+      "ChannelIn": {
+        "properties": {
+          "label": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "url": {
+            "description": "An Apprise URL, e.g. ntfy://ntfy.sh/my-plants",
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "url"
+        ],
+        "title": "ChannelIn",
+        "type": "object"
+      },
+      "ChannelOut": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "last_sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sent At"
+          },
+          "service": {
+            "description": "The kind of service, e.g. `ntfy`, `tgram`, `mailto`.",
+            "title": "Service",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "service",
+          "enabled",
+          "last_sent_at",
+          "last_error"
+        ],
+        "title": "ChannelOut",
+        "type": "object"
+      },
+      "ChannelUpdateIn": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "label": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out to keep it.",
+            "title": "Url"
+          }
+        },
+        "required": [
+          "label",
+          "enabled"
+        ],
+        "title": "ChannelUpdateIn",
+        "type": "object"
+      },
       "ContainerMaterial": {
         "description": "What the plant grows in. Porous pots (terracotta, fabric) dry out faster.",
         "enum": [
@@ -1322,6 +1432,44 @@
         "title": "MemberUpdate",
         "type": "object"
       },
+      "MessageOut": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "body"
+        ],
+        "title": "MessageOut",
+        "type": "object"
+      },
+      "NotificationsOut": {
+        "properties": {
+          "channels": {
+            "items": {
+              "$ref": "#/components/schemas/ChannelOut"
+            },
+            "title": "Channels",
+            "type": "array"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/PreferencesSchema"
+          }
+        },
+        "required": [
+          "preferences",
+          "channels"
+        ],
+        "title": "NotificationsOut",
+        "type": "object"
+      },
       "PageQuery": {
         "properties": {
           "limit": {
@@ -2127,6 +2275,61 @@
           "problems"
         ],
         "title": "PluginsOut",
+        "type": "object"
+      },
+      "PreferencesSchema": {
+        "properties": {
+          "digest_time": {
+            "description": "When the daily digest is sent, in `timezone`.",
+            "format": "time",
+            "title": "Digest Time",
+            "type": "string"
+          },
+          "reminder_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An evening reminder of what's still due; none for no reminder.",
+            "title": "Reminder Time"
+          },
+          "timezone": {
+            "maxLength": 64,
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "digest_time",
+          "reminder_time",
+          "timezone"
+        ],
+        "title": "PreferencesSchema",
+        "type": "object"
+      },
+      "PreviewOut": {
+        "properties": {
+          "message": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None when there's nothing to tell."
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "PreviewOut",
         "type": "object"
       },
       "ProblemOut": {
@@ -4446,6 +4649,250 @@
         "summary": "Update Me",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "description": "The signed-in person's notification channels and preferences.",
+        "operationId": "sunfleck_notifications_api_get_notifications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationsOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Notifications",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/channels": {
+      "post": {
+        "description": "Add somewhere to send notifications, as an Apprise URL.",
+        "operationId": "sunfleck_notifications_api_add_channel",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChannelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Add Channel",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/channels/{channel_id}": {
+      "delete": {
+        "operationId": "sunfleck_notifications_api_delete_channel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channel_id",
+            "required": true,
+            "schema": {
+              "title": "Channel Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Channel",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_notifications_api_update_channel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channel_id",
+            "required": true,
+            "schema": {
+              "title": "Channel Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChannelUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Channel",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/channels/{channel_id}/test": {
+      "post": {
+        "description": "Send a test message now.",
+        "operationId": "sunfleck_notifications_api_test_channel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channel_id",
+            "required": true,
+            "schema": {
+              "title": "Channel Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Test Channel",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/preferences": {
+      "put": {
+        "operationId": "sunfleck_notifications_api_update_preferences",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferencesSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesSchema"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Preferences",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/preview": {
+      "get": {
+        "description": "What today's digest would say, if it were sent now.",
+        "operationId": "sunfleck_notifications_api_preview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Preview",
+        "tags": [
+          "notifications"
         ]
       }
     },

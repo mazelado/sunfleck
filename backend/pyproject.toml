@@ -21,6 +21,8 @@ dependencies = [
     # Built-in plugins: separate packages in ../plugins, installed like any other plugin.
     "sunfleck-weather-openmeteo",
     "huey>=3.5",
+    "apprise>=1.9",
+    "cryptography>=44",
 ]
 
 [project.optional-dependencies]
