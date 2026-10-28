@@ -8,6 +8,7 @@ from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
+from django.db import transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
@@ -149,6 +150,25 @@ def log_care(plant: Plant, data: CareEventData, user: User | None) -> CareEvent:
     event = CareEvent(plant=plant, performed_by=user)
     _apply_event(event, plant.household, data)
     return event
+
+
+@transaction.atomic
+def log_care_for_plants(
+    household: Household, plant_ids: list[int], data: CareEventData, user: User | None
+) -> list[CareEvent]:
+    """Record the same care for several plants at once (e.g. watering a whole room), all or
+    none.
+
+    Raises:
+        CareError: If a plant isn't the household's, or as for `log_care`.
+    """
+    plants = Plant.objects.filter(household=household, pk__in=plant_ids).select_related(
+        "location__site"
+    )
+    by_id = {plant.pk: plant for plant in plants}
+    if set(plant_ids) - set(by_id):
+        raise CareError("plant_not_found", "Some of these plants don't exist.", "plant_ids")
+    return [log_care(by_id[plant_id], data, user) for plant_id in dict.fromkeys(plant_ids)]
 
 
 def update_care_event(event: CareEvent, data: CareEventData) -> CareEvent:

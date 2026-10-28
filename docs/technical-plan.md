@@ -212,15 +212,22 @@ erDiagram
 | **Photo** | plant, image, thumbnail, width, height, taken at, caption | Stored as WebP (at most 2048 px, thumbnail 512 px). EXIF stripped; the date taken is read first. HEIC (iPhone) supported. Served through the API with a permission check |
 | **CareType** | household (empty for built-ins), key (built-ins only), name, icon, affects-prediction flag, counts-as-watering flag | Built-ins: water, fertilize, repot, prune, mist, rotate, clean leaves, check for pests; the app translates their names by key. Households can add their own (marking kinds of watering, such as bottom watering, as watering), and rename or delete them until they've been used |
 | **CareEvent** | plant, care type, performed at, performed by, notes, feedback (`too_dry` / `just_right` / `still_wet`, watering only), skipped flag | The care log. Feedback trains predictions. A plant's **timeline** shows its care events and photos together, newest first |
-| **CareSchedule** | plant, care type, mode (`predicted` / `fixed`), interval for fixed schedules, origin (`suggested` / `manual`), in use, started on; the latest prediction: interval, next due date, factors, calculated on | One per plant per care type, and one for watering of any kind. Only watering and fertilizing can be predicted. Snoozing comes with the Today dashboard (M7) |
+| **CareSchedule** | plant, care type, mode (`predicted` / `fixed`), interval for fixed schedules, origin (`suggested` / `manual`), in use, started on, snoozed until; the latest prediction: interval, next due date, factors, calculated on | One per plant per care type, and one for watering of any kind. Only watering and fertilizing can be predicted. A snooze puts off one due date: a new one (e.g. after the care is logged) ends it |
 | **ScheduleAdjustment** | schedule, calculated at, interval, next due date, factors (JSON) | Recorded whenever a prediction changes: the history behind the "why", useful for debugging (shown in the Django admin) |
 | **NotificationChannel** | user, Apprise URL (encrypted), label, enabled, digest time, quiet hours | One user can have several |
 | **NotificationLog** | user, schedule, sent at, channel, status | Prevents duplicate reminders |
 | **PluginSetting** | plugin ID, household (optional), enabled, settings (JSON), secrets (encrypted) | Per plugin, optionally per household |
 
-**Due tasks are derived, not stored.** "Today / Upcoming / Overdue" is a query over
-`CareSchedule.next_due_date` (respecting `snoozed_until`). Completing a task creates a
-`CareEvent`, which triggers recalculation. This avoids keeping a separate task table in sync.
+**Due tasks are derived, not stored.** "Today / Upcoming / Overdue" comes from each
+schedule's next due date (or the day it's snoozed until, if later), counted in the plant's own
+time zone. Completing a task creates a `CareEvent`, which marks the plant's schedules out of
+date. This avoids keeping a separate task table in sync.
+
+**Keeping predictions current.** Saving anything a prediction depends on (the plant, its light,
+its location or site, its care log, its species or care profile) marks the affected schedules
+out of date (Django signals, one cheap update each). Schedules are recalculated when read if
+they're out of date or were last calculated on an earlier day, so the Today list only
+recalculates what changed.
 
 ## 5. Care data and prediction engine
 

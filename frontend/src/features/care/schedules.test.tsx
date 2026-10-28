@@ -83,6 +83,8 @@ const waterSchedule: Schedule = {
   origin: "suggested",
   enabled: true,
   started_on: "2026-04-01",
+  snoozed_until: null,
+  due_on: inDays(3),
   interval_days: 6,
   next_due: inDays(3),
   factors: [season, light],

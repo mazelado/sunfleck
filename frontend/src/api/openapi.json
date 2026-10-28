@@ -20,6 +20,65 @@
         "title": "AcceptInvitationIn",
         "type": "object"
       },
+      "BulkCareIn": {
+        "properties": {
+          "care_type_id": {
+            "title": "Care Type Id",
+            "type": "integer"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Feedback"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Care types that count as watering only: how the soil was beforehand."
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out for now.",
+            "title": "Performed At"
+          },
+          "plant_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Plant Ids",
+            "type": "array"
+          },
+          "skipped": {
+            "default": false,
+            "description": "Checked, but decided not to (e.g. the soil was still wet).",
+            "title": "Skipped",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "care_type_id",
+          "plant_ids"
+        ],
+        "title": "BulkCareIn",
+        "type": "object"
+      },
       "CareEventIn": {
         "properties": {
           "care_type_id": {
@@ -2023,6 +2082,19 @@
           "care_type": {
             "$ref": "#/components/schemas/CareTypeOut"
           },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When it's due, after any snooze; none if paused.",
+            "title": "Due On"
+          },
           "enabled": {
             "title": "Enabled",
             "type": "boolean"
@@ -2084,6 +2156,18 @@
             "title": "Plant Id",
             "type": "integer"
           },
+          "snoozed_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snoozed Until"
+          },
           "started_on": {
             "format": "date",
             "title": "Started On",
@@ -2101,7 +2185,9 @@
           "fixed_interval_days",
           "origin",
           "enabled",
-          "started_on"
+          "started_on",
+          "snoozed_until",
+          "due_on"
         ],
         "title": "ScheduleOut",
         "type": "object"
@@ -2298,6 +2384,28 @@
           "locations"
         ],
         "title": "SiteOut",
+        "type": "object"
+      },
+      "SnoozeIn": {
+        "properties": {
+          "until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Put the care off until this day; null to stop.",
+            "title": "Until"
+          }
+        },
+        "required": [
+          "until"
+        ],
+        "title": "SnoozeIn",
         "type": "object"
       },
       "SoilType": {
@@ -2557,6 +2665,110 @@
         "title": "SuggestionOut",
         "type": "object"
       },
+      "TaskOut": {
+        "properties": {
+          "care_type": {
+            "$ref": "#/components/schemas/CareTypeOut"
+          },
+          "days_until": {
+            "description": "Days until it's due, in the plant's time zone: 0 today, negative overdue.",
+            "title": "Days Until",
+            "type": "integer"
+          },
+          "due_on": {
+            "description": "When it's due, after any snooze.",
+            "format": "date",
+            "title": "Due On",
+            "type": "string"
+          },
+          "interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Days"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ScheduleMode"
+          },
+          "plant": {
+            "$ref": "#/components/schemas/TaskPlantOut"
+          },
+          "schedule_id": {
+            "title": "Schedule Id",
+            "type": "integer"
+          },
+          "snoozed_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snoozed Until"
+          }
+        },
+        "required": [
+          "schedule_id",
+          "plant",
+          "care_type",
+          "mode",
+          "interval_days",
+          "due_on",
+          "days_until",
+          "snoozed_until"
+        ],
+        "title": "TaskOut",
+        "type": "object"
+      },
+      "TaskPlantOut": {
+        "properties": {
+          "cover_thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Thumbnail Url"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantLocationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nickname": {
+            "title": "Nickname",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "cover_thumbnail_url",
+          "location"
+        ],
+        "title": "TaskPlantOut",
+        "type": "object"
+      },
       "TaxonRank": {
         "enum": [
           "genus",
@@ -2692,6 +2904,42 @@
         "title": "TimelineQuery",
         "type": "object"
       },
+      "TodayOut": {
+        "properties": {
+          "tasks": {
+            "description": "Overdue care, then care due soonest.",
+            "items": {
+              "$ref": "#/components/schemas/TaskOut"
+            },
+            "title": "Tasks",
+            "type": "array"
+          },
+          "unscheduled_plants": {
+            "description": "Plants being looked after with no schedule.",
+            "title": "Unscheduled Plants",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tasks",
+          "unscheduled_plants"
+        ],
+        "title": "TodayOut",
+        "type": "object"
+      },
+      "TodayQuery": {
+        "properties": {
+          "days_ahead": {
+            "default": 7,
+            "maximum": 31,
+            "minimum": 0,
+            "title": "Days Ahead",
+            "type": "integer"
+          }
+        },
+        "title": "TodayQuery",
+        "type": "object"
+      },
       "UnitSystem": {
         "enum": [
           "metric",
@@ -2742,6 +2990,48 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/care-events/bulk": {
+      "post": {
+        "description": "Log the same care for several plants at once, e.g. watering a whole room; all or none.",
+        "operationId": "sunfleck_care_api_log_care_for_plants",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CareEventOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Log Care For Plants",
+        "tags": [
+          "care"
+        ]
+      }
+    },
     "/api/v1/care-events/{event_id}": {
       "delete": {
         "operationId": "sunfleck_care_api_delete_care_event",
@@ -2957,6 +3247,54 @@
           }
         ],
         "summary": "Update Schedule",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}/snooze": {
+      "put": {
+        "description": "Put off due care until a day (up to two months ahead), or stop putting it off.",
+        "operationId": "sunfleck_care_api_snooze_schedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnoozeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Snooze Schedule",
         "tags": [
           "care"
         ]
@@ -5037,6 +5375,47 @@
         "summary": "Get Species",
         "tags": [
           "taxonomy"
+        ]
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "description": "The household's overdue care and care due in the next few days, soonest first.",
+        "operationId": "sunfleck_care_api_today",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days_ahead",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "maximum": 31,
+              "minimum": 0,
+              "title": "Days Ahead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Today",
+        "tags": [
+          "care"
         ]
       }
     }
