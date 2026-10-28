@@ -16,7 +16,12 @@ const plantKey = (plantId: number) => ["plants", plantId] as const;
 
 function useInvalidatePlant(plantId: number) {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: plantKey(plantId) });
+  return () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: plantKey(plantId) }),
+      // The Today list (see today.ts).
+      queryClient.invalidateQueries({ queryKey: ["plants", "today"] }),
+    ]);
 }
 
 /** The plant's care schedules, each with when it's next due and why. */

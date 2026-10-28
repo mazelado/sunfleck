@@ -31,7 +31,7 @@
     "viewerDescription": "See everything, change nothing"
   },
   "nav": {
-    "home": "Home",
+    "home": "Today",
     "profile": "Profile",
     "household": "Household",
     "signOut": "Sign out",
@@ -75,8 +75,6 @@
     "invalid": "This invitation link is invalid, already used, or expired. Ask your household's Admin for a new one."
   },
   "home": {
-    "welcome": "Welcome, {{name}}!",
-    "comingSoon": "Care schedules and reminders are coming in the next milestones.",
     "placesCta": "Start by telling Sunfleck where your plants live.",
     "placesSummary_one": "You have {{count}} place set up.",
     "placesSummary_other": "You have {{count}} places set up.",
@@ -635,5 +633,35 @@
         "still_wet": "still wet {{count}}×"
       }
     }
+  },
+  "today": {
+    "title": "Today",
+    "needsCare": "Needs care",
+    "comingUp": "Coming up",
+    "tomorrow": "Tomorrow",
+    "noLocation": "No location",
+    "allCaughtUp": "All caught up. Nothing needs care today.",
+    "nothingComingUp": "Nothing else is due this week.",
+    "unscheduled_one": "{{count}} plant has no care schedule yet.",
+    "unscheduled_other": "{{count}} plants have no care schedule yet.",
+    "unscheduledAction": "Open a plant to add its suggested routine.",
+    "overdue_one": "1 day overdue",
+    "overdue_other": "{{count}} days overdue",
+    "dueToday": "Due today",
+    "snoozed": "Snoozed",
+    "done": "Done: {{care}} {{plant}}",
+    "more": "More for {{care}} {{plant}}",
+    "skip": "Skip this time",
+    "skipped": "Skipped: {{care}} {{plant}}",
+    "snoozeTomorrow": "Snooze until tomorrow",
+    "snoozeDays": "Snooze for {{count}} days",
+    "snoozeWeek": "Snooze for a week",
+    "unsnooze": "Don't snooze",
+    "snoozedUntil": "{{care}} {{plant}}: snoozed until {{date}}",
+    "unsnoozed": "Snooze cancelled",
+    "allOf": "{{care}} all {{count}}",
+    "loggedMany_one": "{{action}}: {{count}} plant",
+    "loggedMany_other": "{{action}}: {{count}} plants",
+    "gettingStarted": "Getting started"
   }
 }

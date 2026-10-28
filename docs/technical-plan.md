@@ -437,8 +437,11 @@ show (settings forms, dashboard conditions, identification results).
 | Dates | Day.js (used by Mantine's date components) |
 
 ### Main screens (MVP)
-1. **Today:** due and overdue tasks grouped by location, one-tap "Done", swipe to snooze or skip,
-   weather strip per site, "water everything in this location".
+1. **Today** (the home page): overdue and today's care grouped by location, one-tap "Done"
+   with undo, a menu to skip, snooze (tomorrow, 3 days, a week) or log with details, and "Water
+   all" for a location; then what's coming up in the next week, by day. (Snooze and skip are in
+   a menu rather than swipe gestures, which are hard to discover and to use with a keyboard or
+   screen reader.) Weather per site comes with the weather plugin (M8).
 2. **Plants:** grid of photo cards with search and filters (location, status, needs care).
 3. **Plant detail:** cover photo, care schedule with "why" explanations, care timeline
    (events and photos), quick actions (log care, add photo, give feedback).
