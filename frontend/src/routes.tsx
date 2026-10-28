@@ -19,6 +19,7 @@ import { PlantsPage } from "./features/plants/PlantsPage";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
 import { HouseholdPage } from "./features/settings/HouseholdPage";
+import { DataPage } from "./features/settings/DataPage";
 import { NotificationsPage } from "./features/settings/NotificationsPage";
 import { PluginsPage } from "./features/settings/PluginsPage";
 import { CareProfilePage } from "./features/taxonomy/CareProfilePage";
@@ -65,6 +66,7 @@ export const routes: RouteObject[] = [
               { path: "/settings/care-types", element: <CareTypesPage /> },
               { path: "/settings/notifications", element: <NotificationsPage /> },
               { path: "/settings/plugins", element: <PluginsPage /> },
+              { path: "/settings/data", element: <DataPage /> },
             ],
           },
         ],

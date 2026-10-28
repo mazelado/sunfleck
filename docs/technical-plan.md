@@ -175,6 +175,17 @@ variable, a key derived from `SECRET_KEY` (with HKDF) is used and a warning is l
 install works out of the box, but changing `SECRET_KEY` then makes stored secrets unreadable.
 A channel whose URL can't be decrypted shows that as its error instead of failing silently.
 
+### Export and import
+**As built (M11):** Admins download the household as a ZIP file (Settings → Export and import,
+or `manage.py export_household`): `sunfleck.json` (a versioned format, validated with Pydantic;
+see `sunfleck/dataio/schema.py`) and the photos. It holds the places, plants, photos, care
+history, schedules, the household's own care types and plugin settings. Passwords and secrets
+(notification channels, plugins' API keys) are left out; schedules' predictions are
+recalculated after importing. An export can be imported (`manage.py import_household` for very
+large ones) only into a household without places, plants or care types of its own, so nothing
+is merged; everything is checked first, and nothing is imported if anything is wrong. Care is
+credited to members with the same email on the new server; the others are listed to invite.
+
 ### Configuration (environment variables)
 | Variable | Default | Purpose |
 |---|---|---|
