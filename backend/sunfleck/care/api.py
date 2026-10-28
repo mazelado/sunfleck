@@ -1,10 +1,11 @@
-"""Care API: care types, the care log, and each plant's timeline of care and photos.
+"""Care API: care types, the care log, each plant's timeline of care and photos, and care
+schedules with the suggested routine.
 
 Everyone in the household can see care; Gardeners and Admins can log and change it.
 """
 
-from datetime import datetime
-from typing import Literal
+from datetime import date, datetime
+from typing import Any, Literal
 
 from django.http import HttpRequest
 from ninja import Query, Router, Schema, Status
@@ -13,8 +14,15 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Household, Role, User
 from sunfleck.accounts.permissions import require_role
-from sunfleck.care import selectors, services
-from sunfleck.care.models import CareEvent, CareType, Feedback
+from sunfleck.care import schedules, selectors, services
+from sunfleck.care.models import (
+    CareEvent,
+    CareSchedule,
+    CareType,
+    Feedback,
+    ScheduleMode,
+    ScheduleOrigin,
+)
 from sunfleck.core.errors import ApiError
 from sunfleck.plants.api import PhotoOut, photo_out
 from sunfleck.plants.models import Plant
@@ -88,6 +96,57 @@ class TimelineQuery(Schema):
     limit: int = Field(default=30, ge=1, le=100)
 
 
+class FactorOut(Schema):
+    code: str = Field(
+        description="What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, "
+        "`rest_season`, `fertilize_pause`, `fixed`; the app explains it in words."
+    )
+    multiplier: float = Field(description="How it changes the interval, e.g. 0.9 is 10% sooner.")
+    details: dict[str, Any]
+
+
+class PredictionFields(Schema):
+    interval_days: int | None = Field(
+        description="Days between care; none while it isn't needed (e.g. a resting season)."
+    )
+    next_due: date | None
+    factors: list[FactorOut] = Field(description="Why: the factors behind the prediction.")
+
+
+class ScheduleOut(PredictionFields):
+    id: int
+    plant_id: int
+    care_type: CareTypeOut
+    mode: ScheduleMode
+    fixed_interval_days: int | None
+    origin: ScheduleOrigin
+    enabled: bool
+    started_on: date
+
+
+class SuggestionOut(PredictionFields):
+    care_type: CareTypeOut
+    mode: ScheduleMode
+    fixed_interval_days: int | None
+    recommended: bool = Field(description="Suggested for this plant, rather than just offered.")
+
+
+class ScheduleChangeIn(Schema):
+    mode: ScheduleMode
+    fixed_interval_days: int | None = Field(
+        default=None, ge=1, le=365, description="Fixed schedules: every how many days."
+    )
+    enabled: bool = True
+
+
+class ScheduleIn(ScheduleChangeIn):
+    care_type_id: int
+
+
+class RoutineIn(Schema):
+    items: list[ScheduleIn] = Field(min_length=1, max_length=20)
+
+
 # --- Conversions ------------------------------------------------------------------------------
 
 
@@ -122,6 +181,39 @@ def _event_out(event: CareEvent) -> CareEventOut:
     )
 
 
+def _factors_out(factors: list[dict[str, Any]]) -> list[FactorOut]:
+    return [FactorOut(**factor) for factor in factors]
+
+
+def _schedule_out(schedule: CareSchedule) -> ScheduleOut:
+    return ScheduleOut(
+        id=schedule.pk,
+        plant_id=schedule.plant_id,
+        care_type=_care_type_out(schedule.care_type),
+        mode=ScheduleMode(schedule.mode),
+        fixed_interval_days=schedule.fixed_interval_days,
+        origin=ScheduleOrigin(schedule.origin),
+        enabled=schedule.enabled,
+        started_on=schedule.started_on,
+        interval_days=schedule.interval_days,
+        next_due=schedule.next_due,
+        factors=_factors_out(schedule.factors),
+    )
+
+
+def _suggestion_out(suggestion: schedules.Suggestion) -> SuggestionOut:
+    prediction = suggestion.prediction
+    return SuggestionOut(
+        care_type=_care_type_out(suggestion.care_type),
+        mode=suggestion.mode,
+        fixed_interval_days=suggestion.fixed_interval_days,
+        recommended=suggestion.recommended,
+        interval_days=prediction.interval_days,
+        next_due=prediction.next_due,
+        factors=_factors_out(schedules.factors_json(prediction.factors)),
+    )
+
+
 def _care_error(exc: services.CareError) -> ApiError:
     return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
 
@@ -134,6 +226,35 @@ def _get_plant(household: Household, plant_id: int) -> Plant:
     if plant is None:
         raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
     return plant
+
+
+def _get_plant_for_schedules(household: Household, plant_id: int) -> Plant:
+    """The plant, with what its predictions need."""
+    plant = (
+        Plant.objects.select_related("location__site", "taxon__archetype", "care_profile")
+        .filter(pk=plant_id, household=household)
+        .first()
+    )
+    if plant is None:
+        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
+    return plant
+
+
+def _get_schedule(household: Household, schedule_id: int) -> CareSchedule:
+    schedule = (
+        CareSchedule.objects.select_related(
+            "care_type",
+            "plant__household",
+            "plant__location__site",
+            "plant__taxon__archetype",
+            "plant__care_profile",
+        )
+        .filter(pk=schedule_id, plant__household=household)
+        .first()
+    )
+    if schedule is None:
+        raise ApiError(404, "schedule_not_found", "This schedule doesn't exist.")
+    return schedule
 
 
 def _get_care_type(household: Household, care_type_id: int) -> CareType:
@@ -253,3 +374,72 @@ def plant_timeline(request: HttpRequest, plant_id: int, page: Query[TimelineQuer
         ],
         next_cursor=next_cursor,
     )
+
+
+# --- Schedules and the suggested routine ------------------------------------------------------
+
+
+@router.get("/plants/{plant_id}/schedules", response=list[ScheduleOut])
+def list_schedules(request: HttpRequest, plant_id: int) -> list[ScheduleOut]:
+    """The plant's care schedules, each with when it's next due and why."""
+    household = require_role(request, Role.VIEWER).household
+    plant = _get_plant_for_schedules(household, plant_id)
+    return [_schedule_out(schedule) for schedule in schedules.schedules_for(plant)]
+
+
+@router.get("/plants/{plant_id}/routine-suggestion", response=list[SuggestionOut])
+def suggest_routine(request: HttpRequest, plant_id: int) -> list[SuggestionOut]:
+    """Schedules we'd suggest for care the plant has no schedule for yet: watering and
+    fertilizing predicted from its care profile, and a few reminders every few weeks."""
+    household = require_role(request, Role.VIEWER).household
+    plant = _get_plant_for_schedules(household, plant_id)
+    return [_suggestion_out(suggestion) for suggestion in schedules.suggest_routine(plant)]
+
+
+@router.post("/plants/{plant_id}/routine", response={201: list[ScheduleOut]})
+def accept_routine(
+    request: HttpRequest, plant_id: int, data: RoutineIn
+) -> Status[list[ScheduleOut]]:
+    """Add the chosen schedules from the suggested routine, all or none."""
+    household = require_role(request, Role.GARDENER).household
+    plant = _get_plant_for_schedules(household, plant_id)
+    try:
+        added = schedules.accept_routine(
+            plant, [schedules.ScheduleData(**item.model_dump()) for item in data.items]
+        )
+    except services.CareError as exc:
+        raise _care_error(exc) from exc
+    return Status(201, [_schedule_out(schedule) for schedule in added])
+
+
+@router.post("/plants/{plant_id}/schedules", response={201: ScheduleOut})
+def create_schedule(request: HttpRequest, plant_id: int, data: ScheduleIn) -> Status[ScheduleOut]:
+    household = require_role(request, Role.GARDENER).household
+    plant = _get_plant_for_schedules(household, plant_id)
+    try:
+        schedule = schedules.create_schedule(plant, schedules.ScheduleData(**data.model_dump()))
+    except services.CareError as exc:
+        raise _care_error(exc) from exc
+    return Status(201, _schedule_out(schedule))
+
+
+@router.put("/care-schedules/{schedule_id}", response=ScheduleOut)
+def update_schedule(request: HttpRequest, schedule_id: int, data: ScheduleChangeIn) -> ScheduleOut:
+    """Change a schedule's mode, interval, or whether it's in use."""
+    household = require_role(request, Role.GARDENER).household
+    schedule = _get_schedule(household, schedule_id)
+    try:
+        schedules.update_schedule(
+            schedule,
+            schedules.ScheduleData(care_type_id=schedule.care_type_id, **data.model_dump()),
+        )
+    except services.CareError as exc:
+        raise _care_error(exc) from exc
+    return _schedule_out(schedule)
+
+
+@router.delete("/care-schedules/{schedule_id}", response={204: None})
+def delete_schedule(request: HttpRequest, schedule_id: int) -> Status[None]:
+    household = require_role(request, Role.GARDENER).household
+    schedules.delete_schedule(_get_schedule(household, schedule_id))
+    return Status(204, None)

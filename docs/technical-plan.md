@@ -133,7 +133,7 @@ Adding it later would mean rewriting every query.
 ### Background jobs (Huey)
 | Job | When |
 |---|---|
-| Recalculate due dates for all active schedules | Nightly, per household time zone, and after any care event or settings change |
+| Recalculate due dates for all schedules (`manage.py recalculate_schedules`) | Nightly. Schedules are also recalculated whenever they're read or changed, so they follow changes to plants, places and the care log without this job |
 | Send reminders and daily digests | Every 15 minutes (checks who is due for a notification) |
 | Refresh weather per site (plugin) | Every 1–3 hours |
 
@@ -212,8 +212,8 @@ erDiagram
 | **Photo** | plant, image, thumbnail, width, height, taken at, caption | Stored as WebP (at most 2048 px, thumbnail 512 px). EXIF stripped; the date taken is read first. HEIC (iPhone) supported. Served through the API with a permission check |
 | **CareType** | household (empty for built-ins), key (built-ins only), name, icon, affects-prediction flag, counts-as-watering flag | Built-ins: water, fertilize, repot, prune, mist, rotate, clean leaves, check for pests; the app translates their names by key. Households can add their own (marking kinds of watering, such as bottom watering, as watering), and rename or delete them until they've been used |
 | **CareEvent** | plant, care type, performed at, performed by, notes, feedback (`too_dry` / `just_right` / `still_wet`, watering only), skipped flag | The care log. Feedback trains predictions. A plant's **timeline** shows its care events and photos together, newest first |
-| **CareSchedule** | plant, care type, mode (`fixed` / `predicted`), base interval days, current interval days, next due date, snoozed until, origin (`suggested` / `manual`), enabled | One per plant per care type |
-| **ScheduleAdjustment** | schedule, calculated at, factors (JSON), resulting interval | The "why" behind each prediction; also useful for debugging |
+| **CareSchedule** | plant, care type, mode (`predicted` / `fixed`), interval for fixed schedules, origin (`suggested` / `manual`), in use, started on; the latest prediction: interval, next due date, factors, calculated on | One per plant per care type, and one for watering of any kind. Only watering and fertilizing can be predicted. Snoozing comes with the Today dashboard (M7) |
+| **ScheduleAdjustment** | schedule, calculated at, interval, next due date, factors (JSON) | Recorded whenever a prediction changes: the history behind the "why", useful for debugging (shown in the Django admin) |
 | **NotificationChannel** | user, Apprise URL (encrypted), label, enabled, digest time, quiet hours | One user can have several |
 | **NotificationLog** | user, schedule, sent at, channel, status | Prevents duplicate reminders |
 | **PluginSetting** | plugin ID, household (optional), enabled, settings (JSON), secrets (encrypted) | Per plugin, optionally per household |
@@ -289,10 +289,16 @@ load_care_data` does it by hand.
   ("Looks like a succulent").
 
 ### Suggested care routine
-When a plant is added (or its location or species changes), `care.services.suggest_routine()`
-proposes schedules for watering, fertilizing, and other relevant care types from the
-archetype, adjusted for the location. The user sees the proposal ("Water about every 8 days,
-fertilize monthly from March to October") and accepts it, edits it, or skips it.
+For care a plant has no schedule for yet, `care.schedules.suggest_routine()` proposes:
+- **watering** and **fertilizing**, predicted from its care profile (so only when it has one,
+  and only if the profile ever needs them: carnivorous plants aren't fertilized), recommended;
+- reminders to **rotate** indoor plants every 14 days and **check for pests** every 30 days,
+  offered but not recommended.
+
+Each suggestion comes with its prediction and the factors behind it. The person accepts the
+ones they want ("Water about every 8 days, fertilize monthly from March to October"), changing
+any of them, all at once. They can switch a schedule between predicted and every-few-days,
+pause it, or delete it later.
 
 ### Prediction engine
 `backend/sunfleck/prediction/` is plain Python: it receives simple data objects and returns

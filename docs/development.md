@@ -172,6 +172,29 @@ DEBUG=true uv run python manage.py load_care_data --force
 
 `make test` checks the dataset and lists every problem with its file.
 
+### Care predictions
+
+The prediction engine is plain Python in `backend/sunfleck/prediction/`; the care app's
+`schedules.py` feeds it from the database and stores the results. Schedules recalculate
+whenever they're read or changed. To bring them all up to date at once (the nightly job will do
+this), run:
+
+```bash
+cd backend
+DEBUG=true uv run python manage.py recalculate_schedules
+```
+
+Each change in a prediction is recorded with the factors behind it, so the Django admin
+(**Care schedules**) shows why a due date moved.
+
+The engine's property-based tests (Hypothesis) try 100 random cases each. After changing the
+engine, try many more:
+
+```bash
+cd backend
+uv run pytest sunfleck/prediction --hypothesis-profile=thorough
+```
+
 ### The map
 
 The site form shows a map from **OpenStreetMap**. While it's open, the browser downloads map

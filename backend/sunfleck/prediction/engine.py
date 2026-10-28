@@ -306,6 +306,18 @@ def predict_fertilizing(
     return Prediction(interval, due, tuple(factors))
 
 
+# --- Fixed intervals --------------------------------------------------------------------------
+
+
+def predict_fixed(interval_days: int, history: History) -> Prediction:
+    """Care every so many days, as the person chose."""
+    factors = [Factor("fixed", details={"days": interval_days})]
+    due, counted_from_start = _due(history, interval_days)
+    if counted_from_start:
+        factors.append(Factor("not_logged", details={"since": history.started_on.isoformat()}))
+    return Prediction(interval_days, due, tuple(factors))
+
+
 # --- Helpers ----------------------------------------------------------------------------------
 
 
