@@ -39,7 +39,8 @@
     "places": "Places",
     "plants": "Plants",
     "careTypes": "Care types",
-    "guide": "Care guide"
+    "guide": "Care guide",
+    "plugins": "Plugins"
   },
   "setup": {
     "title": "Welcome to Sunfleck",
@@ -185,7 +186,10 @@
     "cannot_predict": "Only watering and fertilizing can be predicted.",
     "no_care_profile": "Choose the plant's species or care profile first.",
     "interval_required": "Say every how many days.",
-    "schedule_not_found": "This schedule doesn't exist, or it was deleted."
+    "schedule_not_found": "This schedule doesn't exist, or it was deleted.",
+    "invalid_plugin_setting": "This setting isn't valid.",
+    "plugin_not_found": "This plugin isn't installed.",
+    "plugin_not_enabled": "This plugin isn't turned on."
   },
   "places": {
     "title": "Places",
@@ -663,5 +667,16 @@
     "loggedMany_one": "{{action}}: {{count}} plant",
     "loggedMany_other": "{{action}}: {{count}} plants",
     "gettingStarted": "Getting started"
+  },
+  "plugins": {
+    "title": "Plugins",
+    "intro": "Plugins add features to Sunfleck, such as weather. Turn them on for your household here.",
+    "none": "No plugins are installed.",
+    "problems": "Some installed plugins couldn't be loaded",
+    "on": "On",
+    "turnOn": "{{name}} is on",
+    "sendsData": "When on, it sends data to:",
+    "lastError": "It last failed on {{when}}:",
+    "saved": "{{name}} saved"
   }
 }

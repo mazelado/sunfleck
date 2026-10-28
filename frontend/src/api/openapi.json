@@ -1966,6 +1966,161 @@
         "title": "PlantSummaryOut",
         "type": "object"
       },
+      "PluginIn": {
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "settings": {
+            "additionalProperties": true,
+            "title": "Settings",
+            "type": "object"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "PluginIn",
+        "type": "object"
+      },
+      "PluginOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "last_error_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sends_data_to": {
+            "description": "Outside services it sends data to, and what.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sends Data To",
+            "type": "array"
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings"
+          },
+          "settings_schema": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A JSON Schema of the settings, to make a form from.",
+            "title": "Settings Schema"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "description",
+          "sends_data_to",
+          "enabled",
+          "settings",
+          "settings_schema",
+          "last_error",
+          "last_error_at"
+        ],
+        "title": "PluginOut",
+        "type": "object"
+      },
+      "PluginsOut": {
+        "properties": {
+          "plugins": {
+            "items": {
+              "$ref": "#/components/schemas/PluginOut"
+            },
+            "title": "Plugins",
+            "type": "array"
+          },
+          "problems": {
+            "description": "Installed plugins that couldn't be loaded.",
+            "items": {
+              "$ref": "#/components/schemas/ProblemOut"
+            },
+            "title": "Problems",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plugins",
+          "problems"
+        ],
+        "title": "PluginsOut",
+        "type": "object"
+      },
+      "ProblemOut": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "message"
+        ],
+        "title": "ProblemOut",
+        "type": "object"
+      },
       "Role": {
         "description": "What a member may do in their household, from least to most access.",
         "enum": [
@@ -5003,6 +5158,81 @@
         "summary": "Plant Timeline",
         "tags": [
           "care"
+        ]
+      }
+    },
+    "/api/v1/plugins": {
+      "get": {
+        "operationId": "sunfleck_plugins_api_list_plugins",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginsOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Plugins",
+        "tags": [
+          "plugins"
+        ]
+      }
+    },
+    "/api/v1/plugins/{plugin_id}": {
+      "put": {
+        "description": "Turn a plugin on or off for the household, and change its settings.",
+        "operationId": "sunfleck_plugins_api_update_plugin",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PluginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Plugin",
+        "tags": [
+          "plugins"
         ]
       }
     },

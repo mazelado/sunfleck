@@ -12,6 +12,7 @@ import django_stubs_ext
 from django.core.exceptions import ImproperlyConfigured
 
 from sunfleck.config.env import env_bool, env_list, env_str, parse_email_url
+from sunfleck.plugins.discovery import plugin_apps
 
 # Lets Django classes take type parameters at runtime (e.g. admin.ModelAdmin[Plant]), which
 # the type checker requires.
@@ -55,6 +56,9 @@ INSTALLED_APPS = [
     "sunfleck.plants",
     "sunfleck.care",
     "sunfleck.taxonomy",
+    "sunfleck.plugins",
+    # Installed plugins with their own models (see sunfleck/plugins/discovery.py).
+    *plugin_apps(),
 ]
 
 MIDDLEWARE = [

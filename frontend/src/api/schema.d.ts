@@ -655,6 +655,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plugins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Plugins */
+        get: operations["sunfleck_plugins_api_list_plugins"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plugins/{plugin_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Plugin
+         * @description Turn a plugin on or off for the household, and change its settings.
+         */
+        put: operations["sunfleck_plugins_api_update_plugin"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -1482,6 +1519,65 @@ export interface components {
             nickname: string;
             species: components["schemas"]["PlantSpeciesOut"] | null;
             status: components["schemas"]["PlantStatus"];
+        };
+        /** PluginIn */
+        PluginIn: {
+            /** Enabled */
+            enabled: boolean;
+            /** Settings */
+            settings?: {
+                [key: string]: unknown;
+            };
+        };
+        /** PluginOut */
+        PluginOut: {
+            /** Description */
+            description: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Id */
+            id: string;
+            /** Last Error */
+            last_error: string | null;
+            /** Last Error At */
+            last_error_at: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Sends Data To
+             * @description Outside services it sends data to, and what.
+             */
+            sends_data_to: string[];
+            /** Settings */
+            settings: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Settings Schema
+             * @description A JSON Schema of the settings, to make a form from.
+             */
+            settings_schema: {
+                [key: string]: unknown;
+            } | null;
+            /** Version */
+            version: string;
+        };
+        /** PluginsOut */
+        PluginsOut: {
+            /** Plugins */
+            plugins: components["schemas"]["PluginOut"][];
+            /**
+             * Problems
+             * @description Installed plugins that couldn't be loaded.
+             */
+            problems: components["schemas"]["ProblemOut"][];
+        };
+        /** ProblemOut */
+        ProblemOut: {
+            /** Message */
+            message: string;
+            /** Source */
+            source: string;
         };
         /**
          * Role
@@ -3025,6 +3121,52 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TimelinePage"];
+                };
+            };
+        };
+    };
+    sunfleck_plugins_api_list_plugins: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginsOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plugins_api_update_plugin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plugin_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PluginIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginOut"];
                 };
             };
         };

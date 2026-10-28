@@ -25,6 +25,7 @@ from sunfleck.plants.models import (
     PlantStatus,
     SoilType,
 )
+from sunfleck.plugins.registry import registry
 from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 MAX_CAPTION_LENGTH = 200
@@ -154,6 +155,7 @@ def create_plant(household: Household, data: PlantData) -> Plant:
     """
     plant = Plant(household=household)
     _apply_plant(plant, data)
+    registry.call("on_plant_created", household, plant=plant)
     return plant
 
 

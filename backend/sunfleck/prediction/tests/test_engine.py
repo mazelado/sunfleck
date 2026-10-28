@@ -4,6 +4,7 @@ import pytest
 from django.conf import settings
 
 from sunfleck.prediction.engine import (
+    Adjustment,
     Conditions,
     Factor,
     History,
@@ -371,3 +372,28 @@ def test_fixed_intervals_count_from_the_start_until_logged() -> None:
 
     assert prediction.next_due == date(2026, 4, 15)
     assert codes(prediction) == ["fixed", "not_logged"]
+
+
+# --- Factors from plugins ---------------------------------------------------------------------
+
+
+def test_plugin_factors_change_the_interval_within_the_limits() -> None:
+    cool = Adjustment(Factor("weather_temperature", 1.2, {"temperature_c": 12}))
+    prediction = predict_watering(AROID, Conditions(), WATERED, SPRING_DAY, [cool])
+
+    assert prediction.interval_days == 8
+    assert factor(prediction, "weather_temperature").details == {"temperature_c": 12}
+
+    soaked = [Adjustment(Factor("very_cool", 3.0))]
+    assert predict_watering(AROID, Conditions(), WATERED, SPRING_DAY, soaked).interval_days == 14
+
+
+def test_plugins_can_put_watering_off() -> None:
+    rain = Adjustment(Factor("rain", details={"mm": 12}), not_before=date(2026, 4, 25))
+    drizzle = Adjustment(Factor("rain", details={"mm": 3}), not_before=date(2026, 4, 18))
+
+    put_off = predict_watering(AROID, Conditions(), WATERED, SPRING_DAY, [drizzle, rain])
+    already_later = predict_watering(AROID, Conditions(), WATERED, SPRING_DAY, [drizzle])
+
+    assert put_off.next_due == date(2026, 4, 25)
+    assert already_later.next_due == date(2026, 4, 20)  # due later than the 18th anyway

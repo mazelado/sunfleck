@@ -6,6 +6,7 @@ import {
   IconLogout,
   IconMapPin,
   IconPlant2,
+  IconPuzzle,
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
@@ -80,6 +81,15 @@ export function AppLayout() {
               >
                 {t("nav.household")}
               </Menu.Item>
+              {me?.role === "admin" && (
+                <Menu.Item
+                  component={Link}
+                  to="/settings/plugins"
+                  leftSection={<IconPuzzle size={16} />}
+                >
+                  {t("nav.plugins")}
+                </Menu.Item>
+              )}
               <Menu.Divider />
               <Menu.Item
                 leftSection={<IconLogout size={16} />}
