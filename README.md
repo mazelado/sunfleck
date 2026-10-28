@@ -1,30 +1,69 @@
 # Sunfleck
 
-A self-hosted, open-source plant care app for hobbyists and enthusiasts, covering indoor
-and outdoor plants.
+A self-hosted, open-source plant care app for hobbyists, for indoor and outdoor plants. It
+tells you when each plant needs care, from its type, where it grows, its light, its pot, the
+season and the weather, and learns from how you find the soil.
 
 *A sunfleck is a brief patch of sunlight that reaches the forest floor through the canopy.*
 
-> **Status:** Early development (milestone M8: plugins and weather). Not usable yet.
-> - [docs/development.md](docs/development.md): run it on your computer
-> - [docs/research.md](docs/research.md): market research, MVP scope, and roadmap
-> - [docs/technical-plan.md](docs/technical-plan.md): architecture and build plan
-> - [docs/STYLE_GUIDE.md](docs/STYLE_GUIDE.md): coding and project conventions
+<p align="center">
+  <img src="docs/images/today.png" alt="The Today page: the weather at home with a frost warning, a plant whose watering is overdue, and one coming up" width="260">
+  <img src="docs/images/plant.png" alt="A plant's page: its species, location, care buttons, and its watering schedule with why it's every 10 days" width="260">
+  <img src="docs/images/plants.png" alt="The plants list: cards for three plants with their location and when they were last watered" width="260">
+</p>
 
-## Planned highlights
+## Features
 
-- Track plants, locations (indoor rooms, outdoor beds), windows and grow lights
-- Log care (watering, fertilizing, repotting…) in one tap from your phone
-- Reminders and notifications (email, ntfy, Gotify, and more)
-- Weather-aware outdoor care using your location
-- Optional AI: plant identification, diagnosis, and care suggestions, including local models
-- Add-on (plugin) system
-- Lightweight: one container, SQLite by default, runs on a Raspberry Pi
+- **Your plants and where they grow**: sites on a map, indoor rooms and outdoor beds,
+  windows and grow lights, pots and soil, photos.
+- **Care that's predicted, not just scheduled**: watering and fertilizing intervals worked out
+  from each plant's care profile, light, temperature, pot, season and hemisphere, with an
+  explanation of why. Tell it whether the soil was too dry or still wet, and it adapts.
+- **One tap on your phone**: a Today page with what's due, snooze and skip, a care timeline,
+  and an app you can install on your home screen.
+- **Reminders where you want them**: a daily digest and an evening reminder through ntfy,
+  Telegram, email, Discord, Signal and about 100 other services.
+- **Weather-aware** (optional plugin, Open-Meteo): outdoor watering waits after rain and comes
+  sooner in heat, with frost warnings.
+- **Plant identification** (optional plugin, Pl@ntNet): identify a plant from a photo.
+- **A care guide** of care profiles for over 300 genera and species, with common names.
+- **For the whole household**: invite others as Admin, Gardener or Viewer; each chooses
+  their language, units (metric or imperial) and notifications.
+- **Yours**: self-hosted, export and import everything, no tracking. One Docker image, SQLite
+  by default (PostgreSQL optional), runs on a Raspberry Pi.
+- **Extensible**: a plugin system, and translatable.
+
+## Install
+
+With Docker:
+
+```bash
+mkdir sunfleck && cd sunfleck
+curl -fsSLO https://raw.githubusercontent.com/mazelado/sunfleck/main/docker/compose.yaml
+curl -fsSL https://raw.githubusercontent.com/mazelado/sunfleck/main/docker/env.example -o .env
+# edit .env: at least SECRET_KEY (openssl rand -base64 48)
+docker compose up -d
+```
+
+Then open <http://localhost:8000>. The [installation guide](docs/install.md) covers HTTPS
+and your phone, email, backups, upgrades and every setting.
+
+## Documentation
+
+- [Installing Sunfleck](docs/install.md): setup, HTTPS, backups, upgrading
+- [Using Sunfleck](docs/user-guide.md): places, plants, care, notifications, households
+- [Development](docs/development.md): run it from the source code
+- [Writing plugins](docs/plugins.md), [translating](docs/translating.md), and the
+  [care dataset](data/care/README.md)
+- [Technical plan](docs/technical-plan.md) and [style guide](docs/STYLE_GUIDE.md)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), including our policy on AI-assisted contributions.
+Contributions are welcome, from code to translations and care profiles for more plants: see
+[CONTRIBUTING.md](CONTRIBUTING.md), including our policy on AI-assisted contributions.
 
 ## License
 
-[AGPL-3.0](LICENSE)
+Sunfleck is [AGPL-3.0](LICENSE). The care dataset (`data/care`) is
+[CC BY-SA 4.0](data/care/LICENSE). Weather data by [Open-Meteo.com](https://open-meteo.com)
+(CC BY 4.0); plant identification by [Pl@ntNet](https://plantnet.org).

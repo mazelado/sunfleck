@@ -14,7 +14,11 @@ function testQueryClient() {
 
 /** Render a component inside the same providers the real app uses. */
 export function renderWithProviders(ui: ReactElement) {
-  return render(<AppProviders queryClient={testQueryClient()}>{ui}</AppProviders>);
+  return render(
+    <AppProviders queryClient={testQueryClient()} env="test">
+      {ui}
+    </AppProviders>,
+  );
 }
 
 /** Render the whole app, starting at `path`. */
@@ -22,7 +26,7 @@ export function renderApp(path: string) {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
   const user = userEvent.setup();
   const result = render(
-    <AppProviders queryClient={testQueryClient()}>
+    <AppProviders queryClient={testQueryClient()} env="test">
       <RouterProvider router={router} />
     </AppProviders>,
   );

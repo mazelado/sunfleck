@@ -231,6 +231,8 @@ if FRONTEND_DIR.is_dir():
 # Files with a content hash in their name can be cached by browsers forever: Vite's assets
 # ("/assets/index-Bx3k2_aZ.js") and Django's collected static files ("base.1a2b3c4d5e6f.css").
 WHITENOISE_IMMUTABLE_FILE_TEST = r"^/assets/.+-[\w-]{8,}\.\w+$|\.[0-9a-f]{12}\.\w+$"
+# The installable app's manifest (see frontend/vite.config.ts).
+WHITENOISE_MIMETYPES = {".webmanifest": "application/manifest+json"}
 
 # --- Logging ----------------------------------------------------------------------------------
 
