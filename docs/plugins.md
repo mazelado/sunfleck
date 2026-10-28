@@ -48,7 +48,9 @@ from sunfleck.plugins import PluginInfo
 
 
 class Settings(BaseModel):
-    threshold_mm: int = Field(default=5, ge=1, le=50, title="Rain threshold (mm)")
+    threshold_mm: int = Field(
+        default=5, ge=1, le=50, title="Rain threshold", json_schema_extra={"unit": "mm"}
+    )
 
 
 plugin = PluginInfo(
@@ -67,6 +69,10 @@ plugin = PluginInfo(
 - **`settings_schema`** is a Pydantic model. Admins change the settings on the **Plugins** page,
   in a form made from the model: numbers (with `ge`/`le` limits), yes/no, choices (an `Enum`),
   and text. Give each field a `title`, and a `description` if it needs explaining.
+- **Measurements** are stored in metric. Mark a number setting with
+  `json_schema_extra={"unit": ...}` (`celsius` for a temperature, `mm` for rain, `cm` for a
+  length) and leave the unit out of its title: the form shows it in each person's units (°F
+  and inches for people who chose imperial units) and saves it in metric.
 - **`sends_data_to`** must list every outside service the plugin contacts, and exactly what
   it sends. Admins see this before turning the plugin on.
 - **Plugins are off until an Admin turns them on**, for each household. Only set

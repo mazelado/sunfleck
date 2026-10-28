@@ -425,3 +425,27 @@ def test_previewing_todays_digest(client_as: ClientAs, living_room: Location) ->
     assert preview == {
         "message": {"title": "1 plant needs care today", "body": "Living room: Rotate Monty"}
     }
+
+
+def test_a_channels_address_can_be_changed(client_as: ClientAs, apprise: FakeApprise) -> None:
+    client = client_as(Role.GARDENER)
+    channel_id = send(
+        client, "POST", "/api/v1/notifications/channels", {"label": "Phone", "url": NTFY}
+    ).json()["id"]
+    apprise.failing.add(NTFY)
+    send(client, "POST", f"/api/v1/notifications/channels/{channel_id}/test")
+    url = f"/api/v1/notifications/channels/{channel_id}"
+    email = "mailto://ada:secret@example.com"
+
+    kept = send(client, "PUT", url, {"label": "Phone", "enabled": True, "url": ""})
+    changed = send(client, "PUT", url, {"label": "Email", "enabled": True, "url": email})
+    refused = send(client, "PUT", url, {"label": "Email", "enabled": True, "url": "pager://1"})
+    tested = send(client, "POST", f"{url}/test")
+
+    assert kept.json()["service"] == "ntfy"
+    assert kept.json()["last_error"]  # still the same address
+    assert changed.json()["service"] == "mailto"
+    assert changed.json()["last_error"] is None  # a new address hasn't failed yet
+    assert refused.json()["error"]["details"] == {"field": "url"}
+    assert tested.status_code == 200
+    assert apprise.sent[-1][0] == email

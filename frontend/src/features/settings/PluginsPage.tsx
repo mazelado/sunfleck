@@ -19,8 +19,10 @@ import { type Plugin, usePlugins, useUpdatePlugin } from "../../api/plugins";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { formatDateAndTime } from "../../lib/relativeTime";
+import { useUnits } from "../../lib/useUnits";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { SchemaFields, type SettingsValues } from "./SchemaFields";
+import { settingsForDisplay, settingsFromDisplay } from "./settingUnits";
 
 /** Admins turn plugins on or off for the household, and change their settings. */
 export function PluginsPage() {
@@ -69,13 +71,24 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
   const { t, i18n } = useTranslation();
   const update = useUpdatePlugin();
   const applyFieldErrors = useApplyFieldErrors();
+  const units = useUnits();
+  const schema = plugin.settings_schema ?? {};
   const form = useForm<PluginFormValues>({
-    initialValues: { enabled: plugin.enabled, settings: plugin.settings ?? {} },
+    initialValues: {
+      enabled: plugin.enabled,
+      settings: settingsForDisplay(schema, plugin.settings ?? {}, units),
+    },
   });
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
-      await update.mutateAsync({ id: plugin.id, body: values });
+      await update.mutateAsync({
+        id: plugin.id,
+        body: {
+          ...values,
+          settings: settingsFromDisplay(schema, values.settings, plugin.settings ?? {}, units),
+        },
+      });
       notifications.show({ message: t("plugins.saved", { name: plugin.name }) });
     } catch (error) {
       const fields = Object.fromEntries(
@@ -142,6 +155,7 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
             <SchemaFields
               schema={plugin.settings_schema}
               secretsSet={plugin.secrets_set}
+              units={units}
               inputProps={(key, options) => form.getInputProps(`settings.${key}`, options)}
             />
           )}

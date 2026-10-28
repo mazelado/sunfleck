@@ -79,6 +79,44 @@ describe("plugins", () => {
     });
   });
 
+  it("show measurements in the person's units and save them in metric", async () => {
+    signInAs({ ...admin, unit_system: "imperial" });
+    const frost: Plugin = {
+      ...rain,
+      id: "frost",
+      name: "Frost",
+      settings: { frost_c: 2, rain_mm: 5 },
+      settings_schema: {
+        type: "object",
+        properties: {
+          frost_c: { type: "number", title: "Frost below", unit: "celsius", minimum: -10 },
+          rain_mm: { type: "number", title: "Rain", unit: "mm", minimum: 1 },
+        },
+      },
+    };
+    withPlugins([frost]);
+    let sent: unknown = null;
+    server.use(
+      http.put("*/api/v1/plugins/frost", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(frost);
+      }),
+    );
+    const { user } = renderApp("/settings/plugins");
+
+    const below = await screen.findByRole("textbox", { name: "Frost below (°F)" });
+    expect(below).toHaveValue("36");
+    expect(screen.getByRole("textbox", { name: "Rain (in)" })).toHaveValue("0.2");
+    await user.clear(below);
+    await user.type(below, "32");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      // The rain wasn't changed, so it keeps its exact value rather than 0.2 in = 5.1 mm.
+      expect(sent).toEqual({ enabled: false, settings: { frost_c: 0, rain_mm: 5 } });
+    });
+  });
+
   it("keep API keys secret: an empty one keeps the saved key", async () => {
     signInAs(admin);
     const leafy: Plugin = {
