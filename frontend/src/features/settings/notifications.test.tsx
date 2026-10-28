@@ -35,7 +35,7 @@ describe("notifications", () => {
     signInAs({ ...ada, role: "viewer" });
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     expect(await screen.findByRole("menuitem", { name: "Notifications" })).toHaveAttribute(
       "href",
       "/settings/notifications",

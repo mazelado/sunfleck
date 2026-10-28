@@ -134,7 +134,7 @@ describe("signing in", () => {
     );
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     await user.click(await screen.findByRole("menuitem", { name: "Sign out" }));
 
     expect(await screen.findByRole("heading", { name: "Sign in" })).toBeVisible();

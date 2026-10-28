@@ -100,7 +100,7 @@ describe("care guide", () => {
     withReferenceData();
     const { user } = renderApp("/guide");
 
-    expect(await screen.findByRole("link", { name: "Tropical aroid" })).toBeVisible();
+    expect(await screen.findByRole("link", { name: /^Tropical aroid/ })).toBeVisible();
     expect(screen.getByText("Outdoor")).toBeVisible();
     await user.type(screen.getByRole("searchbox", { name: "Search plants" }), "sansevieria");
 

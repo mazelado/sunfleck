@@ -1,4 +1,4 @@
-import { Center, Group, Paper, Stack, ThemeIcon, Title } from "@mantine/core";
+import { Center, Group, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconPlant2 } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,15 +12,17 @@ interface AuthCardProps {
 export function AuthCard({ title, children }: AuthCardProps) {
   const { t } = useTranslation();
   return (
-    <Center mih="100dvh" p="md">
+    // The page's main content, for screen readers' "skip to main" and landmark lists.
+    <Center component="main" mih="100dvh" p="md">
       <Stack w="100%" maw={420} gap="lg">
         <Group justify="center" gap="xs">
           <ThemeIcon size="lg" radius="xl" variant="light">
             <IconPlant2 size={22} aria-hidden />
           </ThemeIcon>
-          <Title order={2} fz="h3">
+          {/* The app's name, not a heading: the page's title (below) is its first heading. */}
+          <Text fw={700} fz="h3">
             {t("app.name")}
-          </Title>
+          </Text>
         </Group>
         <Paper withBorder radius="lg" p="xl" shadow="sm">
           <Stack gap="md">

@@ -35,7 +35,7 @@
     "profile": "Profile",
     "household": "Household",
     "signOut": "Sign out",
-    "openMenu": "Open the account menu",
+    "accountMenu": "Account menu: {{name}}",
     "places": "Places",
     "plants": "Plants",
     "careTypes": "Care types",

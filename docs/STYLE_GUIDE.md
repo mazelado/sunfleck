@@ -244,6 +244,14 @@ Project conventions (on top of PEP 8):
 - Target **WCAG 2.2 AA**: semantic HTML, labels on every input, visible focus, sufficient
   contrast in light *and* dark themes, `alt` text on meaningful images, never color alone to
   convey meaning.
+- A button's or link's accessible name **includes the text it shows** (WCAG 2.5.3), so people
+  using voice control can say what they see. Prefer visible text over `aria-label`; a card
+  that links somewhere is named by its content.
+- Every page has one `<main>` (`AppShell.Main`, or `AuthCard` for signed-out pages).
+- Checking: `features/layout/accessibility.test.tsx` runs [axe](https://github.com/dequelabs/axe-core)
+  on the main pages (add new pages to it). Colour contrast needs a real browser: check new
+  colours with the axe DevTools extension or Lighthouse, in both themes. The theme
+  (`theme.ts`) already fixes Mantine's dimmed text and "light" badges, which are too faint.
 - **Every user-visible string goes through the translation function** (`t("plants.add")`).
   No hardcoded English in components.
 - Dates, numbers, and units are formatted with the user's locale and unit preferences.
