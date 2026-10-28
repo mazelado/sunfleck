@@ -7,6 +7,7 @@ depends on changed (its plant, location, light, care log, or care profile; see s
 `manage.py recalculate_schedules` (which the nightly job will run) recalculates them all.
 """
 
+import json
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from datetime import date, timedelta
@@ -31,8 +32,12 @@ from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.light import grow_light_dli
 from sunfleck.places.models import LightSourceKind, LocationKind
 from sunfleck.plants.models import Plant, PlantStatus
+from sunfleck.plugins import services as plugin_services
+from sunfleck.plugins.registry import registry
+from sunfleck.plugins.types import CareContext
 from sunfleck.prediction.engine import (
     FEEDBACK_MEMORY,
+    Adjustment,
     Conditions,
     Factor,
     History,
@@ -145,8 +150,38 @@ def predict(schedule: CareSchedule, today: date) -> Prediction:
     profile = Profile.from_dataset(archetype.profile)
     conditions = conditions_for(schedule.plant)
     if schedule.care_type.counts_as_watering:
-        return predict_watering(profile, conditions, history, today)
+        context = CareContext(
+            plant=schedule.plant,
+            site=schedule.plant.location.site if schedule.plant.location else None,
+            care_type=schedule.care_type,
+            today=today,
+            profile=profile,
+            conditions=conditions,
+        )
+        extra = plugin_adjustments(context)
+        return predict_watering(profile, conditions, history, today, extra)
     return predict_fertilizing(profile, conditions, history, today)
+
+
+def plugin_adjustments(context: CareContext) -> list[Adjustment]:
+    """Factors from the household's plugins (e.g. weather) for a plant's watering.
+
+    Answers that aren't adjustments, or whose details can't be stored, are left out and
+    reported as the plugin's error.
+    """
+    household = context.plant.household
+    adjustments = []
+    for answer in registry.call("care_factors", household, context=context):
+        for item in answer.result:
+            try:
+                if not isinstance(item, Adjustment):
+                    raise TypeError(f"expected an Adjustment, got {type(item).__name__}")
+                json.dumps(item.factor.details)
+            except (TypeError, ValueError) as exc:
+                plugin_services.record_error(household, answer.plugin_id, "care_factors", exc)
+                continue
+            adjustments.append(item)
+    return adjustments
 
 
 def factors_json(factors: Iterable[Factor]) -> list[dict[str, Any]]:

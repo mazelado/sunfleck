@@ -17,6 +17,7 @@ dependencies = [
     "pillow-heif>=1.8",
     "pyyaml>=6.0.3",
     "jsonschema>=4.26",
+    "pluggy>=1.7.0",
 ]
 
 [project.optional-dependencies]

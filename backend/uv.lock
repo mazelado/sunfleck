@@ -1523,6 +1523,7 @@ dependencies = [
     { name = "jsonschema" },
     { name = "pillow" },
     { name = "pillow-heif" },
+    { name = "pluggy" },
     { name = "pyyaml" },
     { name = "whitenoise" },
 ]
@@ -1560,6 +1561,7 @@ requires-dist = [
     { name = "jsonschema", specifier = ">=4.26" },
     { name = "pillow", specifier = ">=13.0" },
     { name = "pillow-heif", specifier = ">=1.8" },
+    { name = "pluggy", specifier = ">=1.7.0" },
     { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.3" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "whitenoise", specifier = ">=6.12" },

@@ -101,6 +101,15 @@ class Factor:
 
 
 @dataclass(frozen=True)
+class Adjustment:
+    """A factor from outside the engine (e.g. a weather plugin): it multiplies the interval
+    like the others, and can put the care off until a day (e.g. after heavy rain)."""
+
+    factor: Factor
+    not_before: date | None = None
+
+
+@dataclass(frozen=True)
 class Prediction:
     """When care is next due.
 
@@ -215,9 +224,13 @@ def feedback_factor(feedback: Sequence[str]) -> Factor | None:
 
 
 def predict_watering(
-    profile: Profile, conditions: Conditions, history: History, today: date
+    profile: Profile,
+    conditions: Conditions,
+    history: History,
+    today: date,
+    extra: Sequence[Adjustment] = (),
 ) -> Prediction:
-    """When a plant next needs watering, and why."""
+    """When a plant next needs watering, and why. `extra` adds factors from plugins."""
     latitude = conditions.latitude
     season = season_of(today, latitude)
     base = profile.watering_days[season]
@@ -247,6 +260,7 @@ def predict_watering(
         if factor is not None
         and (abs(factor.multiplier - 1) >= NEGLIGIBLE or factor.code.startswith("no_"))
     ]
+    factors += [adjustment.factor for adjustment in extra]
     multiplier = math.prod(factor.multiplier for factor in factors)
     if not MIN_MULTIPLIER <= multiplier <= MAX_MULTIPLIER:
         multiplier = _clamp(multiplier, MIN_MULTIPLIER, MAX_MULTIPLIER)
@@ -269,6 +283,10 @@ def predict_watering(
         resumes = next_month_start(max(due, today), watered_in)
         factors.append(Factor("rest_season_ahead", details={"resumes_on": _iso(resumes)}))
         due = resumes if resumes else due
+    # Put off by a plugin, e.g. until the soil has had time to dry after rain.
+    not_before = max((a.not_before for a in extra if a.not_before), default=None)
+    if not_before and not_before > due:
+        due = not_before
     return Prediction(interval, due, tuple(factors))
 
 

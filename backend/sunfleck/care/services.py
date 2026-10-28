@@ -15,6 +15,7 @@ from django.utils import timezone
 from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareType, Feedback
 from sunfleck.plants.models import Plant
+from sunfleck.plugins.registry import registry
 
 # Phones' and servers' clocks differ a little; allow for it before calling a time "future".
 CLOCK_TOLERANCE = timedelta(minutes=5)
@@ -149,6 +150,7 @@ def log_care(plant: Plant, data: CareEventData, user: User | None) -> CareEvent:
     """
     event = CareEvent(plant=plant, performed_by=user)
     _apply_event(event, plant.household, data)
+    registry.call("on_care_event_logged", plant.household, event=event)
     return event
 
 

@@ -408,9 +408,25 @@ implements it can respond.
 | `search_taxa(query)` | Provide additional species search results | (Future: Trefle, Perenual) |
 | `site_conditions(site)` | Provide current/forecast conditions for the dashboard | Weather |
 
-Rules (from the [style guide](STYLE_GUIDE.md#8-plugins)): plugins fail gracefully (exceptions
-are caught and logged, and the plugin is disabled, never crashing the app), have their own
-tables, and document what data they send.
+Rules (from the [style guide](STYLE_GUIDE.md#8-plugins)): plugins fail gracefully, have their
+own tables, and document what data they send.
+
+**As built (M8)** — see [plugins.md](plugins.md) for plugin authors:
+- The plugin API is the `sunfleck.plugins` package (version 1). `PluginInfo` also names the
+  plugin's hooks module (imported once Django is ready) and its settings (a Pydantic model).
+- **Plugins are turned on per household by an Admin** (Settings → Plugins), off by default,
+  since most send data elsewhere; the page shows exactly what each sends. Settings are stored
+  per household in `PluginSetting` and validated against the plugin's model. Secrets (API keys)
+  come with the first plugin that needs them (Pl@ntNet, M10).
+- **Hooks are called one plugin at a time**, only for households that turned it on, with their
+  settings. An exception is logged, kept as the plugin's latest error (shown on the Plugins
+  page), and that plugin's answer is left out; the plugin stays on, since most failures (a
+  service being down) are temporary. A plugin that can't be loaded at all is left out and
+  listed on the page.
+- `register_api` routers are mounted under `/api/v1/plugins/<id>/`; endpoints check access with
+  `require_enabled`. `register_periodic_jobs` is defined now and run from M9.
+- `identify_plant` (M10) and `search_taxa` will be added when their first plugin is; adding
+  hooks doesn't break existing plugins.
 
 ### Installing third-party plugins
 For the MVP: install the package into the environment (`pip install ...`) and restart. For
