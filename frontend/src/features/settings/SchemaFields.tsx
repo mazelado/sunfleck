@@ -1,9 +1,12 @@
-import { NumberInput, Select, Switch, TextInput } from "@mantine/core";
+import { NumberInput, PasswordInput, Select, Switch, TextInput } from "@mantine/core";
 import type { GetInputPropsReturnType } from "@mantine/form";
+import { useTranslation } from "react-i18next";
 
 /** The parts of a JSON Schema (as Pydantic writes it) that settings forms use. */
 export interface FieldSchema {
   type?: string;
+  /** `password` for secrets such as API keys. */
+  format?: string;
   title?: string;
   description?: string;
   enum?: (string | number)[];
@@ -32,13 +35,16 @@ interface SchemaFieldsProps {
   schema: ObjectSchema;
   /** The input props of a setting, e.g. from a form's `getInputProps`. */
   inputProps: (key: string, options?: { type: "checkbox" }) => GetInputPropsReturnType;
+  /** Secret settings that have a value; the server never sends it back. */
+  secretsSet?: string[];
 }
 
 /**
  * Form fields for a plugin's settings, from their JSON Schema: numbers, yes/no switches,
  * choices, and text. Labels and help come from the plugin (in its own language for now).
  */
-export function SchemaFields({ schema, inputProps }: SchemaFieldsProps) {
+export function SchemaFields({ schema, inputProps, secretsSet = [] }: SchemaFieldsProps) {
+  const { t } = useTranslation();
   return Object.entries(schema.properties ?? {}).map(([key, raw]) => {
     const field = resolve(raw, schema);
     const common = { key, label: field.title ?? key, description: field.description };
@@ -62,6 +68,16 @@ export function SchemaFields({ schema, inputProps }: SchemaFieldsProps) {
           min={field.minimum}
           max={field.maximum}
           allowDecimal={field.type === "number"}
+          {...inputProps(key)}
+        />
+      );
+    }
+    if (field.format === "password") {
+      return (
+        <PasswordInput
+          {...common}
+          autoComplete="new-password"
+          placeholder={secretsSet.includes(key) ? t("plugins.secretSaved") : undefined}
           {...inputProps(key)}
         />
       );

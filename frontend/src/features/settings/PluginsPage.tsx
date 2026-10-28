@@ -141,6 +141,7 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
           {plugin.settings_schema && (
             <SchemaFields
               schema={plugin.settings_schema}
+              secretsSet={plugin.secrets_set}
               inputProps={(key, options) => form.getInputProps(`settings.${key}`, options)}
             />
           )}

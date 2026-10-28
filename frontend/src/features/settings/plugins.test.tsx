@@ -35,6 +35,7 @@ const rain: Plugin = {
     },
     $defs: { Mood: { enum: ["calm", "wild"], title: "Mood", type: "string" } },
   },
+  secrets_set: [],
   last_error: null,
   last_error_at: null,
 };
@@ -75,6 +76,43 @@ describe("plugins", () => {
         enabled: true,
         settings: { threshold_mm: 8, mood: "calm", alerts: false },
       });
+    });
+  });
+
+  it("keep API keys secret: an empty one keeps the saved key", async () => {
+    signInAs(admin);
+    const leafy: Plugin = {
+      ...rain,
+      id: "leafy",
+      name: "Leafy",
+      enabled: true,
+      settings: { api_key: "" },
+      secrets_set: ["api_key"],
+      settings_schema: {
+        type: "object",
+        properties: {
+          api_key: { type: "string", format: "password", writeOnly: true, title: "API key" },
+        },
+      },
+    };
+    withPlugins([leafy]);
+    let sent: unknown = null;
+    server.use(
+      http.put("*/api/v1/plugins/leafy", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(leafy);
+      }),
+    );
+    const { user } = renderApp("/settings/plugins");
+
+    const key = await screen.findByLabelText("API key");
+    expect(key).toHaveAttribute("type", "password");
+    expect(key).toHaveValue("");
+    expect(key).toHaveAttribute("placeholder", "Saved. Leave empty to keep it.");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(sent).toEqual({ enabled: true, settings: { api_key: "" } });
     });
   });
 

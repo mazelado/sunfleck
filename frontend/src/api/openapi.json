@@ -105,6 +105,56 @@
         "title": "BulkCareIn",
         "type": "object"
       },
+      "CandidateOut": {
+        "properties": {
+          "common_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Common Names",
+            "type": "array"
+          },
+          "exact": {
+            "description": "Whether `species` is this species rather than its genus.",
+            "title": "Exact",
+            "type": "boolean"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "scientific_name": {
+            "title": "Scientific Name",
+            "type": "string"
+          },
+          "score": {
+            "description": "How likely it is, from 0 to 1.",
+            "title": "Score",
+            "type": "number"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SpeciesOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The species in the care guide or, if it isn't there, its genus."
+          }
+        },
+        "required": [
+          "scientific_name",
+          "score",
+          "family",
+          "common_names",
+          "species",
+          "exact"
+        ],
+        "title": "CandidateOut",
+        "type": "object"
+      },
       "CareEventIn": {
         "properties": {
           "care_type_id": {
@@ -754,6 +804,56 @@
         ],
         "title": "Humidity",
         "type": "string"
+      },
+      "IdentificationOut": {
+        "properties": {
+          "attribution": {
+            "description": "Who identified it, to show with the results.",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "candidates": {
+            "description": "Most likely first; may be empty.",
+            "items": {
+              "$ref": "#/components/schemas/CandidateOut"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Identifications left today, if known.",
+            "title": "Remaining"
+          }
+        },
+        "required": [
+          "attribution",
+          "candidates",
+          "remaining"
+        ],
+        "title": "IdentificationOut",
+        "type": "object"
+      },
+      "IdentifyAvailableOut": {
+        "properties": {
+          "available": {
+            "description": "Whether a plugin that identifies plants is on.",
+            "title": "Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "IdentifyAvailableOut",
+        "type": "object"
       },
       "InvitationCreatedOut": {
         "properties": {
@@ -2148,6 +2248,7 @@
           },
           "settings": {
             "additionalProperties": true,
+            "description": "Leave a secret setting empty to keep its value.",
             "title": "Settings",
             "type": "object"
           }
@@ -2199,6 +2300,14 @@
             "title": "Name",
             "type": "string"
           },
+          "secrets_set": {
+            "description": "Secret settings that have a value.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Secrets Set",
+            "type": "array"
+          },
           "sends_data_to": {
             "description": "Outside services it sends data to, and what.",
             "items": {
@@ -2217,6 +2326,7 @@
                 "type": "null"
               }
             ],
+            "description": "Secret settings (API keys) are never sent: they're empty here, and listed in `secrets_set` when they have a value.",
             "title": "Settings"
           },
           "settings_schema": {
@@ -2245,6 +2355,7 @@
           "sends_data_to",
           "enabled",
           "settings",
+          "secrets_set",
           "settings_schema",
           "last_error",
           "last_error_at"
@@ -4279,6 +4390,84 @@
         "summary": "Create Password Reset Link",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/api/v1/identify": {
+      "get": {
+        "description": "Whether plants can be identified from photos (a plugin for it is on).",
+        "operationId": "sunfleck_taxonomy_api_identify_available",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentifyAvailableOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Identify Available",
+        "tags": [
+          "taxonomy"
+        ]
+      },
+      "post": {
+        "description": "Identify a plant from 1 to 5 photos of it, through a plugin such as Pl@ntNet.\n\nThe photos are sent without their metadata (such as where they were taken) and aren't\nkept by Sunfleck.",
+        "operationId": "sunfleck_taxonomy_api_identify",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "photos": {
+                    "items": {
+                      "format": "binary",
+                      "type": "string"
+                    },
+                    "title": "Photos",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "photos"
+                ],
+                "title": "FileParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Identify",
+        "tags": [
+          "taxonomy"
         ]
       }
     },

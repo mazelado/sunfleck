@@ -19,6 +19,8 @@ class PluginSetting(models.Model):
     plugin_id = models.CharField(_("plugin"), max_length=64)
     enabled = models.BooleanField(_("on"), default=False)
     settings = models.JSONField(_("settings"), default=dict, blank=True)
+    # Secret settings (e.g. API keys), each encrypted (see sunfleck.core.crypto).
+    secrets = models.JSONField(_("secrets"), default=dict, blank=True)
     # The latest exception from one of the plugin's hooks, for the Admin to see.
     last_error = models.TextField(_("latest error"), blank=True)
     last_error_at = models.DateTimeField(_("latest error at"), null=True, blank=True)

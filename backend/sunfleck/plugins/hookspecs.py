@@ -12,7 +12,14 @@ from typing import TYPE_CHECKING
 import pluggy
 from pydantic import BaseModel
 
-from sunfleck.plugins.types import Adjustment, CareContext, PeriodicJob, SiteConditions
+from sunfleck.plugins.types import (
+    Adjustment,
+    CareContext,
+    Identification,
+    PeriodicJob,
+    PhotoToIdentify,
+    SiteConditions,
+)
 
 if TYPE_CHECKING:
     from ninja import Router
@@ -56,3 +63,13 @@ def on_care_event_logged(event: "CareEvent", settings: BaseModel | None) -> None
 @hookspec
 def on_plant_created(plant: "Plant", settings: BaseModel | None) -> None:
     """Called after a plant is added."""
+
+
+@hookspec
+def identify_plant(
+    photos: list[PhotoToIdentify], language: str, settings: BaseModel | None
+) -> Identification | None:
+    """Which species the plant in the photos (1 to 5, all of the same plant) may be.
+
+    `language` is the person's language code (e.g. "en"), for common names.
+    """

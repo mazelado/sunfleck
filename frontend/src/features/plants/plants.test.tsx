@@ -3,20 +3,31 @@ import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Me } from "../../api/accounts";
+import type { Identification } from "../../api/identify";
 import type { LightSource, Location, Site } from "../../api/places";
 import type { Photo, Plant, PlantSummary } from "../../api/plants";
+import type { Species } from "../../api/taxonomy";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
 
-// Uploads are checked in api/plants.test.ts: jsdom's FormData doesn't survive Node's fetch.
-const { uploadPhoto } = vi.hoisted(() => ({ uploadPhoto: vi.fn() }));
+// Uploads are checked in api/plants.test.ts and api/identify.test.ts: jsdom's FormData doesn't
+// survive Node's fetch.
+const { uploadPhoto, identifyPlant } = vi.hoisted(() => ({
+  uploadPhoto: vi.fn(),
+  identifyPlant: vi.fn(),
+}));
 vi.mock("../../api/plants", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../api/plants")>()),
   uploadPhoto,
 }));
+vi.mock("../../api/identify", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../api/identify")>()),
+  identifyPlant,
+}));
 
 afterEach(() => {
   uploadPhoto.mockReset();
+  identifyPlant.mockReset();
 });
 
 const gardener: Me = { ...ada, role: "gardener" };
@@ -245,6 +256,98 @@ describe("plant form", () => {
       file: chosen,
       filename: "monty.jpg",
       takenAt: null,
+    });
+  });
+
+  it("identifies the plant from the chosen photo", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    const deliciosa: Species = {
+      id: 3,
+      scientific_name: "Monstera deliciosa",
+      rank: "species",
+      family: "Araceae",
+      common_name: "Swiss cheese plant",
+      common_names: ["Swiss cheese plant"],
+      synonyms: [],
+      note: null,
+      care_profile: { key: "tropical_aroid", name: "Tropical aroid" },
+    };
+    const monstera: Species = { ...deliciosa, id: 2, scientific_name: "Monstera", rank: "genus" };
+    const identification: Identification = {
+      attribution: "Identified by Pl@ntNet",
+      remaining: 42,
+      candidates: [
+        {
+          scientific_name: "Monstera deliciosa",
+          score: 0.83,
+          family: "Araceae",
+          common_names: ["Cheese plant"],
+          species: deliciosa,
+          exact: true,
+        },
+        {
+          scientific_name: "Monstera obliqua",
+          score: 0.06,
+          family: "Araceae",
+          common_names: [],
+          species: monstera,
+          exact: false,
+        },
+        {
+          scientific_name: "Quercus robur",
+          score: 0.01,
+          family: "Fagaceae",
+          common_names: ["English oak"],
+          species: null,
+          exact: false,
+        },
+      ],
+    };
+    identifyPlant.mockResolvedValue(identification);
+    let sent: { taxon_id?: number; nickname?: string } = {};
+    server.use(
+      http.get("*/api/v1/identify", () => HttpResponse.json({ available: true })),
+      http.post("*/api/v1/plants", async ({ request }) => {
+        sent = (await request.json()) as typeof sent;
+        return HttpResponse.json(plant(), { status: 201 });
+      }),
+    );
+    withPlant(plant());
+    const { user } = renderApp("/plants/new");
+
+    const identify = await screen.findByRole("button", { name: "Identify from the photo" });
+    expect(identify).toBeDisabled();
+    const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!fileInput) throw new Error("No file input");
+    const chosen = new File(["not really a jpeg"], "monty.jpg", { type: "image/jpeg" });
+    await user.upload(fileInput, chosen);
+    await user.click(identify);
+
+    const best = await screen.findByRole("group", { name: "Monstera deliciosa" });
+    expect(within(best).getByText("Cheese plant")).toBeVisible();
+    expect(within(best).getByText("83% likely")).toBeVisible();
+    const genusOnly = screen.getByRole("group", { name: "Monstera obliqua" });
+    expect(within(genusOnly).getByRole("button", { name: "Use Monstera" })).toBeVisible();
+    const oak = screen.getByRole("group", { name: "Quercus robur" });
+    expect(within(oak).queryByRole("button")).toBeNull();
+    expect(within(oak).getByText(/Not in the care guide yet/)).toBeVisible();
+    expect(
+      screen.getByText(/Identified by Pl@ntNet · 42 identifications left today/),
+    ).toBeVisible();
+    expect(identifyPlant.mock.calls[0]?.[0]).toEqual([
+      { file: chosen, filename: "monty.jpg", takenAt: null },
+    ]);
+
+    await user.click(within(best).getByRole("button", { name: "Use" }));
+    expect(screen.getByRole("textbox", { name: /^Name/ })).toHaveValue("Cheese plant");
+    expect(screen.getByRole("combobox", { name: /Species/ })).toHaveValue(
+      "Swiss cheese plant (Monstera deliciosa)",
+    );
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(sent).toMatchObject({ taxon_id: 3, nickname: "Cheese plant" });
     });
   });
 

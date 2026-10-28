@@ -15,10 +15,13 @@ if TYPE_CHECKING:
 __all__ = [
     "Adjustment",
     "Alert",
+    "Candidate",
     "CareContext",
     "Conditions",
     "Factor",
+    "Identification",
     "PeriodicJob",
+    "PhotoToIdentify",
     "Profile",
     "SiteConditions",
 ]
@@ -72,3 +75,43 @@ class PeriodicJob:
     name: str
     cron: str
     function: Callable[[], object]  # what it returns is ignored
+
+
+@dataclass(frozen=True)
+class PhotoToIdentify:
+    """A photo to identify a plant from: a JPEG without metadata (no GPS position), at most
+    1280 px on its long edge."""
+
+    jpeg: bytes
+    # What the photo shows: `auto` (unknown), `leaf`, `flower`, `fruit` or `bark`.
+    organ: str = "auto"
+
+
+@dataclass(frozen=True)
+class Candidate:
+    """A species a plant may be, by its scientific name without the author (e.g. "Monstera
+    deliciosa"), with how likely it is (0 to 1)."""
+
+    scientific_name: str
+    score: float
+    genus: str = ""
+    family: str = ""
+    common_names: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class Identification:
+    """What an `identify_plant` hook found: candidates, most likely first (none if the photos
+    don't show a plant it knows), or a problem.
+
+    `problem` is one of `missing_api_key`, `invalid_api_key`, `quota_exceeded` or
+    `unavailable`, for problems the person can do something about (or wait out); other
+    failures should raise.
+    """
+
+    # Who identified it, shown with the results (e.g. "Identified by Pl@ntNet").
+    attribution: str
+    candidates: tuple[Candidate, ...] = ()
+    problem: str | None = None
+    # Identifications left today, if the service says.
+    remaining: int | None = None

@@ -193,7 +193,14 @@
     "plugin_not_enabled": "This plugin isn't turned on.",
     "unsupported_channel_url": "Apprise doesn't know this address. Check it against the list of services.",
     "delivery_failed": "It couldn't be sent.",
-    "channel_not_found": "This channel doesn't exist, or it was deleted."
+    "channel_not_found": "This channel doesn't exist, or it was deleted.",
+    "identification_unavailable": "No plugin for identifying plants is turned on.",
+    "missing_api_key": "The identification service needs an API key. An Admin can add it under Plugins.",
+    "invalid_api_key": "The identification service didn't accept its API key. An Admin can check it under Plugins.",
+    "quota_exceeded": "No identifications are left for today. Try again tomorrow.",
+    "unavailable": "The identification service can't be reached. Try again later.",
+    "identification_failed": "The plant couldn't be identified. Try again later.",
+    "too_many_photos": "Choose 1 to 5 photos."
   },
   "places": {
     "title": "Places",
@@ -684,7 +691,8 @@
     "turnOn": "{{name}} is on",
     "sendsData": "When on, it sends data to:",
     "lastError": "It last failed on {{when}}:",
-    "saved": "{{name}} saved"
+    "saved": "{{name}} saved",
+    "secretSaved": "Saved. Leave empty to keep it."
   },
   "weather": {
     "today": "Today",
@@ -737,5 +745,18 @@
     "preview": "Today's digest",
     "previewHelp": "What it would say if it were sent now.",
     "nothingToday": "Nothing needs care today, so no digest would be sent."
+  },
+  "identify": {
+    "button": "Identify from the photo",
+    "needsPhoto": "Choose a photo to identify the plant from it.",
+    "results": "It may be",
+    "likely": "{{percent}}% likely",
+    "use": "Use",
+    "useGenus": "Use {{genus}}",
+    "genusOnly": "This species isn't in the care guide yet, but its genus is.",
+    "notInGuide": "Not in the care guide yet. You can still pick a care profile.",
+    "noMatch": "No plant was recognized. Try a closer photo of a leaf or flower.",
+    "remaining_one": "{{count}} identification left today",
+    "remaining_other": "{{count}} identifications left today"
   }
 }

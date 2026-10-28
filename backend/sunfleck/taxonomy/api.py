@@ -8,13 +8,15 @@ from typing import Any, Literal
 
 from django.db.models import Count, Q
 from django.http import HttpRequest
-from ninja import Query, Router, Schema
+from ninja import File, Query, Router, Schema
+from ninja.files import UploadedFile
 from ninja.security import django_auth
 from pydantic import Field
 
 from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
+from sunfleck.taxonomy import identify as identification
 from sunfleck.taxonomy.models import (
     CareArchetype,
     Taxon,
@@ -115,6 +117,27 @@ class SpeciesHitOut(SpeciesOut):
     matched_name: str | None = Field(
         description="The common or older name that matched, if it wasn't the scientific name."
     )
+
+
+class IdentifyAvailableOut(Schema):
+    available: bool = Field(description="Whether a plugin that identifies plants is on.")
+
+
+class CandidateOut(Schema):
+    scientific_name: str
+    score: float = Field(description="How likely it is, from 0 to 1.")
+    family: str
+    common_names: list[str]
+    species: SpeciesOut | None = Field(
+        description="The species in the care guide or, if it isn't there, its genus."
+    )
+    exact: bool = Field(description="Whether `species` is this species rather than its genus.")
+
+
+class IdentificationOut(Schema):
+    attribution: str = Field(description="Who identified it, to show with the results.")
+    candidates: list[CandidateOut] = Field(description="Most likely first; may be empty.")
+    remaining: int | None = Field(description="Identifications left today, if known.")
 
 
 class SearchQuery(Schema):
@@ -229,3 +252,52 @@ def get_care_profile(request: HttpRequest, key: str) -> CareProfileOut:
         archetype.taxa.filter(rank=TaxonRank.GENUS).values_list("scientific_name", flat=True)
     )
     return _profile_out(archetype, language(request), genera)
+
+
+IDENTIFY_ERROR_STATUS = {
+    "identification_unavailable": 404,
+    "quota_exceeded": 429,
+    "missing_api_key": 502,
+    "invalid_api_key": 502,
+    "unavailable": 502,
+    "identification_failed": 502,
+}
+
+
+@router.get("/identify", response=IdentifyAvailableOut)
+def identify_available(request: HttpRequest) -> IdentifyAvailableOut:
+    """Whether plants can be identified from photos (a plugin for it is on)."""
+    household = require_role(request, Role.VIEWER).household
+    return IdentifyAvailableOut(available=identification.available(household))
+
+
+@router.post("/identify", response=IdentificationOut)
+def identify(request: HttpRequest, photos: File[list[UploadedFile]]) -> IdentificationOut:
+    """Identify a plant from 1 to 5 photos of it, through a plugin such as Pl@ntNet.
+
+    The photos are sent without their metadata (such as where they were taken) and aren't
+    kept by Sunfleck."""
+    household = require_role(request, Role.GARDENER).household
+    lang = language(request)
+    try:
+        result = identification.identify(
+            household, [(photo, photo.size or 0) for photo in photos], lang
+        )
+    except identification.IdentifyError as exc:
+        status = IDENTIFY_ERROR_STATUS.get(exc.code, 422)
+        raise ApiError(status, exc.code, str(exc)) from exc
+    return IdentificationOut(
+        attribution=result.attribution,
+        candidates=[
+            CandidateOut(
+                scientific_name=match.candidate.scientific_name,
+                score=match.candidate.score,
+                family=match.candidate.family,
+                common_names=list(match.candidate.common_names),
+                species=species_out(match.taxon, lang) if match.taxon else None,
+                exact=match.exact,
+            )
+            for match in result.matches
+        ],
+        remaining=result.remaining,
+    )
