@@ -16,7 +16,7 @@ from sunfleck.plants.tests.factories import PlantFactory
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareArchetype
 
-from sunfleck_weather_openmeteo import hooks, weather
+from sunfleck_weather_openmeteo import Settings, hooks, weather
 from sunfleck_weather_openmeteo.models import SiteWeather
 
 ClientAs = Callable[[Role], Client]
@@ -407,3 +407,11 @@ def test_a_failed_refresh_is_tried_again_next_time(
     service.answer = open_meteo()
     with time_machine.travel(NOW + timedelta(minutes=15), tick=False):
         assert hooks.refresh_forecasts() == 1
+
+
+def test_settings_say_their_units_so_people_see_their_own() -> None:
+    properties = Settings.model_json_schema()["properties"]
+
+    assert properties["frost_c"]["unit"] == "celsius"
+    assert properties["rain_mm"]["unit"] == "mm"
+    assert "°C" not in properties["frost_c"]["title"]

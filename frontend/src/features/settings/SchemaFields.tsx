@@ -1,6 +1,9 @@
 import { NumberInput, Select, Switch, TextInput } from "@mantine/core";
 import type { GetInputPropsReturnType } from "@mantine/form";
 
+import type { UnitSystem } from "../../lib/units";
+import { type SettingUnit, toDisplay, unitLabel } from "./settingUnits";
+
 /** The parts of a JSON Schema (as Pydantic writes it) that settings forms use. */
 export interface FieldSchema {
   type?: string;
@@ -9,6 +12,8 @@ export interface FieldSchema {
   enum?: (string | number)[];
   minimum?: number;
   maximum?: number;
+  /** For numbers: what they measure, so they're shown in the person's units. */
+  unit?: SettingUnit;
   $ref?: string;
   allOf?: FieldSchema[];
 }
@@ -32,13 +37,15 @@ interface SchemaFieldsProps {
   schema: ObjectSchema;
   /** The input props of a setting, e.g. from a form's `getInputProps`. */
   inputProps: (key: string, options?: { type: "checkbox" }) => GetInputPropsReturnType;
+  /** The person's units, for settings with a unit. */
+  units: UnitSystem;
 }
 
 /**
  * Form fields for a plugin's settings, from their JSON Schema: numbers, yes/no switches,
  * choices, and text. Labels and help come from the plugin (in its own language for now).
  */
-export function SchemaFields({ schema, inputProps }: SchemaFieldsProps) {
+export function SchemaFields({ schema, inputProps, units }: SchemaFieldsProps) {
   return Object.entries(schema.properties ?? {}).map(([key, raw]) => {
     const field = resolve(raw, schema);
     const common = { key, label: field.title ?? key, description: field.description };
@@ -56,12 +63,17 @@ export function SchemaFields({ schema, inputProps }: SchemaFieldsProps) {
       return <Switch {...common} {...inputProps(key, { type: "checkbox" })} />;
     }
     if (field.type === "integer" || field.type === "number") {
+      const unit = field.unit;
+      const shown = (limit: number | undefined) =>
+        limit === undefined || !unit ? limit : toDisplay(limit, unit, units);
       return (
         <NumberInput
           {...common}
-          min={field.minimum}
-          max={field.maximum}
-          allowDecimal={field.type === "number"}
+          label={unit ? `${common.label} (${unitLabel(unit, units)})` : common.label}
+          min={shown(field.minimum)}
+          max={shown(field.maximum)}
+          // Whole millimetres or degrees can be fractions in other units.
+          allowDecimal={field.type === "number" || (unit !== undefined && units === "imperial")}
           {...inputProps(key)}
         />
       );

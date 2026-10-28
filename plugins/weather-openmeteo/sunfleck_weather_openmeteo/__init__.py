@@ -13,14 +13,16 @@ class Settings(BaseModel):
         default=2.0,
         ge=-10,
         le=10,
-        title="Frost warning below (°C)",
+        title="Frost warning below",
+        json_schema_extra={"unit": "celsius"},
         description="Warn when the night's low is forecast at or below this.",
     )
     rain_mm: float = Field(
         default=5.0,
         ge=1,
         le=50,
-        title="Rain that waters outdoor plants (mm)",
+        title="Rain that waters outdoor plants",
+        json_schema_extra={"unit": "mm"},
         description="Put outdoor watering off for two days after this much rain.",
     )
     wait_for_rain: bool = Field(
