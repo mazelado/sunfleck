@@ -36,6 +36,7 @@ dev = [
     "ruff>=0.17",
     "types-pyyaml>=6.0.12.20260906",
     "types-jsonschema>=4.26.0.20261006",
+    "hypothesis>=6.170.12",
 ]
 
 [tool.uv]
