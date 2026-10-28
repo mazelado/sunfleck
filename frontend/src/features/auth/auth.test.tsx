@@ -34,7 +34,7 @@ describe("first-run setup", () => {
     await user.type(screen.getByLabelText(/Household name/), "Fern Gully");
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
-    expect(await screen.findByRole("heading", { name: "Welcome, Ada!" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
     expect(sent).toEqual({
       display_name: "Ada",
       email: "ada@example.com",
@@ -121,7 +121,7 @@ describe("signing in", () => {
 
     renderApp("/sign-in");
 
-    expect(await screen.findByRole("heading", { name: "Welcome, Ada!" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
   });
 
   it("signs out from the account menu", async () => {
@@ -173,7 +173,7 @@ describe("passwords", () => {
     await user.type(screen.getByLabelText(/Repeat/), "a fresh passphrase");
     await user.click(screen.getByRole("button", { name: "Save password" }));
 
-    expect(await screen.findByRole("heading", { name: "Welcome, Ada!" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
     expect(sent).toEqual({ key: "abc-123", password: "a fresh passphrase" });
   });
 
@@ -234,7 +234,7 @@ describe("invitations", () => {
     await user.type(screen.getByLabelText(/^Password/), "a long and unusual passphrase");
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
-    expect(await screen.findByRole("heading", { name: "Welcome, Basil!" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
     // The used-up invitation must not be fetched again (it would briefly show "invalid").
     expect(previews).toBe(1);
   });

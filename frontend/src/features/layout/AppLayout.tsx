@@ -2,7 +2,7 @@ import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "
 import {
   IconBook,
   IconDroplet,
-  IconHome,
+  IconChecklist,
   IconLogout,
   IconMapPin,
   IconPlant2,
@@ -46,7 +46,7 @@ export function AppLayout() {
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item component={Link} to="/" leftSection={<IconHome size={16} />}>
+              <Menu.Item component={Link} to="/" leftSection={<IconChecklist size={16} />}>
                 {t("nav.home")}
               </Menu.Item>
               <Menu.Item component={Link} to="/plants" leftSection={<IconPlant2 size={16} />}>

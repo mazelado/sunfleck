@@ -30,6 +30,8 @@ interface CareEventDialogProps {
   plantId: number;
   /** The event to correct; leave out to log new care. */
   event?: CareEvent;
+  /** New care only: the care type to start with. */
+  careTypeId?: number;
   onClose: () => void;
 }
 
@@ -42,7 +44,7 @@ interface CareFormValues {
 }
 
 /** Log care with a time, notes, and (for watering) how the soil was; or correct logged care. */
-export function CareEventDialog({ plantId, event, onClose }: CareEventDialogProps) {
+export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEventDialogProps) {
   const { t } = useTranslation();
   const careTypes = useCareTypes().data ?? [];
   const { name } = useCareTypeName();
@@ -52,7 +54,7 @@ export function CareEventDialog({ plantId, event, onClose }: CareEventDialogProp
   const save = event ? updateEvent : logCare;
   const form = useForm<CareFormValues>({
     initialValues: {
-      careTypeId: String(event?.care_type.id ?? careTypes[0]?.id ?? ""),
+      careTypeId: String(event?.care_type.id ?? careTypeId ?? careTypes[0]?.id ?? ""),
       when: toLocalInput(event ? new Date(event.performed_at) : new Date()),
       feedback: event?.feedback ?? null,
       skipped: event?.skipped ?? false,

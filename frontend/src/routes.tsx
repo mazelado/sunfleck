@@ -6,7 +6,6 @@ import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { SetupPage } from "./features/auth/SetupPage";
 import { SignInPage } from "./features/auth/SignInPage";
 import { CareTypesPage } from "./features/care/CareTypesPage";
-import { HomePage } from "./features/home/HomePage";
 import { AppLayout } from "./features/layout/AppLayout";
 import { NotFoundPage } from "./features/layout/NotFoundPage";
 import { LocationFormPage } from "./features/places/LocationFormPage";
@@ -23,6 +22,7 @@ import { HouseholdPage } from "./features/settings/HouseholdPage";
 import { CareProfilePage } from "./features/taxonomy/CareProfilePage";
 import { GuidePage } from "./features/taxonomy/GuidePage";
 import { SpeciesPage } from "./features/taxonomy/SpeciesPage";
+import { TodayPage } from "./features/today/TodayPage";
 import { ProfilePage } from "./features/settings/ProfilePage";
 
 export const routes: RouteObject[] = [
@@ -40,7 +40,7 @@ export const routes: RouteObject[] = [
           {
             element: <AppLayout />,
             children: [
-              { path: "/", element: <HomePage /> },
+              { path: "/", element: <TodayPage /> },
               { path: "/plants", element: <PlantsPage /> },
               { path: "/plants/new", element: <PlantFormPage /> },
               { path: "/plants/:plantId", element: <PlantPage /> },
