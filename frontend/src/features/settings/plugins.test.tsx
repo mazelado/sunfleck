@@ -197,7 +197,7 @@ describe("plugins", () => {
     signInAs({ ...ada, role: "gardener" });
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     const menu = await screen.findByRole("menu");
     expect(within(menu).queryByRole("menuitem", { name: "Plugins" })).toBeNull();
   });
@@ -206,7 +206,7 @@ describe("plugins", () => {
     signInAs(admin);
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     expect(await screen.findByRole("menuitem", { name: "Plugins" })).toHaveAttribute(
       "href",
       "/settings/plugins",

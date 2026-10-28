@@ -7,7 +7,7 @@ import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
 
-import { theme } from "./theme";
+import { cssVariablesResolver, theme } from "./theme";
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -26,7 +26,12 @@ export function AppProviders({
   const [queryClient] = useState(() => providedClient ?? new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme} defaultColorScheme="auto" env={env}>
+      <MantineProvider
+        theme={theme}
+        cssVariablesResolver={cssVariablesResolver}
+        defaultColorScheme="auto"
+        env={env}
+      >
         {/* At the bottom, like phone "snackbars": within thumb reach for "Undo", and clear of
             dialog titles. */}
         <Notifications position="bottom-center" limit={3} />

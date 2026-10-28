@@ -392,9 +392,9 @@ describe("plant cards", () => {
 
     renderApp("/plants");
 
-    const monty = await screen.findByRole("link", { name: "Monty" });
+    const monty = await screen.findByRole("link", { name: /^Monty/ });
     expect(within(monty).getByText("Watered 3 days ago")).toBeVisible();
-    const fern = screen.getByRole("link", { name: "Fern" });
+    const fern = screen.getByRole("link", { name: /^Fern/ });
     expect(within(fern).getByText("Not watered yet")).toBeVisible();
   });
 });

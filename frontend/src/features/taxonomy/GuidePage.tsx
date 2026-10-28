@@ -127,7 +127,6 @@ function ProfileLink({ profile }: { profile: CareProfileSummary }) {
       withBorder
       radius="md"
       p="sm"
-      aria-label={profile.name}
       c="var(--mantine-color-text)"
       td="none"
     >

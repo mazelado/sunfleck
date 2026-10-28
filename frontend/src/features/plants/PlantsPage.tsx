@@ -138,14 +138,7 @@ export function PlantsPage() {
 function PlantCard({ plant }: { plant: PlantSummary }) {
   const { t, i18n } = useTranslation();
   return (
-    <Card
-      component={Link}
-      to={`/plants/${String(plant.id)}`}
-      withBorder
-      radius="lg"
-      padding={0}
-      aria-label={plant.nickname}
-    >
+    <Card component={Link} to={`/plants/${String(plant.id)}`} withBorder radius="lg" padding={0}>
       <PlantImage src={plant.cover_thumbnail_url} alt="" height={140} />
       <Stack gap={2} p="sm">
         <Group gap={6} wrap="nowrap" justify="space-between">

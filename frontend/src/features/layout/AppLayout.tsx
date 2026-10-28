@@ -56,9 +56,15 @@ export function AppLayout() {
           </Text>
           <Menu position="bottom-end" width={200}>
             <Menu.Target>
-              <UnstyledButton aria-label={t("nav.openMenu")}>
+              {/* The name shown (on wider screens) is part of the button's name, as people
+                  using voice control say what they see. */}
+              <UnstyledButton aria-label={t("nav.accountMenu", { name })}>
                 <Group gap="xs">
-                  <Avatar name={name} color="initials" size="sm" />
+                  {/* An icon rather than initials, which would be text that's not in the
+                      button's name. */}
+                  <Avatar name={name} color="initials" size="sm" aria-hidden>
+                    <IconUser size={16} />
+                  </Avatar>
                   <Text size="sm" visibleFrom="xs">
                     {name}
                   </Text>

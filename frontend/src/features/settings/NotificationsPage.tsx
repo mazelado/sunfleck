@@ -221,7 +221,13 @@ function EditChannelForm({ channel, onDone }: { channel: Channel; onDone: () => 
           description={
             <>
               {t("notifications.newUrlHelp")}{" "}
-              <Anchor href={APPRISE_WIKI} target="_blank" rel="noreferrer" size="xs">
+              <Anchor
+                href={APPRISE_WIKI}
+                target="_blank"
+                rel="noreferrer"
+                size="xs"
+                underline="always"
+              >
                 {t("notifications.allServices")}
               </Anchor>
             </>
@@ -284,7 +290,13 @@ function AddChannelForm() {
           description={
             <>
               {t("notifications.urlHelp")}{" "}
-              <Anchor href={APPRISE_WIKI} target="_blank" rel="noreferrer" size="xs">
+              <Anchor
+                href={APPRISE_WIKI}
+                target="_blank"
+                rel="noreferrer"
+                size="xs"
+                underline="always"
+              >
                 {t("notifications.allServices")}
               </Anchor>
             </>

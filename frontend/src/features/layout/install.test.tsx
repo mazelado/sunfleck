@@ -13,7 +13,7 @@ function installPrompt(outcome: "accepted" | "dismissed" = "accepted") {
 }
 
 async function openMenu(user: ReturnType<typeof renderApp>["user"]) {
-  await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+  await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
   return within(await screen.findByRole("menu"));
 }
 
@@ -21,7 +21,7 @@ describe("installing the app", () => {
   it("uses the browser's own prompt where there is one", async () => {
     signInAs(ada);
     const { user } = renderApp("/");
-    await screen.findByRole("button", { name: "Open the account menu" });
+    await screen.findByRole("button", { name: /^Account menu/ });
     const event = installPrompt();
     act(() => {
       window.dispatchEvent(event);

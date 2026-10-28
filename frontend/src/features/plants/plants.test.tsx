@@ -175,9 +175,9 @@ describe("plant list", () => {
     );
     const { user } = renderApp("/plants");
 
-    const monty = await screen.findByRole("link", { name: "Monty" });
+    const monty = await screen.findByRole("link", { name: /^Monty/ });
     expect(within(monty).getByText("Living room")).toBeVisible();
-    const fern = screen.getByRole("link", { name: "Old fern" });
+    const fern = screen.getByRole("link", { name: /^Old fern/ });
     expect(within(fern).getByText("Died")).toBeVisible();
     expect(within(fern).getByText("No location")).toBeVisible();
     expect(screen.getByText("2 plants")).toBeVisible();
@@ -186,7 +186,7 @@ describe("plant list", () => {
     await user.type(screen.getByRole("searchbox", { name: "Search plants" }), "fern");
 
     await waitFor(() => {
-      expect(screen.queryByRole("link", { name: "Monty" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /^Monty/ })).not.toBeInTheDocument();
     });
     expect(searches).toContain("fern");
   });

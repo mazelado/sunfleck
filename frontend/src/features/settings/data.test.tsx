@@ -46,7 +46,7 @@ describe("export and import", () => {
   it("are in the menu for Admins only", async () => {
     signInAs({ ...ada, role: "gardener" });
     const { user } = renderApp("/");
-    await user.click(await screen.findByRole("button", { name: "Open the account menu" }));
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     // The first test in a file loads the whole app, which can be slow on a busy machine.
     const menu = await screen.findByRole("menu", {}, { timeout: 5000 });
     expect(within(menu).queryByRole("menuitem", { name: "Export and import" })).toBeNull();
