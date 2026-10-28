@@ -576,6 +576,16 @@ services:
 
 A PostgreSQL variant is provided as an optional Compose profile.
 
+**As built (M11):** pushing a `v*` tag runs the Release workflow
+(`.github/workflows/release.yml`): it checks `CHANGELOG.md` has notes for that version, builds
+the image for both platforms with Buildx and QEMU, pushes it to `ghcr.io/mazelado/sunfleck`
+tagged with the version, its minor version (`0.1`) and `latest` (pre-releases only get their
+own tag), and creates a GitHub release with those notes. `docker/compose.yaml` runs the
+published image (`SUNFLECK_VERSION` in `.env` picks a version) with a named volume rather than
+`./data`; `docker/compose.build.yaml` builds it from the source code instead. Instead of a
+PostgreSQL profile, [install.md](install.md) explains pointing `DATABASE_URL` at an existing
+server. Releasing is described in [development.md](development.md#releasing).
+
 ## 9. Development environment
 
 ### Repository layout

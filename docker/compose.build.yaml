@@ -1,0 +1,14 @@
+# Builds the image from this repository instead of using the published one, for trying out
+# changes. From this folder:
+#   docker compose -f compose.yaml -f compose.build.yaml up -d --build
+services:
+  sunfleck:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: sunfleck:local
+    pull_policy: build
+
+  worker:
+    image: sunfleck:local
+    pull_policy: never

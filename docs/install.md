@@ -180,9 +180,10 @@ docker compose pull
 docker compose up -d
 ```
 
-Database changes are applied automatically when it starts. Make a backup first. The Compose
-file uses the latest release; to stay on a version, put it in the `image:` lines, e.g.
-`ghcr.io/mazelado/sunfleck:0.1`.
+Database changes are applied automatically when it starts. Make a backup first, and read the
+[release notes](https://github.com/mazelado/sunfleck/releases). The Compose file uses the
+latest release; to stay on a version, set it in `.env`, e.g. `SUNFLECK_VERSION=0.1` (0.1's bug
+fixes, but not 0.2).
 
 ## PostgreSQL and Redis (optional)
 

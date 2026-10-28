@@ -238,17 +238,20 @@ docker run --rm -p 8000:8000 -e SECRET_KEY=try-it-out sunfleck:dev
 
 Then open <http://localhost:8000>. Data is thrown away when the container stops.
 
-For a longer-lived setup, use Docker Compose from the `docker/` folder:
+For a longer-lived setup, use Docker Compose from the `docker/` folder. `compose.yaml` runs the
+published image (see [Installing Sunfleck](install.md)); `compose.build.yaml` adds to it to
+build the image from your code instead:
 
 ```bash
 cd docker
 cp env.example .env       # then edit .env: set SECRET_KEY and TIME_ZONE
-docker compose up -d --build
+docker compose -f compose.yaml -f compose.build.yaml up -d --build
 ```
 
 This starts two containers from the same image: **sunfleck** (the app) and **worker** (background
 jobs: reminders, weather updates, the nightly recalculation), which starts once the app is up.
-`--build` rebuilds the image from your current code; drop it to reuse the last build. Data is
+`--build` rebuilds the image from your current code; drop it to reuse the last build. (Use the
+same `-f` options with the other `docker compose` commands below.) Data is
 kept in a Docker volume named `docker_sunfleck-data` (the `docker_` prefix comes from the
 folder name), so it survives restarts and rebuilds. It holds both the database and the plant
 photos (`/data/media`), so back up the whole volume. Useful commands:
@@ -260,7 +263,27 @@ photos (`/data/media`), so back up the whole volume. Useful commands:
 | `docker compose down` | Stop it (data is kept) |
 | `docker compose down --volumes` | Stop it **and delete all its data** |
 
-Published images (`ghcr.io/mazelado/sunfleck`) will start with the first release.
+### Releasing
+
+Pushing a version tag publishes a release: the [Release workflow](../.github/workflows/release.yml)
+builds the image for `linux/amd64` and `linux/arm64`, pushes it to `ghcr.io/mazelado/sunfleck`
+(tagged e.g. `0.1.0`, `0.1` and `latest`), and creates a GitHub release with that version's
+section of [CHANGELOG.md](../CHANGELOG.md). To release:
+
+1. In a pull request, move the changelog's *Unreleased* notes under a new version heading, and
+   set the version in `backend/pyproject.toml`, `backend/sunfleck/__init__.py` and
+   `frontend/package.json`, then update the lock files (`uv lock` in `backend`, and
+   `npm install --package-lock-only` in `frontend`) and the API types (`make api-types`).
+   Merge it.
+2. Tag the merged commit on `main` and push the tag:
+
+   ```bash
+   git switch main && git pull
+   git tag -a v0.1.0 -m "Sunfleck 0.1.0"
+   git push origin v0.1.0
+   ```
+3. Afterwards, set the versions to the next development version (e.g. `0.2.0.dev0` and
+   `0.2.0-dev`).
 
 ## 9. Troubleshooting
 
@@ -269,7 +292,6 @@ Published images (`ghcr.io/mazelado/sunfleck`) will start with the first release
 | `uv: command not found` | Open a new terminal after installing uv, or follow the PATH hint the installer printed |
 | `The SECRET_KEY environment variable must be set` | You ran `manage.py` directly. Use the `make` commands, or prefix the command with `DEBUG=true` |
 | `Error: That port is already in use` | Another `make dev` is still running. Stop it with Ctrl+C in that terminal |
-| `no such table` or `InconsistentMigrationHistory` after pulling | Until the first release, migrations may be rewritten. Delete your local database (`rm -r backend/data`) and, for Docker, its volume (`cd docker && docker compose down --volumes`) |
 | The page says "Can't reach the server" | The Django server isn't running or crashed. Check its output in the `make dev` terminal |
 | The Django output shows `Not Found: /health` (or other URLs Sunfleck doesn't use) | Another program on your computer is polling port 8000, usually because it expects its own server there. Sunfleck is unaffected. To find the program, run `sudo ss -tnp 'dport = :8000'` a few times while `make dev` is running |
 | Docker says `/data isn't writable` | You replaced the volume with a folder. Give it to the app's user: `sudo chown 1000 <folder>` |
