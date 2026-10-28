@@ -16,6 +16,7 @@ const pages: [string, string, string][] = [
   ["Household", "/settings/household", "Household"],
   ["Notifications", "/settings/notifications", "Notifications"],
   ["Plugins", "/settings/plugins", "Plugins"],
+  ["Export and import", "/settings/data", "Export and import"],
 ];
 
 describe("accessibility", () => {
