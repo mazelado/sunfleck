@@ -13,14 +13,20 @@ interface AppProvidersProps {
   children: ReactNode;
   /** Tests pass their own client, e.g. one that doesn't retry failed requests. */
   queryClient?: QueryClient;
+  /** "test" turns Mantine's transitions and portals off, as its testing guide recommends. */
+  env?: "default" | "test";
 }
 
 /** Everything the app needs around it: theme, notifications, server-state cache, translations. */
-export function AppProviders({ children, queryClient: providedClient }: AppProvidersProps) {
+export function AppProviders({
+  children,
+  queryClient: providedClient,
+  env = "default",
+}: AppProvidersProps) {
   const [queryClient] = useState(() => providedClient ?? new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme} defaultColorScheme="auto">
+      <MantineProvider theme={theme} defaultColorScheme="auto" env={env}>
         {/* At the bottom, like phone "snackbars": within thumb reach for "Undo", and clear of
             dialog titles. */}
         <Notifications position="bottom-center" limit={3} />

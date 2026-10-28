@@ -1,10 +1,14 @@
 import "@testing-library/jest-dom/vitest";
 
 import { notifications } from "@mantine/notifications";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
 
 import { server } from "./server";
+
+// Most pages are loaded when first opened, which can take over the default second when all
+// test files run at once; waiting longer only slows down tests that fail.
+configure({ asyncUtilTimeout: 3000 });
 
 // Any request a test didn't plan for is a bug in the test or the app, so it fails the test.
 const unexpectedRequests: string[] = [];

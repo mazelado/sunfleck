@@ -41,7 +41,8 @@
     "careTypes": "Care types",
     "guide": "Care guide",
     "plugins": "Plugins",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "install": "Install app"
   },
   "setup": {
     "title": "Welcome to Sunfleck",
@@ -761,5 +762,17 @@
     "noMatch": "No plant was recognized. Try a closer photo of a leaf or flower.",
     "remaining_one": "{{count}} identification left today",
     "remaining_other": "{{count}} identifications left today"
+  },
+  "install": {
+    "title": "Install Sunfleck",
+    "iosIntro": "Add Sunfleck to your home screen to open it like an app:",
+    "iosShare": "Tap the Share button in Safari (a square with an arrow).",
+    "iosAdd": "Choose Add to Home Screen, then Add.",
+    "done": "Got it"
+  },
+  "unreachable": {
+    "title": "Sunfleck can't be reached",
+    "body": "Check your internet connection, or whether the Sunfleck server is running, then try again.",
+    "retry": "Try again"
   }
 }

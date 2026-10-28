@@ -1,7 +1,20 @@
-import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "@mantine/core";
+import {
+  AppShell,
+  Avatar,
+  Button,
+  Container,
+  Group,
+  List,
+  Menu,
+  Modal,
+  Stack,
+  Text,
+  UnstyledButton,
+} from "@mantine/core";
 import {
   IconBell,
   IconBook,
+  IconDeviceMobileDown,
   IconDroplet,
   IconChecklist,
   IconLogout,
@@ -11,10 +24,12 @@ import {
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigate } from "react-router";
 
 import { useMe, useSignOut } from "../../api/accounts";
+import { useInstall } from "../../lib/useInstall";
 
 /** The frame around every page for signed-in people: header with the account menu. */
 export function AppLayout() {
@@ -23,6 +38,8 @@ export function AppLayout() {
   const me = useMe().data;
   const signOut = useSignOut();
   const name = me?.display_name || me?.email || "";
+  const { method: installMethod, install } = useInstall();
+  const [iosHelp, setIosHelp] = useState(false);
 
   async function handleSignOut() {
     await signOut.mutateAsync();
@@ -99,6 +116,20 @@ export function AppLayout() {
                 </Menu.Item>
               )}
               <Menu.Divider />
+              {installMethod && (
+                <Menu.Item
+                  leftSection={<IconDeviceMobileDown size={16} />}
+                  onClick={() => {
+                    if (installMethod === "ios") {
+                      setIosHelp(true);
+                    } else {
+                      void install();
+                    }
+                  }}
+                >
+                  {t("nav.install")}
+                </Menu.Item>
+              )}
               <Menu.Item
                 leftSection={<IconLogout size={16} />}
                 onClick={() => void handleSignOut()}
@@ -109,6 +140,30 @@ export function AppLayout() {
           </Menu>
         </Group>
       </AppShell.Header>
+      <Modal
+        opened={iosHelp}
+        onClose={() => {
+          setIosHelp(false);
+        }}
+        title={t("install.title")}
+      >
+        <Stack gap="sm">
+          <Text size="sm">{t("install.iosIntro")}</Text>
+          <List type="ordered" size="sm">
+            <List.Item>{t("install.iosShare")}</List.Item>
+            <List.Item>{t("install.iosAdd")}</List.Item>
+          </List>
+          <Group justify="flex-end">
+            <Button
+              onClick={() => {
+                setIosHelp(false);
+              }}
+            >
+              {t("install.done")}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
       <AppShell.Main>
         <Container size="md" px={0}>
           <Outlet />
