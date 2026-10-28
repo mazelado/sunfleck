@@ -849,6 +849,23 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** AlertOut */
+        AlertOut: {
+            /** Details */
+            details: {
+                [key: string]: unknown;
+            };
+            /**
+             * Kind
+             * @description What to look out for, e.g. `frost`.
+             */
+            kind: string;
+            /**
+             * On
+             * Format: date
+             */
+            on: string;
+        };
         /** BulkCareIn */
         BulkCareIn: {
             /** Care Type Id */
@@ -1705,6 +1722,46 @@ export interface components {
             /** Needs Setup */
             needs_setup: boolean;
         };
+        /** SiteConditionsOut */
+        SiteConditionsOut: {
+            /** Alerts */
+            alerts: components["schemas"]["AlertOut"][];
+            /**
+             * Attribution
+             * @description Who the data comes from; show it with the data.
+             */
+            attribution: string;
+            /** Plugin Id */
+            plugin_id: string;
+            /** Precipitation Mm */
+            precipitation_mm: number | null;
+            /** Site Id */
+            site_id: number;
+            /** Site Name */
+            site_name: string;
+            /** Temperature C */
+            temperature_c: number | null;
+            /**
+             * Today
+             * Format: date
+             * @description The day it is at the site, in its time zone.
+             */
+            today: string;
+            /** Today Max C */
+            today_max_c: number | null;
+            /** Today Min C */
+            today_min_c: number | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Weather Code
+             * @description A WMO weather code.
+             */
+            weather_code: number | null;
+        };
         /** SiteIn */
         SiteIn: {
             /** Latitude */
@@ -1909,6 +1966,11 @@ export interface components {
         };
         /** TodayOut */
         TodayOut: {
+            /**
+             * Sites
+             * @description Conditions at the household's sites, from plugins (e.g. weather).
+             */
+            sites: components["schemas"]["SiteConditionsOut"][];
             /**
              * Tasks
              * @description Overdue care, then care due soonest.

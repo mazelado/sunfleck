@@ -635,7 +635,10 @@
         "too_dry": "too dry {{count}}×",
         "just_right": "just right {{count}}×",
         "still_wet": "still wet {{count}}×"
-      }
+      },
+      "rain": "Rain: {{amount}} in the last two days, so the soil is still moist",
+      "rainForecast": "Rain forecast {{when}} ({{amount}}), so watering waits for it",
+      "hotSpell": "Hot spell: highs around {{max}}, above the {{ideal}} its care profile likes"
     }
   },
   "today": {
@@ -678,5 +681,24 @@
     "sendsData": "When on, it sends data to:",
     "lastError": "It last failed on {{when}}:",
     "saved": "{{name}} saved"
+  },
+  "weather": {
+    "today": "Today",
+    "range": "{{min}} to {{max}}",
+    "rain": "{{amount}} rain",
+    "tonight": "tonight",
+    "tomorrowNight": "tomorrow night",
+    "nightOf": "{{day}} night",
+    "frost": "Frost likely {{when}} (low of {{low}}). Bring tender plants in, or cover them.",
+    "kinds": {
+      "clear": "Clear",
+      "partlyCloudy": "Partly cloudy",
+      "cloudy": "Cloudy",
+      "fog": "Fog",
+      "drizzle": "Drizzle",
+      "rain": "Rain",
+      "snow": "Snow",
+      "thunderstorm": "Thunderstorms"
+    }
   }
 }

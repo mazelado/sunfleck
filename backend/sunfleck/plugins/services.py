@@ -91,6 +91,10 @@ def update(household: Household, plugin_id: str, enabled: bool, settings: dict[s
         plugin_id=plugin_id,
         defaults={"enabled": enabled, "settings": values, "last_error": "", "last_error_at": None},
     )
+    # Plugins can change predictions (e.g. weather), so recalculate the household's.
+    from sunfleck.care.signals import mark_out_of_date  # care imports the plugin registry
+
+    mark_out_of_date(household=household)
     return _state(info, row)
 
 

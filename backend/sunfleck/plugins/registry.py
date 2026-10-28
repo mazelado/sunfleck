@@ -74,8 +74,13 @@ class Registry:
         caller = self.manager.subset_hook_caller(hook, remove_plugins=others)
         return list(caller(**kwargs))
 
-    def call(self, hook: str, household: Household, **kwargs: Any) -> list[Answer]:
-        """Call a hook of every plugin that's on for the household, with its settings."""
+    def call(
+        self, hook: str, household: Household, expect: type | None = None, **kwargs: Any
+    ) -> list[Answer]:
+        """Call a hook of every plugin that's on for the household, with its settings.
+
+        With `expect`, answers of another type are left out and reported as the plugin's error.
+        """
         from sunfleck.plugins import services  # services imports this module
 
         implementers = self.implementers(hook)
@@ -93,7 +98,12 @@ class Registry:
                 logger.exception("Plugin %s failed in %s", plugin_id, hook)
                 services.record_error(household, plugin_id, hook, exc)
                 continue
-            answers.extend(Answer(plugin_id, result) for result in results if result)
+            for result in results:
+                if expect is not None and not isinstance(result, expect):
+                    error = TypeError(f"expected {expect.__name__}, got {type(result).__name__}")
+                    services.record_error(household, plugin_id, hook, error)
+                elif result:
+                    answers.append(Answer(plugin_id, result))
         return answers
 
     def call_at_startup(self, hook: str, plugin_id: str, **kwargs: Any) -> list[Any]:

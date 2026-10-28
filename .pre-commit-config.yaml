@@ -35,7 +35,7 @@ repos:
         types: [python]
       - id: mypy
         name: Type-check Python (mypy)
-        entry: bash -c "cd backend && uv run mypy ."
+        entry: bash -c "cd backend && uv run mypy . ../plugins"
         language: system
         types: [python]
         pass_filenames: false

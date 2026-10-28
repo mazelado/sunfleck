@@ -18,6 +18,8 @@ dependencies = [
     "pyyaml>=6.0.3",
     "jsonschema>=4.26",
     "pluggy>=1.7.0",
+    # Built-in plugins: separate packages in ../plugins, installed like any other plugin.
+    "sunfleck-weather-openmeteo",
 ]
 
 [project.optional-dependencies]
@@ -42,6 +44,9 @@ dev = [
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+sunfleck-weather-openmeteo = { path = "../plugins/weather-openmeteo", editable = true }
 
 # --- Ruff: formatting and linting -------------------------------------------------------------
 
@@ -91,7 +96,7 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 # factory_boy's field helpers (Sequence, SubFactory, ...) have no type hints.
-module = ["sunfleck.conftest", "sunfleck.*.tests.*"]
+module = ["sunfleck.testing", "sunfleck.*.tests.*", "sunfleck_*.tests.*"]
 disallow_untyped_calls = false
 
 [tool.django-stubs]
@@ -101,9 +106,9 @@ django_settings_module = "sunfleck.config.test_settings"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sunfleck.config.test_settings"
-addopts = "--strict-markers --cov=sunfleck --cov-report=term-missing"
+addopts = "--strict-markers --cov=sunfleck --cov=../plugins --cov-report=term-missing"
 filterwarnings = ["error"]  # a warning today is a bug tomorrow; fix or explicitly ignore it
-testpaths = ["sunfleck"]
+testpaths = ["sunfleck", "../plugins"]
 
 [tool.coverage.run]
 branch = true

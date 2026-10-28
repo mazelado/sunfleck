@@ -46,9 +46,9 @@ test-frontend: ## Run the frontend tests
 lint: lint-backend lint-frontend ## Run every check that CI runs (except tests)
 
 lint-backend: ## Check backend formatting, lint rules, types, and migrations
-	$(BACKEND) uv run ruff format --check .
-	$(BACKEND) uv run ruff check .
-	$(BACKEND) uv run mypy .
+	$(BACKEND) uv run ruff format --check . ../plugins
+	$(BACKEND) uv run ruff check . ../plugins
+	$(BACKEND) uv run mypy . ../plugins
 	$(BACKEND) $(DEV_ENV) uv run python manage.py makemigrations --check --dry-run
 
 lint-frontend: ## Check frontend formatting, lint rules, and types
@@ -57,8 +57,8 @@ lint-frontend: ## Check frontend formatting, lint rules, and types
 	$(FRONTEND) npm run typecheck
 
 format: ## Fix formatting and auto-fixable lint problems
-	$(BACKEND) uv run ruff format .
-	$(BACKEND) uv run ruff check --fix .
+	$(BACKEND) uv run ruff format . ../plugins
+	$(BACKEND) uv run ruff check --fix . ../plugins
 	$(FRONTEND) npm run format
 	$(FRONTEND) npx eslint --fix .
 

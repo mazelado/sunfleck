@@ -4,6 +4,9 @@ A plugin is a normal Python package that adds a feature to Sunfleck, such as wea
 use the **plugin API, version 1**, which is everything in the `sunfleck.plugins` package.
 Sunfleck's built-in plugins are packaged and installed exactly the same way as yours.
 
+> The built-in weather plugin, [`plugins/weather-openmeteo`](../plugins/weather-openmeteo), is a
+> complete example: settings, its own table, `site_conditions`, `care_factors`, and tests.
+
 > Status: the plugin API arrived in milestone M8. It may still change before v1.0, but changes
 > that break plugins will raise its version (see [Versions](#versions)).
 
@@ -121,7 +124,12 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 
 A plugin with `django_app` has its own Django app: its models get their own tables and
 migrations, which `migrate` applies like Sunfleck's own. Name tables after the plugin (Django
-does this by default) and don't change Sunfleck's tables.
+does this by default).
+
+Plugins may use Sunfleck's models (such as `sunfleck.places.models.Site` and
+`sunfleck.plants.models.Plant`) for foreign keys and to read them, but must not change
+Sunfleck's data directly: use the hooks, and `mark_site_out_of_date`. Anything else in
+Sunfleck's code isn't part of the plugin API and may change without notice.
 
 ## 5. Installing
 
@@ -138,8 +146,9 @@ shows the reason on the Plugins page.
 
 ## 6. Testing
 
-Test hooks like any Django code. In Sunfleck's own test suite, a plugin can be added and removed
-around a test:
+Test hooks like any Django code. Sunfleck's shared test fixtures (`household`, `member_of`,
+`client_as`) are in `sunfleck.testing`; import them in your tests' `conftest.py`. In Sunfleck's
+own test suite, a plugin can also be added and removed around a test:
 
 ```python
 from sunfleck.plugins.registry import registry

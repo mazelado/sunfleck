@@ -427,6 +427,16 @@ own tables, and document what data they send.
   `require_enabled`. `register_periodic_jobs` is defined now and run from M9.
 - `identify_plant` (M10) and `search_taxa` will be added when their first plugin is; adding
   hooks doesn't break existing plugins.
+- **Built-in plugins** live in `plugins/`, each its own package installed by the backend from
+  there (and into the Docker image as a regular package), so they go through exactly the same
+  entry-point discovery as third-party ones.
+- **Weather (Open-Meteo)**, the first: each site's weather on Today, frost warnings (sites with
+  outdoor locations), and for outdoor watering: two days' wait after rain (or before forecast
+  rain) and sooner watering in a hot spell (highs above the care profile's ideal maximum).
+  Cool weather isn't counted, as the seasonal intervals already allow for it. Forecasts are
+  fetched on demand when 3 hours old (M9 moves this to a background job), kept per site, and
+  used for up to a day when Open-Meteo is down. It sends only each site's location, rounded to
+  about 1 km.
 
 ### Installing third-party plugins
 For the MVP: install the package into the environment (`pip install ...`) and restart. For

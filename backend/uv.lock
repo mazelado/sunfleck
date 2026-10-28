@@ -1525,6 +1525,7 @@ dependencies = [
     { name = "pillow-heif" },
     { name = "pluggy" },
     { name = "pyyaml" },
+    { name = "sunfleck-weather-openmeteo" },
     { name = "whitenoise" },
 ]
 
@@ -1564,6 +1565,7 @@ requires-dist = [
     { name = "pluggy", specifier = ">=1.7.0" },
     { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.3" },
     { name = "pyyaml", specifier = ">=6.0.3" },
+    { name = "sunfleck-weather-openmeteo", editable = "../plugins/weather-openmeteo" },
     { name = "whitenoise", specifier = ">=6.12" },
 ]
 provides-extras = ["postgres"]
@@ -1584,6 +1586,11 @@ dev = [
     { name = "types-jsonschema", specifier = ">=4.26.0.20261006" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20260906" },
 ]
+
+[[package]]
+name = "sunfleck-weather-openmeteo"
+version = "0.1.0"
+source = { editable = "../plugins/weather-openmeteo" }
 
 [[package]]
 name = "time-machine"

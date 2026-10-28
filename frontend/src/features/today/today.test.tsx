@@ -56,7 +56,7 @@ const tasks: Task[] = [
 function withToday(list: Task[] = tasks, unscheduled = 0) {
   server.use(
     http.get("*/api/v1/today", () =>
-      HttpResponse.json({ tasks: list, unscheduled_plants: unscheduled }),
+      HttpResponse.json({ sites: [], tasks: list, unscheduled_plants: unscheduled }),
     ),
   );
 }
@@ -232,6 +232,48 @@ describe("today", () => {
     expect(await screen.findByText("2 days overdue")).toBeVisible();
     expect(screen.queryByRole("button", { name: /^Done/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /all \d/ })).not.toBeInTheDocument();
+  });
+
+  it("shows each site's weather, with frost warnings", async () => {
+    signInAs({ ...gardener, unit_system: "imperial" });
+    server.use(
+      http.get("*/api/v1/today", () =>
+        HttpResponse.json({
+          sites: [
+            {
+              site_id: 1,
+              site_name: "Home",
+              today: "2026-04-15",
+              plugin_id: "weather_openmeteo",
+              attribution: "Weather data by Open-Meteo.com",
+              updated_at: "2026-04-15T10:00:00Z",
+              temperature_c: 13.4,
+              today_min_c: 6,
+              today_max_c: 15,
+              precipitation_mm: 5.08,
+              weather_code: 61,
+              alerts: [{ kind: "frost", on: "2026-04-16", details: { min_c: -1 } }],
+            },
+          ],
+          tasks: [],
+          unscheduled_plants: 0,
+        }),
+      ),
+    );
+
+    renderApp("/");
+
+    expect(await screen.findByText("Rain, 56°F")).toBeVisible();
+    expect(screen.getByText("Today: 43°F to 59°F · 0.2 in rain")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Frost likely tomorrow night (low of 30°F). Bring tender plants in, or cover them.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole("link", { name: "Weather data by Open-Meteo.com" })).toHaveAttribute(
+      "href",
+      "https://open-meteo.com/",
+    );
   });
 
   it("helps getting started when there's nothing to do yet", async () => {

@@ -196,6 +196,16 @@ cd backend
 uv run pytest sunfleck/prediction --hypothesis-profile=thorough
 ```
 
+### Plugins
+
+Built-in plugins live in `plugins/`, each a Python package of its own (see
+[plugins.md](plugins.md)). The backend installs them from there (`[tool.uv.sources]` in
+`backend/pyproject.toml`), as editable packages, so changes take effect on restart. Lint, type
+checks and tests cover them: run everything from `backend/` as usual (`make lint`, `make test`).
+
+Plugins are off until an Admin turns them on in **Settings → Plugins**. The weather plugin needs
+to reach `api.open-meteo.com`; without it, Today just shows no weather (and the plugin's error).
+
 ### The map
 
 The site form shows a map from **OpenStreetMap**. While it's open, the browser downloads map

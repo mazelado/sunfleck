@@ -20,6 +20,32 @@
         "title": "AcceptInvitationIn",
         "type": "object"
       },
+      "AlertOut": {
+        "properties": {
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "kind": {
+            "description": "What to look out for, e.g. `frost`.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "on": {
+            "format": "date",
+            "title": "On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "on",
+          "details"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
       "BulkCareIn": {
         "properties": {
           "care_type_id": {
@@ -2469,6 +2495,117 @@
         "title": "SetupStatusOut",
         "type": "object"
       },
+      "SiteConditionsOut": {
+        "properties": {
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/AlertOut"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "attribution": {
+            "description": "Who the data comes from; show it with the data.",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "plugin_id": {
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "precipitation_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precipitation Mm"
+          },
+          "site_id": {
+            "title": "Site Id",
+            "type": "integer"
+          },
+          "site_name": {
+            "title": "Site Name",
+            "type": "string"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "today": {
+            "description": "The day it is at the site, in its time zone.",
+            "format": "date",
+            "title": "Today",
+            "type": "string"
+          },
+          "today_max_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Today Max C"
+          },
+          "today_min_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Today Min C"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "weather_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A WMO weather code.",
+            "title": "Weather Code"
+          }
+        },
+        "required": [
+          "site_id",
+          "site_name",
+          "today",
+          "plugin_id",
+          "attribution",
+          "updated_at",
+          "temperature_c",
+          "today_min_c",
+          "today_max_c",
+          "precipitation_mm",
+          "weather_code",
+          "alerts"
+        ],
+        "title": "SiteConditionsOut",
+        "type": "object"
+      },
       "SiteIn": {
         "properties": {
           "latitude": {
@@ -3061,6 +3198,14 @@
       },
       "TodayOut": {
         "properties": {
+          "sites": {
+            "description": "Conditions at the household's sites, from plugins (e.g. weather).",
+            "items": {
+              "$ref": "#/components/schemas/SiteConditionsOut"
+            },
+            "title": "Sites",
+            "type": "array"
+          },
           "tasks": {
             "description": "Overdue care, then care due soonest.",
             "items": {
@@ -3076,6 +3221,7 @@
           }
         },
         "required": [
+          "sites",
           "tasks",
           "unscheduled_plants"
         ],

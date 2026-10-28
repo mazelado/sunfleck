@@ -6,8 +6,10 @@ Everyone in the household can see care; Gardeners and Admins can log and change 
 
 from datetime import date, datetime
 from typing import Any, Literal
+from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
+from django.utils import timezone
 from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -24,8 +26,11 @@ from sunfleck.care.models import (
     ScheduleOrigin,
 )
 from sunfleck.core.errors import ApiError
+from sunfleck.places.models import Site
 from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
+from sunfleck.plugins.registry import registry
+from sunfleck.plugins.types import SiteConditions
 
 router = Router(tags=["care"], auth=django_auth)
 
@@ -177,7 +182,31 @@ class TaskOut(Schema):
     snoozed_until: date | None
 
 
+class AlertOut(Schema):
+    kind: str = Field(description="What to look out for, e.g. `frost`.")
+    on: date
+    details: dict[str, Any]
+
+
+class SiteConditionsOut(Schema):
+    site_id: int
+    site_name: str
+    today: date = Field(description="The day it is at the site, in its time zone.")
+    plugin_id: str
+    attribution: str = Field(description="Who the data comes from; show it with the data.")
+    updated_at: datetime
+    temperature_c: float | None
+    today_min_c: float | None
+    today_max_c: float | None
+    precipitation_mm: float | None
+    weather_code: int | None = Field(description="A WMO weather code.")
+    alerts: list[AlertOut]
+
+
 class TodayOut(Schema):
+    sites: list[SiteConditionsOut] = Field(
+        description="Conditions at the household's sites, from plugins (e.g. weather)."
+    )
     tasks: list[TaskOut] = Field(description="Overdue care, then care due soonest.")
     unscheduled_plants: int = Field(description="Plants being looked after with no schedule.")
 
@@ -261,6 +290,26 @@ def _task_out(task: schedules.Task) -> TaskOut:
         due_on=task.due_on,
         days_until=task.days_until,
         snoozed_until=schedule.snoozed_until,
+    )
+
+
+def _conditions_out(site: Site, plugin_id: str, conditions: SiteConditions) -> SiteConditionsOut:
+    return SiteConditionsOut(
+        site_id=site.pk,
+        site_name=site.name,
+        today=timezone.now().astimezone(ZoneInfo(site.timezone)).date(),
+        plugin_id=plugin_id,
+        attribution=conditions.attribution,
+        updated_at=conditions.updated_at,
+        temperature_c=conditions.temperature_c,
+        today_min_c=conditions.today_min_c,
+        today_max_c=conditions.today_max_c,
+        precipitation_mm=conditions.precipitation_mm,
+        weather_code=conditions.weather_code,
+        alerts=[
+            AlertOut(kind=alert.kind, on=alert.on, details=dict(alert.details))
+            for alert in conditions.alerts
+        ],
     )
 
 
@@ -544,7 +593,14 @@ def snooze_schedule(request: HttpRequest, schedule_id: int, data: SnoozeIn) -> S
 def today(request: HttpRequest, query: Query[TodayQuery]) -> TodayOut:
     """The household's overdue care and care due in the next few days, soonest first."""
     household = require_role(request, Role.VIEWER).household
+    # Conditions first: new weather can change today's predictions.
+    sites = [
+        _conditions_out(site, answer.plugin_id, answer.result)
+        for site in Site.objects.filter(household=household)
+        for answer in registry.call("site_conditions", household, SiteConditions, site=site)
+    ]
     return TodayOut(
+        sites=sites,
         tasks=[_task_out(task) for task in schedules.due_tasks(household, query.days_ahead)],
         unscheduled_plants=schedules.unscheduled_plants(household),
     )

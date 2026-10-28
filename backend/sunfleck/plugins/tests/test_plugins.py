@@ -275,6 +275,20 @@ def test_plugins_adjust_the_watering_of_households_that_turned_them_on(
     assert rain.seen == [("care_factors", 7)]
 
 
+def test_turning_a_plugin_on_or_changing_it_recalculates_predictions(
+    household: Household, monty: Plant, rain: RainHooks
+) -> None:
+    schedule = water(monty)
+    other = water(PlantFactory.create(care_profile=monty.care_profile))
+
+    turn_on(household)
+    [schedule] = schedules.schedules_for(monty)
+
+    assert schedule.next_due == date(2026, 4, 30)
+    other.refresh_from_db()
+    assert other.calculated_on is not None  # another household's
+
+
 def test_a_failing_plugin_is_left_out_and_its_error_kept(
     household: Household, monty: Plant, rain: RainHooks
 ) -> None:
