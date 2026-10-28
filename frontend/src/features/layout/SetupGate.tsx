@@ -37,7 +37,7 @@ export function SetupGate() {
 function Unreachable({ retrying, onRetry }: { retrying: boolean; onRetry: () => void }) {
   const { t } = useTranslation();
   return (
-    <Center mih="100dvh" p="md">
+    <Center component="main" mih="100dvh" p="md">
       <Stack align="center" gap="sm" maw={360} ta="center">
         <IconCloudOff size={48} stroke={1.5} color="var(--mantine-color-dimmed)" />
         <Title order={1} fz="h3">

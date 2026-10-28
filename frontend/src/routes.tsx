@@ -114,6 +114,10 @@ export const routes: RouteObject[] = [
                 path: "/settings/plugins",
                 ...page(() => import("./features/settings/PluginsPage"), "PluginsPage"),
               },
+              {
+                path: "/settings/data",
+                ...page(() => import("./features/settings/DataPage"), "DataPage"),
+              },
             ],
           },
         ],

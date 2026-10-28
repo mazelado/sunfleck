@@ -35,6 +35,7 @@ export const server = setupServer(
   http.get("*/api/v1/today", () =>
     HttpResponse.json({ sites: [], tasks: [], unscheduled_plants: 0 }),
   ),
+  http.get("*/api/v1/import", () => HttpResponse.json({ allowed: true })),
   http.get("*/api/v1/identify", () => HttpResponse.json({ available: false })),
   http.get("*/api/v1/notifications", () =>
     HttpResponse.json({

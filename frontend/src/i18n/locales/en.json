@@ -42,6 +42,7 @@
     "guide": "Care guide",
     "plugins": "Plugins",
     "notifications": "Notifications",
+    "data": "Export and import",
     "install": "Install app"
   },
   "setup": {
@@ -201,7 +202,11 @@
     "quota_exceeded": "No identifications are left for today. Try again tomorrow.",
     "unavailable": "The identification service can't be reached. Try again later.",
     "identification_failed": "The plant couldn't be identified. Try again later.",
-    "too_many_photos": "Choose 1 to 5 photos."
+    "too_many_photos": "Choose 1 to 5 photos.",
+    "household_not_empty": "Exports can only be imported into a household without places or plants yet.",
+    "not_an_export": "This file isn't a Sunfleck export.",
+    "export_too_new": "This export is from a newer version of Sunfleck. Update Sunfleck first.",
+    "invalid_export": "This export can't be imported because something in it isn't valid."
   },
   "places": {
     "title": "Places",
@@ -774,5 +779,31 @@
     "title": "Sunfleck can't be reached",
     "body": "Check your internet connection, or whether the Sunfleck server is running, then try again.",
     "retry": "Try again"
+  },
+  "data": {
+    "title": "Export and import",
+    "exportTitle": "Export",
+    "exportIntro": "Download everything in this household as a ZIP file: places, plants, photos, care history and settings. Keep it as a backup, or import it into a new server.",
+    "exportLeftOut": "Passwords, notification addresses and plugins' API keys aren't included.",
+    "download": "Download export",
+    "importTitle": "Import",
+    "importIntro": "Load an export into this household. This works only while the household has no places or plants of its own, so nothing gets mixed up.",
+    "importNotAllowed": "This household already has places or plants, so an export can't be imported into it. To move to a new server, download an export here and import it there.",
+    "file": "Export file",
+    "fileHelp": "A ZIP file downloaded from Sunfleck. Very large exports are best imported with the import_household command; see the docs.",
+    "import": "Import",
+    "imported": "Imported {{plants}}, {{photos}} and {{events}}.",
+    "plants_one": "{{count}} plant",
+    "plants_other": "{{count}} plants",
+    "photos_one": "{{count}} photo",
+    "photos_other": "{{count}} photos",
+    "events_one": "{{count}} care record",
+    "events_other": "{{count}} care records",
+    "toInvite": "Invite again, from Household: {{items}}",
+    "unknownSpecies": "Not in this server's care guide, so left without a species: {{items}}",
+    "unknownProfiles": "Care profiles not on this server, so left unset: {{items}}",
+    "needKeys": "Enter the API keys again under Plugins: {{items}}",
+    "notInstalled": "Plugins that aren't installed here: {{items}}",
+    "notifications": "Notification channels aren't exported: everyone sets theirs up again."
   }
 }
