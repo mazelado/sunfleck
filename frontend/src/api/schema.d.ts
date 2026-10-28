@@ -162,6 +162,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export
+         * @description Download the household's data as a ZIP file: places, plants, photos, care history and
+         *     settings. Passwords and secrets (notification addresses, API keys) aren't included.
+         */
+        get: operations["sunfleck_dataio_api_export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -313,6 +334,28 @@ export interface paths {
          *     kept by Sunfleck.
          */
         post: operations["sunfleck_taxonomy_api_identify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Import Status */
+        get: operations["sunfleck_dataio_api_import_status"];
+        put?: never;
+        /**
+         * Import Export
+         * @description Import an export into this household, which must have no places, plants or care types
+         *     of its own yet. Nothing is imported if anything in the file is wrong.
+         */
+        post: operations["sunfleck_dataio_api_import_export"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1339,6 +1382,44 @@ export interface components {
              * @description Whether a plugin that identifies plants is on.
              */
             available: boolean;
+        };
+        /** ImportStatusOut */
+        ImportStatusOut: {
+            /**
+             * Allowed
+             * @description Whether an export can be imported: only into a household without places, plants or care types of its own yet.
+             */
+            allowed: boolean;
+        };
+        /** ImportSummaryOut */
+        ImportSummaryOut: {
+            /** Care Events */
+            care_events: number;
+            /**
+             * Members To Invite
+             * @description Emails of exported members without an account here, to invite again.
+             */
+            members_to_invite: string[];
+            /** Photos */
+            photos: number;
+            /** Plants */
+            plants: number;
+            /**
+             * Plugins Needing Keys
+             * @description Plugins turned on whose API keys weren't exported, to enter again.
+             */
+            plugins_needing_keys: string[];
+            /** Plugins Not Installed */
+            plugins_not_installed: string[];
+            /** Sites */
+            sites: number;
+            /** Unknown Care Profiles */
+            unknown_care_profiles: string[];
+            /**
+             * Unknown Species
+             * @description Not in this server's care guide; left unset.
+             */
+            unknown_species: string[];
         };
         /** InvitationCreatedOut */
         InvitationCreatedOut: {
@@ -2562,6 +2643,24 @@ export interface operations {
             };
         };
     };
+    sunfleck_dataio_api_export: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     sunfleck_core_api_health: {
         parameters: {
             query?: never;
@@ -2830,6 +2929,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IdentificationOut"];
+                };
+            };
+        };
+    };
+    sunfleck_dataio_api_import_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportStatusOut"];
+                };
+            };
+        };
+    };
+    sunfleck_dataio_api_import_export: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * File
+                     * Format: binary
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportSummaryOut"];
                 };
             };
         };
