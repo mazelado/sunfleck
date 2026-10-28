@@ -509,6 +509,13 @@ show (settings forms, dashboard conditions, identification results).
 | Map (pick site location) | Leaflet with OpenStreetMap tiles; manual lat/lon entry always available |
 | Dates | Day.js (used by Mantine's date components) |
 
+**Translations, as built (M11)** (see [translating.md](translating.md)): the app's texts are in
+`frontend/src/i18n/locales/<language>.json` (English bundled, others loaded when chosen), the
+server's (emails, notifications) in Django `.po` files compiled into the Docker image.
+`LANGUAGES` lists the languages Sunfleck is translated into, kept in step with the app's files
+by a test; people choose theirs in their profile, new accounts start in their browser's
+language, and a test checks each translation's keys and placeholders against English.
+
 ### Main screens (MVP)
 1. **Today** (the home page): overdue and today's care grouped by location, one-tap "Done"
    with undo, a menu to skip, snooze (tomorrow, 3 days, a week) or log with details, and "Water

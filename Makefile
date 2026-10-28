@@ -6,7 +6,7 @@ DEV_ENV := DEBUG=true
 
 .DEFAULT_GOAL := help
 .PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
-	test-frontend lint lint-backend lint-frontend format api-types docker
+	test-frontend lint lint-backend lint-frontend format api-types messages docker
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
@@ -69,6 +69,10 @@ api-types: ## Regenerate frontend API types after changing the backend API
 	$(BACKEND) $(DEV_ENV) uv run python manage.py export_openapi_schema \
 		--api sunfleck.config.api.api --indent 2 --sorted --output ../frontend/src/api/openapi.json
 	$(FRONTEND) npm run api-types
+
+messages: ## Update the server's translation files (add a language with LOCALE=de); see docs/translating.md
+	$(BACKEND) uv run python manage.py makemessages $(if $(LOCALE),--locale $(LOCALE),--all) \
+		--ignore=.venv --ignore="*/tests/*" --no-obsolete
 
 docker: ## Build the production Docker image as sunfleck:dev
 	docker build --file docker/Dockerfile --tag sunfleck:dev .

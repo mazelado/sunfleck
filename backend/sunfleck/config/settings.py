@@ -179,6 +179,11 @@ DEFAULT_FROM_EMAIL = env_str("EMAIL_FROM", "Sunfleck <sunfleck@localhost>")
 # --- Internationalization ---------------------------------------------------------------------
 
 LANGUAGE_CODE = "en"
+# The languages Sunfleck is translated into: the same as the app's own translation files
+# (frontend/src/i18n/locales), which a test checks. See docs/translating.md.
+LANGUAGES = [("en", "English")]
+# The server's translations (emails, notifications): sunfleck/locale/<language>/LC_MESSAGES.
+LOCALE_PATHS = [BASE_DIR / "sunfleck" / "locale"]
 TIME_ZONE = env_str("TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True

@@ -21,11 +21,19 @@ COPY backend/pyproject.toml backend/uv.lock ./
 COPY plugins/ /app/plugins/
 RUN uv sync --locked --no-dev --extra postgres --extra redis --no-editable
 
-# --- Stage 3: the application image ------------------------------------------------------------
+# --- Stage 3: compile the server's translations (gettext isn't needed in the final image) -------
+FROM python-deps AS translations
+RUN apt-get update && apt-get install --yes --no-install-recommends gettext \
+    && rm -rf /var/lib/apt/lists/*
+COPY backend/ ./
+RUN SECRET_KEY=build-only /app/.venv/bin/python manage.py compilemessages --ignore=.venv
+
+# --- Stage 4: the application image ------------------------------------------------------------
 FROM python:3.13-slim AS app
 WORKDIR /app/backend
 COPY --from=python-deps /app/.venv /app/.venv
 COPY backend/ ./
+COPY --from=translations /app/backend/sunfleck/locale ./sunfleck/locale
 COPY --from=frontend /src/frontend/dist /app/frontend
 # The care dataset (CC BY-SA 4.0): care profiles, genera and species.
 COPY data/care/ /app/data/care/
