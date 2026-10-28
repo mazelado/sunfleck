@@ -24,6 +24,7 @@ import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
+import { PlantSchedules } from "../care/PlantSchedules";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { QuickCare } from "../care/QuickCare";
 import { PlantCareCard } from "../taxonomy/PlantCareCard";
@@ -121,6 +122,7 @@ export function PlantPage() {
 
       {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
 
+      <PlantSchedules plant={data} />
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
