@@ -14,8 +14,8 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconAlertTriangle, IconSend } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { IconAlertTriangle, IconPencil, IconSend } from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -85,6 +85,7 @@ function ChannelRow({ channel }: { channel: Channel }) {
   const update = useUpdateChannel();
   const remove = useDeleteChannel();
   const test = useTestChannel();
+  const [editing, setEditing] = useState(false);
 
   async function sendTest() {
     try {
@@ -131,27 +132,115 @@ function ChannelRow({ channel }: { channel: Channel }) {
             </Text>
           )
         )}
-        <Group gap="xs">
-          <Button
-            variant="light"
-            leftSection={<IconSend size={16} />}
-            loading={test.isPending}
-            onClick={() => void sendTest()}
-          >
-            {t("notifications.test")}
-          </Button>
-          <ConfirmDeleteButton
-            label={t("notifications.delete", { label: channel.label })}
-            title={t("notifications.deleteTitle", { label: channel.label })}
-            message={t("notifications.deleteConfirm")}
-            onConfirm={async () => {
-              await remove.mutateAsync(channel.id);
-              notifications.show({ message: t("notifications.deleted", { label: channel.label }) });
+        {editing ? (
+          <EditChannelForm
+            channel={channel}
+            onDone={() => {
+              setEditing(false);
             }}
           />
-        </Group>
+        ) : (
+          <Group gap="xs">
+            <Button
+              variant="light"
+              leftSection={<IconSend size={16} />}
+              loading={test.isPending}
+              onClick={() => void sendTest()}
+            >
+              {t("notifications.test")}
+            </Button>
+            <Button
+              variant="subtle"
+              leftSection={<IconPencil size={16} />}
+              onClick={() => {
+                setEditing(true);
+              }}
+            >
+              {t("notifications.edit", { label: channel.label })}
+            </Button>
+            <ConfirmDeleteButton
+              label={t("notifications.delete", { label: channel.label })}
+              title={t("notifications.deleteTitle", { label: channel.label })}
+              message={t("notifications.deleteConfirm")}
+              onConfirm={async () => {
+                await remove.mutateAsync(channel.id);
+                notifications.show({
+                  message: t("notifications.deleted", { label: channel.label }),
+                });
+              }}
+            />
+          </Group>
+        )}
       </Stack>
     </Paper>
+  );
+}
+
+/** Rename a channel or change its address; the current address is never shown. */
+function EditChannelForm({ channel, onDone }: { channel: Channel; onDone: () => void }) {
+  const { t } = useTranslation();
+  const update = useUpdateChannel();
+  const applyFieldErrors = useApplyFieldErrors();
+  const form = useForm({
+    initialValues: { label: channel.label, url: "" },
+    validate: { label: (value) => (value.trim() ? null : t("validation.required")) },
+  });
+
+  const handleSubmit = form.onSubmit(async (values) => {
+    try {
+      await update.mutateAsync({
+        id: channel.id,
+        body: {
+          label: values.label,
+          enabled: channel.enabled,
+          url: values.url.trim() || null,
+        },
+      });
+      notifications.show({ message: t("notifications.saved") });
+      onDone();
+    } catch (error) {
+      applyFieldErrors(form, error);
+    }
+  });
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label={t("notifications.edit", { label: channel.label })}
+    >
+      <Stack gap="sm">
+        <TextInput
+          label={t("notifications.label")}
+          required
+          maxLength={100}
+          {...form.getInputProps("label")}
+        />
+        <TextInput
+          label={t("notifications.newUrl")}
+          description={
+            <>
+              {t("notifications.newUrlHelp")}{" "}
+              <Anchor href={APPRISE_WIKI} target="_blank" rel="noreferrer" size="xs">
+                {t("notifications.allServices")}
+              </Anchor>
+            </>
+          }
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={2000}
+          {...form.getInputProps("url")}
+        />
+        <Group gap="xs">
+          <Button type="submit" loading={update.isPending}>
+            {t("common.save")}
+          </Button>
+          <Button variant="default" onClick={onDone}>
+            {t("common.cancel")}
+          </Button>
+        </Group>
+      </Stack>
+    </form>
   );
 }
 
