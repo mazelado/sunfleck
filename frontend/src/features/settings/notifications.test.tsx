@@ -102,6 +102,69 @@ describe("notifications", () => {
     expect(await screen.findByText("Last attempt failed: ntfy: 401 Unauthorized")).toBeVisible();
   });
 
+  it("can be renamed or given a new address", async () => {
+    signInAs(ada);
+    withChannels([phone]);
+    const sent: unknown[] = [];
+    server.use(
+      http.put("*/api/v1/notifications/channels/7", async ({ request }) => {
+        sent.push(await request.json());
+        return sent.length === 1
+          ? apiError(422, "unsupported_channel_url", { field: "url" })
+          : HttpResponse.json({ ...phone, label: "Email", service: "mailto" });
+      }),
+    );
+    const { user } = renderApp("/settings/notifications");
+
+    await user.click(await screen.findByRole("button", { name: "Edit My phone" }));
+    const form = within(screen.getByRole("form", { name: "Edit My phone" }));
+    const name = form.getByRole("textbox", { name: "Name" });
+    expect(name).toHaveValue("My phone");
+    const address = form.getByRole("textbox", { name: "New address (Apprise URL)" });
+    // The current address is never shown.
+    expect(address).toHaveValue("");
+    await user.clear(name);
+    await user.type(name, "Email");
+    await user.type(address, "pager://1");
+    await user.click(form.getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(address).toHaveAttribute("aria-invalid", "true");
+    });
+    await user.clear(address);
+    await user.type(address, "mailto://ada:secret@example.com");
+    await user.click(form.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("textbox", { name: "New address (Apprise URL)" })).toBeNull();
+    });
+    expect(sent).toEqual([
+      { label: "Email", enabled: true, url: "pager://1" },
+      { label: "Email", enabled: true, url: "mailto://ada:secret@example.com" },
+    ]);
+  });
+
+  it("keep their address when only renamed", async () => {
+    signInAs(ada);
+    withChannels([phone]);
+    let sent: unknown = null;
+    server.use(
+      http.put("*/api/v1/notifications/channels/7", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(phone);
+      }),
+    );
+    const { user } = renderApp("/settings/notifications");
+
+    await user.click(await screen.findByRole("button", { name: "Edit My phone" }));
+    const form = within(screen.getByRole("form", { name: "Edit My phone" }));
+    await user.type(form.getByRole("textbox", { name: "Name" }), " 2");
+    await user.click(form.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(sent).toEqual({ label: "My phone 2", enabled: true, url: null });
+    });
+  });
+
   it("can be paused per channel", async () => {
     signInAs(ada);
     withChannels([phone]);
