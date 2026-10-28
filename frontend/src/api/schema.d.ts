@@ -59,6 +59,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-schedules/{schedule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Schedule
+         * @description Change a schedule's mode, interval, or whether it's in use.
+         */
+        put: operations["sunfleck_care_api_update_schedule"];
+        post?: never;
+        /** Delete Schedule */
+        delete: operations["sunfleck_care_api_delete_schedule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-types": {
         parameters: {
             query?: never;
@@ -512,6 +533,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plants/{plant_id}/routine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept Routine
+         * @description Add the chosen schedules from the suggested routine, all or none.
+         */
+        post: operations["sunfleck_care_api_accept_routine"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/routine-suggestion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Suggest Routine
+         * @description Schedules we'd suggest for care the plant has no schedule for yet: watering and
+         *     fertilizing predicted from its care profile, and a few reminders every few weeks.
+         */
+        get: operations["sunfleck_care_api_suggest_routine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Schedules
+         * @description The plant's care schedules, each with when it's next due and why.
+         */
+        get: operations["sunfleck_care_api_list_schedules"];
+        put?: never;
+        /** Create Schedule */
+        post: operations["sunfleck_care_api_create_schedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plants/{plant_id}/timeline": {
         parameters: {
             query?: never;
@@ -833,6 +916,23 @@ export interface components {
          * @enum {string}
          */
         Exposure: "full_sun" | "part_shade" | "shade";
+        /** FactorOut */
+        FactorOut: {
+            /**
+             * Code
+             * @description What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words.
+             */
+            code: string;
+            /** Details */
+            details: {
+                [key: string]: unknown;
+            };
+            /**
+             * Multiplier
+             * @description How it changes the interval, e.g. 0.9 is 10% sooner.
+             */
+            multiplier: number;
+        };
         /**
          * Feedback
          * @description How the soil was when watering, which tunes future watering predictions.
@@ -1304,6 +1404,82 @@ export interface components {
          * @enum {string}
          */
         Role: "viewer" | "gardener" | "admin";
+        /** RoutineIn */
+        RoutineIn: {
+            /** Items */
+            items: components["schemas"]["ScheduleIn"][];
+        };
+        /** ScheduleChangeIn */
+        ScheduleChangeIn: {
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /**
+             * Fixed Interval Days
+             * @description Fixed schedules: every how many days.
+             */
+            fixed_interval_days?: number | null;
+            mode: components["schemas"]["ScheduleMode"];
+        };
+        /** ScheduleIn */
+        ScheduleIn: {
+            /** Care Type Id */
+            care_type_id: number;
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /**
+             * Fixed Interval Days
+             * @description Fixed schedules: every how many days.
+             */
+            fixed_interval_days?: number | null;
+            mode: components["schemas"]["ScheduleMode"];
+        };
+        /**
+         * ScheduleMode
+         * @enum {string}
+         */
+        ScheduleMode: "predicted" | "fixed";
+        /**
+         * ScheduleOrigin
+         * @enum {string}
+         */
+        ScheduleOrigin: "suggested" | "manual";
+        /** ScheduleOut */
+        ScheduleOut: {
+            care_type: components["schemas"]["CareTypeOut"];
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Factors
+             * @description Why: the factors behind the prediction.
+             */
+            factors: components["schemas"]["FactorOut"][];
+            /** Fixed Interval Days */
+            fixed_interval_days: number | null;
+            /** Id */
+            id: number;
+            /**
+             * Interval Days
+             * @description Days between care; none while it isn't needed (e.g. a resting season).
+             */
+            interval_days: number | null;
+            mode: components["schemas"]["ScheduleMode"];
+            /** Next Due */
+            next_due: string | null;
+            origin: components["schemas"]["ScheduleOrigin"];
+            /** Plant Id */
+            plant_id: number;
+            /**
+             * Started On
+             * Format: date
+             */
+            started_on: string;
+        };
         /** SearchQuery */
         SearchQuery: {
             /**
@@ -1426,6 +1602,30 @@ export interface components {
              * @description Older names.
              */
             synonyms: string[];
+        };
+        /** SuggestionOut */
+        SuggestionOut: {
+            care_type: components["schemas"]["CareTypeOut"];
+            /**
+             * Factors
+             * @description Why: the factors behind the prediction.
+             */
+            factors: components["schemas"]["FactorOut"][];
+            /** Fixed Interval Days */
+            fixed_interval_days: number | null;
+            /**
+             * Interval Days
+             * @description Days between care; none while it isn't needed (e.g. a resting season).
+             */
+            interval_days: number | null;
+            mode: components["schemas"]["ScheduleMode"];
+            /** Next Due */
+            next_due: string | null;
+            /**
+             * Recommended
+             * @description Suggested for this plant, rather than just offered.
+             */
+            recommended: boolean;
         };
         /**
          * TaxonRank
@@ -1587,6 +1787,52 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CareProfileOut"];
                 };
+            };
+        };
+    };
+    sunfleck_care_api_update_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleChangeIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_delete_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -2454,6 +2700,102 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PhotoOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_accept_routine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoutineIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_suggest_routine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuggestionOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_list_schedules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_create_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
                 };
             };
         };

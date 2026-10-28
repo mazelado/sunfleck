@@ -1,6 +1,7 @@
 """Care types (watering, fertilizing, ...) and the care log."""
 
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -91,3 +92,82 @@ class CareEvent(models.Model):
 
     def __str__(self) -> str:
         return f"{self.care_type} · {self.plant} ({self.performed_at:%Y-%m-%d})"
+
+
+class ScheduleMode(models.TextChoices):
+    PREDICTED = "predicted", _("Predicted")
+    FIXED = "fixed", _("Every few days")
+
+
+class ScheduleOrigin(models.TextChoices):
+    SUGGESTED = "suggested", _("Suggested")
+    MANUAL = "manual", _("Added by hand")
+
+
+class CareSchedule(models.Model):
+    """When a plant needs a kind of care: predicted from its care profile and conditions, or
+    every so many days. One per plant and care type.
+
+    The latest prediction is kept here so that due care can be found with a query; each
+    change is recorded as a ScheduleAdjustment.
+    """
+
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name="schedules")
+    care_type = models.ForeignKey(CareType, on_delete=models.CASCADE, related_name="schedules")
+    mode = models.CharField(_("mode"), max_length=16, choices=ScheduleMode.choices)
+    # Fixed schedules only.
+    fixed_interval_days = models.PositiveSmallIntegerField(
+        _("every (days)"),
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(365)],
+    )
+    origin = models.CharField(_("origin"), max_length=16, choices=ScheduleOrigin.choices)
+    enabled = models.BooleanField(_("in use"), default=True)
+    # Until the care is first logged, it's due counting from this day.
+    started_on = models.DateField(_("started on"))
+    # The latest prediction. No interval or due date: not needed for now (e.g. a resting
+    # season, a pause in fertilizing, or the schedule isn't in use).
+    interval_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    next_due = models.DateField(null=True, blank=True)
+    factors = models.JSONField(default=list, blank=True)
+    calculated_on = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("care schedule")
+        verbose_name_plural = _("care schedules")
+        ordering = ["plant_id", "care_type_id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["plant", "care_type"], name="care_schedule_unique_per_plant"
+            ),
+            models.CheckConstraint(
+                condition=~Q(mode="fixed") | Q(fixed_interval_days__isnull=False),
+                name="care_schedule_fixed_has_interval",
+            ),
+        ]
+        indexes = [models.Index(fields=["next_due"], name="care_schedule_next_due")]
+
+    def __str__(self) -> str:
+        return f"{self.care_type} · {self.plant}"
+
+
+class ScheduleAdjustment(models.Model):
+    """A change in a schedule's prediction, with the factors behind it: the "why", and a
+    history for working out why a prediction changed."""
+
+    schedule = models.ForeignKey(CareSchedule, on_delete=models.CASCADE, related_name="adjustments")
+    calculated_at = models.DateTimeField()
+    interval_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    next_due = models.DateField(null=True, blank=True)
+    factors = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        verbose_name = _("schedule adjustment")
+        verbose_name_plural = _("schedule adjustments")
+        ordering = ["-calculated_at", "-id"]
+
+    def __str__(self) -> str:
+        return f"{self.schedule} ({self.calculated_at:%Y-%m-%d})"

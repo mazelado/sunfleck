@@ -10,6 +10,7 @@ from sunfleck.prediction.engine import (
     Prediction,
     Profile,
     predict_fertilizing,
+    predict_fixed,
     predict_watering,
 )
 from sunfleck.prediction.light import GrowLight, Window
@@ -354,3 +355,19 @@ def test_every_care_profile_in_the_dataset_can_be_read() -> None:
 
     assert profiles["tropical_aroid"] == AROID
     assert profiles["bog_carnivore"].fertilize_days is None
+
+
+# --- Fixed intervals --------------------------------------------------------------------------
+
+
+def test_fixed_intervals_count_from_the_last_time() -> None:
+    assert predict_fixed(14, WATERED) == Prediction(
+        14, date(2026, 4, 27), (Factor("fixed", details={"days": 14}),)
+    )
+
+
+def test_fixed_intervals_count_from_the_start_until_logged() -> None:
+    prediction = predict_fixed(14, History(None, date(2026, 4, 1)))
+
+    assert prediction.next_due == date(2026, 4, 15)
+    assert codes(prediction) == ["fixed", "not_logged"]

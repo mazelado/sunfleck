@@ -438,6 +438,32 @@
         "title": "Exposure",
         "type": "string"
       },
+      "FactorOut": {
+        "properties": {
+          "code": {
+            "description": "What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words.",
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "multiplier": {
+            "description": "How it changes the interval, e.g. 0.9 is 10% sooner.",
+            "title": "Multiplier",
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "multiplier",
+          "details"
+        ],
+        "title": "FactorOut",
+        "type": "object"
+      },
       "Feedback": {
         "description": "How the soil was when watering, which tunes future watering predictions.",
         "enum": [
@@ -1891,6 +1917,195 @@
         "title": "Role",
         "type": "string"
       },
+      "RoutineIn": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ScheduleIn"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RoutineIn",
+        "type": "object"
+      },
+      "ScheduleChangeIn": {
+        "properties": {
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "fixed_interval_days": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Fixed schedules: every how many days.",
+            "title": "Fixed Interval Days"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ScheduleMode"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "ScheduleChangeIn",
+        "type": "object"
+      },
+      "ScheduleIn": {
+        "properties": {
+          "care_type_id": {
+            "title": "Care Type Id",
+            "type": "integer"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "fixed_interval_days": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Fixed schedules: every how many days.",
+            "title": "Fixed Interval Days"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ScheduleMode"
+          }
+        },
+        "required": [
+          "mode",
+          "care_type_id"
+        ],
+        "title": "ScheduleIn",
+        "type": "object"
+      },
+      "ScheduleMode": {
+        "enum": [
+          "predicted",
+          "fixed"
+        ],
+        "title": "ScheduleMode",
+        "type": "string"
+      },
+      "ScheduleOrigin": {
+        "enum": [
+          "suggested",
+          "manual"
+        ],
+        "title": "ScheduleOrigin",
+        "type": "string"
+      },
+      "ScheduleOut": {
+        "properties": {
+          "care_type": {
+            "$ref": "#/components/schemas/CareTypeOut"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "factors": {
+            "description": "Why: the factors behind the prediction.",
+            "items": {
+              "$ref": "#/components/schemas/FactorOut"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "fixed_interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Interval Days"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days between care; none while it isn't needed (e.g. a resting season).",
+            "title": "Interval Days"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ScheduleMode"
+          },
+          "next_due": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Due"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ScheduleOrigin"
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          },
+          "started_on": {
+            "format": "date",
+            "title": "Started On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "interval_days",
+          "next_due",
+          "factors",
+          "id",
+          "plant_id",
+          "care_type",
+          "mode",
+          "fixed_interval_days",
+          "origin",
+          "enabled",
+          "started_on"
+        ],
+        "title": "ScheduleOut",
+        "type": "object"
+      },
       "SearchQuery": {
         "properties": {
           "limit": {
@@ -2273,6 +2488,75 @@
         "title": "SpeciesOut",
         "type": "object"
       },
+      "SuggestionOut": {
+        "properties": {
+          "care_type": {
+            "$ref": "#/components/schemas/CareTypeOut"
+          },
+          "factors": {
+            "description": "Why: the factors behind the prediction.",
+            "items": {
+              "$ref": "#/components/schemas/FactorOut"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "fixed_interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Interval Days"
+          },
+          "interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days between care; none while it isn't needed (e.g. a resting season).",
+            "title": "Interval Days"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ScheduleMode"
+          },
+          "next_due": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Due"
+          },
+          "recommended": {
+            "description": "Suggested for this plant, rather than just offered.",
+            "title": "Recommended",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "interval_days",
+          "next_due",
+          "factors",
+          "care_type",
+          "mode",
+          "fixed_interval_days",
+          "recommended"
+        ],
+        "title": "SuggestionOut",
+        "type": "object"
+      },
       "TaxonRank": {
         "enum": [
           "genus",
@@ -2599,6 +2883,82 @@
         "summary": "Get Care Profile",
         "tags": [
           "taxonomy"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}": {
+      "delete": {
+        "operationId": "sunfleck_care_api_delete_schedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Schedule",
+        "tags": [
+          "care"
+        ]
+      },
+      "put": {
+        "description": "Change a schedule's mode, interval, or whether it's in use.",
+        "operationId": "sunfleck_care_api_update_schedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleChangeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Schedule",
+        "tags": [
+          "care"
         ]
       }
     },
@@ -4057,6 +4417,187 @@
         "summary": "Add Photo",
         "tags": [
           "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/routine": {
+      "post": {
+        "description": "Add the chosen schedules from the suggested routine, all or none.",
+        "operationId": "sunfleck_care_api_accept_routine",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoutineIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Accept Routine",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/routine-suggestion": {
+      "get": {
+        "description": "Schedules we'd suggest for care the plant has no schedule for yet: watering and\nfertilizing predicted from its care profile, and a few reminders every few weeks.",
+        "operationId": "sunfleck_care_api_suggest_routine",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SuggestionOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Suggest Routine",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/schedules": {
+      "get": {
+        "description": "The plant's care schedules, each with when it's next due and why.",
+        "operationId": "sunfleck_care_api_list_schedules",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Schedules",
+        "tags": [
+          "care"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_care_api_create_schedule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Schedule",
+        "tags": [
+          "care"
         ]
       }
     },
