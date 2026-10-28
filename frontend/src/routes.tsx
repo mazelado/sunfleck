@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import type { RouteObject } from "react-router";
 
 import { AcceptInvitationPage } from "./features/auth/AcceptInvitationPage";
@@ -5,28 +6,21 @@ import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./features/auth/ResetPasswordPage";
 import { SetupPage } from "./features/auth/SetupPage";
 import { SignInPage } from "./features/auth/SignInPage";
-import { CareTypesPage } from "./features/care/CareTypesPage";
 import { AppLayout } from "./features/layout/AppLayout";
 import { NotFoundPage } from "./features/layout/NotFoundPage";
-import { LocationFormPage } from "./features/places/LocationFormPage";
-import { LocationPage } from "./features/places/LocationPage";
-import { PlacesPage } from "./features/places/PlacesPage";
-import { SiteFormPage } from "./features/places/SiteFormPage";
-import { SitePage } from "./features/places/SitePage";
-import { PlantFormPage } from "./features/plants/PlantFormPage";
-import { PlantPage } from "./features/plants/PlantPage";
-import { PlantsPage } from "./features/plants/PlantsPage";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
-import { HouseholdPage } from "./features/settings/HouseholdPage";
-import { DataPage } from "./features/settings/DataPage";
-import { NotificationsPage } from "./features/settings/NotificationsPage";
-import { PluginsPage } from "./features/settings/PluginsPage";
-import { CareProfilePage } from "./features/taxonomy/CareProfilePage";
-import { GuidePage } from "./features/taxonomy/GuidePage";
-import { SpeciesPage } from "./features/taxonomy/SpeciesPage";
 import { TodayPage } from "./features/today/TodayPage";
-import { ProfilePage } from "./features/settings/ProfilePage";
+
+/**
+ * A page loaded when it's first opened, so the app starts with less to download. (The service
+ * worker then fetches the rest in the background, so later visits are instant.)
+ */
+function page<Module>(load: () => Promise<Module>, name: keyof Module) {
+  return {
+    lazy: async () => ({ Component: (await load())[name] as ComponentType }),
+  } satisfies Partial<RouteObject>;
+}
 
 export const routes: RouteObject[] = [
   {
@@ -44,29 +38,86 @@ export const routes: RouteObject[] = [
             element: <AppLayout />,
             children: [
               { path: "/", element: <TodayPage /> },
-              { path: "/plants", element: <PlantsPage /> },
-              { path: "/plants/new", element: <PlantFormPage /> },
-              { path: "/plants/:plantId", element: <PlantPage /> },
-              { path: "/plants/:plantId/edit", element: <PlantFormPage /> },
-              { path: "/guide", element: <GuidePage /> },
-              { path: "/guide/profiles/:key", element: <CareProfilePage /> },
-              { path: "/guide/species/:taxonId", element: <SpeciesPage /> },
-              { path: "/places", element: <PlacesPage /> },
-              { path: "/places/new", element: <SiteFormPage /> },
-              { path: "/places/:siteId", element: <SitePage /> },
-              { path: "/places/:siteId/edit", element: <SiteFormPage /> },
-              { path: "/places/:siteId/locations/new", element: <LocationFormPage /> },
-              { path: "/places/:siteId/locations/:locationId", element: <LocationPage /> },
+              {
+                path: "/plants",
+                ...page(() => import("./features/plants/PlantsPage"), "PlantsPage"),
+              },
+              {
+                path: "/plants/new",
+                ...page(() => import("./features/plants/PlantFormPage"), "PlantFormPage"),
+              },
+              {
+                path: "/plants/:plantId",
+                ...page(() => import("./features/plants/PlantPage"), "PlantPage"),
+              },
+              {
+                path: "/plants/:plantId/edit",
+                ...page(() => import("./features/plants/PlantFormPage"), "PlantFormPage"),
+              },
+              {
+                path: "/guide",
+                ...page(() => import("./features/taxonomy/GuidePage"), "GuidePage"),
+              },
+              {
+                path: "/guide/profiles/:key",
+                ...page(() => import("./features/taxonomy/CareProfilePage"), "CareProfilePage"),
+              },
+              {
+                path: "/guide/species/:taxonId",
+                ...page(() => import("./features/taxonomy/SpeciesPage"), "SpeciesPage"),
+              },
+              {
+                path: "/places",
+                ...page(() => import("./features/places/PlacesPage"), "PlacesPage"),
+              },
+              {
+                path: "/places/new",
+                ...page(() => import("./features/places/SiteFormPage"), "SiteFormPage"),
+              },
+              {
+                path: "/places/:siteId",
+                ...page(() => import("./features/places/SitePage"), "SitePage"),
+              },
+              {
+                path: "/places/:siteId/edit",
+                ...page(() => import("./features/places/SiteFormPage"), "SiteFormPage"),
+              },
+              {
+                path: "/places/:siteId/locations/new",
+                ...page(() => import("./features/places/LocationFormPage"), "LocationFormPage"),
+              },
+              {
+                path: "/places/:siteId/locations/:locationId",
+                ...page(() => import("./features/places/LocationPage"), "LocationPage"),
+              },
               {
                 path: "/places/:siteId/locations/:locationId/edit",
-                element: <LocationFormPage />,
+                ...page(() => import("./features/places/LocationFormPage"), "LocationFormPage"),
               },
-              { path: "/settings/profile", element: <ProfilePage /> },
-              { path: "/settings/household", element: <HouseholdPage /> },
-              { path: "/settings/care-types", element: <CareTypesPage /> },
-              { path: "/settings/notifications", element: <NotificationsPage /> },
-              { path: "/settings/plugins", element: <PluginsPage /> },
-              { path: "/settings/data", element: <DataPage /> },
+              {
+                path: "/settings/profile",
+                ...page(() => import("./features/settings/ProfilePage"), "ProfilePage"),
+              },
+              {
+                path: "/settings/household",
+                ...page(() => import("./features/settings/HouseholdPage"), "HouseholdPage"),
+              },
+              {
+                path: "/settings/care-types",
+                ...page(() => import("./features/care/CareTypesPage"), "CareTypesPage"),
+              },
+              {
+                path: "/settings/notifications",
+                ...page(() => import("./features/settings/NotificationsPage"), "NotificationsPage"),
+              },
+              {
+                path: "/settings/plugins",
+                ...page(() => import("./features/settings/PluginsPage"), "PluginsPage"),
+              },
+              {
+                path: "/settings/data",
+                ...page(() => import("./features/settings/DataPage"), "DataPage"),
+              },
             ],
           },
         ],

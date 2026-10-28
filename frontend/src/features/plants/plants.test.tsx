@@ -209,7 +209,7 @@ describe("plant form", () => {
     await user.type(await screen.findByLabelText(/^Name/), "Monty");
     // The location comes from the link on the location's page.
     expect(screen.getByRole("combobox", { name: /Location/ })).toHaveValue("Living room");
-    await user.click(screen.getByRole("checkbox", { name: /Bay window/ }));
+    await user.click(await screen.findByRole("checkbox", { name: /Bay window/ }));
     await user.type(screen.getByLabelText(/Distance from the window/), "80");
     await user.click(screen.getByRole("checkbox", { name: /Shelf light/ }));
     await user.type(screen.getByLabelText(/Pot diameter/), "17");
@@ -362,7 +362,7 @@ describe("plant form", () => {
     const { user } = renderApp("/plants/new?location=10");
 
     await user.type(await screen.findByLabelText(/^Name/), "Monty");
-    await user.click(screen.getByRole("checkbox", { name: /Bay window/ }));
+    await user.click(await screen.findByRole("checkbox", { name: /Bay window/ }));
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     // In the form's error summary, and next to the lights.
