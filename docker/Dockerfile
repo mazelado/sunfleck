@@ -17,7 +17,9 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_PROJECT_ENVIRONMENT=/app/.venv
 WORKDIR /app/backend
 COPY backend/pyproject.toml backend/uv.lock ./
-RUN uv sync --locked --no-dev --extra postgres
+# Built-in plugins are packages of their own; installed as regular packages, not links.
+COPY plugins/ /app/plugins/
+RUN uv sync --locked --no-dev --extra postgres --no-editable
 
 # --- Stage 3: the application image ------------------------------------------------------------
 FROM python:3.13-slim AS app

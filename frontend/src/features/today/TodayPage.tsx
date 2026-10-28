@@ -38,6 +38,7 @@ import { GettingStarted } from "../home/GettingStarted";
 import { formatDate } from "../plants/dates";
 import { PlantImage } from "../plants/PlantImage";
 import { addDays, groupBy } from "./grouping";
+import { WeatherCard } from "./WeatherCard";
 
 /** The household's care for today: what's overdue or due, by location, then what's coming up. */
 export function TodayPage() {
@@ -51,7 +52,7 @@ export function TodayPage() {
   if (!today.data) {
     return <ErrorAlert error={today.error} />;
   }
-  const { tasks, unscheduled_plants: unscheduled } = today.data;
+  const { sites, tasks, unscheduled_plants: unscheduled } = today.data;
   const due = tasks.filter((task) => task.days_until <= 0);
   const upcoming = tasks.filter((task) => task.days_until > 0);
   const byLocation = groupBy(due, (task) =>
@@ -75,6 +76,13 @@ export function TodayPage() {
           }).format(new Date())}
         </Text>
       </Stack>
+
+      {sites.map((conditions) => (
+        <WeatherCard
+          key={`${String(conditions.site_id)}-${conditions.plugin_id}`}
+          conditions={conditions}
+        />
+      ))}
 
       {unscheduled > 0 && (
         <Alert variant="light" icon={<IconInfoCircle />}>

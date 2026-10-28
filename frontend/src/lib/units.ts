@@ -27,6 +27,11 @@ export function lengthUnit(units: UnitSystem): string {
   return units === "imperial" ? "in" : "cm";
 }
 
+/** Rain: "4 mm", or "0.16 in" in imperial units. */
+export function formatPrecipitation(mm: number, units: UnitSystem): string {
+  return units === "imperial" ? `${String(round(mm / 25.4, 2))} in` : `${String(round(mm, 1))} mm`;
+}
+
 function round(value: number, decimals: number): number {
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;

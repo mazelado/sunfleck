@@ -32,7 +32,9 @@ export const server = setupServer(
   http.get("*/api/v1/plants", () => HttpResponse.json({ items: [], count: 0 })),
   http.get("*/api/v1/care-types", () => HttpResponse.json(builtinCareTypes)),
   http.get("*/api/v1/care-profiles", () => HttpResponse.json([])),
-  http.get("*/api/v1/today", () => HttpResponse.json({ tasks: [], unscheduled_plants: 0 })),
+  http.get("*/api/v1/today", () =>
+    HttpResponse.json({ sites: [], tasks: [], unscheduled_plants: 0 }),
+  ),
   http.get("*/api/v1/plants/:plantId/schedules", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/routine-suggestion", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/timeline", () =>

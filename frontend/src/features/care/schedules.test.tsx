@@ -169,6 +169,15 @@ describe("wording", () => {
         details: { months: [1, 2, 11, 12], resumes_on: "2027-03-01" },
       }).text,
     ).toBe("No fertilizing in Nov–Feb. It starts again on Mar 1, 2027");
+    expect(explain({ code: "rain", multiplier: 1, details: { mm: 12.7 } }).text).toBe(
+      "Rain: 0.5 in in the last two days, so the soil is still moist",
+    );
+    expect(
+      explain({ code: "hot_spell", multiplier: 0.82, details: { max_c: 31, ideal_max_c: 25 } }),
+    ).toEqual({
+      text: "Hot spell: highs around 88°F, above the 77°F its care profile likes",
+      effect: "18% sooner",
+    });
     expect(explain({ code: "from_a_plugin", multiplier: 1, details: {} })).toEqual({
       text: "from_a_plugin",
       effect: null,

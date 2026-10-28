@@ -2,7 +2,13 @@ import type { TFunction } from "i18next";
 
 import type { CareType } from "../../api/care";
 import type { Factor, Schedule, Suggestion } from "../../api/schedules";
-import { celsiusToDisplay, cmToDisplay, lengthUnit, temperatureUnit } from "../../lib/units";
+import {
+  celsiusToDisplay,
+  cmToDisplay,
+  formatPrecipitation,
+  lengthUnit,
+  temperatureUnit,
+} from "../../lib/units";
 import type { UnitSystem } from "../../lib/units";
 import { formatDate } from "../plants/dates";
 import { formatMonths } from "../taxonomy/months";
@@ -142,6 +148,21 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
         return t("schedules.factors.dormantNoFertilizer");
       case "fixed":
         return t("schedules.factors.fixed", { count: number("days") });
+      // From the weather plugin.
+      case "rain":
+        return t("schedules.factors.rain", {
+          amount: formatPrecipitation(number("mm"), units),
+        });
+      case "rain_forecast":
+        return t("schedules.factors.rainForecast", {
+          when: date("on") ?? "",
+          amount: formatPrecipitation(number("mm"), units),
+        });
+      case "hot_spell":
+        return t("schedules.factors.hotSpell", {
+          max: temperature(number("max_c")),
+          ideal: temperature(number("ideal_max_c")),
+        });
       case "not_in_use":
         return t("schedules.factors.notInUse");
       case "no_care_profile":
