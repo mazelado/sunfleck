@@ -63,10 +63,14 @@ automatically every time you commit.
 make dev
 ```
 
-This starts two servers side by side:
+This starts three processes side by side:
 - **Vite** on port 5173 serves the React frontend and reloads the page instantly when you save
   a file.
 - **Django** on port 8000 serves the API. Vite forwards `/api`, `/admin`, and `/static` to it.
+- **The worker** (Huey) runs background jobs: reminders, weather updates, and the nightly
+  recalculation. Its queue is a file next to the database (`backend/data/huey.sqlite3`). It
+  doesn't reload when you change code: stop `make dev` and start it again. (`make dev-worker`
+  runs just the worker.)
 
 Open <http://localhost:5173>. The first time, Sunfleck shows its **setup page**: create your
 account there (you become the household's Admin). To try other roles, invite yourself at a
@@ -237,6 +241,8 @@ cp env.example .env       # then edit .env: set SECRET_KEY and TIME_ZONE
 docker compose up -d --build
 ```
 
+This starts two containers from the same image: **sunfleck** (the app) and **worker** (background
+jobs: reminders, weather updates, the nightly recalculation), which starts once the app is up.
 `--build` rebuilds the image from your current code; drop it to reuse the last build. Data is
 kept in a Docker volume named `docker_sunfleck-data` (the `docker_` prefix comes from the
 folder name), so it survives restarts and rebuilds. It holds both the database and the plant
@@ -244,7 +250,7 @@ photos (`/data/media`), so back up the whole volume. Useful commands:
 
 | Command | Does |
 |---|---|
-| `docker compose logs -f` | Follow the app's output (Ctrl+C stops following, not the app) |
+| `docker compose logs -f` | Follow the app's and worker's output (Ctrl+C stops following, not the app) |
 | `docker compose ps` | Show whether it's running and healthy |
 | `docker compose down` | Stop it (data is kept) |
 | `docker compose down --volumes` | Stop it **and delete all its data** |

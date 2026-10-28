@@ -143,6 +143,12 @@ so it takes a fraction of a second.
 Huey stores its queue in a separate SQLite file by default, so the default install needs no
 Redis. Users with PostgreSQL or Redis can point Huey at Redis instead.
 
+**As built (M9):** the worker is `manage.py run_huey` (`make dev` runs it; in Docker, the
+`worker` command, a second Compose service from the same image that starts once the app is
+healthy). Job times are in UTC: the nightly recalculation runs at 02:23, and plugins' jobs
+(`register_periodic_jobs`, e.g. the weather refresh, hourly) run on their own cron schedules,
+with their exceptions logged rather than stopping the worker. Tests run jobs immediately.
+
 > Django 6 added a built-in *tasks* API, but it doesn't include a production worker or
 > periodic scheduling yet. Huey supports that API, so we can adopt it later without changing
 > our job code much.

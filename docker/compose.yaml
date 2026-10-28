@@ -22,5 +22,18 @@ services:
       - sunfleck-data:/data
     env_file: .env
 
+  # Background jobs (reminders, weather, nightly recalculation), from the same image and data.
+  worker:
+    image: sunfleck:local
+    pull_policy: never
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      sunfleck:
+        condition: service_healthy  # it runs the database migrations first
+    volumes:
+      - sunfleck-data:/data
+    env_file: .env
+
 volumes:
   sunfleck-data:

@@ -19,7 +19,7 @@ WORKDIR /app/backend
 COPY backend/pyproject.toml backend/uv.lock ./
 # Built-in plugins are packages of their own; installed as regular packages, not links.
 COPY plugins/ /app/plugins/
-RUN uv sync --locked --no-dev --extra postgres --no-editable
+RUN uv sync --locked --no-dev --extra postgres --extra redis --no-editable
 
 # --- Stage 3: the application image ------------------------------------------------------------
 FROM python:3.13-slim AS app

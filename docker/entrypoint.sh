@@ -1,5 +1,5 @@
 #!/bin/sh
-# Container entry point. Usage: web (default) | manage <command> | any other command.
+# Container entry point. Usage: web (default) | worker | manage <command> | any other command.
 set -e
 
 data_dir="${SUNFLECK_DATA_DIR:-/data}"
@@ -17,6 +17,11 @@ case "$1" in
       --workers "${WEB_CONCURRENCY:-2}" \
       --access-logfile - \
       --no-control-socket
+    ;;
+  worker)
+    # Background jobs: reminders, weather, nightly recalculation. The web service runs the
+    # database migrations, so start this one after it.
+    exec python manage.py run_huey
     ;;
   manage)
     shift
