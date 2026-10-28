@@ -29,6 +29,14 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("The SECRET_KEY environment variable must be set.")
     SECRET_KEY = "django-insecure-development-only"  # noqa: S105 - only used with DEBUG on
 
+# The address people open Sunfleck at (e.g. https://plants.example.com), for links in
+# notifications, which the worker sends without a web request to take it from. Optional.
+PUBLIC_URL = env_str("SUNFLECK_PUBLIC_URL", "").rstrip("/")
+
+# Keys that encrypt secrets stored in the database (see sunfleck/core/crypto.py): Fernet keys,
+# comma-separated, the first one encrypting. Generate one with:  python manage.py encryption_key
+ENCRYPTION_KEYS = env_list("SUNFLECK_ENCRYPTION_KEY")
+
 # localhost is always allowed so that health checks from inside the container keep working.
 ALLOWED_HOSTS = [*env_list("ALLOWED_HOSTS"), "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
@@ -58,6 +66,7 @@ INSTALLED_APPS = [
     "sunfleck.care",
     "sunfleck.taxonomy",
     "sunfleck.plugins",
+    "sunfleck.notifications",
     # Installed plugins with their own models (see sunfleck/plugins/discovery.py).
     *plugin_apps(),
 ]

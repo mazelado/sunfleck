@@ -21,6 +21,8 @@ dependencies = [
     # Built-in plugins: separate packages in ../plugins, installed like any other plugin.
     "sunfleck-weather-openmeteo",
     "huey>=3.5",
+    "apprise>=1.9",
+    "cryptography>=44",
 ]
 
 [project.optional-dependencies]
@@ -114,7 +116,11 @@ django_settings_module = "sunfleck.config.test_settings"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sunfleck.config.test_settings"
 addopts = "--strict-markers --cov=sunfleck --cov=../plugins --cov-report=term-missing"
-filterwarnings = ["error"]  # a warning today is a bug tomorrow; fix or explicitly ignore it
+filterwarnings = [
+    "error",  # a warning today is a bug tomorrow; fix or explicitly ignore it
+    # Apprise's PGP support imports imghdr to check whether it exists; only Python 3.12 warns.
+    "ignore:'imghdr' is deprecated:DeprecationWarning",
+]
 testpaths = ["sunfleck", "../plugins"]
 
 [tool.coverage.run]

@@ -149,6 +149,15 @@ healthy). Job times are in UTC: the nightly recalculation runs at 02:23, and plu
 (`register_periodic_jobs`, e.g. the weather refresh, hourly) run on their own cron schedules,
 with their exceptions logged rather than stopping the worker. Tests run jobs immediately.
 
+**Notifications as built (M9):** every 15 minutes, `notifications.send_due` looks at each person
+with a channel in use. Their **daily digest** (default 08:00) and optional **evening reminder**
+go out at their chosen times, in their own time zone (by default their household's first
+site's), or up to 3 hours later if the worker was down. Neither is sent when nothing is due.
+The digest lists today's and overdue tasks by location, plus frost warnings from plugins; the
+reminder lists only what's still due. Each person gets one of each per day (a `NotificationLog`
+row claims the day first, so two workers can't both send it); if every channel failed, it's
+tried again on the next run within the window. Messages are written in the person's language.
+
 > Django 6 added a built-in *tasks* API, but it doesn't include a production worker or
 > periodic scheduling yet. Huey supports that API, so we can adopt it later without changing
 > our job code much.
@@ -159,11 +168,19 @@ database using Fernet (from the `cryptography` library), with a key from the
 `SUNFLECK_ENCRYPTION_KEY` environment variable. Exports leave secrets out unless the user
 explicitly asks to include them.
 
+**As built (M9):** `sunfleck.core.crypto` encrypts with `MultiFernet`. `SUNFLECK_ENCRYPTION_KEY`
+may hold several comma-separated keys: the first encrypts and all of them decrypt, so a key can
+be replaced without losing anything. `manage.py encryption_key` prints a new one. Without the
+variable, a key derived from `SECRET_KEY` (with HKDF) is used and a warning is logged, so a new
+install works out of the box, but changing `SECRET_KEY` then makes stored secrets unreadable.
+A channel whose URL can't be decrypted shows that as its error instead of failing silently.
+
 ### Configuration (environment variables)
 | Variable | Default | Purpose |
 |---|---|---|
 | `SECRET_KEY` | *(required)* | Django cryptographic signing |
-| `SUNFLECK_ENCRYPTION_KEY` | *(required)* | Encrypts stored secrets |
+| `SUNFLECK_ENCRYPTION_KEY` | *(derived from `SECRET_KEY`)* | Encrypts stored secrets; recommended. Comma-separated to rotate keys |
+| `SUNFLECK_PUBLIC_URL` | *(empty)* | The address people open Sunfleck at, e.g. `https://plants.example.com`; notifications link to it |
 | `DATABASE_URL` | `sqlite:////data/db.sqlite3` | Database connection |
 | `ALLOWED_HOSTS` / `CSRF_TRUSTED_ORIGINS` | `localhost` | Hostnames the app is served on |
 | `TIME_ZONE` | `UTC` | Server default; each site has its own time zone |
@@ -220,8 +237,9 @@ erDiagram
 | **CareEvent** | plant, care type, performed at, performed by, notes, feedback (`too_dry` / `just_right` / `still_wet`, watering only), skipped flag | The care log. Feedback trains predictions. A plant's **timeline** shows its care events and photos together, newest first |
 | **CareSchedule** | plant, care type, mode (`predicted` / `fixed`), interval for fixed schedules, origin (`suggested` / `manual`), in use, started on, snoozed until; the latest prediction: interval, next due date, factors, calculated on | One per plant per care type, and one for watering of any kind. Only watering and fertilizing can be predicted. A snooze puts off one due date: a new one (e.g. after the care is logged) ends it |
 | **ScheduleAdjustment** | schedule, calculated at, interval, next due date, factors (JSON) | Recorded whenever a prediction changes: the history behind the "why", useful for debugging (shown in the Django admin) |
-| **NotificationChannel** | user, Apprise URL (encrypted), label, enabled, digest time, quiet hours | One user can have several |
-| **NotificationLog** | user, schedule, sent at, channel, status | Prevents duplicate reminders |
+| **NotificationChannel** | user, label, Apprise URL (encrypted), service, enabled, last sent at, last error | One user can have several |
+| **NotificationPreferences** | user, digest time, evening reminder time (optional), time zone | Times are in the person's time zone |
+| **NotificationLog** | user, kind (digest/reminder), local date, status (sent/nothing due/failed), detail | One per person, kind and day: prevents duplicates; failed ones are retried |
 | **PluginSetting** | plugin ID, household (optional), enabled, settings (JSON), secrets (encrypted) | Per plugin, optionally per household |
 
 **Due tasks are derived, not stored.** "Today / Upcoming / Overdue" comes from each

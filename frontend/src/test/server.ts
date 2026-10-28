@@ -35,6 +35,13 @@ export const server = setupServer(
   http.get("*/api/v1/today", () =>
     HttpResponse.json({ sites: [], tasks: [], unscheduled_plants: 0 }),
   ),
+  http.get("*/api/v1/notifications", () =>
+    HttpResponse.json({
+      preferences: { digest_time: "08:00:00", reminder_time: null, timezone: "Europe/Amsterdam" },
+      channels: [],
+    }),
+  ),
+  http.get("*/api/v1/notifications/preview", () => HttpResponse.json({ message: null })),
   http.get("*/api/v1/plants/:plantId/schedules", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/routine-suggestion", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/timeline", () =>

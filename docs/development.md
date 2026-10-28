@@ -72,6 +72,11 @@ This starts three processes side by side:
   doesn't reload when you change code: stop `make dev` and start it again. (`make dev-worker`
   runs just the worker.)
 
+To try notifications, add a channel under **Notifications** in the account menu. The easiest
+is [ntfy](https://ntfy.sh): install its phone app, subscribe to a topic name nobody would guess,
+and add `ntfy://ntfy.sh/that-topic`. **Send a test** sends one right away; the daily digest is
+sent by the worker at the time you choose, and the page shows what it would say now.
+
 Open <http://localhost:5173>. The first time, Sunfleck shows its **setup page**: create your
 account there (you become the household's Admin). To try other roles, invite yourself at a
 second address from **Household**; the invitation link is printed in the `make dev` terminal

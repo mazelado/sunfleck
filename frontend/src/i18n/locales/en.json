@@ -40,7 +40,8 @@
     "plants": "Plants",
     "careTypes": "Care types",
     "guide": "Care guide",
-    "plugins": "Plugins"
+    "plugins": "Plugins",
+    "notifications": "Notifications"
   },
   "setup": {
     "title": "Welcome to Sunfleck",
@@ -189,7 +190,10 @@
     "schedule_not_found": "This schedule doesn't exist, or it was deleted.",
     "invalid_plugin_setting": "This setting isn't valid.",
     "plugin_not_found": "This plugin isn't installed.",
-    "plugin_not_enabled": "This plugin isn't turned on."
+    "plugin_not_enabled": "This plugin isn't turned on.",
+    "unsupported_channel_url": "Apprise doesn't know this address. Check it against the list of services.",
+    "delivery_failed": "It couldn't be sent.",
+    "channel_not_found": "This channel doesn't exist, or it was deleted."
   },
   "places": {
     "title": "Places",
@@ -700,5 +704,38 @@
       "snow": "Snow",
       "thunderstorm": "Thunderstorms"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Get a daily digest of the care that's due, on your phone or by email. Sunfleck sends it through Apprise, which supports ntfy, Telegram, email, Discord, Signal and about 100 more.",
+    "channels": "Where to send them",
+    "noChannels": "Add somewhere to send them, then send a test to check it works.",
+    "add": "Add a channel",
+    "label": "Name",
+    "labelPlaceholder": "e.g. My phone",
+    "url": "Address (Apprise URL)",
+    "urlHelp": "For example ntfy://ntfy.sh/your-own-topic, tgram://bot-token/chat-id, or mailto://user:password@gmail.com. It's stored encrypted.",
+    "allServices": "All services and their addresses",
+    "inUse": "In use",
+    "test": "Send a test",
+    "testSent": "Test sent to {{label}}",
+    "lastSent": "Last sent {{when}}",
+    "failed": "Last attempt failed: {{error}}",
+    "delete": "Delete {{label}}",
+    "deleteTitle": "Delete {{label}}?",
+    "deleteConfirm": "Notifications won't be sent there any more.",
+    "deleted": "{{label}} was deleted.",
+    "added": "{{label}} added",
+    "when": "When",
+    "digestTime": "Daily digest at",
+    "digestHelp": "What needs care today, and frost warnings. Not sent when there's nothing to do.",
+    "reminder": "Evening reminder",
+    "reminderHelp": "Only what's still not done by then.",
+    "reminderTime": "Evening reminder at",
+    "timezone": "Time zone",
+    "saved": "Saved",
+    "preview": "Today's digest",
+    "previewHelp": "What it would say if it were sent now.",
+    "nothingToday": "Nothing needs care today, so no digest would be sent."
   }
 }

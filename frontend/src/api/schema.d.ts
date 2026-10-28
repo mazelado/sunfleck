@@ -404,6 +404,121 @@ export interface paths {
         patch: operations["sunfleck_accounts_api_update_me"];
         trace?: never;
     };
+    "/api/v1/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Notifications
+         * @description The signed-in person's notification channels and preferences.
+         */
+        get: operations["sunfleck_notifications_api_get_notifications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/channels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Channel
+         * @description Add somewhere to send notifications, as an Apprise URL.
+         */
+        post: operations["sunfleck_notifications_api_add_channel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/channels/{channel_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Channel */
+        put: operations["sunfleck_notifications_api_update_channel"];
+        post?: never;
+        /** Delete Channel */
+        delete: operations["sunfleck_notifications_api_delete_channel"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/channels/{channel_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Channel
+         * @description Send a test message now.
+         */
+        post: operations["sunfleck_notifications_api_test_channel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Preferences */
+        put: operations["sunfleck_notifications_api_update_preferences"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview
+         * @description What today's digest would say, if it were sent now.
+         */
+        get: operations["sunfleck_notifications_api_preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/photos/{photo_id}": {
         parameters: {
             query?: never;
@@ -1034,6 +1149,46 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** ChannelIn */
+        ChannelIn: {
+            /** Label */
+            label: string;
+            /**
+             * Url
+             * @description An Apprise URL, e.g. ntfy://ntfy.sh/my-plants
+             */
+            url: string;
+        };
+        /** ChannelOut */
+        ChannelOut: {
+            /** Enabled */
+            enabled: boolean;
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
+            /** Last Error */
+            last_error: string | null;
+            /** Last Sent At */
+            last_sent_at: string | null;
+            /**
+             * Service
+             * @description The kind of service, e.g. `ntfy`, `tgram`, `mailto`.
+             */
+            service: string;
+        };
+        /** ChannelUpdateIn */
+        ChannelUpdateIn: {
+            /** Enabled */
+            enabled: boolean;
+            /** Label */
+            label: string;
+            /**
+             * Url
+             * @description Leave out to keep it.
+             */
+            url?: string | null;
+        };
         /**
          * ContainerMaterial
          * @description What the plant grows in. Porous pots (terracotta, fabric) dry out faster.
@@ -1314,6 +1469,19 @@ export interface components {
         MemberUpdate: {
             role: components["schemas"]["Role"];
         };
+        /** MessageOut */
+        MessageOut: {
+            /** Body */
+            body: string;
+            /** Title */
+            title: string;
+        };
+        /** NotificationsOut */
+        NotificationsOut: {
+            /** Channels */
+            channels: components["schemas"]["ChannelOut"][];
+            preferences: components["schemas"]["PreferencesSchema"];
+        };
         /** PageQuery */
         PageQuery: {
             /**
@@ -1588,6 +1756,27 @@ export interface components {
              * @description Installed plugins that couldn't be loaded.
              */
             problems: components["schemas"]["ProblemOut"][];
+        };
+        /** PreferencesSchema */
+        PreferencesSchema: {
+            /**
+             * Digest Time
+             * Format: time
+             * @description When the daily digest is sent, in `timezone`.
+             */
+            digest_time: string;
+            /**
+             * Reminder Time
+             * @description An evening reminder of what's still due; none for no reminder.
+             */
+            reminder_time: string | null;
+            /** Timezone */
+            timezone: string;
+        };
+        /** PreviewOut */
+        PreviewOut: {
+            /** @description None when there's nothing to tell. */
+            message: components["schemas"]["MessageOut"] | null;
         };
         /** ProblemOut */
         ProblemOut: {
@@ -2741,6 +2930,162 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_get_notifications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationsOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_add_channel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChannelIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChannelOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_update_channel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChannelUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChannelOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_delete_channel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_notifications_api_test_channel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                channel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChannelOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_update_preferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferencesSchema"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreferencesSchema"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreviewOut"];
                 };
             };
         };

@@ -1,5 +1,6 @@
 import { AppShell, Avatar, Container, Group, Menu, Text, UnstyledButton } from "@mantine/core";
 import {
+  IconBell,
   IconBook,
   IconDroplet,
   IconChecklist,
@@ -66,6 +67,13 @@ export function AppLayout() {
                 leftSection={<IconUser size={16} />}
               >
                 {t("nav.profile")}
+              </Menu.Item>
+              <Menu.Item
+                component={Link}
+                to="/settings/notifications"
+                leftSection={<IconBell size={16} />}
+              >
+                {t("nav.notifications")}
               </Menu.Item>
               <Menu.Item
                 component={Link}
