@@ -20,6 +20,7 @@ dependencies = [
     "pluggy>=1.7.0",
     # Built-in plugins: separate packages in ../plugins, installed like any other plugin.
     "sunfleck-weather-openmeteo",
+    "sunfleck-identify-plantnet",
     "huey>=3.5",
     "apprise>=1.9",
     "cryptography>=44",
@@ -51,6 +52,7 @@ package = false
 
 [tool.uv.sources]
 sunfleck-weather-openmeteo = { path = "../plugins/weather-openmeteo", editable = true }
+sunfleck-identify-plantnet = { path = "../plugins/identify-plantnet", editable = true }
 
 # --- Ruff: formatting and linting -------------------------------------------------------------
 
@@ -105,7 +107,12 @@ disallow_untyped_decorators = false
 
 [[tool.mypy.overrides]]
 # factory_boy's field helpers (Sequence, SubFactory, ...) have no type hints.
-module = ["sunfleck.testing", "sunfleck.*.tests.*", "sunfleck_weather_openmeteo.tests.*"]
+module = [
+    "sunfleck.testing",
+    "sunfleck.*.tests.*",
+    "sunfleck_weather_openmeteo.tests.*",
+    "sunfleck_identify_plantnet.tests.*",
+]
 disallow_untyped_calls = false
 
 [tool.django-stubs]
