@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 from django.core import mail
-from django.test import Client
+from django.test import Client, override_settings
 from pytest_django.fixtures import Settings
 
 from sunfleck.accounts import services
@@ -64,6 +64,18 @@ def test_setup_creates_the_first_admin_and_signs_in() -> None:
     assert response.json()["household"]["name"] == "Fern Gully"
     assert client.get("/api/v1/me").json()["email"] == "ada@example.com"
     assert client.get("/api/v1/setup").json() == {"needs_setup": False}
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGES=[("en", "English"), ("nl", "Nederlands")])
+def test_new_accounts_start_in_the_browsers_language() -> None:
+    client = csrf_client()
+    client.defaults["HTTP_ACCEPT_LANGUAGE"] = "nl-BE, nl;q=0.9, en;q=0.5"
+    client.get("/api/v1/setup")
+
+    csrf_post(client, "/api/v1/setup", SETUP_DATA)
+
+    assert client.get("/api/v1/me").json()["locale"] == "nl"
 
 
 @pytest.mark.django_db
@@ -228,11 +240,15 @@ def test_update_me_changes_only_the_given_fields(client_as: ClientAs) -> None:
 
 
 @pytest.mark.django_db
-def test_update_me_rejects_unknown_languages(client_as: ClientAs) -> None:
+def test_update_me_offers_only_the_languages_sunfleck_is_translated_into(
+    client_as: ClientAs,
+) -> None:
     client = client_as(Role.VIEWER)
 
-    assert patch(client, "/api/v1/me", {"locale": "de"}).json()["locale"] == "de"
+    assert patch(client, "/api/v1/me", {"locale": "en"}).json()["locale"] == "en"
     assert patch(client, "/api/v1/me", {"locale": "klingon"}).status_code == 422
+    # Django knows German, but Sunfleck isn't translated into it (yet).
+    assert patch(client, "/api/v1/me", {"locale": "de"}).status_code == 422
 
 
 @pytest.mark.django_db

@@ -5,6 +5,9 @@ plant care app for hobbyists, licensed under the [AGPL-3.0](LICENSE).
 
 > **Getting started:** see the [development guide](docs/development.md) to set up your
 > computer, and the [style guide](docs/STYLE_GUIDE.md) for coding conventions.
+>
+> **Not a programmer?** Translations ([translating.md](docs/translating.md)) and care
+> profiles for more plants ([data/care/README.md](data/care/README.md)) are very welcome too.
 
 ## Ground rules
 

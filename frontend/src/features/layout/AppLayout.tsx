@@ -4,6 +4,7 @@ import {
   IconBook,
   IconDroplet,
   IconChecklist,
+  IconDatabaseExport,
   IconLogout,
   IconMapPin,
   IconPlant2,
@@ -102,6 +103,15 @@ export function AppLayout() {
                   leftSection={<IconPuzzle size={16} />}
                 >
                   {t("nav.plugins")}
+                </Menu.Item>
+              )}
+              {me?.role === "admin" && (
+                <Menu.Item
+                  component={Link}
+                  to="/settings/data"
+                  leftSection={<IconDatabaseExport size={16} />}
+                >
+                  {t("nav.data")}
                 </Menu.Item>
               )}
               <Menu.Divider />

@@ -855,6 +855,91 @@
         "title": "IdentifyAvailableOut",
         "type": "object"
       },
+      "ImportStatusOut": {
+        "properties": {
+          "allowed": {
+            "description": "Whether an export can be imported: only into a household without places, plants or care types of its own yet.",
+            "title": "Allowed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "allowed"
+        ],
+        "title": "ImportStatusOut",
+        "type": "object"
+      },
+      "ImportSummaryOut": {
+        "properties": {
+          "care_events": {
+            "title": "Care Events",
+            "type": "integer"
+          },
+          "members_to_invite": {
+            "description": "Emails of exported members without an account here, to invite again.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Members To Invite",
+            "type": "array"
+          },
+          "photos": {
+            "title": "Photos",
+            "type": "integer"
+          },
+          "plants": {
+            "title": "Plants",
+            "type": "integer"
+          },
+          "plugins_needing_keys": {
+            "description": "Plugins turned on whose API keys weren't exported, to enter again.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Plugins Needing Keys",
+            "type": "array"
+          },
+          "plugins_not_installed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Plugins Not Installed",
+            "type": "array"
+          },
+          "sites": {
+            "title": "Sites",
+            "type": "integer"
+          },
+          "unknown_care_profiles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknown Care Profiles",
+            "type": "array"
+          },
+          "unknown_species": {
+            "description": "Not in this server's care guide; left unset.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknown Species",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sites",
+          "plants",
+          "photos",
+          "care_events",
+          "members_to_invite",
+          "unknown_species",
+          "unknown_care_profiles",
+          "plugins_needing_keys",
+          "plugins_not_installed"
+        ],
+        "title": "ImportSummaryOut",
+        "type": "object"
+      },
       "InvitationCreatedOut": {
         "properties": {
           "created_at": {
@@ -4058,6 +4143,27 @@
         ]
       }
     },
+    "/api/v1/export": {
+      "get": {
+        "description": "Download the household's data as a ZIP file: places, plants, photos, care history and\nsettings. Passwords and secrets (notification addresses, API keys) aren't included.",
+        "operationId": "sunfleck_dataio_api_export",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Export",
+        "tags": [
+          "export and import"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "description": "Report whether the app is running and can reach its database.\n\nUsed by Docker health checks and uptime monitors, so it needs no sign-in.",
@@ -4468,6 +4574,80 @@
         "summary": "Identify",
         "tags": [
           "taxonomy"
+        ]
+      }
+    },
+    "/api/v1/import": {
+      "get": {
+        "operationId": "sunfleck_dataio_api_import_status",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportStatusOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Import Status",
+        "tags": [
+          "export and import"
+        ]
+      },
+      "post": {
+        "description": "Import an export into this household, which must have no places, plants or care types\nof its own yet. Nothing is imported if anything in the file is wrong.",
+        "operationId": "sunfleck_dataio_api_import_export",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "title": "File",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "title": "FileParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummaryOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Import Export",
+        "tags": [
+          "export and import"
         ]
       }
     },

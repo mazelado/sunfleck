@@ -15,7 +15,7 @@ from allauth.core import context as allauth_context
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
 from django.http import HttpRequest
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from sunfleck.accounts.models import (
     Household,
@@ -57,8 +57,14 @@ def needs_setup() -> bool:
 
 
 def _create_user(*, email: str, password: str, display_name: str, is_superuser: bool) -> User:
-    """Create a user whose email address counts as verified (they were set up or invited)."""
-    user = User(email=normalize_email(email), display_name=display_name.strip())
+    """Create a user whose email address counts as verified (they were set up or invited).
+
+    Their language is the one they're using: their browser's, if Sunfleck has it."""
+    user = User(
+        email=normalize_email(email),
+        display_name=display_name.strip(),
+        locale=translation.get_supported_language_variant(translation.get_language()),
+    )
     user.is_staff = user.is_superuser = is_superuser
     validate_password(password, user)
     user.set_password(password)
