@@ -268,9 +268,17 @@ photos (`/data/media`), so back up the whole volume. Useful commands:
 Pushing a version tag publishes a release: the [Release workflow](../.github/workflows/release.yml)
 builds the image for `linux/amd64` and `linux/arm64`, pushes it to `ghcr.io/mazelado/sunfleck`
 (tagged e.g. `0.1.0`, `0.1` and `latest`), and creates a GitHub release with that version's
-section of [CHANGELOG.md](../CHANGELOG.md). To release:
+section of [CHANGELOG.md](../CHANGELOG.md), titled with the release name.
 
-1. In a pull request, move the changelog's *Unreleased* notes under a new version heading, and
+Choose the version by [Semantic Versioning](https://semver.org/): new features raise the minor
+version (0.2.0), only fixes raise the patch version (0.2.1). Each minor version has the next
+plant name from the [roadmap](roadmap.md#versions-and-release-names), and its patch releases
+keep it.
+
+To release:
+
+1. In a pull request, move the changelog's *Unreleased* notes under a new version heading
+   (with the release name first, e.g. `**Bougainvillea.**`), and
    set the version in `backend/pyproject.toml`, `backend/sunfleck/__init__.py` and
    `frontend/package.json`, then update the lock files (`uv lock` in `backend`, and
    `npm install --package-lock-only` in `frontend`) and the API types (`make api-types`).
