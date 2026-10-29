@@ -118,6 +118,7 @@ class Plant(Model):
     care_profile: str | None = Field(description="Care profile key, if one was chosen")
     status: str
     container_diameter_cm: int | None
+    container_height_cm: int | None = None  # added in 0.2
     container_material: str
     soil_type: str
     acquired_on: date | None

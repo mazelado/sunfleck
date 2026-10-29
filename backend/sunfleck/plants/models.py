@@ -79,6 +79,12 @@ class Plant(models.Model):
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(500)],
     )
+    container_height_cm = models.PositiveIntegerField(
+        _("pot height (cm)"),
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(500)],
+    )
     container_material = models.CharField(
         _("pot material"), max_length=16, choices=ContainerMaterial.choices, blank=True
     )

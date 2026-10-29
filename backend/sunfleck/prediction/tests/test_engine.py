@@ -10,6 +10,7 @@ from sunfleck.prediction.engine import (
     History,
     Prediction,
     Profile,
+    pot_volume_l,
     predict_fertilizing,
     predict_fixed,
     predict_watering,
@@ -28,6 +29,7 @@ AROID = Profile(
     temperature_ideal_max=27,
     fertilize_days=30,
     fertilize_pause_north=frozenset({11, 12, 1, 2}),
+    let_dry="top_third",
 )
 BULB = Profile(
     watering_days={Season.SPRING: 7, Season.SUMMER: None, Season.AUTUMN: 21, Season.WINTER: None},
@@ -66,7 +68,7 @@ def test_the_baseline_is_the_profiles_interval_for_the_season() -> None:
     assert prediction.interval_days == 7
     assert prediction.next_due == date(2026, 4, 20)
     assert prediction.factors[0] == Factor("season", details={"season": "spring", "days": 7})
-    assert codes(prediction) == ["season", "no_location"]
+    assert codes(prediction) == ["season", "no_location", "no_pot_size"]
 
 
 def test_seasons_follow_the_hemisphere() -> None:
@@ -198,6 +200,66 @@ def test_in_the_ground_the_pot_size_doesnt_matter() -> None:
 
     assert "pot_size" not in codes(prediction)
     assert prediction.interval_days == 9
+
+
+def test_a_pots_volume_assumes_a_standard_shape_unless_its_height_is_known() -> None:
+    assert pot_volume_l(15) == pytest.approx(2.16, abs=0.01)
+    assert pot_volume_l(15, 7) == pytest.approx(1.01, abs=0.01)
+    assert pot_volume_l(15, 30) == pytest.approx(2 * pot_volume_l(15))
+
+
+def test_a_shallow_pot_dries_out_faster_than_a_standard_one_of_the_same_width() -> None:
+    standard = predict_watering(AROID, Conditions(pot_diameter_cm=30), WATERED, SPRING_DAY)
+    shallow = predict_watering(
+        AROID, Conditions(pot_diameter_cm=30, pot_height_cm=10), WATERED, SPRING_DAY
+    )
+
+    assert factor(shallow, "pot_size").details == {"diameter_cm": 30, "height_cm": 10}
+    assert factor(shallow, "pot_size").multiplier < factor(standard, "pot_size").multiplier
+
+
+def test_watering_says_how_much_water_a_pot_needs() -> None:
+    conditions = Conditions(indoor=True, pot_diameter_cm=15)
+    thirsty = Profile(**{**vars(AROID), "let_dry": "keep_moist"})
+    dry = Profile(**{**vars(AROID), "let_dry": "completely"})
+
+    amount = factor(predict_watering(thirsty, conditions, WATERED, SPRING_DAY), "water_amount")
+    more = factor(predict_watering(dry, conditions, WATERED, SPRING_DAY), "water_amount")
+
+    assert amount.multiplier == 1.0
+    assert amount.details == {"litres": 0.32, "pot_litres": 2.2, "height_known": False}
+    assert more.details["litres"] == 0.65
+
+
+def test_in_the_ground_watering_is_a_depth_of_water() -> None:
+    in_ground = Conditions(indoor=False, pot_diameter_cm=8, pot_material="in_ground")
+    bed = Conditions(indoor=False)
+
+    prediction = predict_watering(AROID, in_ground, WATERED, SPRING_DAY)
+
+    # Every 9 days: 25 mm a week comes to about 30 mm each time.
+    assert factor(prediction, "water_amount").details == {"depth_mm": 30, "in_ground": True}
+    assert factor(
+        predict_watering(CARNIVORE, bed, WATERED, SPRING_DAY), "water_amount"
+    ).details == {
+        "depth_mm": 10,
+        "in_ground": False,
+    }
+
+
+def test_indoors_without_a_pot_size_it_asks_for_one() -> None:
+    prediction = predict_watering(AROID, LIVING_ROOM, WATERED, SPRING_DAY)
+
+    assert "no_pot_size" in codes(prediction)
+    assert "water_amount" not in codes(prediction)
+
+
+def test_air_plants_get_no_amount() -> None:
+    air_plant = Profile(**{**vars(AROID), "in_soil": False})
+
+    prediction = predict_watering(air_plant, LIVING_ROOM, WATERED, SPRING_DAY)
+
+    assert not {"water_amount", "no_pot_size"} & set(codes(prediction))
 
 
 def test_feedback_moves_the_interval_a_little_at_a_time() -> None:
@@ -356,6 +418,7 @@ def test_every_care_profile_in_the_dataset_can_be_read() -> None:
 
     assert profiles["tropical_aroid"] == AROID
     assert profiles["bog_carnivore"].fertilize_days is None
+    assert not profiles["air_plant"].in_soil
 
 
 # --- Fixed intervals --------------------------------------------------------------------------

@@ -46,8 +46,10 @@ Everything is in the account menu (your avatar at the top right).
   different care, or if you don't know the species. The **Care guide** describes each profile.
 - **Identify it from a photo** when adding it, if an Admin turned on the Pl@ntNet plugin:
   pick one of the suggestions to set its species.
-- Add its **pot** (size, material) and **soil**: plants in small or terracotta pots dry out
-  sooner.
+- Add its **pot** (width, and height if you like; material) and **soil**: plants in small or
+  terracotta pots dry out sooner. With the pot's size, the plant's watering schedule also says
+  roughly how much water to give each time. Without a height, a standard pot (about as tall as
+  it is wide) is assumed.
 - **Photos**: add as many as you like; the first becomes the plant's cover. Photos are made
   smaller and stripped of their location data when uploaded.
 - **Status**: Active, Dormant, Given away, or Died. Only active and dormant plants need care.

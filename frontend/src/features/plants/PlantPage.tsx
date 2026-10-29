@@ -148,7 +148,14 @@ function PlantDetails({ plant, units }: { plant: Plant; units: UnitSystem }) {
   const { t, i18n } = useTranslation();
   const pot = [
     plant.container_diameter_cm !== null
-      ? `${String(cmToDisplay(plant.container_diameter_cm, units))} ${lengthUnit(units)}`
+      ? t("plants.potWide", {
+          size: `${String(cmToDisplay(plant.container_diameter_cm, units))} ${lengthUnit(units)}`,
+        })
+      : null,
+    plant.container_height_cm !== null
+      ? t("plants.potTall", {
+          size: `${String(cmToDisplay(plant.container_height_cm, units))} ${lengthUnit(units)}`,
+        })
       : null,
     plant.container_material ? t(`plants.materials.${plant.container_material}`) : null,
   ].filter(Boolean);

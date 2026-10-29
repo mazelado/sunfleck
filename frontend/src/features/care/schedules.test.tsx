@@ -9,7 +9,7 @@ import type { CareProfile } from "../../api/taxonomy";
 import i18n from "../../i18n";
 import { renderApp } from "../../test/render";
 import { ada, builtinCareTypes, server, signInAs } from "../../test/server";
-import { daysUntil, describeDue, explainFactor } from "./scheduleText";
+import { daysUntil, describeDue, describeWaterAmount, explainFactor } from "./scheduleText";
 
 const t = i18n.t.bind(i18n);
 const gardener: Me = { ...ada, role: "gardener" };
@@ -30,6 +30,7 @@ const plant: Plant = {
   status: "active",
   location: { id: 10, name: "Living room", kind: "indoor", site_id: 1, site_name: "Home" },
   container_diameter_cm: null,
+  container_height_cm: null,
   container_material: null,
   soil_type: null,
   acquired_on: null,
@@ -87,7 +88,15 @@ const waterSchedule: Schedule = {
   due_on: inDays(3),
   interval_days: 6,
   next_due: inDays(3),
-  factors: [season, light],
+  factors: [
+    season,
+    light,
+    {
+      code: "water_amount",
+      multiplier: 1,
+      details: { litres: 0.43, pot_litres: 2.2, height_known: false },
+    },
+  ],
 };
 
 const suggestions: Suggestion[] = [
@@ -145,6 +154,10 @@ describe("wording", () => {
     expect(explain({ code: "pot_size", multiplier: 0.8, details: { diameter_cm: 8 } }).text).toBe(
       "Pot 3 in across",
     );
+    expect(
+      explain({ code: "pot_size", multiplier: 0.8, details: { diameter_cm: 30, height_cm: 10 } })
+        .text,
+    ).toBe("Pot 12 in across and 4 in tall");
     expect(
       explain({
         code: "temperature",
@@ -239,6 +252,41 @@ describe("the suggested routine", () => {
   });
 });
 
+describe("how much water", () => {
+  const amount = (details: Record<string, unknown>, units: "metric" | "imperial" = "metric") =>
+    describeWaterAmount([season, { code: "water_amount", multiplier: 1, details }], {
+      t,
+      locale: "en",
+      units,
+    });
+
+  it("says how much water a pot needs, in the person's units", () => {
+    expect(amount({ litres: 0.43, pot_litres: 2.2, height_known: false })).toBe(
+      "About 450 ml each time, or until a little drains from the bottom",
+    );
+    expect(amount({ litres: 0.43, pot_litres: 2.2, height_known: false }, "imperial")).toBe(
+      "About 1.75 cups each time, or until a little drains from the bottom",
+    );
+  });
+
+  it("gives a depth of water in the ground", () => {
+    expect(amount({ depth_mm: 30, in_ground: true })).toBe(
+      "About 30 mm of water each time, as if that much rain fell",
+    );
+    expect(amount({ depth_mm: 25, in_ground: false }, "imperial")).toMatch(
+      /^About 1 in of water each time if it's in the ground/,
+    );
+  });
+
+  it("asks for the pot's size, or says nothing without an amount", () => {
+    const noPot = { code: "no_pot_size", multiplier: 1, details: {} };
+    expect(describeWaterAmount([season, noPot], { t, locale: "en", units: "metric" })).toBe(
+      "Add the pot's size to see how much water to give",
+    );
+    expect(describeWaterAmount([season], { t, locale: "en", units: "metric" })).toBeNull();
+  });
+});
+
 describe("the care schedule", () => {
   it("says when care is due, and why", async () => {
     signInAs({ ...ada, role: "viewer" });
@@ -247,6 +295,7 @@ describe("the care schedule", () => {
 
     expect(await screen.findByText("Due in 3 days")).toBeVisible();
     expect(screen.getByText(/About every 6 days/)).toBeVisible();
+    expect(screen.getByText(/^About 450 ml each time/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "Edit" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Why?" }));
@@ -255,6 +304,8 @@ describe("the care schedule", () => {
     expect(within(why).getByText(/Spring: about every 7 days/)).toBeVisible();
     expect(within(why).getByText(/Light: about 20 mol/)).toBeVisible();
     expect(within(why).getByText("(16% sooner)")).toBeVisible();
+    // How much to give is shown with the schedule, not as a reason for when.
+    expect(within(why).queryByText(/450 ml/)).not.toBeInTheDocument();
   });
 
   it("switches a schedule to every few days", async () => {

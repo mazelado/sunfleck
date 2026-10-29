@@ -75,6 +75,7 @@ def conditions_for(plant: Plant) -> Conditions:
     """Where and how the plant grows, as the engine needs it."""
     plant_only = Conditions(
         pot_diameter_cm=plant.container_diameter_cm,
+        pot_height_cm=plant.container_height_cm,
         pot_material=plant.container_material or None,
         dormant=plant.status == PlantStatus.DORMANT,
     )

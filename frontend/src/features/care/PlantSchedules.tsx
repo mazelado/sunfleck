@@ -35,7 +35,9 @@ import { ScheduleDialog } from "./ScheduleDialog";
 import {
   daysUntil,
   describeDue,
+  AMOUNT_CODES,
   describeInterval,
+  describeWaterAmount,
   explainFactor,
   type Urgency,
   urgency,
@@ -135,8 +137,13 @@ interface ScheduleRowProps {
 function ScheduleRow({ schedule, canEdit, onEdit }: ScheduleRowProps) {
   const { t, i18n } = useTranslation();
   const { name } = useCareTypeName();
+  const units = useUnits();
   const [showWhy, setShowWhy] = useState(false);
   const careName = name(schedule.care_type);
+  const amount =
+    schedule.interval_days === null
+      ? null
+      : describeWaterAmount(schedule.factors, { t, locale: i18n.language, units });
 
   return (
     <Stack gap={4}>
@@ -158,6 +165,7 @@ function ScheduleRow({ schedule, canEdit, onEdit }: ScheduleRowProps) {
               </Text>
               <WhyToggle shown={showWhy} onToggle={setShowWhy} />
             </Group>
+            {amount && <Text size="sm">{amount}</Text>}
           </Stack>
         </Group>
         {canEdit && (
@@ -205,20 +213,22 @@ function FactorList({ factors, label }: { factors: Factor[]; label: string }) {
   const units = useUnits();
   return (
     <List size="sm" spacing={2} pl={34} aria-label={label}>
-      {factors.map((factor) => {
-        const { text, effect } = explainFactor(factor, { t, locale: i18n.language, units });
-        return (
-          <List.Item key={factor.code}>
-            {text}
-            {effect && (
-              <Text span size="sm" c="dimmed">
-                {" "}
-                ({effect})
-              </Text>
-            )}
-          </List.Item>
-        );
-      })}
+      {factors
+        .filter((factor) => !AMOUNT_CODES.has(factor.code))
+        .map((factor) => {
+          const { text, effect } = explainFactor(factor, { t, locale: i18n.language, units });
+          return (
+            <List.Item key={factor.code}>
+              {text}
+              {effect && (
+                <Text span size="sm" c="dimmed">
+                  {" "}
+                  ({effect})
+                </Text>
+              )}
+            </List.Item>
+          );
+        })}
     </List>
   );
 }

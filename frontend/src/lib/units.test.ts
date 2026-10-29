@@ -7,6 +7,8 @@ import {
   displayToCelsius,
   displayToCm,
   hoursOn,
+  waterDepth,
+  waterVolume,
 } from "./units";
 
 describe("units", () => {
@@ -35,5 +37,18 @@ describe("units", () => {
 
   it("calculates the daily light integral", () => {
     expect(dailyLightIntegral(200, 12)).toBe(8.6);
+  });
+
+  it("rounds amounts of water to what's easy to measure", () => {
+    expect(waterVolume(0.32, "metric")).toEqual({ unit: "ml", value: 300 });
+    expect(waterVolume(0.01, "metric")).toEqual({ unit: "ml", value: 50 });
+    expect(waterVolume(0.98, "metric")).toEqual({ unit: "litres", value: 1 });
+    expect(waterVolume(2.6, "metric")).toEqual({ unit: "litres", value: 2.5 });
+    expect(waterVolume(0.05, "imperial")).toEqual({ unit: "flOz", value: 2 });
+    expect(waterVolume(0.32, "imperial")).toEqual({ unit: "cups", value: 1.25 });
+    expect(waterVolume(4, "imperial")).toEqual({ unit: "gallons", value: 1 });
+    expect(waterDepth(30, "metric")).toEqual({ unit: "mm", value: 30 });
+    expect(waterDepth(25, "imperial")).toEqual({ unit: "inches", value: 1 });
+    expect(waterDepth(2, "imperial")).toEqual({ unit: "inches", value: 0.25 });
   });
 });

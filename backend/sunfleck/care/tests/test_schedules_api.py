@@ -55,6 +55,7 @@ def test_the_suggested_routine(client_as: ClientAs, monty: Plant) -> None:
         "factors": [
             {"code": "season", "multiplier": 1.0, "details": {"season": "spring", "days": 7}},
             {"code": "no_light_info", "multiplier": 1.0, "details": {"indoor": True}},
+            {"code": "no_pot_size", "multiplier": 1.0, "details": {}},
             {"code": "not_logged", "multiplier": 1.0, "details": {"since": "2026-04-15"}},
         ],
     }

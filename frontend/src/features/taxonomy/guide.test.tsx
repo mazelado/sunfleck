@@ -185,6 +185,7 @@ describe("species and care profile of a plant", () => {
       status: "active",
       location: { id: 10, name: "Living room", kind: "indoor", site_id: 1, site_name: "Home" },
       container_diameter_cm: null,
+      container_height_cm: null,
       container_material: null,
       soil_type: null,
       acquired_on: null,

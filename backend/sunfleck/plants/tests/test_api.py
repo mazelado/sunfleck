@@ -58,6 +58,7 @@ def test_gardener_adds_a_plant_with_its_light(client_as: ClientAs, location: Loc
             "nickname": "Monty",
             "location_id": location.pk,
             "container_diameter_cm": 17,
+            "container_height_cm": 15,
             "container_material": "terracotta",
             "soil_type": "aroid_mix",
             "acquired_on": "2026-04-01",
@@ -74,6 +75,7 @@ def test_gardener_adds_a_plant_with_its_light(client_as: ClientAs, location: Loc
         "site_id": location.site_id,
         "site_name": "Home",
     }
+    assert (data["container_diameter_cm"], data["container_height_cm"]) == (17, 15)
     assert (data["container_material"], data["soil_type"]) == ("terracotta", "aroid_mix")
     [light] = data["light_sources"]
     assert (light["light_source"]["direction"], light["distance_cm"]) == ("E", 150)

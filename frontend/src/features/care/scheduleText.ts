@@ -8,6 +8,8 @@ import {
   formatPrecipitation,
   lengthUnit,
   temperatureUnit,
+  waterDepth,
+  waterVolume,
 } from "../../lib/units";
 import type { UnitSystem } from "../../lib/units";
 import { formatDate } from "../plants/dates";
@@ -58,6 +60,10 @@ export function describeInterval(item: Schedule | Suggestion, t: TFunction): str
     ? t("schedules.aboutEvery", { count: item.interval_days })
     : t("schedules.every", { count: item.interval_days });
 }
+
+/** Factors that say how much water to give rather than when: shown with the schedule, not
+ * among the reasons for its interval. */
+export const AMOUNT_CODES: ReadonlySet<string> = new Set(["water_amount", "no_pot_size"]);
 
 interface ExplainContext {
   t: TFunction;
@@ -110,10 +116,15 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
           min: temperature(number("ideal_min_c")),
           max: temperature(number("ideal_max_c")),
         });
-      case "pot_size":
-        return t("schedules.factors.potSize", {
-          size: `${String(cmToDisplay(number("diameter_cm"), units))} ${lengthUnit(units)}`,
-        });
+      case "pot_size": {
+        const size = (cm: number) => `${String(cmToDisplay(cm, units))} ${lengthUnit(units)}`;
+        return details.height_cm
+          ? t("schedules.factors.potSizeHeight", {
+              size: size(number("diameter_cm")),
+              height: size(number("height_cm")),
+            })
+          : t("schedules.factors.potSize", { size: size(number("diameter_cm")) });
+      }
       case "pot_material":
         return details.material === "in_ground"
           ? t("schedules.factors.inGround")
@@ -181,4 +192,28 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
         ? t("schedules.sooner", { percent })
         : t("schedules.later", { percent });
   return { text: text(), effect };
+}
+
+/** Roughly how much water to give, e.g. "About 2 cups each time, or until a little drains
+ * from the bottom"; null when the prediction doesn't say. */
+export function describeWaterAmount(
+  factors: Factor[],
+  { t, locale, units }: ExplainContext,
+): string | null {
+  const factor = factors.find((each) => AMOUNT_CODES.has(each.code));
+  if (!factor) return null;
+  if (factor.code === "no_pot_size") return t("schedules.amount.noPotSize");
+  const details = factor.details as Record<string, unknown>;
+  const format = (value: number) =>
+    new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+  if (typeof details.litres === "number") {
+    const { unit, value } = waterVolume(details.litres, units);
+    const amount = t(`amounts.${unit}`, { value: format(value), count: value });
+    return t("schedules.amount.pot", { amount });
+  }
+  const { unit, value } = waterDepth(Number(details.depth_mm), units);
+  const depth = t(`amounts.${unit}`, { value: format(value) });
+  return details.in_ground
+    ? t("schedules.amount.ground", { depth })
+    : t("schedules.amount.groundGuess", { depth });
 }

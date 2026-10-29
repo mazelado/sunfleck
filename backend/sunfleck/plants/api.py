@@ -43,6 +43,7 @@ class PlantIn(Schema):
     location_id: int | None = None
     status: PlantStatus = PlantStatus.ACTIVE
     container_diameter_cm: int | None = Field(default=None, ge=1, le=500)
+    container_height_cm: int | None = Field(default=None, ge=1, le=500)
     container_material: ContainerMaterial | None = None
     soil_type: SoilType | None = None
     acquired_on: date | None = None
@@ -118,6 +119,7 @@ class PlantOut(Schema):
     status: PlantStatus
     location: PlantLocationOut | None
     container_diameter_cm: int | None
+    container_height_cm: int | None
     container_material: ContainerMaterial | None
     soil_type: SoilType | None
     acquired_on: date | None
@@ -231,6 +233,7 @@ def _plant_out(plant: Plant, lang: str) -> PlantOut:
         status=PlantStatus(plant.status),
         location=location_out(plant),
         container_diameter_cm=plant.container_diameter_cm,
+        container_height_cm=plant.container_height_cm,
         container_material=(
             ContainerMaterial(plant.container_material) if plant.container_material else None
         ),

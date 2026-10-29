@@ -7,6 +7,13 @@ since yours, and make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **How much water to give**: each predicted watering says roughly how much, in your units:
+  from the pot's size for plants in pots, or as a depth of water (like rain) in the ground.
+- **Pot height** (optional), for a better estimate of how much soil a pot holds. It also
+  refines when to water: shallow pots dry out sooner.
+
 ## [0.1.0] - 2026-10-28
 
 The first release.

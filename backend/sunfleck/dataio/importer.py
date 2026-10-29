@@ -240,6 +240,7 @@ class _Importer:
             care_profile=care_profile,
             status=item.status,
             container_diameter_cm=item.container_diameter_cm,
+            container_height_cm=item.container_height_cm,
             container_material=item.container_material,
             soil_type=item.soil_type,
             acquired_on=item.acquired_on,

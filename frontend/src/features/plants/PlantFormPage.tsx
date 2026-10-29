@@ -16,7 +16,7 @@ import {
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconBulb, IconPhoto, IconWindow } from "@tabler/icons-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
 
@@ -83,6 +83,7 @@ interface PlantFormValues {
   lights: Record<string, LightChoice>;
   status: PlantStatus;
   potDiameter: number | "";
+  potHeight: number | "";
   potMaterial: ContainerMaterial | null;
   soil: SoilType | null;
   acquiredOn: string;
@@ -118,6 +119,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
   const backPath = plant ? `/plants/${String(plant.id)}` : "/plants";
   const locations = sites.flatMap((site) => site.locations);
 
+  const potHelpId = useId();
   const form = useForm<PlantFormValues>({
     initialValues: {
       nickname: plant?.nickname ?? "",
@@ -130,6 +132,8 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
       status: plant?.status ?? "active",
       potDiameter:
         plant?.container_diameter_cm == null ? "" : cmToDisplay(plant.container_diameter_cm, units),
+      potHeight:
+        plant?.container_height_cm == null ? "" : cmToDisplay(plant.container_height_cm, units),
       potMaterial: plant?.container_material ?? null,
       soil: plant?.soil_type ?? null,
       acquiredOn: plant?.acquired_on ?? "",
@@ -169,6 +173,8 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         status: formValues.status,
         container_diameter_cm:
           formValues.potDiameter === "" ? null : displayToCm(formValues.potDiameter, units),
+        container_height_cm:
+          formValues.potHeight === "" ? null : displayToCm(formValues.potHeight, units),
         container_material: formValues.potMaterial,
         soil_type: formValues.soil,
         acquired_on: formValues.acquiredOn || null,
@@ -188,6 +194,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
       applyFieldErrors(form, error, {
         location_id: "locationId",
         container_diameter_cm: "potDiameter",
+        container_height_cm: "potHeight",
         container_material: "potMaterial",
         soil_type: "soil",
         acquired_on: "acquiredOn",
@@ -300,19 +307,30 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               <NumberInput
                 label={`${t("plants.potDiameter")} (${lengthUnit(units)})`}
                 min={1}
+                aria-describedby={potHelpId}
                 {...form.getInputProps("potDiameter")}
               />
-              <Select
-                label={t("plants.potMaterial")}
+              <NumberInput
+                label={`${t("plants.potHeight")} (${lengthUnit(units)})`}
                 placeholder={t("common.optional")}
-                clearable
-                data={CONTAINER_MATERIALS.map((value) => ({
-                  value,
-                  label: t(`plants.materials.${value}`),
-                }))}
-                {...form.getInputProps("potMaterial")}
+                min={1}
+                aria-describedby={potHelpId}
+                {...form.getInputProps("potHeight")}
               />
             </Group>
+            <Text id={potHelpId} size="xs" c="dimmed" mt={-8}>
+              {t("plants.potSizeHelp")}
+            </Text>
+            <Select
+              label={t("plants.potMaterial")}
+              placeholder={t("common.optional")}
+              clearable
+              data={CONTAINER_MATERIALS.map((value) => ({
+                value,
+                label: t(`plants.materials.${value}`),
+              }))}
+              {...form.getInputProps("potMaterial")}
+            />
             <Select
               label={t("plants.soil")}
               placeholder={t("common.optional")}

@@ -357,6 +357,7 @@ def test_indoor_plants_and_cool_weather_are_left_alone(
     assert [f["code"] for f in indoor_water.factors] == [
         "season",
         "no_light_info",
+        "no_pot_size",
         "not_logged",
     ]
 
