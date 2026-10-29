@@ -293,53 +293,8 @@ roadmap below. Keeping the MVP small is what gets it finished.
 
 ## 9. Roadmap (after MVP)
 
-Order and scope are open for discussion. Each phase is meant to be a usable release.
-
-### v0.2: Smarter care and AI providers
-- **Adaptive intervals** that learn from your actual care history ("you usually water
-  this every 9 days, not 7: update the schedule?").
-- **Grow light tools:** DLI calculator, light schedule recommendations, "is this spot bright
-  enough?" estimates for windows.
-- AI provider plugins: OpenAI-compatible (covers Ollama and other local models), Anthropic.
-- **AI care profile suggestions** for unusual plants that don't match a built-in archetype
-  (always reviewed by the user).
-- Optional care data provider plugins: Open Plantbook, Perenual, Trefle.
-- Toxicity flags (pets/children) with sources.
-
-### Later: AI assistant
-- **Photo diagnosis**: "what's wrong with my plant?", with likely causes and next steps,
-  clearly labeled as suggestions.
-- **Ask about this plant**: chat with the plant's history and conditions as context.
-
-### v0.3: Integrations and environment-aware care
-- **Home Assistant / MQTT** sensor readings (soil moisture, light, temperature, humidity);
-  reminders triggered by sensor thresholds.
-- **Weather-adaptive outdoor watering** using Open-Meteo ET₀ and rainfall (a transparent,
-  documented formula).
-- Seasonal adjustments (dormancy, reduced winter watering, fertilizing pauses).
-- **Web Push** notifications; **iCal** feed of tasks.
-- **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID, etc.).
-- **Import from HortusFox and Plant-it** to make migrating easy.
-- Public REST API docs and personal API tokens.
-
-### v0.4: Outdoor and edible gardening
-- Garden beds and a simple **garden map / layout**.
-- **Frost dates** from location; sowing, transplanting, and harvest calendar.
-- Harvest log (yields), seeds inventory.
-- Companion planting hints (as a plugin with its own data).
-
-### v0.5: Collector features
-- **Propagation and lineage** (cuttings, divisions, seedlings: "this plant came from that one").
-- Supplies inventory (soil, fertilizer, pots), with optional reminders to restock.
-- **QR / NFC labels** that open the plant page.
-- Statistics and charts; growth time-lapse from photos.
-- Wishlist / plants wanted.
-
-### v1.0: Mature platform
-- **Frontend plugin slots**, so add-ons can contribute UI (widgets, plant page tabs).
-- Plugin catalog page and plugin development guide.
-- Offline support for logging care without a connection, syncing later.
-- Hardened security review, stable API versioning, upgrade guarantees.
+The roadmap now lives in [roadmap.md](roadmap.md), organised into phases by theme, with a
+plant name for each release. This section held its first draft.
 
 ## 10. Open questions
 

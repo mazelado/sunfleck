@@ -81,7 +81,7 @@ Key points:
   Compose runs them as two services sharing one data volume.
 - **The browser and API share one origin**, so authentication uses secure session cookies
   with CSRF protection. That's simpler and safer than storing tokens in the browser. Personal
-  API tokens for third-party tools come later (roadmap v0.3).
+  API tokens for third-party tools come later (the roadmap's [Integrations](roadmap.md#integrations) phase).
 - **The prediction engine is plain Python** with no Django imports, so it's fast to test and
   easy to reason about (see section 5).
 
@@ -125,7 +125,7 @@ Adding it later would mean rewriting every query.
 ### Authentication
 - **django-allauth in headless mode** provides sign-in, sign-out, password reset, email
   verification, and later MFA, through a JSON API that the React app calls.
-- **OIDC** (roadmap v0.3) uses allauth's built-in OpenID Connect provider support. We plan for
+- **OIDC** (roadmap: [Integrations](roadmap.md#integrations)) uses allauth's built-in OpenID Connect provider support. We plan for
   it now by keying users on email address and never assuming that a user has a password.
 - A **first-run setup** screen creates the first Admin account. After that, open sign-up is
   **off** by default; Admins invite users.
@@ -406,7 +406,7 @@ UI, for example: *"Watering moved 2 days later: cooler weather (−15%), lower w
 (−10%)."*
 
 Evapotranspiration-based outdoor watering and learning from the history of observed
-intervals (beyond feedback) are on the v0.2/v0.3 roadmap.
+intervals (beyond feedback) are on the roadmap ([Smarter care](roadmap.md#smarter-care)).
 
 ## 6. Plugin system
 
@@ -497,7 +497,7 @@ own tables, and document what data they send.
 ### Installing third-party plugins
 For the MVP: install the package into the environment (`pip install ...`) and restart. For
 Docker users, we'll document extending the image with a two-line `Dockerfile`. A plugin
-directory or catalog is a v1.0 goal. **UI plugins** (plugins adding screens to the React
+directory or catalog is a 1.0 goal ([roadmap](roadmap.md#mature-and-beautiful)). **UI plugins** (plugins adding screens to the React
 app) are also v1.0; until then, plugins contribute data the core UI already knows how to
 show (settings forms, dashboard conditions, identification results).
 
@@ -544,7 +544,7 @@ language, and a test checks each translation's keys and placeholders against Eng
 - Designed for phones first (375px wide), then tablet and desktop layouts.
 - Photos are taken with the phone's camera through the standard file input and **resized in
   the browser** before upload, which saves bandwidth and server storage.
-- The PWA caches the app shell so it opens instantly. Full offline logging is a v1.0 goal.
+- The PWA caches the app shell so it opens instantly. Full offline logging is a 1.0 goal.
 - **As built (M11):** `vite-plugin-pwa` adds the manifest, icons (rendered from
   `favicon.svg`, including a maskable one) and a Workbox service worker that stores the app's
   files. Pages still come from the server first (which sets the CSRF cookie); only when it

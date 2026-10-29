@@ -2,8 +2,10 @@
 
 What's changed in each release of Sunfleck. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
-[Semantic Versioning](https://semver.org/). Before upgrading, read the notes of every version
-since yours, and make a backup ([how to upgrade](docs/install.md#upgrading)).
+[Semantic Versioning](https://semver.org/): new features raise the minor version, fixes the
+patch version. Each minor version has a plant name, in alphabetical order (see the
+[roadmap](docs/roadmap.md)). Before upgrading, read the notes of every version since yours, and
+make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
@@ -16,7 +18,7 @@ since yours, and make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [0.1.0] - 2026-10-28
 
-The first release.
+**Azalea.** The first release.
 
 ### Added
 
