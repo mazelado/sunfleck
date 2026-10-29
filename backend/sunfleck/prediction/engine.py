@@ -2,7 +2,8 @@
 
 Watering starts from the care profile's interval for the current season, then each factor
 (light, temperature, pot, the plant being dormant, and feedback about the soil) multiplies it.
-Every factor is reported, so the app can explain the result in plain words.
+Every factor is reported, so the app can explain the result in plain words. A watering
+prediction also says roughly how much water to give (see `water_amount`).
 """
 
 import math
@@ -35,6 +36,25 @@ FEEDBACK_LIMITS = (0.6, 1.6)
 
 # The pot an interval in the care dataset assumes: a 15 cm plastic pot.
 TYPICAL_POT_CM = 15
+# A pot without a known height is taken to be as tall as it is wide, and its base this much
+# narrower than its top: the shape of most standard pots.
+POT_BASE_RATIO = 0.8
+
+# How much water to give, as a share of the pot's volume: enough to wet the soil that dried
+# since the last watering, and a little more to drain out of the bottom. The more of the soil
+# a profile lets dry, the more it takes. These are rough, and the app says so.
+WATER_SHARE = {
+    "keep_moist": 0.15,
+    "top_quarter": 0.2,
+    "top_third": 0.2,
+    "top_half": 0.25,
+    "mostly": 0.3,
+    "completely": 0.3,
+}
+# In the ground: about 25 mm (an inch) of water a week, in fewer, deeper waterings when the
+# interval is longer. 1 mm is 1 litre per square metre.
+GROUND_MM_PER_WEEK = 25
+GROUND_MM_LIMITS = (10, 40)
 POT_MATERIAL = {
     "terracotta": 0.85,
     "fabric": 0.8,
@@ -55,6 +75,10 @@ class Profile:
     temperature_ideal_max: float
     fertilize_days: int | None
     fertilize_pause_north: frozenset[int] = frozenset()
+    # How much of the soil may dry between waterings (the dataset's `let_dry`), and whether
+    # the plant grows in soil at all: air plants are soaked or misted, so no amount applies.
+    let_dry: str | None = None
+    in_soil: bool = True
 
     @classmethod
     def from_dataset(cls, profile: Mapping[str, Any]) -> "Profile":
@@ -72,6 +96,8 @@ class Profile:
             fertilize_pause_north=frozenset(
                 fertilizing["pause_months_north"] if fertilizing else ()
             ),
+            let_dry=profile["watering"].get("let_dry"),
+            in_soil=profile.get("key") != "air_plant",
         )
 
 
@@ -87,6 +113,7 @@ class Conditions:
     temperature_min_c: float | None = None
     temperature_max_c: float | None = None
     pot_diameter_cm: int | None = None
+    pot_height_cm: int | None = None
     pot_material: str | None = None
     dormant: bool = False
 
@@ -182,13 +209,29 @@ def temperature_factor(profile: Profile, conditions: Conditions) -> Factor | Non
     )
 
 
+def pot_volume_l(diameter_cm: float, height_cm: float | None = None) -> float:
+    """The volume of a pot in litres: a slightly tapered cylinder (a frustum), as tall as it
+    is wide unless its height is known."""
+    height = height_cm or diameter_cm
+    top = diameter_cm
+    base = diameter_cm * POT_BASE_RATIO
+    return math.pi * height / 12 * (top**2 + top * base + base**2) / 1000
+
+
 def pot_factors(conditions: Conditions) -> list[Factor]:
     """Small and porous pots dry out faster than large or sealed ones; the ground, slowest."""
     factors = []
     in_ground = conditions.pot_material == "in_ground"
     if conditions.pot_diameter_cm and not in_ground:
-        multiplier = _clamp((conditions.pot_diameter_cm / TYPICAL_POT_CM) ** 0.35, 0.8, 1.3)
-        factors.append(Factor("pot_size", multiplier, {"diameter_cm": conditions.pot_diameter_cm}))
+        # Compared by volume, so a known height counts too. Without one, this is the same as
+        # comparing diameters: (d / 15) ** 0.35.
+        volume = pot_volume_l(conditions.pot_diameter_cm, conditions.pot_height_cm)
+        ratio = volume / pot_volume_l(TYPICAL_POT_CM)
+        multiplier = _clamp(ratio ** (0.35 / 3), 0.8, 1.3)
+        details: dict[str, Any] = {"diameter_cm": conditions.pot_diameter_cm}
+        if conditions.pot_height_cm:
+            details["height_cm"] = conditions.pot_height_cm
+        factors.append(Factor("pot_size", multiplier, details))
     if conditions.pot_material in POT_MATERIAL:
         factors.append(
             Factor(
@@ -198,6 +241,36 @@ def pot_factors(conditions: Conditions) -> list[Factor]:
             )
         )
     return factors
+
+
+def water_amount(profile: Profile, conditions: Conditions, interval_days: int) -> Factor | None:
+    """Roughly how much water to give each time.
+
+    In a pot, a share of its volume (see WATER_SHARE). In the ground (or outdoors with no pot
+    size, which is most likely a bed), a depth of water, as rain is measured. Indoors without
+    a pot size, a hint to add it. These factors don't change the interval (multiplier 1).
+    """
+    if not profile.in_soil:
+        return None
+    in_ground = conditions.pot_material == "in_ground"
+    if conditions.pot_diameter_cm and not in_ground:
+        volume = pot_volume_l(conditions.pot_diameter_cm, conditions.pot_height_cm)
+        share = WATER_SHARE.get(profile.let_dry or "", WATER_SHARE["top_third"])
+        return Factor(
+            "water_amount",
+            details={
+                "litres": round(volume * share, 2),
+                "pot_litres": round(volume, 1),
+                "height_known": bool(conditions.pot_height_cm),
+            },
+        )
+    if in_ground or conditions.indoor is False:
+        depth = _clamp(GROUND_MM_PER_WEEK * interval_days / 7, *GROUND_MM_LIMITS)
+        return Factor(
+            "water_amount",
+            details={"depth_mm": round(depth / 5) * 5, "in_ground": in_ground},
+        )
+    return Factor("no_pot_size")
 
 
 def feedback_factor(feedback: Sequence[str]) -> Factor | None:
@@ -274,6 +347,9 @@ def predict_watering(
             )
         )
     interval = _days(base * multiplier)
+    amount = water_amount(profile, conditions, interval)
+    if amount:
+        factors.append(amount)
 
     due, counted_from_start = _due(history, interval)
     if counted_from_start:

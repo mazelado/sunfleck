@@ -79,6 +79,7 @@ def _plant(plant: Plant) -> schema.Plant:
         care_profile=plant.care_profile.key if plant.care_profile else None,
         status=plant.status,
         container_diameter_cm=plant.container_diameter_cm,
+        container_height_cm=plant.container_height_cm,
         container_material=plant.container_material,
         soil_type=plant.soil_type,
         acquired_on=plant.acquired_on,

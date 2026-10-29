@@ -26,6 +26,7 @@ const plant: Plant = {
   status: "active",
   location: null,
   container_diameter_cm: null,
+  container_height_cm: null,
   container_material: null,
   soil_type: null,
   acquired_on: null,

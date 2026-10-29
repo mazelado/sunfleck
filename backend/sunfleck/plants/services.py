@@ -56,6 +56,7 @@ class PlantData:
     location_id: int | None = None
     status: PlantStatus = PlantStatus.ACTIVE
     container_diameter_cm: int | None = None
+    container_height_cm: int | None = None
     container_material: ContainerMaterial | None = None
     soil_type: SoilType | None = None
     acquired_on: date | None = None
@@ -133,6 +134,7 @@ def _apply_plant(plant: Plant, data: PlantData) -> None:
     plant.nickname = data.nickname.strip()
     plant.status = data.status
     plant.container_diameter_cm = data.container_diameter_cm
+    plant.container_height_cm = data.container_height_cm
     plant.container_material = data.container_material or ""
     plant.soil_type = data.soil_type or ""
     plant.acquired_on = data.acquired_on

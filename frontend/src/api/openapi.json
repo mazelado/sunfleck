@@ -686,7 +686,7 @@
       "FactorOut": {
         "properties": {
           "code": {
-            "description": "What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words.",
+            "description": "What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words. Two don't change the interval but say how much water to give: `water_amount` (`litres` for a pot, or `depth_mm` in the ground) and `no_pot_size` (add the pot's size to know).",
             "title": "Code",
             "type": "string"
           },
@@ -1885,6 +1885,19 @@
             ],
             "title": "Container Diameter Cm"
           },
+          "container_height_cm": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Height Cm"
+          },
           "container_material": {
             "anyOf": [
               {
@@ -2084,6 +2097,17 @@
             ],
             "title": "Container Diameter Cm"
           },
+          "container_height_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Height Cm"
+          },
           "container_material": {
             "anyOf": [
               {
@@ -2180,6 +2204,7 @@
           "status",
           "location",
           "container_diameter_cm",
+          "container_height_cm",
           "container_material",
           "soil_type",
           "acquired_on",

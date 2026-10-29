@@ -104,6 +104,7 @@ function plant(overrides: Partial<Plant> = {}): Plant {
       site_name: "Home",
     },
     container_diameter_cm: 20,
+    container_height_cm: null,
     container_material: "terracotta",
     soil_type: "aroid_mix",
     acquired_on: "2026-04-01",
@@ -213,6 +214,7 @@ describe("plant form", () => {
     await user.type(screen.getByLabelText(/Distance from the window/), "80");
     await user.click(screen.getByRole("checkbox", { name: /Shelf light/ }));
     await user.type(screen.getByLabelText(/Pot diameter/), "17");
+    await user.type(screen.getByLabelText(/Pot height/), "12");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
@@ -221,6 +223,7 @@ describe("plant form", () => {
       location_id: 10,
       status: "active",
       container_diameter_cm: 17,
+      container_height_cm: 12,
       container_material: null,
       soil_type: null,
       acquired_on: null,
@@ -386,7 +389,7 @@ describe("plant form", () => {
 describe("plant page", () => {
   it("shows the plant's details and light in the person's units", async () => {
     signInAs({ ...viewer, unit_system: "imperial" });
-    withPlant(plant(), [photo]);
+    withPlant(plant({ container_height_cm: 15 }), [photo]);
 
     renderApp("/plants/7");
 
@@ -395,7 +398,7 @@ describe("plant page", () => {
       "href",
       "/places/1/locations/10",
     );
-    expect(screen.getByText("8 in, Terracotta")).toBeVisible();
+    expect(screen.getByText("8 in wide, 6 in tall, Terracotta")).toBeVisible();
     expect(screen.getByText("Chunky aroid mix")).toBeVisible();
     expect(screen.getByText("From the plant swap.")).toBeVisible();
     expect(screen.getByText("Faces south")).toBeVisible();

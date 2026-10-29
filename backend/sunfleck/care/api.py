@@ -104,7 +104,9 @@ class TimelineQuery(Schema):
 class FactorOut(Schema):
     code: str = Field(
         description="What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, "
-        "`rest_season`, `fertilize_pause`, `fixed`; the app explains it in words."
+        "`rest_season`, `fertilize_pause`, `fixed`; the app explains it in words. Two don't "
+        "change the interval but say how much water to give: `water_amount` (`litres` for a "
+        "pot, or `depth_mm` in the ground) and `no_pot_size` (add the pot's size to know)."
     )
     multiplier: float = Field(description="How it changes the interval, e.g. 0.9 is 10% sooner.")
     details: dict[str, Any]

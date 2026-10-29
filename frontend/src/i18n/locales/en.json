@@ -337,6 +337,10 @@
     },
     "pot": "Pot",
     "potDiameter": "Pot diameter",
+    "potHeight": "Pot height",
+    "potSizeHelp": "Used to work out how much water to give. Without a height, Sunfleck assumes a standard pot, about as tall as it is wide.",
+    "potWide": "{{size}} wide",
+    "potTall": "{{size}} tall",
     "potMaterial": "Pot material",
     "materials": {
       "plastic": "Plastic",
@@ -633,6 +637,7 @@
       "noLocation": "No location yet. Add one to take its light and temperature into account",
       "temperature": "The room is about {{temperature}}; its care profile likes {{min}}–{{max}}",
       "potSize": "Pot {{size}} across",
+      "potSizeHeight": "Pot {{size}} across and {{height}} tall",
       "potMaterial": "{{material}} pot",
       "inGround": "Growing in the ground, which holds water longer",
       "dormant": "Dormant, so it needs less water",
@@ -656,6 +661,12 @@
       "rain": "Rain: {{amount}} in the last two days, so the soil is still moist",
       "rainForecast": "Rain forecast {{when}} ({{amount}}), so watering waits for it",
       "hotSpell": "Hot spell: highs around {{max}}, above the {{ideal}} its care profile likes"
+    },
+    "amount": {
+      "pot": "About {{amount}} each time, or until a little drains from the bottom",
+      "ground": "About {{depth}} of water each time, as if that much rain fell",
+      "groundGuess": "About {{depth}} of water each time if it's in the ground, as if that much rain fell. In a pot, add the pot's size to see how much",
+      "noPotSize": "Add the pot's size to see how much water to give"
     }
   },
   "today": {
@@ -805,5 +816,16 @@
     "needKeys": "Enter the API keys again under Plugins: {{items}}",
     "notInstalled": "Plugins that aren't installed here: {{items}}",
     "notifications": "Notification channels aren't exported: everyone sets theirs up again."
+  },
+  "amounts": {
+    "ml": "{{value}} ml",
+    "litres": "{{value}} L",
+    "flOz": "{{value}} fl oz",
+    "cups_one": "{{value}} cup",
+    "cups_other": "{{value}} cups",
+    "gallons_one": "{{value}} gallon",
+    "gallons_other": "{{value}} gallons",
+    "mm": "{{value}} mm",
+    "inches": "{{value}} in"
   }
 }

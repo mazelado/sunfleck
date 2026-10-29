@@ -241,7 +241,7 @@ erDiagram
 | **LightSource** | location, kind (`window` / `grow_light`), name; windows: direction (N, NE, …); grow lights: PPFD (µmol/m²/s), on time, off time; enabled | Indoor locations only. A room can have several windows. Grow lights report their **DLI**. The app suggests typical PPFD values for people who don't know theirs |
 | **CareArchetype** | key (e.g. `tropical_aroid`), name (per language), profile (the whole YAML profile: seasonal watering intervals, how dry to let the soil get, DLI range, humidity, temperature range, fertilizing, dormancy, status, sources) | Loaded from our CC BY-SA dataset (section 5); read-only in the app. Shown to people as a "care profile" |
 | **Taxon** | scientific name, rank (genus/species), genus, family, common names (per language), older names (synonyms), note, care profile, search text | Reference data from the dataset; shared by all households. A plant whose species the dataset later drops keeps it |
-| **Plant** | household, location (optional), nickname, species (taxon, optional), chosen care profile (optional), status (`active` / `dormant` / `gifted` / `deceased`), container diameter, container material, soil type, acquired on, cover photo, notes | An individual plant. Deleting its location keeps the plant. Its care profile is the chosen one, else its species' |
+| **Plant** | household, location (optional), nickname, species (taxon, optional), chosen care profile (optional), status (`active` / `dormant` / `gifted` / `deceased`), container diameter and height (optional), container material, soil type, acquired on, cover photo, notes | An individual plant. Deleting its location keeps the plant. Its care profile is the chosen one, else its species' |
 | **PlantLight** | plant, light source, distance from the window (cm) | Which of its location's windows and grow lights reach a plant. Plants in one room get different light, but share the room's fixtures: change a grow light's timer once and every plant under it follows |
 | **Photo** | plant, image, thumbnail, width, height, taken at, caption | Stored as WebP (at most 2048 px, thumbnail 512 px). EXIF stripped; the date taken is read first. HEIC (iPhone) supported. Served through the API with a permission check |
 | **CareType** | household (empty for built-ins), key (built-ins only), name, icon, affects-prediction flag, counts-as-watering flag | Built-ins: water, fertilize, repot, prune, mist, rotate, clean leaves, check for pests; the app translates their names by key. Households can add their own (marking kinds of watering, such as bottom watering, as watering), and rename or delete them until they've been used |
@@ -373,8 +373,10 @@ the interval, and factors under 2% are left out):
 3. **Temperature:** an indoor location's typical temperature compared with the middle of the
    profile's ideal range: 2.5% sooner per °C warmer, within 0.8×–1.2×. Outdoor temperature comes
    from the weather plugin.
-4. **Pot:** size compared with a typical 15 cm pot ((diameter/15)^0.35, within 0.8×–1.3×), and
-   material (terracotta 0.85×, fabric 0.8×, wood 0.95×, in the ground 1.3×).
+4. **Pot:** its volume compared with a typical 15 cm pot ((volume ratio)^(0.35/3), within
+   0.8×–1.3×), and material (terracotta 0.85×, fabric 0.8×, wood 0.95×, in the ground 1.3×).
+   The volume is a slightly tapered cylinder (base 0.8× the top); without a height, the pot is
+   taken to be as tall as it is wide, which makes this (diameter/15)^0.35.
 5. **Dormant plants** (status "dormant") are watered 1.5× less often.
 6. **Learning from feedback:** each "still wet" lengthens the interval by 12.5% and each "too
    dry" shortens it by 10%, counting the last 10 answers, within 0.6×–1.6×, so that one unusual
@@ -383,6 +385,13 @@ the interval, and factors under 2% are left out):
    significant rain or before forecast rain, and raises frost alerts.
 8. **Limits:** together, the factors stay within half and twice the season's interval (and
    1–180 days).
+
+**How much water** (added after 0.1.0, issue #43): a watering prediction also says roughly how
+much to give, as a factor that doesn't change the interval. In a pot: a share of its volume,
+by how much soil the profile lets dry (15% for `keep_moist` up to 30% for `mostly` and
+`completely`), shown as "about 600 ml, or until a little drains from the bottom". In the
+ground, or outdoors without a pot size: a depth of water, 25 mm a week spread over the interval
+(10–40 mm). Indoors without a pot size, the app asks for it. Air plants get no amount.
 
 The next due date counts from the last watering (or from when the routine started, until
 watering is logged). If that falls in a season without watering, it moves to when the season

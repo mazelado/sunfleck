@@ -32,6 +32,37 @@ export function formatPrecipitation(mm: number, units: UnitSystem): string {
   return units === "imperial" ? `${String(round(mm / 25.4, 2))} in` : `${String(round(mm, 1))} mm`;
 }
 
+/** An amount of water, rounded to what's easy to measure in a kitchen. */
+export interface WaterVolume {
+  unit: "ml" | "litres" | "flOz" | "cups" | "gallons";
+  value: number;
+}
+
+export function waterVolume(litres: number, units: UnitSystem): WaterVolume {
+  if (units === "imperial") {
+    const cups = litres / 0.2366;
+    if (cups < 0.5) return { unit: "flOz", value: Math.max(1, Math.round(cups * 8)) };
+    if (cups <= 8) return { unit: "cups", value: nearest(cups, 0.25) };
+    return { unit: "gallons", value: nearest(litres / 3.785, 0.25) };
+  }
+  if (litres < 0.975) return { unit: "ml", value: Math.max(50, nearest(litres * 1000, 50)) };
+  return { unit: "litres", value: Math.max(1, nearest(litres, 0.5)) };
+}
+
+/** A depth of water (as rain is measured): millimetres, or quarter inches. */
+export function waterDepth(
+  mm: number,
+  units: UnitSystem,
+): { unit: "mm" | "inches"; value: number } {
+  return units === "imperial"
+    ? { unit: "inches", value: Math.max(0.25, nearest(mm / 25.4, 0.25)) }
+    : { unit: "mm", value: Math.round(mm) };
+}
+
+function nearest(value: number, step: number): number {
+  return Math.round(value / step) * step;
+}
+
 function round(value: number, decimals: number): number {
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;

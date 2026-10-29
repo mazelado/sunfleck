@@ -73,6 +73,7 @@ def test_conditions_of_an_indoor_plant(monty: Plant, living_room: Location) -> N
     for light, distance in [(window, 50), (lamp, None), (switched_off, 10)]:
         PlantLight.objects.create(plant=monty, light_source=light, distance_cm=distance)
     monty.container_diameter_cm = 12
+    monty.container_height_cm = 10
     monty.container_material = "terracotta"
     monty.status = PlantStatus.DORMANT
 
@@ -84,7 +85,8 @@ def test_conditions_of_an_indoor_plant(monty: Plant, living_room: Location) -> N
     [grow_light] = conditions.grow_lights
     assert grow_light.dli == pytest.approx(8.64)
     assert (conditions.temperature_min_c, conditions.temperature_max_c) == (18, 24)
-    assert (conditions.pot_diameter_cm, conditions.pot_material) == (12, "terracotta")
+    assert (conditions.pot_diameter_cm, conditions.pot_height_cm) == (12, 10)
+    assert conditions.pot_material == "terracotta"
     assert conditions.dormant is True
 
 
@@ -173,6 +175,7 @@ def test_a_new_watering_schedule_is_predicted_and_explained(monty: Plant) -> Non
     assert schedule.factors == [
         {"code": "season", "multiplier": 1.0, "details": {"season": "spring", "days": 7}},
         {"code": "no_light_info", "multiplier": 1.0, "details": {"indoor": True}},
+        {"code": "no_pot_size", "multiplier": 1.0, "details": {}},
         {"code": "not_logged", "multiplier": 1.0, "details": {"since": "2026-04-15"}},
     ]
     assert schedule.adjustments.count() == 1
@@ -212,6 +215,9 @@ def test_changes_to_the_plant_are_picked_up_when_read(monty: Plant) -> None:
     latest = ScheduleAdjustment.objects.filter(schedule=schedule).first()
     assert latest is not None
     assert latest.interval_days == 5
+    # Monty is a tropical aroid (let the top third dry): a fifth of its 0.33 L pot.
+    [amount] = [f for f in schedule.factors if f["code"] == "water_amount"]
+    assert amount["details"] == {"litres": 0.07, "pot_litres": 0.3, "height_known": False}
 
 
 def test_fertilizing_waits_out_the_winter(monty: Plant) -> None:

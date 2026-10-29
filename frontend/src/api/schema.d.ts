@@ -1305,7 +1305,7 @@ export interface components {
         FactorOut: {
             /**
              * Code
-             * @description What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words.
+             * @description What the factor is, e.g. `season`, `light`, `pot_size`, `feedback`, `rest_season`, `fertilize_pause`, `fixed`; the app explains it in words. Two don't change the interval but say how much water to give: `water_amount` (`litres` for a pot, or `depth_mm` in the ground) and `no_pot_size` (add the pot's size to know).
              */
             code: string;
             /** Details */
@@ -1739,6 +1739,8 @@ export interface components {
             care_profile_key?: string | null;
             /** Container Diameter Cm */
             container_diameter_cm?: number | null;
+            /** Container Height Cm */
+            container_height_cm?: number | null;
             container_material?: components["schemas"]["ContainerMaterial"] | null;
             /**
              * Light Sources
@@ -1800,6 +1802,8 @@ export interface components {
             care_profile: components["schemas"]["PlantCareProfileOut"] | null;
             /** Container Diameter Cm */
             container_diameter_cm: number | null;
+            /** Container Height Cm */
+            container_height_cm: number | null;
             container_material: components["schemas"]["ContainerMaterial"] | null;
             cover_photo: components["schemas"]["PhotoOut"] | null;
             /**

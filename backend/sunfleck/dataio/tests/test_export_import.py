@@ -79,6 +79,7 @@ def filled(household: Household, ada: Membership) -> Household:
         nickname="Monty",
         taxon=Taxon.objects.get(scientific_name="Monstera deliciosa"),
         container_diameter_cm=17,
+        container_height_cm=15,
         container_material="terracotta",
         acquired_on=date(2025, 3, 1),
         notes="From the market",
@@ -207,6 +208,16 @@ def test_an_export_imports_into_a_new_household_unchanged(
         original = Photo.objects.get(plant__household=filled, caption="New leaf")
         with original.image.open("rb") as source:
             assert copy.read() == source.read()
+
+
+def test_exports_from_before_pot_heights_import(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda e: first_plant(e).pop("container_height_cm"))
+
+    importer.import_into(target, io.BytesIO(data))
+
+    monty = Plant.objects.get(household=target, nickname="Monty")
+    assert (monty.container_diameter_cm, monty.container_height_cm) == (17, None)
 
 
 def test_imported_schedules_are_predicted_from_the_imported_care(filled: Household) -> None:

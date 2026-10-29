@@ -321,6 +321,7 @@ def test_answers_that_arent_adjustments_are_left_out(
     assert [factor["code"] for factor in schedule.factors] == [
         "season",
         "no_light_info",
+        "no_pot_size",
         "not_logged",
     ]
     assert "not JSON serializable" in services.states(household)["rain"].last_error
