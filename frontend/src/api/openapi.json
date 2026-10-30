@@ -2883,6 +2883,26 @@
         "title": "RoutineIn",
         "type": "object"
       },
+      "RoutineSuggestionOut": {
+        "properties": {
+          "schedule_days": {
+            "description": "Days between waterings the schedule says now.",
+            "title": "Schedule Days",
+            "type": "integer"
+          },
+          "your_days": {
+            "description": "Days between the person's recent waterings.",
+            "title": "Your Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schedule_days",
+          "your_days"
+        ],
+        "title": "RoutineSuggestionOut",
+        "type": "object"
+      },
       "ScheduleChangeIn": {
         "properties": {
           "enabled": {
@@ -3045,6 +3065,30 @@
             "title": "Plant Id",
             "type": "integer"
           },
+          "routine_since": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the person's routine was accepted; none: Sunfleck's own prediction.",
+            "title": "Routine Since"
+          },
+          "routine_suggestion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RoutineSuggestionOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Predicted watering: a suggestion to match how often the person waters."
+          },
           "snoozed_until": {
             "anyOf": [
               {
@@ -3076,7 +3120,9 @@
           "enabled",
           "started_on",
           "snoozed_until",
-          "due_on"
+          "due_on",
+          "routine_suggestion",
+          "routine_since"
         ],
         "title": "ScheduleOut",
         "type": "object"
@@ -4388,6 +4434,118 @@
           }
         ],
         "summary": "Update Schedule",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}/routine": {
+      "delete": {
+        "description": "Go back to Sunfleck's own prediction.",
+        "operationId": "sunfleck_care_api_reset_routine",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Reset Routine",
+        "tags": [
+          "care"
+        ]
+      },
+      "post": {
+        "description": "Match predicted watering to how often the person waters, as suggested.",
+        "operationId": "sunfleck_care_api_accept_routine_suggestion",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Accept Routine Suggestion",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}/routine/dismiss": {
+      "post": {
+        "description": "Don't suggest matching the routine for a while.",
+        "operationId": "sunfleck_care_api_dismiss_routine_suggestion",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Dismiss Routine Suggestion",
         "tags": [
           "care"
         ]

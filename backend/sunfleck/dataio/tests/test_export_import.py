@@ -108,8 +108,12 @@ def filled(household: Household, ada: Membership) -> Household:
         care_services.CareEventData(harvest.pk, performed_at=datetime(2026, 5, 2, 9, tzinfo=UTC)),
         None,
     )
-    schedules.create_schedule(
+    water = schedules.create_schedule(
         monty, schedules.ScheduleData(builtin("water").pk, ScheduleMode.PREDICTED)
+    )
+    # Matched to how often Ada waters (see care/learning.py).
+    CareSchedule.objects.filter(pk=water.pk).update(
+        routine_multiplier=1.3, routine_set_on=date(2026, 5, 1)
     )
     schedules.create_schedule(
         monty, schedules.ScheduleData(harvest.pk, ScheduleMode.FIXED, fixed_interval_days=14)
@@ -218,6 +222,18 @@ def test_exports_from_before_pot_heights_import(filled: Household) -> None:
 
     monty = Plant.objects.get(household=target, nickname="Monty")
     assert (monty.container_diameter_cm, monty.container_height_cm) == (17, None)
+
+
+def test_exports_from_before_routines_import(filled: Household) -> None:
+    def drop_routines(exported: dict[str, Any]) -> None:
+        for schedule in first_plant(exported)["schedules"]:
+            del schedule["routine_multiplier"], schedule["routine_set_on"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_routines)))
+
+    water = CareSchedule.objects.get(plant__household=target, care_type__key="water")
+    assert (water.routine_multiplier, water.routine_set_on) == (1.0, None)
 
 
 def test_imported_schedules_are_predicted_from_the_imported_care(filled: Household) -> None:

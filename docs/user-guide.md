@@ -85,6 +85,9 @@ signing out are in the account menu (your picture at the top right).
   - **Every few days**: a fixed interval, for anything else, or if you prefer it.
 - **Soil feedback**: when you water, say whether the soil was **Too dry**, **Just right** or
   **Still wet**. Sunfleck adjusts that plant's watering from your last few answers.
+- **Your routine**: if you keep watering a plant clearly more or less often than its schedule
+  (three times in a row), its page offers to match the schedule to how you water. It only
+  changes if you accept, and you can go back to Sunfleck's own estimate at any time.
 - **Snooze or skip**: on Today, the ⋯ menu skips a task this time, or snoozes it for a day,
   three days or a week.
 

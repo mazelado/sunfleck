@@ -17,7 +17,7 @@ from pydantic import Field
 from sunfleck.accounts.api import avatar_url
 from sunfleck.accounts.models import Household, Role, User
 from sunfleck.accounts.permissions import require_role
-from sunfleck.care import schedules, selectors, services
+from sunfleck.care import learning, schedules, selectors, services
 from sunfleck.care.models import (
     CareEvent,
     CareSchedule,
@@ -122,6 +122,11 @@ class PredictionFields(Schema):
     factors: list[FactorOut] = Field(description="Why: the factors behind the prediction.")
 
 
+class RoutineSuggestionOut(Schema):
+    schedule_days: int = Field(description="Days between waterings the schedule says now.")
+    your_days: int = Field(description="Days between the person's recent waterings.")
+
+
 class ScheduleOut(PredictionFields):
     id: int
     plant_id: int
@@ -133,6 +138,12 @@ class ScheduleOut(PredictionFields):
     started_on: date
     snoozed_until: date | None
     due_on: date | None = Field(description="When it's due, after any snooze; none if paused.")
+    routine_suggestion: RoutineSuggestionOut | None = Field(
+        description="Predicted watering: a suggestion to match how often the person waters."
+    )
+    routine_since: date | None = Field(
+        description="When the person's routine was accepted; none: Sunfleck's own prediction."
+    )
 
 
 class SuggestionOut(PredictionFields):
@@ -277,6 +288,17 @@ def _schedule_out(schedule: CareSchedule) -> ScheduleOut:
         interval_days=schedule.interval_days,
         next_due=schedule.next_due,
         factors=_factors_out(schedule.factors),
+        routine_suggestion=_routine_suggestion_out(schedule),
+        routine_since=schedule.routine_set_on,
+    )
+
+
+def _routine_suggestion_out(schedule: CareSchedule) -> RoutineSuggestionOut | None:
+    suggestion = learning.routine_suggestion(schedule)
+    if suggestion is None:
+        return None
+    return RoutineSuggestionOut(
+        schedule_days=suggestion.schedule_days, your_days=suggestion.your_days
     )
 
 
@@ -593,6 +615,27 @@ def snooze_schedule(request: HttpRequest, schedule_id: int, data: SnoozeIn) -> S
     except services.CareError as exc:
         raise _care_error(exc) from exc
     return _schedule_out(schedule)
+
+
+@router.post("/care-schedules/{schedule_id}/routine", response=ScheduleOut)
+def accept_routine_suggestion(request: HttpRequest, schedule_id: int) -> ScheduleOut:
+    """Match predicted watering to how often the person waters, as suggested."""
+    household = require_role(request, Role.GARDENER).household
+    return _schedule_out(learning.accept_routine(_get_schedule(household, schedule_id)))
+
+
+@router.post("/care-schedules/{schedule_id}/routine/dismiss", response=ScheduleOut)
+def dismiss_routine_suggestion(request: HttpRequest, schedule_id: int) -> ScheduleOut:
+    """Don't suggest matching the routine for a while."""
+    household = require_role(request, Role.GARDENER).household
+    return _schedule_out(learning.dismiss_routine(_get_schedule(household, schedule_id)))
+
+
+@router.delete("/care-schedules/{schedule_id}/routine", response=ScheduleOut)
+def reset_routine(request: HttpRequest, schedule_id: int) -> ScheduleOut:
+    """Go back to Sunfleck's own prediction."""
+    household = require_role(request, Role.GARDENER).household
+    return _schedule_out(learning.reset_routine(_get_schedule(household, schedule_id)))
 
 
 # --- Today ------------------------------------------------------------------------------------

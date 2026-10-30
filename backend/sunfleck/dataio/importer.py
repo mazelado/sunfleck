@@ -288,6 +288,8 @@ class _Importer:
                 enabled=schedule_item.enabled,
                 started_on=schedule_item.started_on,
                 snoozed_until=schedule_item.snoozed_until,
+                routine_multiplier=schedule_item.routine_multiplier,
+                routine_set_on=schedule_item.routine_set_on,
                 # Recalculated when first read, from the imported care history.
                 calculated_on=None,
             )
