@@ -116,6 +116,12 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
           min: temperature(number("ideal_min_c")),
           max: temperature(number("ideal_max_c")),
         });
+      case "humidity": {
+        const text = details.estimated
+          ? t("schedules.factors.humidityEstimated", { percent: number("percent") })
+          : t("schedules.factors.humiditySetting", { percent: number("percent") });
+        return details.likes_humid ? `${text}. ${t("schedules.factors.likesHumid")}` : text;
+      }
       case "pot_size": {
         const size = (cm: number) => `${String(cmToDisplay(cm, units))} ${lengthUnit(units)}`;
         return details.height_cm

@@ -45,6 +45,8 @@ class Day:
     max_c: float | None
     precipitation_mm: float | None
     weather_code: int | None
+    # The day's average dew point, for estimating indoor humidity.
+    dew_point_c: float | None = None
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,7 @@ class Forecast:
                     "max_c": day.max_c,
                     "precipitation_mm": day.precipitation_mm,
                     "weather_code": day.weather_code,
+                    "dew_point_c": day.dew_point_c,
                 }
                 for day in self.days
             ],
@@ -89,6 +92,8 @@ class Forecast:
                     max_c=day["max_c"],
                     precipitation_mm=day["precipitation_mm"],
                     weather_code=day["weather_code"],
+                    # Forecasts stored before 0.4 don't have it.
+                    dew_point_c=day.get("dew_point_c"),
                 )
                 for day in data["days"]
             ),
@@ -100,7 +105,9 @@ def request_url(latitude: float, longitude: float) -> str:
         "latitude": round(latitude, COORDINATE_DECIMALS),
         "longitude": round(longitude, COORDINATE_DECIMALS),
         "current": "temperature_2m,weather_code",
-        "daily": "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code",
+        "daily": (
+            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,dew_point_2m_mean"
+        ),
         "timezone": "auto",
         "past_days": PAST_DAYS,
         "forecast_days": FORECAST_DAYS,
@@ -140,11 +147,21 @@ def parse(data: Any, fetched_at: datetime) -> Forecast:
                 "weather_code",
             )
         ]
-        if any(len(column) != len(dates) for column in columns):
+        dew_points = daily.get("dew_point_2m_mean") or [None] * len(dates)
+        if any(len(column) != len(dates) for column in [*columns, dew_points]):
             raise WeatherError("The daily forecast's columns have different lengths.")
         days = tuple(
-            Day(date.fromisoformat(day), low, high, rain, None if code is None else int(code))
-            for day, low, high, rain, code in zip(dates, *columns, strict=True)
+            Day(
+                date.fromisoformat(day),
+                low,
+                high,
+                rain,
+                None if code is None else int(code),
+                dew_point,
+            )
+            for day, low, high, rain, code, dew_point in zip(
+                dates, *columns, dew_points, strict=True
+            )
         )
         code = current.get("weather_code")
         return Forecast(

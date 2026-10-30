@@ -30,6 +30,7 @@ AROID = Profile(
     fertilize_days=30,
     fertilize_pause_north=frozenset({11, 12, 1, 2}),
     let_dry="top_third",
+    humidity="medium_high",
 )
 BULB = Profile(
     watering_days={Season.SPRING: 7, Season.SUMMER: None, Season.AUTUMN: 21, Season.WINTER: None},
@@ -172,6 +173,53 @@ def test_outdoor_temperatures_are_left_to_the_weather() -> None:
     prediction = predict_watering(AROID, conditions, WATERED, SPRING_DAY)
 
     assert "temperature" not in codes(prediction)
+
+
+def test_dry_air_dries_the_soil_sooner_and_damp_air_later() -> None:
+    dry = predict_watering(AROID, Conditions(indoor=True, humidity_percent=25), WATERED, SPRING_DAY)
+    damp = predict_watering(
+        AROID, Conditions(indoor=True, humidity_percent=65), WATERED, SPRING_DAY
+    )
+
+    assert factor(dry, "humidity").multiplier == pytest.approx((50 / 75) ** 0.5)
+    assert factor(damp, "humidity").multiplier == pytest.approx((50 / 35) ** 0.5)
+    assert dry.interval_days == 6
+    assert damp.interval_days == 8
+
+
+def test_humidity_has_its_limits() -> None:
+    desert = Conditions(indoor=True, humidity_percent=5)
+    steamy = Conditions(indoor=True, humidity_percent=95)
+
+    assert (
+        factor(predict_watering(AROID, desert, WATERED, SPRING_DAY), "humidity").multiplier == 0.8
+    )
+    assert (
+        factor(predict_watering(AROID, steamy, WATERED, SPRING_DAY), "humidity").multiplier == 1.2
+    )
+
+
+def test_dry_air_is_flagged_for_plants_that_like_it_humid() -> None:
+    conditions = Conditions(indoor=True, humidity_percent=30, humidity_estimated=True)
+
+    aroid = predict_watering(AROID, conditions, WATERED, SPRING_DAY)
+    bulb = predict_watering(BULB, conditions, WATERED, SPRING_DAY)
+
+    assert factor(aroid, "humidity").details == {
+        "percent": 30,
+        "estimated": True,
+        "likes_humid": True,
+    }
+    assert factor(bulb, "humidity").details["likes_humid"] is False
+
+
+def test_typical_or_unknown_humidity_and_outdoor_air_change_nothing() -> None:
+    for conditions in (
+        Conditions(indoor=True, humidity_percent=50),
+        Conditions(indoor=True),
+        Conditions(indoor=False, humidity_percent=20),
+    ):
+        assert "humidity" not in codes(predict_watering(AROID, conditions, WATERED, SPRING_DAY))
 
 
 def test_a_small_terracotta_pot_dries_out_faster() -> None:

@@ -30,6 +30,7 @@ def open_meteo(
     lows: list[float] | None = None,
     highs: list[float] | None = None,
     rain: list[float] | None = None,
+    dew_points: list[float] | None = None,
 ) -> dict[str, Any]:
     """An answer like Open-Meteo's: 3 past days, today (the 15th), and 6 days ahead."""
     days = [(TODAY + timedelta(days=offset)).isoformat() for offset in range(-3, 7)]
@@ -46,6 +47,7 @@ def open_meteo(
             "temperature_2m_max": highs or [15.0] * 10,
             "precipitation_sum": rain or [0.0] * 10,
             "weather_code": [3] * 10,
+            "dew_point_2m_mean": dew_points or [2.0] * 10,
         },
     }
 
@@ -105,7 +107,9 @@ def test_it_sends_only_the_rounded_location(service: FakeOpenMeteo, site: Site) 
         "latitude": "52.37",
         "longitude": "4.89",
         "current": "temperature_2m,weather_code",
-        "daily": "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code",
+        "daily": (
+            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,dew_point_2m_mean"
+        ),
         "timezone": "auto",
         "past_days": "3",
         "forecast_days": "7",
@@ -117,11 +121,24 @@ def test_the_forecast_is_read_and_kept(service: FakeOpenMeteo, site: Site) -> No
 
     assert forecast.temperature_c == 13.4
     assert forecast.weather_code == 3
-    assert forecast.day(TODAY) == weather.Day(TODAY, 6.0, 15.0, 0.0, 3)
+    assert forecast.day(TODAY) == weather.Day(TODAY, 6.0, 15.0, 0.0, 3, 2.0)
     assert len(forecast.days) == 10
     stored = SiteWeather.objects.get(site=site)
     assert stored.fetched_at == NOW
     assert weather.Forecast.from_json(stored.data, NOW) == forecast
+
+
+def test_a_forecast_stored_before_dew_points_still_reads(
+    service: FakeOpenMeteo, site: Site
+) -> None:
+    weather.forecast_for(site)
+    stored = SiteWeather.objects.get(site=site)
+    for day in stored.data["days"]:
+        del day["dew_point_c"]
+
+    forecast = weather.Forecast.from_json(stored.data, NOW)
+
+    assert forecast.day(TODAY) == weather.Day(TODAY, 6.0, 15.0, 0.0, 3, None)
 
 
 def test_a_recent_forecast_isnt_fetched_again(service: FakeOpenMeteo, site: Site) -> None:
@@ -357,9 +374,89 @@ def test_indoor_plants_and_cool_weather_are_left_alone(
     assert [f["code"] for f in indoor_water.factors] == [
         "season",
         "no_light_info",
+        "humidity",  # cold outside: the air indoors is dry (see the tests below)
         "no_pot_size",
         "not_logged",
     ]
+
+
+# --- Indoor humidity --------------------------------------------------------------------------
+
+
+@pytest.fixture
+def monstera(household: Household, site: Site) -> CareSchedule:
+    plant = PlantFactory.create(
+        household=household,
+        location=LocationFactory.create(site=site, temperature_min_c=20.0, temperature_max_c=22.0),
+        care_profile=CareArchetype.objects.get(key="tropical_aroid"),
+    )
+    return schedules.create_schedule(
+        plant, schedules.ScheduleData(builtin("water").pk, ScheduleMode.PREDICTED)
+    )
+
+
+def test_cold_weather_dries_the_air_indoors(
+    service: FakeOpenMeteo, household: Household, monstera: CareSchedule
+) -> None:
+    # 4 °C outside with a 2 °C dew point, heated to 21 °C: about 28 % humidity.
+    service.answer = open_meteo(lows=[6.0] * 10, highs=[2.0] * 10, dew_points=[2.0] * 10)
+    turn_on(household)
+
+    recalculated(monstera)
+
+    assert factor(monstera, "humidity") == {
+        "code": "humidity",
+        "multiplier": 0.836,
+        "details": {"percent": 28, "estimated": True, "likes_humid": True},
+    }
+
+
+def test_the_locations_own_humidity_wins_over_the_estimate(
+    service: FakeOpenMeteo, household: Household, monstera: CareSchedule
+) -> None:
+    service.answer = open_meteo(lows=[6.0] * 10, highs=[2.0] * 10)
+    turn_on(household)
+    location = monstera.plant.location
+    assert location is not None
+    location.humidity = "high"
+    location.save()
+
+    recalculated(monstera)
+
+    assert factor(monstera, "humidity") == {
+        "code": "humidity",
+        "multiplier": 1.2,
+        "details": {"percent": 70, "estimated": False, "likes_humid": False},
+    }
+
+
+def test_no_estimate_when_its_warm_outside(
+    service: FakeOpenMeteo, household: Household, monstera: CareSchedule
+) -> None:
+    # 20 °C outside: the heating is off, so the air indoors isn't the outdoor air warmed up.
+    service.answer = open_meteo(lows=[15.0] * 10, highs=[25.0] * 10, dew_points=[12.0] * 10)
+    turn_on(household)
+
+    recalculated(monstera)
+
+    assert factor(monstera, "humidity") is None
+
+
+def test_the_location_page_shows_todays_estimate(
+    service: FakeOpenMeteo,
+    client_as: ClientAs,
+    household: Household,
+    site: Site,
+    garden: Location,
+) -> None:
+    room = LocationFactory.create(site=site, name="Living room")
+    viewer = client_as(Role.VIEWER)
+    service.answer = open_meteo(lows=[6.0] * 10, highs=[2.0] * 10, dew_points=[2.0] * 10)
+
+    assert viewer.get(f"/api/v1/locations/{room.pk}").json()["humidity_estimate"] is None
+    turn_on(household)
+    assert viewer.get(f"/api/v1/locations/{room.pk}").json()["humidity_estimate"] == 28
+    assert viewer.get(f"/api/v1/locations/{garden.pk}").json()["humidity_estimate"] is None
 
 
 def test_without_weather_watering_is_predicted_as_usual(
