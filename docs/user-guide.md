@@ -139,6 +139,10 @@ outside services: each one says exactly what it sends.
   1 km.
 - **Plant identification (Pl@ntNet)**: identifying plants from photos. It needs a free API key
   from [my.plantnet.org](https://my.plantnet.org), and sends only the photos you identify.
+- **AI (OpenAI-compatible)**: suggestions from an AI model, through OpenAI or a model you run
+  yourself with Ollama or LM Studio (then nothing leaves your network). It's only asked when
+  you ask for a suggestion, and you review every suggestion before it's used. See its
+  [setup guide](../plugins/ai-openai/README.md).
 
 ## Export and import
 

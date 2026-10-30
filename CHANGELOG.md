@@ -11,6 +11,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **AI plugin (OpenAI-compatible)**, off until an Admin turns it on: suggestions from an AI
+  model through OpenAI, or a model you run yourself with Ollama or LM Studio. It's only asked
+  when you ask for a suggestion, and every answer is checked before it's used. Plugins can
+  offer other AI services through the new `complete_json` hook.
 - **When was it last cared for?** Adding a plant asks roughly when it was last watered and
   fertilized (today, a few days ago, about a week ago, or don't know), so its first due dates
   and care bars start from there instead of from the day it was added (#76). The answer is
