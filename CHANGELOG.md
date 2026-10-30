@@ -21,6 +21,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Plant identification:** after you pick a suggestion with **Use**, the suggestions give way
   to what it set ("Species set to …"), with a link to see them again.
 
+### Fixed
+
+- On iPhones, the page no longer zooms in (and stays zoomed) when you tap into a field: text
+  in fields is at least 16 px on touch screens.
+
 ## [0.1.0] - 2026-10-28
 
 **Azalea.** The first release.
