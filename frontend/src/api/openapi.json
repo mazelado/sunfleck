@@ -1855,6 +1855,18 @@
             ],
             "title": "Location Id"
           },
+          "needs_routine": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only plants that do (or don't) need a care schedule.",
+            "title": "Needs Routine"
+          },
           "offset": {
             "default": 0,
             "minimum": 0,
@@ -2357,6 +2369,11 @@
               }
             ]
           },
+          "needs_routine": {
+            "description": "Looked after (active or dormant) but has no care schedule yet.",
+            "title": "Needs Routine",
+            "type": "boolean"
+          },
           "nickname": {
             "title": "Nickname",
             "type": "string"
@@ -2382,7 +2399,8 @@
           "location",
           "cover_thumbnail_url",
           "last_watered_at",
-          "species"
+          "species",
+          "needs_routine"
         ],
         "title": "PlantSummaryOut",
         "type": "object"
@@ -3675,6 +3693,18 @@
             "title": "Tasks",
             "type": "array"
           },
+          "unscheduled_plant_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When exactly one plant has no schedule, which one: the app links to it.",
+            "title": "Unscheduled Plant Id"
+          },
           "unscheduled_plants": {
             "description": "Plants being looked after with no schedule.",
             "title": "Unscheduled Plants",
@@ -3684,7 +3714,8 @@
         "required": [
           "sites",
           "tasks",
-          "unscheduled_plants"
+          "unscheduled_plants",
+          "unscheduled_plant_id"
         ],
         "title": "TodayOut",
         "type": "object"
@@ -5639,6 +5670,24 @@
                   "type": "null"
                 }
               ]
+            }
+          },
+          {
+            "description": "Only plants that do (or don't) need a care schedule.",
+            "in": "query",
+            "name": "needs_routine",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only plants that do (or don't) need a care schedule.",
+              "title": "Needs Routine"
             }
           }
         ],

@@ -129,6 +129,7 @@ function summary(overrides: Partial<PlantSummary> = {}): PlantSummary {
     cover_thumbnail_url: null,
     last_watered_at: null,
     species: null,
+    needs_routine: false,
     ...overrides,
   };
 }
@@ -190,6 +191,31 @@ describe("plant list", () => {
       expect(screen.queryByRole("link", { name: /^Monty/ })).not.toBeInTheDocument();
     });
     expect(searches).toContain("fern");
+  });
+
+  it("marks plants without a care routine, and shows only them when asked", async () => {
+    signInAs(viewer);
+    server.use(
+      http.get("*/api/v1/plants", ({ request }) => {
+        const onlyThose = new URL(request.url).searchParams.get("needs_routine") === "true";
+        const plants = [summary({ needs_routine: true }), summary({ id: 8, nickname: "Basil" })];
+        const items = onlyThose ? plants.filter((p) => p.needs_routine) : plants;
+        return HttpResponse.json({ items, count: items.length });
+      }),
+    );
+    // As Today links to it.
+    const { user, router } = renderApp("/plants?needs_routine=true");
+
+    const monty = await screen.findByRole("link", { name: /^Monty/ });
+    expect(within(monty).getByText("No routine yet")).toBeVisible();
+    expect(screen.queryByRole("link", { name: /^Basil/ })).not.toBeInTheDocument();
+    const onlyThose = screen.getByRole("checkbox", { name: "Only plants without a care routine" });
+    expect(onlyThose).toBeChecked();
+
+    await user.click(onlyThose);
+
+    expect(await screen.findByRole("link", { name: /^Basil/ })).toBeVisible();
+    expect(router.state.location.search).toBe("");
   });
 });
 

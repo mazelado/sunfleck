@@ -267,10 +267,21 @@ def test_today_is_each_plants_own(household: Household, living_room: Location) -
 
 def test_plants_without_a_schedule_are_counted(household: Household, living_room: Location) -> None:
     every(plant_in(living_room), "rotate", 7)
-    plant_in(living_room, "Fern")
+    fern = plant_in(living_room, "Fern")
     plant_in(living_room, "Gone", status=PlantStatus.DECEASED)
 
-    assert schedules.unscheduled_plants(household) == 1
+    assert list(schedules.unscheduled_plants(household)) == [fern]
+
+
+def test_with_several_plants_without_a_schedule_today_links_to_none(
+    client_as: ClientAs, living_room: Location
+) -> None:
+    plant_in(living_room, "Fern")
+    plant_in(living_room, "Ivy")
+
+    body = client_as(Role.VIEWER).get("/api/v1/today").json()
+
+    assert (body["unscheduled_plants"], body["unscheduled_plant_id"]) == (2, None)
 
 
 # --- Care for many plants at once -------------------------------------------------------------
@@ -322,7 +333,9 @@ def test_the_today_list(client_as: ClientAs, household: Household, living_room: 
 
     assert response.status_code == 200
     body = response.json()
-    assert body["unscheduled_plants"] == 1
+    # The only plant without a schedule: the app links straight to it.
+    fern = Plant.objects.get(nickname="Fern")
+    assert (body["unscheduled_plants"], body["unscheduled_plant_id"]) == (1, fern.pk)
     [task] = body["tasks"]
     assert task | {"care_type": task["care_type"]["key"]} == {
         "schedule_id": schedule.pk,

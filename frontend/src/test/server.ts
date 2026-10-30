@@ -33,7 +33,7 @@ export const server = setupServer(
   http.get("*/api/v1/care-types", () => HttpResponse.json(builtinCareTypes)),
   http.get("*/api/v1/care-profiles", () => HttpResponse.json([])),
   http.get("*/api/v1/today", () =>
-    HttpResponse.json({ sites: [], tasks: [], unscheduled_plants: 0 }),
+    HttpResponse.json({ sites: [], tasks: [], unscheduled_plants: 0, unscheduled_plant_id: null }),
   ),
   http.get("*/api/v1/import", () => HttpResponse.json({ allowed: true })),
   http.get("*/api/v1/identify", () => HttpResponse.json({ available: false })),

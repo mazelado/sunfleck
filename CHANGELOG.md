@@ -11,6 +11,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Plants without a care routine** are marked "No routine yet" in the plant list, which can
+  show only them. Today's notice links straight to the plant when there's one, or to that
+  list.
 - **Profile pictures:** choose one under Profile. It's shown in the header, the household's
   member list and the care history, only to your household. Not included in exports.
 
