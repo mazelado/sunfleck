@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
-import { type Photo, type Plant, usePhotos, usePlant } from "../../api/plants";
+import { type Photo, type Plant, usePhotos, usePlant, usePlantLight } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { relativeDay } from "../../lib/relativeTime";
@@ -35,6 +35,7 @@ import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
 import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
+import { LightCheck } from "./LightCheck";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 
 export function PlantPage() {
@@ -128,6 +129,7 @@ export function PlantPage() {
       <PlantSchedules plant={data} />
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
+      <LightCheck plantId={data.id} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
       <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />
@@ -197,6 +199,7 @@ function PlantDetails({ plant, units }: { plant: Plant; units: UnitSystem }) {
 
 function PlantLight({ plant, units }: { plant: Plant; units: UnitSystem }) {
   const { t } = useTranslation();
+  const report = usePlantLight(plant.id).data;
   return (
     <Paper withBorder radius="lg" p="lg">
       <Stack gap="sm">
@@ -214,6 +217,15 @@ function PlantLight({ plant, units }: { plant: Plant; units: UnitSystem }) {
             lines.push(
               t("plants.distanceFromWindowShort", {
                 distance: `${String(cmToDisplay(distance_cm, units))} ${lengthUnit(units)}`,
+              }),
+            );
+          }
+          // What it gives this season, from the light check.
+          const given = report?.sources.find((source) => source.id === light.id);
+          if (report && given) {
+            lines.push(
+              t("light.givesNow", {
+                dli: given.dli[report.current_season as keyof typeof given.dli],
               }),
             );
           }

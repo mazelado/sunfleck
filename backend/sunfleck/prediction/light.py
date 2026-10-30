@@ -107,3 +107,15 @@ def outdoor_dli(exposure: str | None, season: Season, latitude: float | None) ->
     if not exposure:
         return None
     return _EXPOSURE_DLI[exposure] * seasonal_sun(season, latitude)
+
+
+# How the light at a spot compares with what a plant likes, as a share of its ideal DLI:
+# under half is low, under 80 % a bit low, up to 150 % good, and above that bright.
+def light_verdict(dli: float, ideal: float) -> str:
+    """ "low", "a_bit_low", "good" or "bright" (more than the plant likes)."""
+    share = dli / ideal if ideal else 1.0
+    if share < 0.5:
+        return "low"
+    if share < 0.8:
+        return "a_bit_low"
+    return "good" if share <= 1.5 else "bright"

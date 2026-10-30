@@ -40,6 +40,10 @@ signing out are in the account menu (your picture at the top right).
   lights** (with their brightness and when they're on). Each plant says which reach it, and
   how far it is from a window. Sunfleck estimates how much light each plant gets, which
   changes with the season, and uses it to predict watering.
+- **Is it bright enough?** A plant's page compares the light at its spot with what it likes
+  in each season, and suggests moving it or adding a grow light when it's too dim. A
+  location's page shows each window's light through the year. Light is the day's total
+  (DLI, in mol/m²/day), estimated for a typical day.
 
 ## Plants
 

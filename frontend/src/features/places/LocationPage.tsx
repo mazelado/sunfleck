@@ -6,13 +6,16 @@ import { Link, useParams } from "react-router";
 
 import {
   type LightSource,
+  type SourceLight,
   useDeleteLightSource,
   useHumidityEstimate,
   useLocation,
+  useLocationLight,
 } from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { cmToDisplay, lengthUnit } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { LocationPlants } from "../plants/LocationPlants";
 import { LocationKindBadge } from "./LocationKindBadge";
@@ -30,6 +33,10 @@ export function LocationPage() {
   const deleteLight = useDeleteLightSource();
   const [dialog, setDialog] = useState<Dialog>(null);
   const estimate = useHumidityEstimate(found.data).data;
+  const lightThroughYear = useLocationLight(
+    found.data?.id ?? 0,
+    found.data?.kind === "indoor" && found.data.light_sources.length > 0,
+  ).data;
 
   if (found.isPending) {
     return <FullPageLoader />;
@@ -96,9 +103,9 @@ export function LocationPage() {
                 <Group key={light.id} justify="space-between" wrap="nowrap" gap="sm">
                   <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
                     {light.kind === "window" ? (
-                      <IconWindow size={22} aria-hidden />
+                      <IconWindow size={22} aria-hidden style={{ flexShrink: 0 }} />
                     ) : (
-                      <IconBulb size={22} aria-hidden />
+                      <IconBulb size={22} aria-hidden style={{ flexShrink: 0 }} />
                     )}
                     <Stack gap={0} style={{ minWidth: 0 }}>
                       <Text fw={500} truncate>
@@ -114,6 +121,9 @@ export function LocationPage() {
                           {line}
                         </Text>
                       ))}
+                      <SourceThroughYear
+                        source={lightThroughYear?.find((s) => s.id === light.id)}
+                      />
                     </Stack>
                   </Group>
                   {canEdit && (
@@ -185,5 +195,33 @@ export function LocationPage() {
         />
       )}
     </Stack>
+  );
+}
+
+/** A window's light through the year at a typical distance, or a grow light's. */
+function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
+  const { t } = useTranslation();
+  const units = useUnits();
+  if (!source) {
+    return null;
+  }
+  if (source.kind !== "window") {
+    return (
+      <Text size="sm" c="dimmed">
+        {t("light.growLightAllYear", { dli: source.dli.spring })}
+      </Text>
+    );
+  }
+  return (
+    <>
+      <Text size="sm" c="dimmed">
+        {t("light.throughYear", {
+          distance: `${String(cmToDisplay(source.distance_cm, units))} ${lengthUnit(units)}`,
+        })}
+      </Text>
+      <Text size="sm" c="dimmed">
+        {t("light.seasonValues", { ...source.dli })}
+      </Text>
+    </>
   );
 }

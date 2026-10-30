@@ -18,8 +18,16 @@ from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.care.glance import glance
 from sunfleck.care.models import CareSchedule
+from sunfleck.care.schedules import local_today
 from sunfleck.core.errors import ApiError
-from sunfleck.places.api import LightSourceOut, light_source_out
+from sunfleck.places.api import (
+    LightSourceOut,
+    PlantLightReportOut,
+    SeasonLightOut,
+    light_source_out,
+    source_light_out,
+)
+from sunfleck.places.light_report import plant_light_report
 from sunfleck.places.models import LocationKind
 from sunfleck.plants import services
 from sunfleck.plants.models import (
@@ -425,6 +433,31 @@ def move_plants(request: HttpRequest, data: MovePlantsIn) -> list[PlantSummaryOu
 def get_plant(request: HttpRequest, plant_id: int) -> PlantOut:
     household = require_role(request, Role.VIEWER).household
     return _plant_out(_get_plant(household, plant_id), language(request))
+
+
+@router.get("/plants/{plant_id}/light", response=PlantLightReportOut | None)
+def plant_light(request: HttpRequest, plant_id: int) -> PlantLightReportOut | None:
+    """Is the plant's spot bright enough? Its light in each season compared with what it likes,
+    and what each window or grow light gives. None if the plant has no location or care
+    profile, or nothing is known about the light there."""
+    household = require_role(request, Role.VIEWER).household
+    plant = _get_plant(household, plant_id)
+    report = plant_light_report(plant, local_today(plant))
+    if report is None:
+        return None
+    return PlantLightReportOut(
+        current_season=report.current_season.value,
+        seasons=[
+            SeasonLightOut(
+                season=season.season.value,
+                dli=season.dli,
+                ideal=season.ideal,
+                verdict=season.verdict,
+            )
+            for season in report.seasons
+        ],
+        sources=[source_light_out(source) for source in report.sources],
+    )
 
 
 @router.put("/plants/{plant_id}", response=PlantOut)

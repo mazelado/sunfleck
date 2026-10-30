@@ -31,6 +31,9 @@ export const server = setupServer(
   http.get("*/api/v1/sites", () => HttpResponse.json([])),
   // Only its humidity estimate is read from here; the rest comes with the sites.
   http.get("*/api/v1/locations/:id", () => HttpResponse.json({ humidity_estimate: null })),
+  // Nothing known about the light, unless a test says otherwise.
+  http.get("*/api/v1/plants/:id/light", () => HttpResponse.json(null)),
+  http.get("*/api/v1/locations/:id/light", () => HttpResponse.json([])),
   http.get("*/api/v1/plants", () => HttpResponse.json({ items: [], count: 0 })),
   http.get("*/api/v1/care-types", () => HttpResponse.json(builtinCareTypes)),
   http.get("*/api/v1/care-profiles", () => HttpResponse.json([])),

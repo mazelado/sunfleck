@@ -450,6 +450,48 @@ describe("plant form", () => {
 });
 
 describe("plant page", () => {
+  it("checks whether the spot is bright enough through the year", async () => {
+    signInAs(viewer);
+    withPlant(plant());
+    server.use(
+      http.get("*/api/v1/plants/7/light", () =>
+        HttpResponse.json({
+          current_season: "spring",
+          seasons: [
+            { season: "spring", dli: 8, ideal: 10, verdict: "good" },
+            { season: "summer", dli: 11, ideal: 13.5, verdict: "good" },
+            { season: "autumn", dli: 8, ideal: 10, verdict: "good" },
+            { season: "winter", dli: 3.5, ideal: 5.5, verdict: "a_bit_low" },
+          ],
+          sources: [
+            {
+              id: 1,
+              kind: "window",
+              name: "Bay window",
+              distance_cm: 100,
+              dli: { spring: 8, summer: 11, autumn: 8, winter: 3.5 },
+            },
+          ],
+        }),
+      ),
+    );
+
+    renderApp("/plants/7");
+
+    expect(
+      await screen.findByRole("heading", { name: "Is this spot bright enough?" }),
+    ).toBeVisible();
+    const now = screen.getByRole("row", { name: /Spring \(now\)/ });
+    expect(now).toHaveTextContent("Spring (now)810Good");
+    expect(screen.getByRole("row", { name: /Winter/ })).toHaveTextContent("Winter3.55.5A bit low");
+    expect(
+      screen.getByText(
+        "Too little light in winter: moving it closer to a window, or a grow light, would help.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByText("About 8 mol/m²/day of light here now")).toBeVisible();
+  });
+
   it("shows care at a glance, in words as well as bars", async () => {
     signInAs(viewer);
     withPlant(

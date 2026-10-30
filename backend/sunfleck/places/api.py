@@ -14,7 +14,7 @@ from pydantic import Field
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
-from sunfleck.places import services
+from sunfleck.places import light_report, services
 from sunfleck.places.humidity import estimated_humidity
 from sunfleck.places.light import grow_light_dli, hours_on
 from sunfleck.places.models import (
@@ -27,6 +27,7 @@ from sunfleck.places.models import (
     LocationKind,
     Site,
 )
+from sunfleck.prediction.light import ASSUMED_WINDOW_DISTANCE_CM
 
 router = Router(tags=["places"], auth=django_auth)
 
@@ -82,6 +83,38 @@ class LocationOut(Schema):
     )
 
 
+class SeasonDli(Schema):
+    spring: float
+    summer: float
+    autumn: float
+    winter: float
+
+
+class SourceLightOut(Schema):
+    """A window or grow light and the light it gives through the year (DLI, mol/m²/day)."""
+
+    id: int
+    kind: LightSourceKind
+    name: str
+    distance_cm: int = Field(
+        description="Windows: how far from the glass. On a location, a typical distance."
+    )
+    dli: SeasonDli
+
+
+class SeasonLightOut(Schema):
+    season: str
+    dli: float
+    ideal: float = Field(description="What the plant's care profile likes there then.")
+    verdict: str = Field(description="low, a_bit_low, good, or bright (more than it likes).")
+
+
+class PlantLightReportOut(Schema):
+    current_season: str
+    seasons: list[SeasonLightOut]
+    sources: list[SourceLightOut]
+
+
 class SiteIn(Schema):
     name: str = Field(min_length=1, max_length=100)
     latitude: float
@@ -119,6 +152,20 @@ def light_source_out(light: LightSource) -> LightSourceOut:
         enabled=light.enabled,
         hours_per_day=hours,
         dli=dli,
+    )
+
+
+def source_light_out(light: light_report.SourceLight) -> SourceLightOut:
+    """Also used by the plants API."""
+    distance = light.distance_cm
+    if distance is None and light.source.kind == LightSourceKind.WINDOW:
+        distance = ASSUMED_WINDOW_DISTANCE_CM
+    return SourceLightOut(
+        id=light.source.pk,
+        kind=LightSourceKind(light.source.kind),
+        name=light.source.name,
+        distance_cm=distance or 0,
+        dli=SeasonDli(**{season.value: dli for season, dli in light.dli.items()}),
     )
 
 
@@ -251,6 +298,14 @@ def create_location(request: HttpRequest, site_id: int, data: LocationIn) -> Sta
 def get_location(request: HttpRequest, location_id: int) -> LocationOut:
     household = require_role(request, Role.VIEWER).household
     return _location_out(_get_location(household, location_id), with_estimate=True)
+
+
+@router.get("/locations/{location_id}/light", response=list[SourceLightOut])
+def location_light(request: HttpRequest, location_id: int) -> list[SourceLightOut]:
+    """How much light each window (at a typical distance) and grow light gives, by season."""
+    household = require_role(request, Role.VIEWER).household
+    location = _get_location(household, location_id)
+    return [source_light_out(light) for light in light_report.location_light(location)]
 
 
 @router.put("/locations/{location_id}", response=LocationOut)

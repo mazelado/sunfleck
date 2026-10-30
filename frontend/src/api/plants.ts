@@ -150,6 +150,21 @@ export function useDeletePlant() {
   });
 }
 
+export type PlantLightReport = components["schemas"]["PlantLightReportOut"];
+
+/** Is the plant's spot bright enough? Its light by season; null when it isn't known. */
+export function usePlantLight(plantId: number) {
+  return useQuery({
+    queryKey: [...PLANTS, plantId, "light"],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/plants/{plant_id}/light", {
+          params: { path: { plant_id: plantId } },
+        }),
+      ),
+  });
+}
+
 /** The plant's photos, newest first, a page at a time. */
 export function usePhotos(plantId: number) {
   return useInfiniteQuery({
