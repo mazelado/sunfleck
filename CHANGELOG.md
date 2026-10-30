@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Fixed
+
+- On iPhones, the tab bar sat higher than needed: the space for the home indicator was counted
+  twice.
+
 ## [0.3.0] - 2026-10-30
 
 **Camellia.** Easier everyday use: the main pages one tap away, profile pictures, moving
