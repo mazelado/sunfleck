@@ -47,7 +47,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.2 Bougainvillea** | How much water to give (#43), and fixes from using 0.1 (#41, #42) | Released 2026-10-30 |
 | **0.3 Camellia** | [Easier everyday use](#camellia-easier-everyday-use-released) | Released 2026-10-30 |
 | **0.4 Dahlia** | [Smarter care](#dahlia-smarter-care-released) | Released 2026-10-30 |
-| **0.5 Echinacea** | [AI providers and care data](#ai-providers-and-care-data) | Next |
+| **0.5 Echinacea** | [AI providers and toxicity](#ai-providers-and-toxicity) | Next |
 | **0.6 Fuchsia** | [Integrations](#integrations) | Planned |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Planned |
 | **0.8 Hibiscus** | [Collector features](#collector-features) | Planned |
@@ -91,7 +91,7 @@ Care that learns from you and shows what's going on.
 - **An About page:** which version is running, with its release notes, the licence and source
   code, and credits (#66).
 
-### AI providers and care data
+### AI providers and toxicity
 
 Optional plugins: off until an Admin turns them on, and each says exactly what it sends.
 
@@ -99,10 +99,9 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
   Ollama), then Anthropic's own API.
 - **AI care profile suggestions** for unusual plants that match no built-in profile, always
   reviewed before they're used.
-- **Care data provider plugins:** Open Plantbook, Perenual, Trefle. Each has its own terms and
-  API key, so they stay plugins: their data isn't copied into Sunfleck's CC BY-SA dataset.
 - **Toxicity flags** (pets and children) in the dataset, each with its sources. They only ever
-  say "known to be toxic" (with the source) or "unknown", never "safe".
+  say "known to be toxic" (with the source) or "unknown", never "safe". For pets, from the
+  ASPCA's toxic plant list, for the common houseplant genera first.
 - **When was it last cared for?** Adding a plant asks when it was last watered and
   fertilized, so its first due dates and care bars are right from the start (#76).
 
@@ -116,6 +115,11 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
 - **Import from HortusFox and Plant-it.**
 - **Public API documentation** and personal API tokens.
+- **A care data provider plugin: Open Plantbook** (moved from Echinacea to keep that release
+  smaller). Care data for plants the dataset doesn't cover, fetched with the person's own free
+  account. Its data has no formal licence, so it stays a plugin and isn't copied into
+  Sunfleck's CC BY-SA dataset. Perenual and Trefle could follow if there's a need: Perenual's
+  free tier is non-commercial and limited to 100 requests a day, and Trefle is in beta.
 
 ### Outdoor and edible gardening
 
