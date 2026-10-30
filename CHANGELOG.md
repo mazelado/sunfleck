@@ -14,6 +14,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Move plants here** on a location's page: move plants from elsewhere, those without a
   location first. Their schedules adjust to the new location.
 
+### Fixed
+
+- After signing out, signing in again starts on Today. It sometimes returned to the page you
+  signed out from instead.
+
 ## [0.2.0] - 2026-10-30
 
 **Bougainvillea.** How much water to give, and the first fixes from using 0.1.
