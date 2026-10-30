@@ -45,8 +45,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 |---|---|---|
 | **0.1 Azalea** | The first release (the MVP): see the [changelog](../CHANGELOG.md) | Released 2026-10-28 |
 | **0.2 Bougainvillea** | How much water to give (#43), and fixes from using 0.1 (#41, #42) | Released 2026-10-30 |
-| **0.3 Camellia** | [Easier everyday use](#easier-everyday-use) | Next |
-| **0.4 Dahlia** | [Smarter care](#smarter-care) | Planned |
+| **0.3 Camellia** | [Easier everyday use](#camellia-easier-everyday-use-released) | Released 2026-10-30 |
+| **0.4 Dahlia** | [Smarter care](#smarter-care) | Next |
 | **0.5 Echinacea** | [AI providers and care data](#ai-providers-and-care-data) | Planned |
 | **0.6 Fuchsia** | [Integrations](#integrations) | Planned |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Planned |
@@ -62,7 +62,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 - **iPhone zoom:** fields no longer make Safari zoom in (#41).
 - **Plant identification:** it's clear that **Use** set the species (#42).
 
-### Easier everyday use
+### Camellia: easier everyday use (released)
 
 Getting around the app, and making it feel like yours.
 

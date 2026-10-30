@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-30
+
+**Camellia.** Easier everyday use: the main pages one tap away, profile pictures, moving
+plants between locations, and finding plants without a care routine.
+
 ### Added
 
 - **Plants without a care routine** are marked "No routine yet" in the plant list, which can
@@ -83,6 +88,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mazelado/sunfleck/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mazelado/sunfleck/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mazelado/sunfleck/releases/tag/v0.1.0
