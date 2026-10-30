@@ -96,6 +96,7 @@ Run `make` (or `make help`) to see them all.
 |---|---|
 | `make dev` | Run the app locally |
 | `make test` | Run all tests (backend and frontend). Do this before every commit |
+| `make e2e` | Run the browser tests: the main journeys in Chromium at phone size, against a production build with an empty database. Slower; CI runs them on every pull request |
 | `make lint` | Run the same formatting, lint, type, and migration checks as CI |
 | `make format` | Automatically fix formatting and simple lint problems |
 | `make api-types` | After changing the backend API, regenerate the frontend's TypeScript types (CI checks they're up to date) |

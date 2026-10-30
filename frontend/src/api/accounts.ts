@@ -80,9 +80,17 @@ export function useSignIn() {
   });
 }
 
-export function useSignOut() {
+/** Sign out. `leave` runs before the signed-in data is cleared: navigate away there, so the
+ * page doesn't first see a signed-out person and remember itself as where to come back to. */
+export function useSignOut(leave: () => unknown) {
   const resetCache = useResetCache();
-  return useMutation({ mutationFn: allauth.signOut, onSuccess: resetCache });
+  return useMutation({
+    mutationFn: allauth.signOut,
+    onSuccess: async () => {
+      await leave();
+      await resetCache();
+    },
+  });
 }
 
 export function useRequestPasswordReset() {
