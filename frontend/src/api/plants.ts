@@ -120,6 +120,17 @@ export function useUpdatePlant(plantId: number) {
   });
 }
 
+/** Move plants into a location. Their schedules change with it, so everything about plants is
+ * refreshed (Today included). */
+export function useMovePlants() {
+  const invalidate = useInvalidatePlants();
+  return useMutation({
+    mutationFn: async (body: { location_id: number; plant_ids: number[] }) =>
+      unwrap(await api.POST("/api/v1/plants/move", { body })),
+    onSuccess: invalidate,
+  });
+}
+
 export function useDeletePlant() {
   const queryClient = useQueryClient();
   return useMutation({

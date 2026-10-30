@@ -158,7 +158,7 @@ export function LocationPage() {
         </Paper>
       )}
 
-      <LocationPlants locationId={location.id} />
+      <LocationPlants location={location} />
 
       {dialog && (
         <LightSourceForm

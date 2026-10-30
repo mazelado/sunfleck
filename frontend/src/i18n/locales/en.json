@@ -292,7 +292,17 @@
     "lightCount_other": "{{count}} light sources",
     "windowPlantsNote": "When you add a plant, you'll say how far it is from this window.",
     "plantsHere": "Plants here",
-    "noPlantsHere": "No plants here yet."
+    "noPlantsHere": "No plants here yet.",
+    "movePlantsHere": "Move plants here",
+    "movePlantsTitle": "Move plants to {{location}}",
+    "plantsToMove": "Plants",
+    "plantsToMoveHelp": "Plants without a location are listed first.",
+    "noPlantsToMove": "All your plants are here already, or have no care now (given away or died).",
+    "moveHere": "Move here",
+    "moved_one": "Moved {{count}} plant to {{location}}.",
+    "moved_other": "Moved {{count}} plants to {{location}}.",
+    "movedChooseLight_one": "On its page, choose which windows and grow lights reach it here.",
+    "movedChooseLight_other": "On each plant's page, choose which windows and grow lights reach it here."
   },
   "directions": {
     "N": "north",

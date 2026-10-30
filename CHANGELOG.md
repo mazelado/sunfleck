@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Move plants here** on a location's page: move plants from elsewhere, those without a
+  location first. Their schedules adjust to the new location.
+
 ## [0.2.0] - 2026-10-30
 
 **Bougainvillea.** How much water to give, and the first fixes from using 0.1.

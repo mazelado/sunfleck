@@ -134,6 +134,11 @@ class PlantOut(Schema):
     created_at: datetime
 
 
+class MovePlantsIn(Schema):
+    location_id: int
+    plant_ids: list[int] = Field(min_length=1, max_length=100)
+
+
 class PlantPage(Schema):
     items: list[PlantSummaryOut]
     count: int = Field(description="How many plants match, across all pages.")
@@ -337,6 +342,20 @@ def create_plant(request: HttpRequest, data: PlantIn) -> Status[PlantOut]:
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return Status(201, _plant_out(_get_plant(household, plant.pk), language(request)))
+
+
+@router.post("/plants/move", response=list[PlantSummaryOut])
+def move_plants(request: HttpRequest, data: MovePlantsIn) -> list[PlantSummaryOut]:
+    """Move plants into a location. Returns the plants that moved (those already there don't).
+    The lights that reached them are removed, as they belong to their old location."""
+    household = require_role(request, Role.GARDENER).household
+    try:
+        moved = services.move_plants(household, data.location_id, data.plant_ids)
+    except services.PlantsError as exc:
+        raise _plants_error(exc) from exc
+    plants = _plants(household).filter(pk__in=[plant.pk for plant in moved])
+    lang = language(request)
+    return [_summary_out(plant, lang) for plant in plants]
 
 
 @router.get("/plants/{plant_id}", response=PlantOut)
