@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-30
+
+**Dahlia.** Smarter care: humidity in the predictions, care at a glance, light through the
+year, and schedules that learn from how you water. Also an About page.
+
 ### Added
 
 - **About Sunfleck**, in the account menu: which version is running, with its release notes,
@@ -118,7 +123,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mazelado/sunfleck/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mazelado/sunfleck/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mazelado/sunfleck/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mazelado/sunfleck/releases/tag/v0.1.0
