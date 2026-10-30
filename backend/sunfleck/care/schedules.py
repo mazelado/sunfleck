@@ -29,6 +29,7 @@ from sunfleck.care.models import (
     ScheduleOrigin,
 )
 from sunfleck.care.services import CareError, care_types_for
+from sunfleck.places.humidity import location_humidity
 from sunfleck.places.light import grow_light_dli
 from sunfleck.places.models import LightSourceKind, LocationKind
 from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
@@ -97,6 +98,7 @@ def conditions_for(plant: Plant) -> Conditions:
             windows.append(Window(light.direction, link.distance_cm))
         elif light.ppfd and light.on_time and light.off_time:
             grow_lights.append(GrowLight(grow_light_dli(light.ppfd, light.on_time, light.off_time)))
+    humidity = location_humidity(location)
     return replace(
         plant_only,
         indoor=True,
@@ -105,6 +107,8 @@ def conditions_for(plant: Plant) -> Conditions:
         grow_lights=tuple(grow_lights),
         temperature_min_c=location.temperature_min_c,
         temperature_max_c=location.temperature_max_c,
+        humidity_percent=humidity.percent if humidity else None,
+        humidity_estimated=humidity.estimated if humidity else False,
     )
 
 

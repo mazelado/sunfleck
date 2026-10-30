@@ -15,6 +15,7 @@ from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
 from sunfleck.places import services
+from sunfleck.places.humidity import estimated_humidity
 from sunfleck.places.light import grow_light_dli, hours_on
 from sunfleck.places.models import (
     Direction,
@@ -74,6 +75,11 @@ class LocationOut(Schema):
     humidity: Humidity | None
     exposure: Exposure | None
     light_sources: list[LightSourceOut]
+    humidity_estimate: int | None = Field(
+        default=None,
+        description="Indoors, on a single location: today's humidity in % estimated from the "
+        "weather (a plugin). None when there's no weather, or it's warm outside.",
+    )
 
 
 class SiteIn(Schema):
@@ -116,7 +122,10 @@ def light_source_out(light: LightSource) -> LightSourceOut:
     )
 
 
-def _location_out(location: Location) -> LocationOut:
+def _location_out(location: Location, *, with_estimate: bool = False) -> LocationOut:
+    estimate = None
+    if with_estimate and location.kind == LocationKind.INDOOR:
+        estimate = estimated_humidity(location)
     return LocationOut(
         id=location.pk,
         site_id=location.site_id,
@@ -127,6 +136,7 @@ def _location_out(location: Location) -> LocationOut:
         humidity=Humidity(location.humidity) if location.humidity else None,
         exposure=Exposure(location.exposure) if location.exposure else None,
         light_sources=[light_source_out(light) for light in location.light_sources.all()],
+        humidity_estimate=round(estimate) if estimate is not None else None,
     )
 
 
@@ -240,7 +250,7 @@ def create_location(request: HttpRequest, site_id: int, data: LocationIn) -> Sta
 @router.get("/locations/{location_id}", response=LocationOut)
 def get_location(request: HttpRequest, location_id: int) -> LocationOut:
     household = require_role(request, Role.VIEWER).household
-    return _location_out(_get_location(household, location_id))
+    return _location_out(_get_location(household, location_id), with_estimate=True)
 
 
 @router.put("/locations/{location_id}", response=LocationOut)
