@@ -10,3 +10,23 @@
     font-size: max(16px, var(--_input-fz, var(--input-fz, var(--mantine-font-size-md))));
   }
 }
+
+/*
+ * The main pages (AppLayout). NavLink marks the current one with aria-current="page": shown by
+ * colour and weight in the tab bar, and by a background in the header.
+ */
+.sunfleck-tab {
+  color: var(--mantine-color-dimmed);
+}
+
+.sunfleck-tab[aria-current="page"] {
+  color: var(--mantine-color-anchor);
+}
+
+.sunfleck-tab[aria-current="page"] .mantine-Text-root {
+  font-weight: 700;
+}
+
+.sunfleck-nav-link[aria-current="page"] {
+  background-color: var(--button-hover);
+}
