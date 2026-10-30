@@ -14,6 +14,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Profile pictures:** choose one under Profile. It's shown in the header, the household's
   member list and the care history, only to your household. Not included in exports.
 
+### Changed
+
+- **Navigation:** the main pages (Today, Plants, Places, Care guide) are one tap away, in a tab
+  bar at the bottom on phones and at the top on wider screens. The account menu keeps your
+  settings, your household and signing out.
+
 ### Fixed
 
 - After signing out, signing in again starts on Today. It sometimes returned to the page you

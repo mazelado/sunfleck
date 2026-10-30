@@ -16,10 +16,11 @@ test.afterAll(async () => {
   await page.close();
 });
 
-/** Go to one of the main pages, the way a person would. */
+/** Go to one of the main pages, the way a person would: with the tab bar. */
 async function goTo(name: string) {
-  await page.getByRole("button", { name: /^Account menu/ }).click();
-  await page.getByRole("menuitem", { name }).click();
+  const nav = page.getByRole("navigation", { name: "Main" });
+  await nav.getByRole("link", { name }).click();
+  await expect(nav.getByRole("link", { name })).toHaveAttribute("aria-current", "page");
 }
 
 test("the first visit sets up the household", async () => {

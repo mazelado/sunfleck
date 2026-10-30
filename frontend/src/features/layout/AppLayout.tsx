@@ -24,15 +24,34 @@ import {
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
+import { type ComponentType, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet, useNavigate } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 
 import { useMe, useSignOut } from "../../api/accounts";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
 
-/** The frame around every page for signed-in people: header with the account menu. */
+interface Destination {
+  to: string;
+  label: "nav.home" | "nav.plants" | "nav.places" | "nav.guide";
+  icon: ComponentType<{ size?: number; stroke?: number }>;
+}
+
+/** The main pages: always one tap away. */
+const DESTINATIONS: Destination[] = [
+  { to: "/", label: "nav.home", icon: IconChecklist },
+  { to: "/plants", label: "nav.plants", icon: IconPlant2 },
+  { to: "/places", label: "nav.places", icon: IconMapPin },
+  { to: "/guide", label: "nav.guide", icon: IconBook },
+];
+
+// The tab bar's height, above the iPhone's home indicator.
+const TAB_BAR_HEIGHT = "calc(4rem + env(safe-area-inset-bottom))";
+
+/** The frame around every page for signed-in people: the header with the main pages (on wide
+ * screens) and the account menu, and a tab bar with the main pages on phones. */
 export function AppLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -41,18 +60,27 @@ export function AppLayout() {
   const name = me?.display_name || me?.email || "";
   const { method: installMethod, install } = useInstall();
   const [iosHelp, setIosHelp] = useState(false);
+  // Mantine's "sm" breakpoint. Phones (and narrow windows) get the tab bar.
+  const wide = useMediaQuery("(min-width: 48em)", false, { getInitialValueInEffect: false });
 
   async function handleSignOut() {
     await signOut.mutateAsync();
   }
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
+    <AppShell
+      header={{ height: 60 }}
+      footer={{ height: TAB_BAR_HEIGHT, collapsed: wide }}
+      padding="md"
+    >
       <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Text component={Link} to="/" fw={700} fz="lg" c="var(--mantine-color-anchor)">
-            {t("app.name")}
-          </Text>
+        <Group h="100%" px="md" justify="space-between" wrap="nowrap">
+          <Group gap="lg" wrap="nowrap">
+            <Text component={Link} to="/" fw={700} fz="lg" c="var(--mantine-color-anchor)">
+              {t("app.name")}
+            </Text>
+            {wide && <HeaderNavigation />}
+          </Group>
           <Menu position="bottom-end" width={200}>
             <Menu.Target>
               {/* The name shown (on wider screens) is part of the button's name, as people
@@ -67,19 +95,6 @@ export function AppLayout() {
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item component={Link} to="/" leftSection={<IconChecklist size={16} />}>
-                {t("nav.home")}
-              </Menu.Item>
-              <Menu.Item component={Link} to="/plants" leftSection={<IconPlant2 size={16} />}>
-                {t("nav.plants")}
-              </Menu.Item>
-              <Menu.Item component={Link} to="/guide" leftSection={<IconBook size={16} />}>
-                {t("nav.guide")}
-              </Menu.Item>
-              <Menu.Item component={Link} to="/places" leftSection={<IconMapPin size={16} />}>
-                {t("nav.places")}
-              </Menu.Item>
-              <Menu.Divider />
               <Menu.Item
                 component={Link}
                 to="/settings/profile"
@@ -180,6 +195,60 @@ export function AppLayout() {
           <Outlet />
         </Container>
       </AppShell.Main>
+      {!wide && (
+        <AppShell.Footer pb="env(safe-area-inset-bottom)">
+          <TabBar />
+        </AppShell.Footer>
+      )}
     </AppShell>
+  );
+}
+
+/** The main pages in the header, on wide screens. */
+function HeaderNavigation() {
+  const { t } = useTranslation();
+  return (
+    <Group component="nav" aria-label={t("nav.main")} gap={4} wrap="nowrap">
+      {DESTINATIONS.map(({ to, label }) => (
+        <Button
+          key={to}
+          component={NavLink}
+          to={to}
+          end={to === "/"}
+          variant="subtle"
+          size="sm"
+          // NavLink marks the current page with aria-current="page" (styled in global.css).
+          className="sunfleck-nav-link"
+        >
+          {t(label)}
+        </Button>
+      ))}
+    </Group>
+  );
+}
+
+/** The main pages as a tab bar at the bottom, on phones: in reach of the thumb. */
+function TabBar() {
+  const { t } = useTranslation();
+  return (
+    <Group component="nav" aria-label={t("nav.main")} h="4rem" gap={0} grow wrap="nowrap">
+      {DESTINATIONS.map(({ to, label, icon: Icon }) => (
+        <UnstyledButton
+          key={to}
+          component={NavLink}
+          to={to}
+          end={to === "/"}
+          className="sunfleck-tab"
+          h="100%"
+        >
+          <Stack gap={2} align="center" justify="center" h="100%">
+            <Icon size={24} stroke={1.75} />
+            <Text size="xs" fw={500}>
+              {t(label)}
+            </Text>
+          </Stack>
+        </UnstyledButton>
+      ))}
+    </Group>
   );
 }
