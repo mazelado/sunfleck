@@ -44,7 +44,24 @@
     "plugins": "Plugins",
     "notifications": "Notifications",
     "data": "Export and import",
-    "install": "Install app"
+    "install": "Install app",
+    "about": "About Sunfleck"
+  },
+  "about": {
+    "title": "About Sunfleck",
+    "version": "Sunfleck {{version}}",
+    "versionNamed": "Sunfleck {{version}} ({{name}})",
+    "tagline": "Self-hosted plant care for indoor and outdoor plants.",
+    "careDataset": "Care data: version {{version}}",
+    "releaseNotes": "What's new in this version",
+    "licenceTitle": "Free software",
+    "licence": "Sunfleck is free software under the GNU Affero General Public License 3.0 (AGPL-3.0): you can get its source code, change it and share it.",
+    "dataLicence": "The care data is shared under CC BY-SA 4.0 by the Sunfleck care dataset contributors.",
+    "source": "Source code",
+    "creditsTitle": "Thanks to",
+    "creditWeather": "Weather data by Open-Meteo.com (CC BY 4.0)",
+    "creditIdentify": "Plant identification by Pl@ntNet",
+    "creditMaps": "Maps © OpenStreetMap contributors"
   },
   "setup": {
     "title": "Welcome to Sunfleck",

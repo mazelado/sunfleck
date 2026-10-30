@@ -11,6 +11,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **About Sunfleck**, in the account menu: which version is running, with its release notes,
+  the version of the care data, the licences and the source code, and credits.
 - **Is this spot bright enough?** A plant's page compares the light at its spot with what it
   likes, season by season, with a tip when it's too dim or too bright, and says how much
   light each window or grow light gives it now. A location's page shows each window's light
