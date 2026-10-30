@@ -53,10 +53,19 @@ const tasks: Task[] = [
   task(15, fern, mist, 3),
 ];
 
-function withToday(list: Task[] = tasks, unscheduled = 0) {
+function withToday(
+  list: Task[] = tasks,
+  unscheduled = 0,
+  unscheduledPlantId: number | null = null,
+) {
   server.use(
     http.get("*/api/v1/today", () =>
-      HttpResponse.json({ sites: [], tasks: list, unscheduled_plants: unscheduled }),
+      HttpResponse.json({
+        sites: [],
+        tasks: list,
+        unscheduled_plants: unscheduled,
+        unscheduled_plant_id: unscheduledPlantId,
+      }),
     ),
   );
 }
@@ -90,6 +99,18 @@ describe("helpers", () => {
 });
 
 describe("today", () => {
+  it("links straight to the one plant without a care schedule", async () => {
+    signInAs(gardener);
+    withToday([], 1, 7);
+
+    renderApp("/");
+
+    expect(await screen.findByText("1 plant has no care schedule yet.")).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: "Open it to add its suggested routine." }),
+    ).toHaveAttribute("href", "/plants/7");
+  });
+
   it("lists care that's due by location, then what's coming up", async () => {
     signInAs(gardener);
     withToday(tasks, 2);
@@ -98,6 +119,10 @@ describe("today", () => {
 
     expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
     expect(screen.getByText("2 plants have no care schedule yet.")).toBeVisible();
+    // Several: to the list, showing only those.
+    expect(
+      screen.getByRole("link", { name: "Show them, to add their suggested routines." }),
+    ).toHaveAttribute("href", "/plants?needs_routine=true");
     const livingRoomGroup = screen
       .getByText("Home · Living room")
       .closest("div.mantine-Paper-root");
@@ -257,6 +282,7 @@ describe("today", () => {
           ],
           tasks: [],
           unscheduled_plants: 0,
+          unscheduled_plant_id: null,
         }),
       ),
     );

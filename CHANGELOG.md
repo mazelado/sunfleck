@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Plants without a care routine** are marked "No routine yet" in the plant list, which can
+  show only them. Today's notice links straight to the plant when there's one, or to that
+  list.
+
 ### Changed
 
 - **Navigation:** the main pages (Today, Plants, Places, Care guide) are one tap away, in a tab

@@ -49,6 +49,8 @@ export interface PlantFilters {
   q?: string;
   locationId?: number | null;
   status?: PlantStatus | null;
+  /** Only plants that are looked after but have no care schedule. */
+  needsRoutine?: boolean;
 }
 
 function useInvalidatePlants() {
@@ -71,6 +73,7 @@ export function usePlants(filters: PlantFilters = {}) {
               q: filters.q || undefined,
               location_id: filters.locationId ?? undefined,
               status: filters.status ?? undefined,
+              needs_routine: filters.needsRoutine || undefined,
             },
           },
         }),
