@@ -1,6 +1,5 @@
 import {
   AppShell,
-  Avatar,
   Button,
   Container,
   Group,
@@ -30,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigate } from "react-router";
 
 import { useMe, useSignOut } from "../../api/accounts";
+import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
 
 /** The frame around every page for signed-in people: header with the account menu. */
@@ -60,11 +60,7 @@ export function AppLayout() {
                   using voice control say what they see. */}
               <UnstyledButton aria-label={t("nav.accountMenu", { name })}>
                 <Group gap="xs">
-                  {/* An icon rather than initials, which would be text that's not in the
-                      button's name. */}
-                  <Avatar name={name} color="initials" size="sm" aria-hidden>
-                    <IconUser size={16} />
-                  </Avatar>
+                  <PersonAvatar url={me?.avatar_url} />
                   <Text size="sm" visibleFrom="xs">
                     {name}
                   </Text>

@@ -66,6 +66,7 @@ export const ada: Me = {
   id: 1,
   email: "ada@example.com",
   display_name: "Ada",
+  avatar_url: null,
   locale: "en",
   unit_system: "metric",
   household: { id: 1, name: "Fern Gully" },
@@ -77,6 +78,7 @@ export const basil: Member = {
   user_id: 2,
   email: "basil@example.com",
   display_name: "Basil",
+  avatar_url: null,
   role: "gardener",
 };
 

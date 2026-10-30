@@ -45,7 +45,7 @@ function careEvent(overrides: Partial<CareEvent> = {}): CareEvent {
     plant_id: 7,
     care_type: water,
     performed_at: new Date(Date.now() - DAY).toISOString(),
-    performed_by: { id: 1, display_name: "Ada" },
+    performed_by: { id: 1, display_name: "Ada", avatar_url: null },
     notes: "",
     feedback: null,
     skipped: false,

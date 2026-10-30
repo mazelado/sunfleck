@@ -99,7 +99,14 @@
     "newPassword": "New password",
     "passwordChanged": "Your password has been changed.",
     "metricHint": "Centimeters, °C, liters",
-    "imperialHint": "Inches, °F, gallons"
+    "imperialHint": "Inches, °F, gallons",
+    "picture": "Profile picture",
+    "pictureHelp": "The middle of the photo is used, as a square. Only your household sees it.",
+    "pictureAlt": "Your profile picture",
+    "pictureChoose": "Choose a picture",
+    "pictureChange": "Change",
+    "pictureRemove": "Remove",
+    "pictureSaved": "Profile picture saved"
   },
   "household": {
     "title": "Household",

@@ -1,4 +1,5 @@
 """Photo processing: check an upload is an image, then resize it and remove its metadata.
+Used for plant photos and profile pictures.
 
 The browser already shrinks photos before uploading them; this is the server's own check, and
 it handles uploads from other clients and iPhone HEIC photos.
@@ -22,6 +23,7 @@ IMAGE_MAX_EDGE = 2048
 THUMBNAIL_MAX_EDGE = 512
 # Enough for plant identification services, which work on smaller images still.
 IDENTIFY_MAX_EDGE = 1280
+AVATAR_SIZE = 256
 ALLOWED_FORMATS = {"JPEG", "MPO", "PNG", "WEBP", "HEIF", "AVIF"}
 IMAGE_QUALITY = 82
 THUMBNAIL_QUALITY = 75
@@ -72,6 +74,24 @@ def process_photo(file: IO[bytes]) -> ProcessedPhoto:
         height=image.height,
         taken_at=taken_at,
     )
+
+
+def process_avatar(file: IO[bytes]) -> bytes:
+    """A profile picture: the middle of the photo, as a WebP square of AVATAR_SIZE pixels,
+    upright and without metadata.
+
+    Raises:
+        ImageError: If the file isn't a supported image or is too large to process.
+    """
+    _, image, _ = _open(file, AVATAR_SIZE * 4)
+    # Faces tend to be in the upper part of a portrait: keep a little more of the top.
+    square = ImageOps.fit(
+        image.convert("RGB"),
+        (AVATAR_SIZE, AVATAR_SIZE),
+        Image.Resampling.LANCZOS,
+        centering=(0.5, 0.4),
+    )
+    return _webp(square, IMAGE_QUALITY, None)
 
 
 def jpeg_for_identification(file: IO[bytes]) -> bytes:

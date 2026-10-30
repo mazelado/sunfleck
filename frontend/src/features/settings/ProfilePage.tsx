@@ -1,5 +1,8 @@
 import {
+  Avatar,
   Button,
+  FileButton,
+  Group,
   Paper,
   SegmentedControl,
   Select,
@@ -10,10 +13,20 @@ import {
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { IconPhoto } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
-import { type Me, useChangePassword, useMe, useUpdateMe } from "../../api/accounts";
+import {
+  type Me,
+  useChangePassword,
+  useMe,
+  useRemoveAvatar,
+  useSetAvatar,
+  useUpdateMe,
+} from "../../api/accounts";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { PersonAvatar } from "../../components/PersonAvatar";
+import { preparePhoto } from "../../lib/photos";
 import { PasswordField } from "../../components/PasswordField";
 import { LANGUAGES, languageName } from "../../i18n";
 import { useApplyFieldErrors } from "../auth/serverErrors";
@@ -32,9 +45,79 @@ export function ProfilePage() {
       <Title order={1} fz="h2">
         {t("profile.title")}
       </Title>
+      <ProfilePicture me={me} />
       <ProfileForm me={me} />
       <ChangePasswordForm />
     </Stack>
+  );
+}
+
+/** The person's picture: chosen from their photos, made a square on the server. */
+function ProfilePicture({ me }: { me: Me }) {
+  const { t } = useTranslation();
+  const setAvatar = useSetAvatar();
+  const removeAvatar = useRemoveAvatar();
+  const error = setAvatar.error ?? removeAvatar.error;
+
+  async function choose(file: File | null) {
+    if (!file) return;
+    try {
+      await setAvatar.mutateAsync(await preparePhoto(file));
+      notifications.show({ message: t("profile.pictureSaved") });
+    } catch {
+      // The error is shown by ErrorAlert.
+    }
+  }
+
+  return (
+    <Paper withBorder radius="lg" p="lg">
+      <Stack gap="sm">
+        <Title order={2} fz="h4">
+          {t("profile.picture")}
+        </Title>
+        <Group gap="md" wrap="nowrap">
+          {me.avatar_url ? (
+            <Avatar src={me.avatar_url} size={80} alt={t("profile.pictureAlt")} />
+          ) : (
+            <PersonAvatar url={null} size={80} />
+          )}
+          <Stack gap="xs">
+            <Text size="sm" c="dimmed">
+              {t("profile.pictureHelp")}
+            </Text>
+            <Group gap="xs">
+              <FileButton accept="image/*" onChange={(file) => void choose(file)}>
+                {(props) => (
+                  <Button
+                    {...props}
+                    variant="light"
+                    size="xs"
+                    leftSection={<IconPhoto size={14} />}
+                    loading={setAvatar.isPending}
+                  >
+                    {me.avatar_url ? t("profile.pictureChange") : t("profile.pictureChoose")}
+                  </Button>
+                )}
+              </FileButton>
+              {me.avatar_url && (
+                <Button
+                  variant="subtle"
+                  color="red"
+                  size="xs"
+                  loading={removeAvatar.isPending}
+                  onClick={() => {
+                    removeAvatar.mutate();
+                  }}
+                >
+                  {t("profile.pictureRemove")}
+                </Button>
+              )}
+            </Group>
+          </Stack>
+        </Group>
+        <ErrorAlert error={error} />
+      </Stack>
+    </Paper>
   );
 }
 

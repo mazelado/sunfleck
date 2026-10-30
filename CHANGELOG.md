@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Profile pictures:** choose one under Profile. It's shown in the header, the household's
+  member list and the care history, only to your household. Not included in exports.
+
 ## [0.2.0] - 2026-10-30
 
 **Bougainvillea.** How much water to give, and the first fixes from using 0.1.

@@ -53,6 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_("Whether the user can sign in to the Django admin site."),
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    # Shown only to members of the person's household, through the API (not as public media).
+    avatar = models.ImageField(_("profile picture"), upload_to="avatars/", blank=True)
 
     objects: ClassVar[UserManager] = UserManager()
 

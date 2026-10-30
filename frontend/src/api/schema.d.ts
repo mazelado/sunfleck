@@ -474,6 +474,27 @@ export interface paths {
         patch: operations["sunfleck_accounts_api_update_me"];
         trace?: never;
     };
+    "/api/v1/me/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Avatar
+         * @description Set your profile picture: the middle of the photo, as a square.
+         */
+        post: operations["sunfleck_accounts_api_set_avatar"];
+        /** Remove Avatar */
+        delete: operations["sunfleck_accounts_api_remove_avatar"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications": {
         parameters: {
             query?: never;
@@ -581,6 +602,26 @@ export interface paths {
          * @description What today's digest would say, if it were sent now.
          */
         get: operations["sunfleck_notifications_api_preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/people/{user_id}/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Avatar
+         * @description A person's profile picture (WebP), for members of their household.
+         */
+        get: operations["sunfleck_accounts_api_get_avatar"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1588,6 +1629,11 @@ export interface components {
         };
         /** MeOut */
         MeOut: {
+            /**
+             * Avatar Url
+             * @description The profile picture, if there is one.
+             */
+            avatar_url: string | null;
             /** Display Name */
             display_name: string;
             /** Email */
@@ -1610,6 +1656,8 @@ export interface components {
         };
         /** MemberOut */
         MemberOut: {
+            /** Avatar Url */
+            avatar_url: string | null;
             /** Display Name */
             display_name: string;
             /** Email */
@@ -1652,6 +1700,8 @@ export interface components {
         };
         /** PersonOut */
         PersonOut: {
+            /** Avatar Url */
+            avatar_url: string | null;
             /** Display Name */
             display_name: string;
             /** Id */
@@ -3219,6 +3269,56 @@ export interface operations {
             };
         };
     };
+    sunfleck_accounts_api_set_avatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * File
+                     * Format: binary
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_remove_avatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
     sunfleck_notifications_api_get_notifications: {
         parameters: {
             query?: never;
@@ -3372,6 +3472,26 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PreviewOut"];
                 };
+            };
+        };
+    };
+    sunfleck_accounts_api_get_avatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

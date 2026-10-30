@@ -5,7 +5,9 @@ API endpoints call these functions; they never change account data directly.
 
 import hashlib
 import secrets
+import uuid
 from datetime import datetime, timedelta
+from typing import IO
 
 from allauth.account import app_settings as allauth_settings
 from allauth.account.adapter import get_adapter
@@ -13,6 +15,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import user_pk_to_url_str
 from allauth.core import context as allauth_context
 from django.contrib.auth.password_validation import validate_password
+from django.core.files.base import ContentFile
 from django.db import transaction
 from django.http import HttpRequest
 from django.utils import timezone, translation
@@ -25,6 +28,7 @@ from sunfleck.accounts.models import (
     User,
     normalize_email,
 )
+from sunfleck.core import images
 
 INVITATION_LIFETIME = timedelta(days=7)
 
@@ -224,3 +228,30 @@ def password_reset_url(request: HttpRequest, user: User) -> str:
     # allauth builds the URL from the request it's handling; make sure it knows this one.
     with allauth_context.request_context(request):
         return str(get_adapter(request).get_reset_password_from_key_url(key))
+
+
+# --- Profile pictures -------------------------------------------------------------------------
+
+
+def set_avatar(user: User, file: IO[bytes], size: int) -> None:
+    """Set the person's profile picture, replacing the old one.
+
+    Raises:
+        images.ImageError: If the file is too large or isn't a usable image.
+    """
+    if size > images.MAX_UPLOAD_BYTES:
+        limit = images.MAX_UPLOAD_BYTES // (1024 * 1024)
+        raise images.ImageError("image_too_large", f"Photos can be at most {limit} MB.")
+    data = images.process_avatar(file)
+    old = user.avatar.name
+    # A new name each time, so browsers that cached the old picture fetch the new one.
+    user.avatar.save(f"{uuid.uuid4().hex}.webp", ContentFile(data), save=False)
+    user.save(update_fields=["avatar"])
+    if old:
+        user.avatar.storage.delete(old)
+
+
+def remove_avatar(user: User) -> None:
+    if user.avatar:
+        user.avatar.delete(save=False)
+        user.save(update_fields=["avatar"])

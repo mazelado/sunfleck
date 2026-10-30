@@ -11,6 +11,7 @@ const adaMember: Member = {
   user_id: 1,
   email: ada.email,
   display_name: "Ada",
+  avatar_url: null,
   role: "admin",
 };
 
@@ -45,6 +46,27 @@ describe("profile", () => {
       expect(sent).toEqual({ display_name: "Ada L.", locale: "en", unit_system: "imperial" });
     });
     expect(await screen.findByText("Saved")).toBeVisible();
+  });
+
+  it("shows the profile picture, everywhere, and removes it", async () => {
+    signInAs({ ...ada, avatar_url: "/api/v1/people/1/avatar?v=abc" });
+    server.use(
+      http.delete("*/api/v1/me/avatar", () => HttpResponse.json({ ...ada, avatar_url: null })),
+    );
+    const { user } = renderApp("/settings/profile");
+
+    expect(await screen.findByRole("img", { name: "Your profile picture" })).toHaveAttribute(
+      "src",
+      "/api/v1/people/1/avatar?v=abc",
+    );
+    // In the header too, as decoration: the button says whose menu it is.
+    const accountButton = screen.getByRole("button", { name: "Account menu: Ada" });
+    expect(accountButton.querySelector("img")).toHaveAttribute("alt", "");
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    expect(await screen.findByRole("button", { name: "Choose a picture" })).toBeVisible();
+    expect(screen.queryByRole("img", { name: "Your profile picture" })).not.toBeInTheDocument();
   });
 
   it("shows allauth's message next to the current password", async () => {

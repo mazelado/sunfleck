@@ -1482,6 +1482,18 @@
       },
       "MeOut": {
         "properties": {
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The profile picture, if there is one.",
+            "title": "Avatar Url"
+          },
           "display_name": {
             "title": "Display Name",
             "type": "string"
@@ -1526,6 +1538,7 @@
           "id",
           "email",
           "display_name",
+          "avatar_url",
           "locale",
           "unit_system",
           "household",
@@ -1575,6 +1588,17 @@
       },
       "MemberOut": {
         "properties": {
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
           "display_name": {
             "title": "Display Name",
             "type": "string"
@@ -1600,6 +1624,7 @@
           "user_id",
           "email",
           "display_name",
+          "avatar_url",
           "role"
         ],
         "title": "MemberOut",
@@ -1676,6 +1701,17 @@
       },
       "PersonOut": {
         "properties": {
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
           "display_name": {
             "title": "Display Name",
             "type": "string"
@@ -1687,7 +1723,8 @@
         },
         "required": [
           "id",
-          "display_name"
+          "display_name",
+          "avatar_url"
         ],
         "title": "PersonOut",
         "type": "object"
@@ -5046,6 +5083,80 @@
         ]
       }
     },
+    "/api/v1/me/avatar": {
+      "delete": {
+        "operationId": "sunfleck_accounts_api_remove_avatar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Remove Avatar",
+        "tags": [
+          "accounts"
+        ]
+      },
+      "post": {
+        "description": "Set your profile picture: the middle of the photo, as a square.",
+        "operationId": "sunfleck_accounts_api_set_avatar",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "title": "File",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "title": "FileParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Set Avatar",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/v1/notifications": {
       "get": {
         "description": "The signed-in person's notification channels and preferences.",
@@ -5287,6 +5398,37 @@
         "summary": "Preview",
         "tags": [
           "notifications"
+        ]
+      }
+    },
+    "/api/v1/people/{user_id}/avatar": {
+      "get": {
+        "description": "A person's profile picture (WebP), for members of their household.",
+        "operationId": "sunfleck_accounts_api_get_avatar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Avatar",
+        "tags": [
+          "accounts"
         ]
       }
     },

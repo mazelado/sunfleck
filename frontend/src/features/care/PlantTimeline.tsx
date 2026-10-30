@@ -30,6 +30,7 @@ import {
 } from "../../api/care";
 import type { Photo } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { PersonAvatar } from "../../components/PersonAvatar";
 import { formatDateAndTime, relativeDay } from "../../lib/relativeTime";
 import { CareEventDialog } from "./CareEventDialog";
 import { CareIcon } from "./icons";
@@ -157,9 +158,15 @@ function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
         <Group gap={6}>
           <When at={event.performed_at} />
           {event.performed_by && (
-            <Text size="xs" c="dimmed">
-              · {t("care.by", { name: event.performed_by.display_name })}
-            </Text>
+            <Group gap={4} wrap="nowrap">
+              <Text size="xs" c="dimmed">
+                ·
+              </Text>
+              <PersonAvatar url={event.performed_by.avatar_url} size={18} />
+              <Text size="xs" c="dimmed">
+                {t("care.by", { name: event.performed_by.display_name })}
+              </Text>
+            </Group>
           )}
         </Group>
         {event.notes && (

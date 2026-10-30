@@ -1,10 +1,14 @@
+import io
 import json
 from collections.abc import Callable
 from typing import Any
 
 import pytest
 from django.core import mail
+from django.core.files.storage import default_storage
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, override_settings
+from PIL import Image
 from pytest_django.fixtures import Settings
 
 from sunfleck.accounts import services
@@ -15,6 +19,7 @@ from sunfleck.accounts.tests.factories import (
     MembershipFactory,
     UserFactory,
 )
+from sunfleck.plants.tests.factories import image_bytes
 
 STRONG_PASSWORD = "a long and unusual passphrase"
 ClientAs = Callable[[Role], Client]
@@ -507,3 +512,83 @@ def test_accepting_requires_the_csrf_token() -> None:
 
     assert response.status_code == 403
     assert not User.objects.filter(email="new@example.com").exists()
+
+
+# --- Profile pictures -------------------------------------------------------------------------
+
+
+def upload_avatar(client: Client, data: bytes | None = None) -> Any:
+    file = SimpleUploadedFile("me.jpg", data or image_bytes(600, 400), content_type="image/jpeg")
+    return client.post("/api/v1/me/avatar", {"file": file})
+
+
+def test_people_set_and_remove_their_profile_picture(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    ada = member_of(Role.VIEWER).user
+    client = Client()
+    client.force_login(ada)
+
+    response = upload_avatar(client)
+
+    assert response.status_code == 200
+    url = response.json()["avatar_url"]
+    assert url.startswith(f"/api/v1/people/{ada.pk}/avatar?v=")
+    picture = client.get(url)
+    assert picture["Content-Type"] == "image/webp"
+    image = Image.open(io.BytesIO(b"".join(picture.streaming_content)))  # type: ignore[attr-defined]
+    assert image.size == (256, 256)
+    assert not image.getexif()
+
+    # A new picture gets a new address, and the old file goes.
+    ada.refresh_from_db()
+    old_name = ada.avatar.name or ""
+    newer = upload_avatar(client).json()["avatar_url"]
+    assert newer != url
+    assert not ada.avatar.storage.exists(old_name)
+
+    removed = client.delete("/api/v1/me/avatar")
+    assert removed.json()["avatar_url"] is None
+    assert client.get(newer).status_code == 404
+
+
+def test_only_the_household_sees_a_profile_picture(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    ada, grace = member_of(Role.ADMIN).user, member_of(Role.VIEWER).user
+    outsider = MembershipFactory.create().user
+    services.set_avatar(ada, io.BytesIO(image_bytes()), 1000)
+    url = f"/api/v1/people/{ada.pk}/avatar"
+    as_grace, as_outsider = Client(), Client()
+    as_grace.force_login(grace)
+    as_outsider.force_login(outsider)
+
+    members = as_grace.get("/api/v1/household/members").json()
+
+    assert as_grace.get(url).status_code == 200
+    assert as_outsider.get(url).status_code == 404
+    assert Client().get(url).status_code == 401
+    ada_member = next(m for m in members if m["user_id"] == ada.pk)
+    assert ada_member["avatar_url"].startswith(url)
+
+
+def test_a_profile_picture_must_be_an_image(member_of: Callable[[Role], Membership]) -> None:
+    client = Client()
+    client.force_login(member_of(Role.VIEWER).user)
+
+    response = upload_avatar(client, b"not an image")
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_image"
+
+
+def test_a_profile_picture_goes_with_its_account(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    ada = member_of(Role.VIEWER).user
+    services.set_avatar(ada, io.BytesIO(image_bytes()), 1000)
+    name = ada.avatar.name or ""
+
+    ada.delete()
+
+    assert not default_storage.exists(name)
