@@ -9,6 +9,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+**Bougainvillea.** How much water to give, and the first fixes from using 0.1.
+
 ### Added
 
 - **How much water to give**: each predicted watering says roughly how much, in your units:
@@ -58,5 +62,6 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mazelado/sunfleck/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mazelado/sunfleck/releases/tag/v0.1.0
