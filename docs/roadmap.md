@@ -103,6 +103,8 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
   API key, so they stay plugins: their data isn't copied into Sunfleck's CC BY-SA dataset.
 - **Toxicity flags** (pets and children) in the dataset, each with its sources. They only ever
   say "known to be toxic" (with the source) or "unknown", never "safe".
+- **When was it last cared for?** Adding a plant asks when it was last watered and
+  fertilized, so its first due dates and care bars are right from the start (#76).
 
 ### Integrations
 
