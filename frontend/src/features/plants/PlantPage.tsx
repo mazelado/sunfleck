@@ -33,6 +33,7 @@ import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
 import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
+import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 
@@ -119,6 +120,8 @@ export function PlantPage() {
           </Button>
         )}
       </Group>
+
+      <CareGlance glance={data.glance} />
 
       {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
 

@@ -875,6 +875,32 @@
     "mm": "{{value}} mm",
     "inches": "{{value}} in"
   },
+  "glance": {
+    "water": {
+      "inDays_one": "Water tomorrow",
+      "inDays_other": "Water in {{count}} days",
+      "today": "Water today",
+      "overdue_one": "Watering overdue by {{count}} day",
+      "overdue_other": "Watering overdue by {{count}} days",
+      "resting": "No watering for now (resting season)",
+      "restingUntil": "No watering until {{date}} (resting season)"
+    },
+    "fertilizer": {
+      "inDays_one": "Fertilize tomorrow",
+      "inDays_other": "Fertilize in {{count}} days",
+      "today": "Fertilize today",
+      "overdue_one": "Fertilizing overdue by {{count}} day",
+      "overdue_other": "Fertilizing overdue by {{count}} days",
+      "resting": "No fertilizer for now",
+      "restingUntil": "No fertilizer until {{date}}"
+    },
+    "light": {
+      "low": "Light: low for this plant",
+      "aBitLow": "Light: a bit low for this plant",
+      "good": "Light: what this plant likes",
+      "bright": "Light: brighter than this plant likes"
+    }
+  },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
     "accept_one": "Water every day",

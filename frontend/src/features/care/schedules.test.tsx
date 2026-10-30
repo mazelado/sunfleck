@@ -41,6 +41,7 @@ const plant: Plant = {
   species: null,
   care_profile: { key: "tropical_aroid", name: "Tropical aroid", chosen: true },
   created_at: "2026-04-01T10:00:00Z",
+  glance: { water: null, fertilizer: null, light: null },
 };
 
 const aroid: CareProfile = {

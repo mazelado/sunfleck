@@ -61,6 +61,9 @@ signing out are in the account menu (your picture at the top right).
 
 ## Care, and when it's due
 
+- **At a glance**: each plant's card and page show slim bars for water, fertilizer and
+  light. Water and fertilizer run down until the care is due, and turn red when it's due;
+  light is full when the spot gets what the plant likes at this time of year.
 - **Logging care**: tap **Water**, **Fertilize** or **More care** on a plant's page, or the
   check mark on Today. To add notes or log care you did earlier, use **Log with details**.
   The **timeline** on the plant's page shows everything, with its photos.
