@@ -11,6 +11,7 @@ from sunfleck.places.tests.factories import LocationFactory, SiteFactory, Window
 from sunfleck.plants.models import Plant, PlantLight
 from sunfleck.plants.tests.factories import PlantFactory
 from sunfleck.prediction.light import light_verdict
+from sunfleck.prediction.seasons import Season
 from sunfleck.taxonomy.models import CareArchetype
 
 ClientAs = Callable[[Role], Client]
@@ -66,12 +67,16 @@ def test_a_plants_light_through_the_year(monty: Plant) -> None:
     by_season = {season.season: season for season in report.seasons}
     assert list(by_season) == ["spring", "summer", "autumn", "winter"]
     # A south window gives less in winter; the grow light gives the same all year.
-    assert by_season["winter"].dli < by_season["spring"].dli < by_season["summer"].dli
+    assert (
+        by_season[Season.WINTER].dli < by_season[Season.SPRING].dli < by_season[Season.SUMMER].dli
+    )
     [window, grow] = sorted(report.sources, key=lambda source: source.source.name)
     assert window.source.name == "Bay window"
-    assert window.dli["winter"] < window.dli["summer"]
+    assert window.dli[Season.WINTER] < window.dli[Season.SUMMER]
     assert len(set(grow.dli.values())) == 1
-    assert by_season["spring"].dli == pytest.approx(window.dli["spring"] + grow.dli["spring"])
+    assert by_season[Season.SPRING].dli == pytest.approx(
+        window.dli[Season.SPRING] + grow.dli[Season.SPRING]
+    )
     assert all(
         season.verdict in {"low", "a_bit_low", "good", "bright"} for season in report.seasons
     )
