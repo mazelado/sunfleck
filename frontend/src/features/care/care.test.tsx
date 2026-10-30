@@ -37,6 +37,7 @@ const plant: Plant = {
   species: null,
   care_profile: null,
   created_at: "2026-04-01T10:00:00Z",
+  glance: { water: null, fertilizer: null, light: null },
 };
 
 function careEvent(overrides: Partial<CareEvent> = {}): CareEvent {
@@ -375,6 +376,8 @@ describe("plant cards", () => {
               cover_thumbnail_url: null,
               species: null,
               last_watered_at: new Date(Date.now() - 3 * DAY).toISOString(),
+              needs_routine: false,
+              glance: { water: null, fertilizer: null, light: null },
             },
             {
               id: 8,
@@ -384,6 +387,8 @@ describe("plant cards", () => {
               cover_thumbnail_url: null,
               species: null,
               last_watered_at: null,
+              needs_routine: false,
+              glance: { water: null, fertilizer: null, light: null },
             },
           ],
           count: 2,

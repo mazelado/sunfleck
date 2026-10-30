@@ -12,11 +12,13 @@ from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory
 from sunfleck.care import schedules
 from sunfleck.care.models import CareType, ScheduleMode
+from sunfleck.care.tests.factories import builtin
 from sunfleck.places.models import Location
 from sunfleck.places.tests.factories import LocationFactory, WindowFactory
 from sunfleck.plants import services
 from sunfleck.plants.models import Photo, Plant, PlantLight
 from sunfleck.plants.tests.factories import PlantFactory, image_bytes
+from sunfleck.taxonomy.models import CareArchetype
 
 ClientAs = Callable[[Role], Client]
 
@@ -250,13 +252,25 @@ def test_listing_plants_uses_a_fixed_number_of_queries(
     django_assert_max_num_queries: Any,
 ) -> None:
     client = client_as(Role.VIEWER)
+    window = WindowFactory.create(location=location)
+    aroid = CareArchetype.objects.get(key="tropical_aroid")
     for name in ["Basil", "Calathea", "Monstera"]:
-        _photo(PlantFactory.create(household=household, nickname=name, location=location))
+        plant = PlantFactory.create(
+            household=household, nickname=name, location=location, care_profile=aroid
+        )
+        _photo(plant)
+        PlantLight.objects.create(plant=plant, light_source=window, distance_cm=50)
+        schedules.create_schedule(
+            plant, schedules.ScheduleData(builtin("water").pk, ScheduleMode.PREDICTED)
+        )
 
-    with django_assert_max_num_queries(5):
+    # The plants, their count, and for all of them at once: schedules, care types, lights and
+    # light sources (for the care bars), and the session.
+    with django_assert_max_num_queries(7):
         response = client.get("/api/v1/plants")
 
     assert all(p["cover_thumbnail_url"] for p in response.json()["items"])
+    assert all(p["glance"]["water"] and p["glance"]["light"] for p in response.json()["items"])
 
 
 @pytest.mark.django_db

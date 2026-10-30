@@ -1,5 +1,6 @@
 import {
   Badge,
+  Box,
   Button,
   Card,
   Checkbox,
@@ -24,6 +25,7 @@ import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { relativeDay } from "../../lib/relativeTime";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 import { locationOptions } from "./locationOptions";
@@ -181,6 +183,9 @@ function PlantCard({ plant }: { plant: PlantSummary }) {
             ? t("care.lastWatered", { when: relativeDay(plant.last_watered_at, i18n.language) })
             : t("care.neverWatered")}
         </Text>
+        <Box mt={4}>
+          <CareGlance glance={plant.glance} compact />
+        </Box>
       </Stack>
     </Card>
   );

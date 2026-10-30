@@ -18,6 +18,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   on, it's estimated in cold weather from the outdoor dew point and the room's temperature
   (heated winter air is dry). The location's page shows the estimate, and **Why?** mentions
   when the air is dry for a plant that likes humid air.
+- **Care at a glance**: slim water, fertilizer and light bars on each plant's card and page.
+  Water and fertilizer run down until the care is due (red when it's due or overdue, grey
+  while it rests); light shows how the plant's spot compares with what it likes at this time
+  of year. Each bar is also said in words ("Water in 2 days", "Light: a bit low for this
+  plant"), on the page and for screen readers.
 
 ### Fixed
 
