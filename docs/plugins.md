@@ -116,6 +116,7 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | `register_api(router)` | Once, at startup | Nothing: add endpoints to the Django Ninja `router`, served under `/api/v1/plugins/<id>/` |
 | `register_periodic_jobs()` | Once, at startup (from M9) | `PeriodicJob`s to run in the background |
 | `identify_plant(photos, language, settings)` | When someone identifies a plant from photos (1 to 5, of the same plant) | An `Identification`: `Candidate`s by scientific name with a score from 0 to 1, or a `problem` (`missing_api_key`, `invalid_api_key`, `quota_exceeded`, `unavailable`) to tell the person about |
+| `complete_json(task, settings)` | When Sunfleck needs an AI answer, only when someone asks for one (e.g. a care profile suggestion); the first enabled plugin answers | An `AiAnswer`: `data` (a JSON object matching the `AiTask`'s `schema`, which Sunfleck checks again) and an `attribution`, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`) |
 
 - Hooks are only called for households that turned the plugin on, with that household's
   `settings` (None if the plugin has no settings). `register_api` and `register_periodic_jobs`

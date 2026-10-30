@@ -14,6 +14,8 @@ from pydantic import BaseModel
 
 from sunfleck.plugins.types import (
     Adjustment,
+    AiAnswer,
+    AiTask,
     CareContext,
     Identification,
     PeriodicJob,
@@ -72,4 +74,13 @@ def identify_plant(
     """Which species the plant in the photos (1 to 5, all of the same plant) may be.
 
     `language` is the person's language code (e.g. "en"), for common names.
+    """
+
+
+@hookspec
+def complete_json(task: AiTask, settings: BaseModel | None) -> AiAnswer | None:
+    """Answer `task` with an AI model, as JSON that matches its schema.
+
+    Called only when Sunfleck needs an AI answer (e.g. suggesting a care profile), never in
+    the background. The first enabled plugin that answers is used.
     """

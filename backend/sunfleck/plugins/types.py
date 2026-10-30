@@ -118,3 +118,34 @@ class Identification:
     problem: str | None = None
     # Identifications left today, if the service says.
     remaining: int | None = None
+
+
+@dataclass(frozen=True)
+class AiTask:
+    """Something for an AI model to answer, as JSON that matches `schema` (a JSON Schema).
+
+    `name` says what it's for, in a few letters and underscores (e.g. `care_profile`), as
+    some APIs ask for one. `instructions` says how to answer (a "system prompt"); `prompt` is
+    the question itself.
+    """
+
+    name: str
+    instructions: str
+    prompt: str
+    schema: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class AiAnswer:
+    """What a `complete_json` hook answered: the JSON data, or a problem.
+
+    `problem` is one of `missing_settings` (no model or key set), `invalid_api_key`,
+    `quota_exceeded`, `unavailable` (the service can't be reached or is down) or
+    `invalid_answer` (the model didn't answer JSON of the right shape; Sunfleck also checks
+    the data against the task's schema). Other failures should raise.
+    """
+
+    # Which service and model answered, shown with the answer (e.g. "Suggested by AI: llama3.1").
+    attribution: str
+    data: Mapping[str, Any] | None = None
+    problem: str | None = None

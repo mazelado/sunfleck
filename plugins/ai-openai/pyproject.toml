@@ -1,0 +1,25 @@
+[project]
+name = "sunfleck-ai-openai"
+version = "0.1.0"
+description = "AI for Sunfleck through any OpenAI-compatible API: OpenAI, or a model you run yourself with Ollama or LM Studio."
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.12"
+# Runs inside Sunfleck, which provides Django, Pydantic and the plugin API.
+dependencies = []
+
+[project.entry-points."sunfleck.plugins"]
+ai_openai = "sunfleck_ai_openai:plugin"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sunfleck_ai_openai"]
+
+[tool.ruff]
+extend = "../../backend/pyproject.toml"
+
+[tool.ruff.lint]
+extend-per-file-ignores = { "**/tests/**" = ["S101"] }

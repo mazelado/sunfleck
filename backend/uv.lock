@@ -1769,6 +1769,7 @@ dependencies = [
     { name = "pillow-heif" },
     { name = "pluggy" },
     { name = "pyyaml" },
+    { name = "sunfleck-ai-openai" },
     { name = "sunfleck-identify-plantnet" },
     { name = "sunfleck-weather-openmeteo" },
     { name = "whitenoise" },
@@ -1817,6 +1818,7 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], marker = "extra == 'postgres'", specifier = ">=3.3" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "redis", marker = "extra == 'redis'", specifier = ">=5.2" },
+    { name = "sunfleck-ai-openai", editable = "../plugins/ai-openai" },
     { name = "sunfleck-identify-plantnet", editable = "../plugins/identify-plantnet" },
     { name = "sunfleck-weather-openmeteo", editable = "../plugins/weather-openmeteo" },
     { name = "whitenoise", specifier = ">=6.12" },
@@ -1839,6 +1841,11 @@ dev = [
     { name = "types-jsonschema", specifier = ">=4.26.0.20261006" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20260906" },
 ]
+
+[[package]]
+name = "sunfleck-ai-openai"
+version = "0.1.0"
+source = { editable = "../plugins/ai-openai" }
 
 [[package]]
 name = "sunfleck-identify-plantnet"

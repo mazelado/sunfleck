@@ -11,6 +11,8 @@ import pluggy
 from sunfleck.plugins.info import API_VERSION, PluginInfo
 from sunfleck.plugins.types import (
     Adjustment,
+    AiAnswer,
+    AiTask,
     Alert,
     Candidate,
     CareContext,
@@ -32,6 +34,8 @@ if TYPE_CHECKING:
 __all__ = [
     "API_VERSION",
     "Adjustment",
+    "AiAnswer",
+    "AiTask",
     "Alert",
     "Candidate",
     "CareContext",
