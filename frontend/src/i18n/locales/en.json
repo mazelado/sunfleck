@@ -773,6 +773,8 @@
     "likely": "{{percent}}% likely",
     "use": "Use",
     "useGenus": "Use {{genus}}",
+    "chosen": "Species set to {{name}}",
+    "showAgain": "Show the suggestions again",
     "genusOnly": "This species isn't in the care guide yet, but its genus is.",
     "notInGuide": "Not in the care guide yet. You can still pick a care profile.",
     "noMatch": "No plant was recognized. Try a closer photo of a leaf or flower.",

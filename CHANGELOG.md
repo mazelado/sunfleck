@@ -16,6 +16,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Pot height** (optional), for a better estimate of how much soil a pot holds. It also
   refines when to water: shallow pots dry out sooner.
 
+### Changed
+
+- **Plant identification:** after you pick a suggestion with **Use**, the suggestions give way
+  to what it set ("Species set to …"), with a link to see them again.
+
 ### Fixed
 
 - On iPhones, the page no longer zooms in (and stays zoomed) when you tap into a field: text
