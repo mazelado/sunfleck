@@ -163,6 +163,21 @@ class History:
 # --- Watering ---------------------------------------------------------------------------------
 
 
+def light_level(
+    profile: Profile, conditions: Conditions, season: Season
+) -> tuple[float, float] | None:
+    """The light the spot gets (DLI, mol/m²/day) and what the profile would like there in that
+    season, or None when the spot's light isn't known."""
+    dli = (
+        indoor_dli(conditions.windows, conditions.grow_lights, season, conditions.latitude)
+        if conditions.indoor
+        else outdoor_dli(conditions.exposure, season, conditions.latitude)
+    )
+    if dli is None:
+        return None
+    return dli, profile.dli_ideal * seasonal_sun(season, conditions.latitude)
+
+
 def light_factor(profile: Profile, conditions: Conditions, season: Season) -> Factor:
     """More light than the profile expects dries the soil faster; less, slower.
 
@@ -171,14 +186,10 @@ def light_factor(profile: Profile, conditions: Conditions, season: Season) -> Fa
     """
     if conditions.indoor is None:
         return Factor("no_location")
-    dli = (
-        indoor_dli(conditions.windows, conditions.grow_lights, season, conditions.latitude)
-        if conditions.indoor
-        else outdoor_dli(conditions.exposure, season, conditions.latitude)
-    )
-    if dli is None:
+    level = light_level(profile, conditions, season)
+    if level is None:
         return Factor("no_light_info", details={"indoor": conditions.indoor})
-    expected = profile.dli_ideal * seasonal_sun(season, conditions.latitude)
+    dli, expected = level
     multiplier = _clamp((max(dli, 0.5) / expected) ** -0.25, 0.8, 1.25)
     return Factor("light", multiplier, {"dli": round(dli, 1), "expected": round(expected, 1)})
 

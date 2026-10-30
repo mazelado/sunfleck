@@ -89,23 +89,32 @@ def conditions_for(plant: Plant) -> Conditions:
             latitude=location.site.latitude,
             exposure=location.exposure or None,
         )
-    windows = []
-    grow_lights = []
-    for link in plant.light_links.select_related("light_source").filter(light_source__enabled=True):
-        light = link.light_source
-        if light.kind == LightSourceKind.WINDOW and light.direction:
-            windows.append(Window(light.direction, link.distance_cm))
-        elif light.ppfd and light.on_time and light.off_time:
-            grow_lights.append(GrowLight(grow_light_dli(light.ppfd, light.on_time, light.off_time)))
+    windows, grow_lights = plant_lights(plant)
     return replace(
         plant_only,
         indoor=True,
         latitude=location.site.latitude,
-        windows=tuple(windows),
-        grow_lights=tuple(grow_lights),
+        windows=windows,
+        grow_lights=grow_lights,
         temperature_min_c=location.temperature_min_c,
         temperature_max_c=location.temperature_max_c,
     )
+
+
+def plant_lights(plant: Plant) -> tuple[tuple[Window, ...], tuple[GrowLight, ...]]:
+    """The windows and grow lights in use that reach the plant. Reads `plant.light_links`,
+    so prefetch `light_links__light_source` when doing this for many plants."""
+    windows = []
+    grow_lights = []
+    for link in plant.light_links.all():
+        light = link.light_source
+        if not light.enabled:
+            continue
+        if light.kind == LightSourceKind.WINDOW and light.direction:
+            windows.append(Window(light.direction, link.distance_cm))
+        elif light.ppfd and light.on_time and light.off_time:
+            grow_lights.append(GrowLight(grow_light_dli(light.ppfd, light.on_time, light.off_time)))
+    return tuple(windows), tuple(grow_lights)
 
 
 def history_for(plant: Plant, care_type: CareType, started_on: date) -> History:

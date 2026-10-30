@@ -1201,6 +1201,24 @@ export interface components {
             /** Skipped */
             skipped: boolean;
         };
+        /** CareLevelOut */
+        CareLevelOut: {
+            /**
+             * Due In Days
+             * @description Negative when overdue; None while it rests.
+             */
+            due_in_days: number | null;
+            /**
+             * Level
+             * @description 1 just after the care, down to 0 when it's due; None while it rests.
+             */
+            level: number | null;
+            /**
+             * Resting Until
+             * @description While it rests: when it starts again.
+             */
+            resting_until: string | null;
+        };
         /** CareProfileOut */
         CareProfileOut: {
             /** Description */
@@ -1393,6 +1411,15 @@ export interface components {
             /** Pause Months North */
             pause_months_north: number[];
         };
+        /**
+         * GlanceOut
+         * @description For the slim water, fertilizer and light bars. Each is None when it isn't known.
+         */
+        GlanceOut: {
+            fertilizer: components["schemas"]["CareLevelOut"] | null;
+            light: components["schemas"]["LightLevelOut"] | null;
+            water: components["schemas"]["CareLevelOut"] | null;
+        };
         /** HealthOut */
         HealthOut: {
             /** Database */
@@ -1543,6 +1570,19 @@ export interface components {
             /** Invited By */
             invited_by: string | null;
             role: components["schemas"]["Role"];
+        };
+        /** LightLevelOut */
+        LightLevelOut: {
+            /**
+             * Dli
+             * @description The light at the plant's spot, mol/m²/day.
+             */
+            dli: number;
+            /**
+             * Ideal
+             * @description What its care profile likes there at this time of year.
+             */
+            ideal: number;
         };
         /** LightOut */
         LightOut: {
@@ -1894,6 +1934,7 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            glance: components["schemas"]["GlanceOut"];
             /** Id */
             id: number;
             /** Last Watered At */
@@ -1937,6 +1978,7 @@ export interface components {
         PlantSummaryOut: {
             /** Cover Thumbnail Url */
             cover_thumbnail_url: string | null;
+            glance: components["schemas"]["GlanceOut"];
             /** Id */
             id: number;
             /** Last Watered At */
