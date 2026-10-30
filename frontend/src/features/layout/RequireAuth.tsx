@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 
-import { useMe } from "../../api/accounts";
+import { hasSignedOut, useMe } from "../../api/accounts";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { setLanguage } from "../../i18n";
 
@@ -20,6 +20,12 @@ export function RequireAuth() {
     return <FullPageLoader />;
   }
   if (!me.data) {
+    // After signing out, signing in starts afresh (on Today). The sign-out also goes to the
+    // sign-in page, but this page may see the signed-out session before that shows.
+    if (hasSignedOut()) {
+      return <Navigate to="/sign-in" replace />;
+    }
+    // The session ended: come back here after signing in.
     const next = encodeURIComponent(pathname + search);
     return <Navigate to={`/sign-in?next=${next}`} replace />;
   }
