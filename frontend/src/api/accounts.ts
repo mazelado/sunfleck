@@ -55,8 +55,20 @@ const SHARED_QUERY_KEYS = new Set<unknown>([keys.setup[0], "invitation"]);
  */
 function useResetCache() {
   const queryClient = useQueryClient();
-  return () =>
-    queryClient.resetQueries({ predicate: (query) => !SHARED_QUERY_KEYS.has(query.queryKey[0]) });
+  return ({ signingOut = false } = {}) => {
+    signedOut = signingOut;
+    return queryClient.resetQueries({
+      predicate: (query) => !SHARED_QUERY_KEYS.has(query.queryKey[0]),
+    });
+  };
+}
+
+let signedOut = false;
+
+/** Whether the person signed out, rather than their session ending (e.g. it expired). Kept
+ * until they sign in again, as pages can still see the signed-out session after leaving. */
+export function hasSignedOut() {
+  return signedOut;
 }
 
 export function useSetup() {
@@ -76,7 +88,7 @@ export function useSignIn() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       allauth.signIn(email, password),
-    onSuccess: resetCache,
+    onSuccess: () => resetCache(),
   });
 }
 
@@ -88,7 +100,7 @@ export function useSignOut(leave: () => unknown) {
     mutationFn: allauth.signOut,
     onSuccess: async () => {
       await leave();
-      await resetCache();
+      await resetCache({ signingOut: true });
     },
   });
 }
@@ -102,7 +114,7 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: ({ key, password }: { key: string; password: string }) =>
       allauth.resetPassword(key, password),
-    onSuccess: resetCache,
+    onSuccess: () => resetCache(),
   });
 }
 
@@ -274,6 +286,6 @@ export function useAcceptInvitation(token: string) {
           body,
         }),
       ),
-    onSuccess: resetCache,
+    onSuccess: () => resetCache(),
   });
 }
