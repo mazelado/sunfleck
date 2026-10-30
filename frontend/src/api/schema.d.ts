@@ -1716,6 +1716,11 @@ export interface components {
             /** Location Id */
             location_id?: number | null;
             /**
+             * Needs Routine
+             * @description Only plants that do (or don't) need a care schedule.
+             */
+            needs_routine?: boolean | null;
+            /**
              * Offset
              * @default 0
              */
@@ -1859,6 +1864,11 @@ export interface components {
             /** Last Watered At */
             last_watered_at: string | null;
             location: components["schemas"]["PlantLocationOut"] | null;
+            /**
+             * Needs Routine
+             * @description Looked after (active or dormant) but has no care schedule yet.
+             */
+            needs_routine: boolean;
             /** Nickname */
             nickname: string;
             species: components["schemas"]["PlantSpeciesOut"] | null;
@@ -2335,6 +2345,11 @@ export interface components {
              * @description Overdue care, then care due soonest.
              */
             tasks: components["schemas"]["TaskOut"][];
+            /**
+             * Unscheduled Plant Id
+             * @description When exactly one plant has no schedule, which one: the app links to it.
+             */
+            unscheduled_plant_id: number | null;
             /**
              * Unscheduled Plants
              * @description Plants being looked after with no schedule.
@@ -3470,6 +3485,8 @@ export interface operations {
                 q?: string;
                 location_id?: number | null;
                 status?: components["schemas"]["PlantStatus"] | null;
+                /** @description Only plants that do (or don't) need a care schedule. */
+                needs_routine?: boolean | null;
             };
             header?: never;
             path?: never;

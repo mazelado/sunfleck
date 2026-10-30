@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Plants without a care routine** are marked "No routine yet" in the plant list, which can
+  show only them. Today's notice links straight to the plant when there's one, or to that
+  list.
+
 ## [0.2.0] - 2026-10-30
 
 **Bougainvillea.** How much water to give, and the first fixes from using 0.1.

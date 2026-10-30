@@ -10,6 +10,8 @@ from django.test import Client
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory
+from sunfleck.care import schedules
+from sunfleck.care.models import CareType, ScheduleMode
 from sunfleck.places.models import Location
 from sunfleck.places.tests.factories import LocationFactory, WindowFactory
 from sunfleck.plants import services
@@ -164,6 +166,30 @@ def test_list_is_paged_searchable_and_filterable(
     assert [p["nickname"] for p in searched["items"]] == ["Mint", "Monstera"]
     assert in_location["count"] == 4
     assert [p["nickname"] for p in deceased["items"]] == ["Old fern"]
+
+
+@pytest.mark.django_db
+def test_plants_without_a_care_schedule_are_marked_and_filterable(
+    client_as: ClientAs, household: Household
+) -> None:
+    rotate = CareType.objects.get(household=None, key="rotate")
+    scheduled = PlantFactory.create(household=household, nickname="Basil")
+    schedules.create_schedule(scheduled, schedules.ScheduleData(rotate.pk, ScheduleMode.FIXED, 7))
+    PlantFactory.create(household=household, nickname="Fern")
+    PlantFactory.create(household=household, nickname="Old fern", status="deceased")
+    client = client_as(Role.VIEWER)
+
+    listed = client.get("/api/v1/plants").json()["items"]
+    needing = client.get("/api/v1/plants?needs_routine=true").json()["items"]
+    not_needing = client.get("/api/v1/plants?needs_routine=false").json()["items"]
+
+    assert {p["nickname"]: p["needs_routine"] for p in listed} == {
+        "Basil": False,
+        "Fern": True,
+        "Old fern": False,  # not looked after any more
+    }
+    assert [p["nickname"] for p in needing] == ["Fern"]
+    assert [p["nickname"] for p in not_needing] == ["Basil", "Old fern"]
 
 
 @pytest.mark.django_db

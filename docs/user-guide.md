@@ -76,7 +76,9 @@ Everything is in the account menu (your avatar at the top right).
 
 Today lists what's due or overdue, grouped by location, then what's coming up this week. Each
 site's weather is shown at the top, with frost warnings, when the weather plugin is on. If
-some plants have no schedules yet, Today says so.
+some plants have no schedules yet, Today says so and links to them: to the plant when there's
+one, or to the plant list showing only those. In the plant list, they're marked **No routine
+yet**.
 
 ## Notifications
 
