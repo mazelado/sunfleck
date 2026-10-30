@@ -901,6 +901,29 @@
       "bright": "Light: brighter than this plant likes"
     }
   },
+  "light": {
+    "title": "Is this spot bright enough?",
+    "season": "Season",
+    "here": "Here",
+    "likes": "It likes",
+    "verdict": "How it compares",
+    "now": "now",
+    "verdicts": {
+      "low": "Low",
+      "a_bit_low": "A bit low",
+      "good": "Good",
+      "bright": "Very bright"
+    },
+    "unit": "Light is the day's total, in mol/m²/day (the daily light integral, DLI). These are estimates for a typical day.",
+    "tipDim": "Too little light {{seasons}}: moving it closer to a window, or a grow light, would help.",
+    "tipBright": "More light than it likes {{seasons}}: some shade from the strongest sun may help.",
+    "throughYear": "{{distance}} from the glass, through the year:",
+    "seasonValues": "Spring {{spring}} · Summer {{summer}} · Autumn {{autumn}} · Winter {{winter}} mol/m²/day",
+    "givesNow": "About {{dli}} mol/m²/day of light here now",
+    "growLightAllYear": "About {{dli}} mol/m²/day, all year",
+    "allYear": "all year",
+    "inSeasons": "in {{seasons}}"
+  },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
     "accept_one": "Water every day",

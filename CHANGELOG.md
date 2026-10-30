@@ -23,6 +23,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   while it rests); light shows how the plant's spot compares with what it likes at this time
   of year. Each bar is also said in words ("Water in 2 days", "Light: a bit low for this
   plant"), on the page and for screen readers.
+- **Is this spot bright enough?** A plant's page compares the light at its spot with what it
+  likes, season by season, with a tip when it's too dim or too bright, and says how much
+  light each window or grow light gives it now. A location's page shows each window's light
+  through the year (at 1 m from the glass) and each grow light's.
 - **Learning from how you water**: when your last few waterings were all clearly further apart
   (or closer together) than a plant's schedule, its page offers to match the schedule to your
   routine, e.g. "You've been watering about every 9 days, but the schedule says every 6".
