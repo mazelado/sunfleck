@@ -347,6 +347,13 @@ describe("plant form", () => {
     expect(screen.getByRole("combobox", { name: /Species/ })).toHaveValue(
       "Swiss cheese plant (Monstera deliciosa)",
     );
+    // The suggestions give way to what "Use" did, which takes the focus.
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent("Species set to Cheese plant (Monstera deliciosa)");
+    expect(status).toHaveFocus();
+    expect(screen.queryByRole("button", { name: "Use" })).not.toBeInTheDocument();
+    await user.click(within(status).getByRole("button", { name: "Show the suggestions again" }));
+    expect(screen.getByRole("button", { name: "Use" })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => {

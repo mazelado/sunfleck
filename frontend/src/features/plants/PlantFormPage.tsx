@@ -237,7 +237,11 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
                   leftSection={<IconPhoto size={16} />}
                   {...form.getInputProps("photo")}
                 />
-                <IdentifyPlant photo={values.photo} onChoose={chooseSpecies} />
+                <IdentifyPlant
+                  photo={values.photo}
+                  speciesId={values.species?.id ?? null}
+                  onChoose={chooseSpecies}
+                />
               </>
             )}
             <SpeciesPicker
