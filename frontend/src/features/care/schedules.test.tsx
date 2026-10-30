@@ -167,6 +167,25 @@ describe("wording", () => {
     ).toBe("The room is about 79°F; its care profile likes 64°F–81°F");
     expect(
       explain({
+        code: "humidity",
+        multiplier: 0.84,
+        details: { percent: 28, estimated: true, likes_humid: true },
+      }),
+    ).toEqual({
+      text:
+        "The air indoors is about 28% humidity today (estimated from the weather). That's dry " +
+        "for this plant, which likes humid air: a tray of wet pebbles or grouping plants helps",
+      effect: "16% sooner",
+    });
+    expect(
+      explain({
+        code: "humidity",
+        multiplier: 1.2,
+        details: { percent: 70, estimated: false, likes_humid: false },
+      }).text,
+    ).toBe("The air in this location is about 70% humidity");
+    expect(
+      explain({
         code: "feedback",
         multiplier: 1.27,
         details: { too_dry: 0, just_right: 1, still_wet: 2 },

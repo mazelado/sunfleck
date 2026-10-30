@@ -9,6 +9,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Humidity in watering predictions**: indoors, dry air means watering sooner and damp air
+  later. A location's own humidity setting is used; without one, and with the weather plugin
+  on, it's estimated in cold weather from the outdoor dew point and the room's temperature
+  (heated winter air is dry). The location's page shows the estimate, and **Why?** mentions
+  when the air is dry for a plant that likes humid air.
+
 ### Fixed
 
 - On iPhones, the tab bar sat higher than needed: the space for the home indicator was counted

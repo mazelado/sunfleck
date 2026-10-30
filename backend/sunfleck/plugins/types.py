@@ -52,7 +52,8 @@ class Alert:
 
 @dataclass(frozen=True)
 class SiteConditions:
-    """Current conditions and today's forecast at a site, for the Today page.
+    """Current conditions and today's forecast at a site, for the Today page and for
+    estimating indoor humidity.
 
     Temperatures are in °C and precipitation in mm; `weather_code` is a WMO weather code.
     """
@@ -65,6 +66,8 @@ class SiteConditions:
     today_max_c: float | None = None
     precipitation_mm: float | None = None
     weather_code: int | None = None
+    # Today's average outdoor dew point, used to estimate the humidity indoors.
+    dew_point_c: float | None = None
     alerts: tuple[Alert, ...] = ()
 
 

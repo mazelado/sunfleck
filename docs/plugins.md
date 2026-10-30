@@ -110,7 +110,7 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | Hook | Called | Returns |
 |---|---|---|
 | `care_factors(context, settings)` | When a plant's predicted watering is calculated | `Adjustment`s: a `Factor` (its `multiplier` changes the interval, its `details` explain it, and must be JSON) and, optionally, a day before which watering isn't due |
-| `site_conditions(site, settings)` | For the Today page | `SiteConditions` (temperatures, precipitation, a WMO weather code, alerts such as frost), or None |
+| `site_conditions(site, settings)` | For the Today page, and to estimate indoor humidity | `SiteConditions` (temperatures, precipitation, a WMO weather code, today's average dew point, alerts such as frost), or None |
 | `on_care_event_logged(event, settings)` | After care is logged | Nothing |
 | `on_plant_created(plant, settings)` | After a plant is added | Nothing |
 | `register_api(router)` | Once, at startup | Nothing: add endpoints to the Django Ninja `router`, served under `/api/v1/plugins/<id>/` |

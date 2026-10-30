@@ -1421,6 +1421,18 @@
               }
             ]
           },
+          "humidity_estimate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Indoors, on a single location: today's humidity in % estimated from the weather (a plugin). None when there's no weather, or it's warm outside.",
+            "title": "Humidity Estimate"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
