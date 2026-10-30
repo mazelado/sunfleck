@@ -11,6 +11,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **About Sunfleck**, in the account menu: which version is running, with its release notes,
+  the version of the care data, the licences and the source code, and credits.
 - **Humidity in watering predictions**: indoors, dry air means watering sooner and damp air
   later. A location's own humidity setting is used; without one, and with the weather plugin
   on, it's estimated in cold weather from the outdoor dew point and the room's temperature

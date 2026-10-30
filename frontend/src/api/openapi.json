@@ -1,6 +1,53 @@
 {
   "components": {
     "schemas": {
+      "AboutOut": {
+        "properties": {
+          "care_dataset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Care Dataset"
+          },
+          "release_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Name"
+          },
+          "release_notes_url": {
+            "title": "Release Notes Url",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "release_name",
+          "care_dataset",
+          "source_url",
+          "release_notes_url"
+        ],
+        "title": "AboutOut",
+        "type": "object"
+      },
       "AcceptInvitationIn": {
         "properties": {
           "display_name": {
@@ -3818,6 +3865,34 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/about": {
+      "get": {
+        "description": "Which version of Sunfleck and its care data are running, and where the source is.",
+        "operationId": "sunfleck_core_api_about",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AboutOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "About",
+        "tags": [
+          "core"
+        ]
+      }
+    },
     "/api/v1/care-events/bulk": {
       "post": {
         "description": "Log the same care for several plants at once, e.g. watering a whole room; all or none.",
