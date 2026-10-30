@@ -490,6 +490,48 @@ describe("plant page", () => {
 });
 
 describe("location page", () => {
+  it("moves plants from elsewhere into the location", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    let sent: unknown = null;
+    server.use(
+      http.get("*/api/v1/plants", ({ request }) => {
+        if (new URL(request.url).searchParams.get("location_id")) {
+          return HttpResponse.json({ items: [], count: 0 });
+        }
+        const items = [
+          summary({ location: null }),
+          summary({ id: 8, nickname: "Old fern", status: "deceased", location: null }),
+        ];
+        return HttpResponse.json({ items, count: items.length });
+      }),
+      http.post("*/api/v1/plants/move", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json([summary()]);
+      }),
+    );
+    const { user } = renderApp("/places/1/locations/10");
+
+    await user.click(await screen.findByRole("button", { name: "Move plants here" }));
+    const dialog = await screen.findByRole("dialog", { name: "Move plants to Living room" });
+    const choices = await within(dialog).findByRole("group", { name: /^Plants/ });
+    // Plants that aren't looked after any more aren't offered.
+    expect(within(choices).queryByRole("checkbox", { name: "Old fern" })).toBeNull();
+    expect(within(choices).getByText("No location")).toBeVisible();
+    await user.click(within(choices).getByRole("checkbox", { name: "Monty" }));
+    await user.click(within(dialog).getByRole("button", { name: "Move here" }));
+
+    await waitFor(() => {
+      expect(sent).toEqual({ location_id: 10, plant_ids: [7] });
+    });
+    // The living room has windows: choose which reach the plant now.
+    expect(
+      await screen.findByText(
+        "Moved 1 plant to Living room. On its page, choose which windows and grow lights reach it here.",
+      ),
+    ).toBeVisible();
+  });
+
   it("lists the plants that live there", async () => {
     signInAs(gardener);
     withSites([home]);

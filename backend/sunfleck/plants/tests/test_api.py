@@ -15,7 +15,7 @@ from sunfleck.care.models import CareType, ScheduleMode
 from sunfleck.places.models import Location
 from sunfleck.places.tests.factories import LocationFactory, WindowFactory
 from sunfleck.plants import services
-from sunfleck.plants.models import Photo, Plant
+from sunfleck.plants.models import Photo, Plant, PlantLight
 from sunfleck.plants.tests.factories import PlantFactory, image_bytes
 
 ClientAs = Callable[[Role], Client]
@@ -82,6 +82,56 @@ def test_gardener_adds_a_plant_with_its_light(client_as: ClientAs, location: Loc
     [light] = data["light_sources"]
     assert (light["light_source"]["direction"], light["distance_cm"]) == ("E", 150)
     assert data["cover_photo"] is None
+
+
+@pytest.mark.django_db
+def test_gardener_moves_plants_into_a_location(
+    client_as: ClientAs, household: Household, plant: Plant, location: Location
+) -> None:
+    window = WindowFactory.create(location=location, direction="S")
+    PlantLight.objects.create(plant=plant, light_source=window, distance_cm=50)
+    homeless = PlantFactory.create(household=household, location=None, nickname="Fern")
+    kitchen = LocationFactory.create(site=location.site, name="Kitchen")
+    already_there = PlantFactory.create(household=household, location=kitchen, nickname="Basil")
+    client = client_as(Role.GARDENER)
+
+    response = send(
+        client,
+        "POST",
+        "/api/v1/plants/move",
+        {"location_id": kitchen.pk, "plant_ids": [plant.pk, homeless.pk, already_there.pk]},
+    )
+
+    assert response.status_code == 200
+    # Only the plants that moved are returned.
+    assert sorted(p["nickname"] for p in response.json()) == ["Fern", plant.nickname]
+    plant.refresh_from_db()
+    homeless.refresh_from_db()
+    assert (plant.location, homeless.location) == (kitchen, kitchen)
+    # The old location's window no longer reaches it.
+    assert not plant.light_links.exists()
+
+
+@pytest.mark.django_db
+def test_moving_plants_is_for_gardeners_and_within_the_household(
+    client_as: ClientAs, plant: Plant, location: Location
+) -> None:
+    other = PlantFactory.create(household=HouseholdFactory.create())
+    move = {"location_id": location.pk, "plant_ids": [plant.pk]}
+
+    viewer = send(client_as(Role.VIEWER), "POST", "/api/v1/plants/move", move)
+    foreign = send(
+        client_as(Role.GARDENER),
+        "POST",
+        "/api/v1/plants/move",
+        {"location_id": location.pk, "plant_ids": [plant.pk, other.pk]},
+    )
+
+    assert viewer.status_code == 403
+    assert foreign.status_code == 422
+    assert foreign.json()["error"]["code"] == "plant_not_found"
+    other.refresh_from_db()
+    assert other.location != location
 
 
 @pytest.mark.django_db

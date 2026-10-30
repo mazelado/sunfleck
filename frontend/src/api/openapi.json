@@ -1660,6 +1660,29 @@
         "title": "MessageOut",
         "type": "object"
       },
+      "MovePlantsIn": {
+        "properties": {
+          "location_id": {
+            "title": "Location Id",
+            "type": "integer"
+          },
+          "plant_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Plant Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "location_id",
+          "plant_ids"
+        ],
+        "title": "MovePlantsIn",
+        "type": "object"
+      },
       "NotificationsOut": {
         "properties": {
           "channels": {
@@ -5744,6 +5767,48 @@
           }
         ],
         "summary": "Create Plant",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/move": {
+      "post": {
+        "description": "Move plants into a location. Returns the plants that moved (those already there don't).\nThe lights that reached them are removed, as they belong to their old location.",
+        "operationId": "sunfleck_plants_api_move_plants",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovePlantsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlantSummaryOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Move Plants",
         "tags": [
           "plants"
         ]
