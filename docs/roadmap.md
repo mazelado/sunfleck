@@ -71,6 +71,8 @@ Getting around the app, and making it feel like yours.
   menu (#47).
 - **Profile pictures** (#48).
 - **Move plants into a location** from the location's page, not only add new ones (#45).
+- **Plants without a care schedule:** mark them in the plant list, filter for them, and link
+  straight to them from Today (#54).
 - **End-to-end tests** in CI: a few browser tests of the main journeys at phone size (setup,
   adding a plant, logging care), so that changes to navigation can't break them unnoticed.
 
