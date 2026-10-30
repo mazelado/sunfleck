@@ -129,7 +129,7 @@ export function PlantPage() {
       <PlantSchedules plant={data} />
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
-      <LightCheck plantId={data.id} />
+      <LightCheck plant={data} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
       <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />

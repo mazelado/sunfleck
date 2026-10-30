@@ -274,9 +274,24 @@ def test_watering_says_how_much_water_a_pot_needs() -> None:
     amount = factor(predict_watering(thirsty, conditions, WATERED, SPRING_DAY), "water_amount")
     more = factor(predict_watering(dry, conditions, WATERED, SPRING_DAY), "water_amount")
 
+    # A 15 cm pot: the soil that dries (15% or all of its depth), times the water it holds.
     assert amount.multiplier == 1.0
-    assert amount.details == {"litres": 0.32, "pot_litres": 2.2, "height_known": False}
-    assert more.details["litres"] == 0.65
+    assert amount.details == {"litres": 0.07, "pot_litres": 2.2, "height_known": False}
+    assert more.details["litres"] == 0.31
+
+
+def test_big_pots_need_more_water_but_not_in_proportion_to_their_volume() -> None:
+    dry = Profile(**{**vars(AROID), "let_dry": "completely"})
+
+    def litres(diameter_cm: int) -> float:
+        conditions = Conditions(indoor=True, pot_diameter_cm=diameter_cm)
+        prediction = predict_watering(dry, conditions, WATERED, SPRING_DAY)
+        return float(factor(prediction, "water_amount").details["litres"])
+
+    # A 38 cm (15 in) pot holds 16 times the soil of a 15 cm one, but only the top 10 cm or
+    # so dries between waterings: it needs about 6.5 times the water, about 2 L.
+    assert litres(38) == 2.02
+    assert litres(38) / litres(15) == pytest.approx(6.5, abs=0.1)
 
 
 def test_in_the_ground_watering_is_a_depth_of_water() -> None:

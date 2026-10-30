@@ -922,7 +922,11 @@
     "givesNow": "About {{dli}} mol/m²/day of light here now",
     "growLightAllYear": "About {{dli}} mol/m²/day, all year",
     "allYear": "all year",
-    "inSeasons": "in {{seasons}}"
+    "inSeasons": "in {{seasons}}",
+    "missingIndoor": "To see whether {{name}} gets enough light, tell Sunfleck which windows or grow lights reach it, and how far it is from each window.",
+    "missingOutdoor": "To see whether it gets enough light, set how much sun {{name}} gets.",
+    "addLights": "Add the lights that reach {{name}}",
+    "setSun": "Set the sun exposure"
   },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
