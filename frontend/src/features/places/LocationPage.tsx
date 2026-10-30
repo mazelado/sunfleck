@@ -8,6 +8,7 @@ import {
   type LightSource,
   type SourceLight,
   useDeleteLightSource,
+  useHumidityEstimate,
   useLocation,
   useLocationLight,
 } from "../../api/places";
@@ -31,6 +32,7 @@ export function LocationPage() {
   const units = useUnits();
   const deleteLight = useDeleteLightSource();
   const [dialog, setDialog] = useState<Dialog>(null);
+  const estimate = useHumidityEstimate(found.data).data;
   const lightThroughYear = useLocationLight(
     found.data?.id ?? 0,
     found.data?.kind === "indoor" && found.data.light_sources.length > 0,
@@ -62,6 +64,12 @@ export function LocationPage() {
           {conditions.length > 0 && (
             <Text size="sm" c="dimmed">
               {conditions.join(" · ")}
+            </Text>
+          )}
+          {estimate != null && (
+            <Text size="sm" c="dimmed">
+              {t("places.humidityEstimate", { percent: estimate })}
+              {location.humidity && ` ${t("places.humiditySettingWins")}`}
             </Text>
           )}
         </Stack>

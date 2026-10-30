@@ -1709,6 +1709,11 @@ export interface components {
         LocationOut: {
             exposure: components["schemas"]["Exposure"] | null;
             humidity: components["schemas"]["Humidity"] | null;
+            /**
+             * Humidity Estimate
+             * @description Indoors, on a single location: today's humidity in % estimated from the weather (a plugin). None when there's no weather, or it's warm outside.
+             */
+            humidity_estimate?: number | null;
             /** Id */
             id: number;
             kind: components["schemas"]["LocationKind"];

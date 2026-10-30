@@ -1,7 +1,8 @@
 """Predicting when a plant next needs watering or fertilizing, and explaining why.
 
 Watering starts from the care profile's interval for the current season, then each factor
-(light, temperature, pot, the plant being dormant, and feedback about the soil) multiplies it.
+(light, temperature, humidity, pot, the plant being dormant, and feedback about the soil)
+multiplies it.
 Every factor is reported, so the app can explain the result in plain words. A watering
 prediction also says roughly how much water to give (see `water_amount`).
 """
@@ -64,6 +65,14 @@ POT_MATERIAL = {
 
 DORMANT = 1.5
 
+# The air the care profiles' intervals assume, in % relative humidity. Drier air dries the
+# soil faster. A location's Low, Medium or High setting stands for about these values.
+TYPICAL_HUMIDITY = 50.0
+HUMIDITY_SETTING = {"low": 30.0, "medium": 50.0, "high": 70.0}
+# Profiles that like humid air, for a hint when the air is dry.
+LIKES_HUMID = frozenset({"medium_high", "high"})
+DRY_AIR = 40.0
+
 
 @dataclass(frozen=True)
 class Profile:
@@ -79,6 +88,8 @@ class Profile:
     # the plant grows in soil at all: air plants are soaked or misted, so no amount applies.
     let_dry: str | None = None
     in_soil: bool = True
+    # The air it likes: low, medium, medium_high or high.
+    humidity: str | None = None
 
     @classmethod
     def from_dataset(cls, profile: Mapping[str, Any]) -> "Profile":
@@ -98,6 +109,7 @@ class Profile:
             ),
             let_dry=profile["watering"].get("let_dry"),
             in_soil=profile.get("key") != "air_plant",
+            humidity=profile.get("humidity"),
         )
 
 
@@ -112,6 +124,10 @@ class Conditions:
     exposure: str | None = None  # outdoor: full_sun, part_shade, shade
     temperature_min_c: float | None = None
     temperature_max_c: float | None = None
+    # Indoors: the air's relative humidity in %, from the location's setting or, without
+    # one, estimated from the weather (see prediction.humidity).
+    humidity_percent: float | None = None
+    humidity_estimated: bool = False
     pot_diameter_cm: int | None = None
     pot_height_cm: int | None = None
     pot_material: str | None = None
@@ -205,6 +221,27 @@ def temperature_factor(profile: Profile, conditions: Conditions) -> Factor | Non
             "temperature_c": round(typical, 1),
             "ideal_min_c": profile.temperature_ideal_min,
             "ideal_max_c": profile.temperature_ideal_max,
+        },
+    )
+
+
+def humidity_factor(profile: Profile, conditions: Conditions) -> Factor | None:
+    """Dry air dries the soil faster; damp air, slower. Indoors only: outdoors, the weather
+    plugin's factors already cover it."""
+    if not conditions.indoor or conditions.humidity_percent is None:
+        return None
+    percent = conditions.humidity_percent
+    # How fast water evaporates follows how far the air is from saturation, damped because
+    # the soil and roots don't dry at the air's pace.
+    ratio = (100 - TYPICAL_HUMIDITY) / max(100 - percent, 5)
+    multiplier = _clamp(ratio**0.5, 0.8, 1.2)
+    return Factor(
+        "humidity",
+        multiplier,
+        {
+            "percent": round(percent),
+            "estimated": conditions.humidity_estimated,
+            "likes_humid": profile.humidity in LIKES_HUMID and percent < DRY_AIR,
         },
     )
 
@@ -323,6 +360,7 @@ def predict_watering(
     adjustments = [
         light_factor(profile, conditions, season),
         temperature_factor(profile, conditions),
+        humidity_factor(profile, conditions),
         *pot_factors(conditions),
         Factor("dormant", DORMANT) if conditions.dormant else None,
         feedback_factor(history.feedback),

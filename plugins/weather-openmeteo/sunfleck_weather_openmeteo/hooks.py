@@ -61,6 +61,7 @@ def site_conditions(site: Site, settings: Settings) -> SiteConditions:
         today_max_c=day.max_c if day else None,
         precipitation_mm=day.precipitation_mm if day else None,
         weather_code=forecast.weather_code,
+        dew_point_c=day.dew_point_c if day else None,
         alerts=tuple(alerts),
     )
 
