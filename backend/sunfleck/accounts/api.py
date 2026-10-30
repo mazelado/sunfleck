@@ -6,17 +6,20 @@ under /_allauth/browser/v1/.
 
 import logging
 from datetime import datetime
+from pathlib import PurePosixPath
 
 from django.conf import settings
 from django.contrib.auth import login
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
-from django.http import HttpRequest
+from django.http import FileResponse, HttpRequest
 from django.middleware.csrf import get_token
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from ninja import Router, Schema, Status
+from ninja import File, Router, Schema, Status
+from ninja.files import UploadedFile
 from ninja.security import django_auth
 from ninja.utils import check_csrf
 from pydantic import Field, field_validator
@@ -24,6 +27,7 @@ from pydantic import Field, field_validator
 from sunfleck.accounts import services
 from sunfleck.accounts.models import Household, Invitation, Membership, Role, UnitSystem, User
 from sunfleck.accounts.permissions import get_membership, require_role
+from sunfleck.core import images
 from sunfleck.core.errors import ApiError
 
 logger = logging.getLogger(__name__)
@@ -57,6 +61,7 @@ class MeOut(Schema):
     id: int
     email: str
     display_name: str
+    avatar_url: str | None = Field(description="The profile picture, if there is one.")
     locale: str
     unit_system: UnitSystem
     household: HouseholdOut | None
@@ -95,6 +100,7 @@ class MemberOut(Schema):
     user_id: int
     email: str
     display_name: str
+    avatar_url: str | None
     role: Role
 
 
@@ -163,12 +169,22 @@ def _password_error(exc: DjangoValidationError) -> ApiError:
     )
 
 
+def avatar_url(user: User) -> str | None:
+    """Where the person's profile picture is, if they have one. The address changes with the
+    picture, so browsers can keep it for long."""
+    if not user.avatar:
+        return None
+    url = reverse("api-v1:person_avatar", kwargs={"user_id": user.pk})
+    return f"{url}?v={PurePosixPath(user.avatar.name or '').stem}"
+
+
 def _me(user: User) -> MeOut:
     membership = get_membership(user)
     return MeOut(
         id=user.pk,
         email=user.email,
         display_name=user.display_name,
+        avatar_url=avatar_url(user),
         locale=user.locale,
         unit_system=UnitSystem(user.unit_system),
         household=(
@@ -186,6 +202,7 @@ def _member(membership: Membership) -> MemberOut:
         user_id=membership.user.pk,
         email=membership.user.email,
         display_name=membership.user.display_name,
+        avatar_url=avatar_url(membership.user),
         role=Role(membership.role),
     )
 
@@ -281,6 +298,40 @@ def update_me(request: HttpRequest, data: MeUpdate) -> MeOut:
         setattr(user, field, value)
     user.save(update_fields=[*changes.keys()])
     return _me(user)
+
+
+@router.post("/me/avatar", response=MeOut)
+def set_avatar(request: HttpRequest, file: File[UploadedFile]) -> MeOut:
+    """Set your profile picture: the middle of the photo, as a square."""
+    user = _user(request)
+    try:
+        services.set_avatar(user, file, file.size or 0)
+    except images.ImageError as exc:
+        raise ApiError(422, exc.code, str(exc), {"field": "file"}) from exc
+    return _me(user)
+
+
+@router.delete("/me/avatar", response=MeOut)
+def remove_avatar(request: HttpRequest) -> MeOut:
+    user = _user(request)
+    services.remove_avatar(user)
+    return _me(user)
+
+
+@router.get("/people/{user_id}/avatar", url_name="person_avatar")
+def get_avatar(request: HttpRequest, user_id: int) -> FileResponse:
+    """A person's profile picture (WebP), for members of their household."""
+    viewer = _user(request)
+    person = User.objects.filter(pk=user_id).first()
+    shares_household = person is not None and (
+        person.pk == viewer.pk
+        or Membership.objects.filter(user=person, household__memberships__user=viewer).exists()
+    )
+    if person is None or not person.avatar or not shares_household:
+        raise ApiError(404, "avatar_not_found", "There's no picture here.")
+    response = FileResponse(person.avatar.open("rb"), content_type="image/webp")
+    response["Cache-Control"] = "private, max-age=31536000, immutable"
+    return response
 
 
 # --- Household and members --------------------------------------------------------------------

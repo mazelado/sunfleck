@@ -15,8 +15,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from sunfleck.accounts.models import Household
+from sunfleck.core import images
 from sunfleck.places.models import LightSourceKind, Location
-from sunfleck.plants import images
 from sunfleck.plants.models import (
     ContainerMaterial,
     Photo,

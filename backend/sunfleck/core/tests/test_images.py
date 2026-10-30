@@ -6,7 +6,7 @@ import pytest
 import time_machine
 from PIL import ExifTags, Image
 
-from sunfleck.plants import images
+from sunfleck.core import images
 from sunfleck.plants.tests.factories import image_bytes
 
 TAKEN: dict[int, Any] = {ExifTags.Base.DateTimeOriginal: "2026:05:01 12:30:00"}

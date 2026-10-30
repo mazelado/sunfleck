@@ -108,8 +108,8 @@ Everyone in a household shares its places and plants. Admins invite people from
 | **Gardener** | Also add and change places, plants, schedules and care |
 | **Admin** | Also invite people, change roles, and manage plugins and exports |
 
-Under **Profile**, everyone sets their name, language, units (metric, or imperial: inches and
-°F), and password.
+Under **Profile**, everyone sets their name, a profile picture (only their household sees it),
+language, units (metric, or imperial: inches and °F), and password.
 
 ## Plugins
 
@@ -126,5 +126,5 @@ outside services: each one says exactly what it sends.
 
 Admins can download everything in the household as a ZIP file under **Export and import**: a
 backup, or a way to move to another server. Import it into a new household there. Passwords,
-notification addresses and API keys aren't included, so people set those up again; the page
+profile pictures, notification addresses and API keys aren't included, so people set those up again; the page
 lists anything else that needs doing after an import.

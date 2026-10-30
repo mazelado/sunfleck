@@ -22,9 +22,9 @@ from pydantic import ValidationError as SchemaError
 
 from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
+from sunfleck.core.images import MAX_UPLOAD_BYTES
 from sunfleck.dataio import schema
 from sunfleck.places.models import LightSource, Location, Site
-from sunfleck.plants.images import MAX_UPLOAD_BYTES
 from sunfleck.plants.models import Photo, Plant, PlantLight
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry

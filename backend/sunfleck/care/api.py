@@ -14,6 +14,7 @@ from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
 
+from sunfleck.accounts.api import avatar_url
 from sunfleck.accounts.models import Household, Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.care import schedules, selectors, services
@@ -58,6 +59,7 @@ class CareTypeIn(Schema):
 class PersonOut(Schema):
     id: int
     display_name: str
+    avatar_url: str | None
 
 
 class CareEventOut(Schema):
@@ -238,7 +240,9 @@ def _care_type_out(care_type: CareType) -> CareTypeOut:
 def _person_out(user: User | None) -> PersonOut | None:
     if user is None:
         return None
-    return PersonOut(id=user.pk, display_name=user.display_name or user.email)
+    return PersonOut(
+        id=user.pk, display_name=user.display_name or user.email, avatar_url=avatar_url(user)
+    )
 
 
 def _event_out(event: CareEvent) -> CareEventOut:

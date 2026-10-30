@@ -10,7 +10,7 @@ from typing import IO
 from django.db.models import Q
 
 from sunfleck.accounts.models import Household
-from sunfleck.plants.images import MAX_UPLOAD_BYTES, ImageError, jpeg_for_identification
+from sunfleck.core.images import MAX_UPLOAD_BYTES, ImageError, jpeg_for_identification
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import Candidate, Identification, PhotoToIdentify

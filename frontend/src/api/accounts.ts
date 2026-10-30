@@ -1,7 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import * as allauth from "./allauth";
 import { api, unwrap } from "./client";
+import { getCsrfToken } from "./csrf";
+import { toApiError } from "./errors";
 import type { components } from "./schema";
 
 export type Me = components["schemas"]["MeOut"];
@@ -119,6 +121,46 @@ export function useUpdateMe() {
       queryClient.setQueryData(keys.me, me);
     },
   });
+}
+
+/** Upload your profile picture (made a square on the server). */
+export async function uploadAvatar(file: Blob, filename: string): Promise<Me> {
+  const body = new FormData();
+  body.append("file", file, filename);
+  const response = await globalThis.fetch(`${window.location.origin}/api/v1/me/avatar`, {
+    method: "POST",
+    body,
+    headers: { "X-CSRFToken": getCsrfToken() },
+  });
+  const data: unknown = await response.json().catch(() => null);
+  if (!response.ok) throw toApiError(response.status, data);
+  return data as Me;
+}
+
+export function useSetAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ file, filename }: { file: Blob; filename: string }) =>
+      uploadAvatar(file, filename),
+    onSuccess: (me) => updatedPicture(queryClient, me),
+  });
+}
+
+export function useRemoveAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => unwrap(await api.DELETE("/api/v1/me/avatar")),
+    onSuccess: (me) => updatedPicture(queryClient, me),
+  });
+}
+
+function updatedPicture(queryClient: QueryClient, me: Me) {
+  queryClient.setQueryData(keys.me, me);
+  // Other places that show it: the household's members, and who logged care.
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: keys.members }),
+    queryClient.invalidateQueries({ queryKey: ["plants"] }),
+  ]);
 }
 
 // --- Household --------------------------------------------------------------------------------

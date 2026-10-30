@@ -36,6 +36,7 @@ import {
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { CopyableLink } from "../../components/CopyableLink";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { PersonAvatar } from "../../components/PersonAvatar";
 
 const ROLES: Role[] = ["admin", "gardener", "viewer"];
 
@@ -151,19 +152,22 @@ function MemberRow({ member, isMe, isAdmin }: { member: Member; isMe: boolean; i
 
   return (
     <Group justify="space-between" wrap="nowrap" gap="sm">
-      <Stack gap={0} style={{ minWidth: 0 }}>
-        <Text fw={500} truncate>
-          {name}{" "}
-          {isMe && (
-            <Text span c="dimmed">
-              ({t("household.you")})
-            </Text>
-          )}
-        </Text>
-        <Text size="sm" c="dimmed" truncate>
-          {member.email}
-        </Text>
-      </Stack>
+      <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
+        <PersonAvatar url={member.avatar_url} size="md" />
+        <Stack gap={0} style={{ minWidth: 0 }}>
+          <Text fw={500} truncate>
+            {name}{" "}
+            {isMe && (
+              <Text span c="dimmed">
+                ({t("household.you")})
+              </Text>
+            )}
+          </Text>
+          <Text size="sm" c="dimmed" truncate>
+            {member.email}
+          </Text>
+        </Stack>
+      </Group>
       {isAdmin ? (
         <Group gap="xs" wrap="nowrap">
           <Select
