@@ -319,4 +319,50 @@ describe("light sources", () => {
     expect(screen.getByText("(Not in use)")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Add a window" })).not.toBeInTheDocument();
   });
+
+  it("shows each light source's light through the year", async () => {
+    signInAs(viewer);
+    withSites([
+      site({
+        locations: [
+          location({
+            light_sources: [
+              {
+                id: 1,
+                kind: "window",
+                name: "Bay window",
+                direction: "S",
+                ppfd: null,
+                on_time: null,
+                off_time: null,
+                enabled: true,
+                hours_per_day: null,
+                dli: null,
+              },
+            ],
+          }),
+        ],
+      }),
+    ]);
+    server.use(
+      http.get("*/api/v1/locations/10/light", () =>
+        HttpResponse.json([
+          {
+            id: 1,
+            kind: "window",
+            name: "Bay window",
+            distance_cm: 100,
+            dli: { spring: 6.6, summer: 9.4, autumn: 6.6, winter: 3.2 },
+          },
+        ]),
+      ),
+    );
+
+    renderApp("/places/1/locations/10");
+
+    expect(await screen.findByText("100 cm from the glass, through the year:")).toBeVisible();
+    expect(
+      screen.getByText("Spring 6.6 · Summer 9.4 · Autumn 6.6 · Winter 3.2 mol/m²/day"),
+    ).toBeVisible();
+  });
 });

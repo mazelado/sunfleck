@@ -439,6 +439,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/locations/{location_id}/light": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Location Light
+         * @description How much light each window (at a typical distance) and grow light gives, by season.
+         */
+        get: operations["sunfleck_places_api_location_light"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/locations/{location_id}/light-sources": {
         parameters: {
             query?: never;
@@ -785,6 +805,28 @@ export interface paths {
          * @description Choose which photo shows on the plant's card.
          */
         put: operations["sunfleck_plants_api_set_cover_photo"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/light": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Plant Light
+         * @description Is the plant's spot bright enough? Its light in each season compared with what it likes,
+         *     and what each window or grow light gives. None if the plant has no location or care
+         *     profile, or nothing is known about the light there.
+         */
+        get: operations["sunfleck_plants_api_plant_light"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -1865,6 +1907,15 @@ export interface components {
             distance_cm: number | null;
             light_source: components["schemas"]["LightSourceOut"];
         };
+        /** PlantLightReportOut */
+        PlantLightReportOut: {
+            /** Current Season */
+            current_season: string;
+            /** Seasons */
+            seasons: components["schemas"]["SeasonLightOut"][];
+            /** Sources */
+            sources: components["schemas"]["SourceLightOut"][];
+        };
         /** PlantLocationOut */
         PlantLocationOut: {
             /** Id */
@@ -2142,6 +2193,34 @@ export interface components {
             /** Q */
             q: string;
         };
+        /** SeasonDli */
+        SeasonDli: {
+            /** Autumn */
+            autumn: number;
+            /** Spring */
+            spring: number;
+            /** Summer */
+            summer: number;
+            /** Winter */
+            winter: number;
+        };
+        /** SeasonLightOut */
+        SeasonLightOut: {
+            /** Dli */
+            dli: number;
+            /**
+             * Ideal
+             * @description What the plant's care profile likes there then.
+             */
+            ideal: number;
+            /** Season */
+            season: string;
+            /**
+             * Verdict
+             * @description low, a_bit_low, good, or bright (more than it likes).
+             */
+            verdict: string;
+        };
         /** SeasonalDays */
         SeasonalDays: {
             /** Autumn */
@@ -2248,6 +2327,23 @@ export interface components {
          * @enum {string}
          */
         SoilType: "potting_mix" | "aroid_mix" | "cactus_mix" | "orchid_bark" | "sphagnum" | "semi_hydro" | "water" | "garden_soil" | "other";
+        /**
+         * SourceLightOut
+         * @description A window or grow light and the light it gives through the year (DLI, mol/m²/day).
+         */
+        SourceLightOut: {
+            /**
+             * Distance Cm
+             * @description Windows: how far from the glass. On a location, a typical distance.
+             */
+            distance_cm: number;
+            dli: components["schemas"]["SeasonDli"];
+            /** Id */
+            id: number;
+            kind: components["schemas"]["LightSourceKind"];
+            /** Name */
+            name: string;
+        };
         /** SpeciesHitOut */
         SpeciesHitOut: {
             care_profile: components["schemas"]["CareProfileRef"] | null;
@@ -3242,6 +3338,28 @@ export interface operations {
             };
         };
     };
+    sunfleck_places_api_location_light: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                location_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceLightOut"][];
+                };
+            };
+        };
+    };
     sunfleck_places_api_create_light_source: {
         parameters: {
             query?: never;
@@ -3817,6 +3935,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_plant_light: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantLightReportOut"] | null;
                 };
             };
         };

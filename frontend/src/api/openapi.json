@@ -2101,6 +2101,35 @@
         "title": "PlantLightOut",
         "type": "object"
       },
+      "PlantLightReportOut": {
+        "properties": {
+          "current_season": {
+            "title": "Current Season",
+            "type": "string"
+          },
+          "seasons": {
+            "items": {
+              "$ref": "#/components/schemas/SeasonLightOut"
+            },
+            "title": "Seasons",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLightOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "current_season",
+          "seasons",
+          "sources"
+        ],
+        "title": "PlantLightReportOut",
+        "type": "object"
+      },
       "PlantLocationOut": {
         "properties": {
           "id": {
@@ -2897,6 +2926,64 @@
         "title": "SearchQuery",
         "type": "object"
       },
+      "SeasonDli": {
+        "properties": {
+          "autumn": {
+            "title": "Autumn",
+            "type": "number"
+          },
+          "spring": {
+            "title": "Spring",
+            "type": "number"
+          },
+          "summer": {
+            "title": "Summer",
+            "type": "number"
+          },
+          "winter": {
+            "title": "Winter",
+            "type": "number"
+          }
+        },
+        "required": [
+          "spring",
+          "summer",
+          "autumn",
+          "winter"
+        ],
+        "title": "SeasonDli",
+        "type": "object"
+      },
+      "SeasonLightOut": {
+        "properties": {
+          "dli": {
+            "title": "Dli",
+            "type": "number"
+          },
+          "ideal": {
+            "description": "What the plant's care profile likes there then.",
+            "title": "Ideal",
+            "type": "number"
+          },
+          "season": {
+            "title": "Season",
+            "type": "string"
+          },
+          "verdict": {
+            "description": "low, a_bit_low, good, or bright (more than it likes).",
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "season",
+          "dli",
+          "ideal",
+          "verdict"
+        ],
+        "title": "SeasonLightOut",
+        "type": "object"
+      },
       "SeasonalDays": {
         "properties": {
           "autumn": {
@@ -3216,6 +3303,39 @@
         ],
         "title": "SoilType",
         "type": "string"
+      },
+      "SourceLightOut": {
+        "description": "A window or grow light and the light it gives through the year (DLI, mol/m²/day).",
+        "properties": {
+          "distance_cm": {
+            "description": "Windows: how far from the glass. On a location, a typical distance.",
+            "title": "Distance Cm",
+            "type": "integer"
+          },
+          "dli": {
+            "$ref": "#/components/schemas/SeasonDli"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LightSourceKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "distance_cm",
+          "dli"
+        ],
+        "title": "SourceLightOut",
+        "type": "object"
       },
       "SpeciesHitOut": {
         "properties": {
@@ -5028,6 +5148,48 @@
         ]
       }
     },
+    "/api/v1/locations/{location_id}/light": {
+      "get": {
+        "description": "How much light each window (at a typical distance) and grow light gives, by season.",
+        "operationId": "sunfleck_places_api_location_light",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "location_id",
+            "required": true,
+            "schema": {
+              "title": "Location Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SourceLightOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Location Light",
+        "tags": [
+          "places"
+        ]
+      }
+    },
     "/api/v1/locations/{location_id}/light-sources": {
       "post": {
         "operationId": "sunfleck_places_api_create_light_source",
@@ -6016,6 +6178,51 @@
           }
         ],
         "summary": "Set Cover Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/light": {
+      "get": {
+        "description": "Is the plant's spot bright enough? Its light in each season compared with what it likes,\nand what each window or grow light gives. None if the plant has no location or care\nprofile, or nothing is known about the light there.",
+        "operationId": "sunfleck_plants_api_plant_light",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PlantLightReportOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Plant Light",
         "tags": [
           "plants"
         ]

@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Is this spot bright enough?** A plant's page compares the light at its spot with what it
+  likes, season by season, with a tip when it's too dim or too bright, and says how much
+  light each window or grow light gives it now. A location's page shows each window's light
+  through the year (at 1 m from the glass) and each grow light's.
+
 ### Fixed
 
 - On iPhones, the tab bar sat higher than needed: the space for the home indicator was counted

@@ -45,6 +45,22 @@ export function useLocation(siteId: number, locationId: number) {
   };
 }
 
+export type SourceLight = components["schemas"]["SourceLightOut"];
+
+/** The light each window (at a typical distance) and grow light gives, by season. */
+export function useLocationLight(locationId: number, enabled: boolean) {
+  return useQuery({
+    queryKey: [...SITES, "light", locationId],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/locations/{location_id}/light", {
+          params: { path: { location_id: locationId } },
+        }),
+      ),
+    enabled,
+  });
+}
+
 export function useCreateSite() {
   const invalidate = useInvalidateSites();
   return useMutation({
