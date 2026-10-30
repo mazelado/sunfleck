@@ -31,6 +31,7 @@
     "viewerDescription": "See everything, change nothing"
   },
   "nav": {
+    "main": "Main",
     "home": "Today",
     "profile": "Profile",
     "household": "Household",

@@ -23,7 +23,9 @@ the weather, and they get better as you tell it how the soil was.
 4. **Accept its suggested routine** on the plant's page: when to water, fertilize and so on.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
 
-Everything is in the account menu (your avatar at the top right).
+The main pages, **Today**, **Plants**, **Places** and the **Care guide**, are in the tab bar
+at the bottom on a phone, and at the top on a wider screen. Your settings, your household and
+signing out are in the account menu (your picture at the top right).
 
 ## Places: sites, locations and light
 

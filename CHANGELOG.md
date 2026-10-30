@@ -15,6 +15,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   show only them. Today's notice links straight to the plant when there's one, or to that
   list.
 
+### Changed
+
+- **Navigation:** the main pages (Today, Plants, Places, Care guide) are one tap away, in a tab
+  bar at the bottom on phones and at the top on wider screens. The account menu keeps your
+  settings, your household and signing out.
+
 ### Fixed
 
 - After signing out, signing in again starts on Today. It sometimes returned to the page you
