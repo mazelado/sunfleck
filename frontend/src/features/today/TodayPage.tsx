@@ -52,7 +52,12 @@ export function TodayPage() {
   if (!today.data) {
     return <ErrorAlert error={today.error} />;
   }
-  const { sites, tasks, unscheduled_plants: unscheduled } = today.data;
+  const {
+    sites,
+    tasks,
+    unscheduled_plants: unscheduled,
+    unscheduled_plant_id: unscheduledPlantId,
+  } = today.data;
   const due = tasks.filter((task) => task.days_until <= 0);
   const upcoming = tasks.filter((task) => task.days_until > 0);
   const byLocation = groupBy(due, (task) =>
@@ -87,8 +92,17 @@ export function TodayPage() {
       {unscheduled > 0 && (
         <Alert variant="light" icon={<IconInfoCircle />}>
           {t("today.unscheduled", { count: unscheduled })}{" "}
-          <Anchor component={Link} to="/plants" inherit>
-            {t("today.unscheduledAction")}
+          {/* Straight to the plant when there's one, else to the list of them. */}
+          <Anchor
+            component={Link}
+            to={
+              unscheduledPlantId === null
+                ? "/plants?needs_routine=true"
+                : `/plants/${String(unscheduledPlantId)}`
+            }
+            inherit
+          >
+            {t("today.unscheduledAction", { count: unscheduled })}
           </Anchor>
         </Alert>
       )}

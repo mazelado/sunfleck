@@ -211,6 +211,9 @@ class TodayOut(Schema):
     )
     tasks: list[TaskOut] = Field(description="Overdue care, then care due soonest.")
     unscheduled_plants: int = Field(description="Plants being looked after with no schedule.")
+    unscheduled_plant_id: int | None = Field(
+        description="When exactly one plant has no schedule, which one: the app links to it."
+    )
 
 
 class TodayQuery(Schema):
@@ -601,8 +604,10 @@ def today(request: HttpRequest, query: Query[TodayQuery]) -> TodayOut:
         for site in Site.objects.filter(household=household)
         for answer in registry.call("site_conditions", household, SiteConditions, site=site)
     ]
+    unscheduled = list(schedules.unscheduled_plants(household).values_list("pk", flat=True))
     return TodayOut(
         sites=sites,
         tasks=[_task_out(task) for task in schedules.due_tasks(household, query.days_ahead)],
-        unscheduled_plants=schedules.unscheduled_plants(household),
+        unscheduled_plants=len(unscheduled),
+        unscheduled_plant_id=unscheduled[0] if len(unscheduled) == 1 else None,
     )

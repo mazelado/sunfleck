@@ -5,7 +5,7 @@ Everyone in the household can see plants; Gardeners and Admins can change them.
 
 from datetime import date, datetime
 
-from django.db.models import Max, Q, QuerySet
+from django.db.models import Count, Max, Q, QuerySet
 from django.http import FileResponse, HttpRequest
 from django.urls import reverse
 from ninja import File, Form, Query, Router, Schema, Status
@@ -19,7 +19,14 @@ from sunfleck.core.errors import ApiError
 from sunfleck.places.api import LightSourceOut, light_source_out
 from sunfleck.places.models import LocationKind
 from sunfleck.plants import services
-from sunfleck.plants.models import ContainerMaterial, Photo, Plant, PlantStatus, SoilType
+from sunfleck.plants.models import (
+    CARED_FOR,
+    ContainerMaterial,
+    Photo,
+    Plant,
+    PlantStatus,
+    SoilType,
+)
 from sunfleck.taxonomy.api import care_profile_ref, language
 from sunfleck.taxonomy.models import translated_names
 
@@ -111,6 +118,9 @@ class PlantSummaryOut(Schema):
     cover_thumbnail_url: str | None
     last_watered_at: datetime | None
     species: PlantSpeciesOut | None
+    needs_routine: bool = Field(
+        description="Looked after (active or dormant) but has no care schedule yet."
+    )
 
 
 class PlantOut(Schema):
@@ -158,6 +168,9 @@ class PlantFilters(PageQuery):
     q: str = Field(default="", max_length=100, description="Search by name.")
     location_id: int | None = None
     status: PlantStatus | None = None
+    needs_routine: bool | None = Field(
+        default=None, description="Only plants that do (or don't) need a care schedule."
+    )
 
 
 # --- Conversions ------------------------------------------------------------------------------
@@ -228,7 +241,13 @@ def _summary_out(plant: Plant, lang: str) -> PlantSummaryOut:
         ),
         last_watered_at=_last_watered_at(plant),
         species=_species_out(plant, lang),
+        needs_routine=_needs_routine(plant),
     )
+
+
+def _needs_routine(plant: Plant) -> bool:
+    schedule_count: int = getattr(plant, "schedule_count", 0)
+    return plant.status in CARED_FOR and schedule_count == 0
 
 
 def _plant_out(plant: Plant, lang: str) -> PlantOut:
@@ -279,10 +298,14 @@ def _plants(household: Household) -> QuerySet[Plant]:
         "care_events__performed_at",
         filter=Q(care_events__care_type__counts_as_watering=True, care_events__skipped=False),
     )
-    # The aggregate drops the model's default ordering, so it's repeated here.
+    # The aggregates drop the model's default ordering, so it's repeated here. Schedules are
+    # counted distinct: the join with care events repeats them.
     return (
         household.plants.select_related("location__site", "taxon__archetype", "care_profile")
-        .annotate(last_watered_at=last_watered_at)
+        .annotate(
+            last_watered_at=last_watered_at,
+            schedule_count=Count("schedules", distinct=True),
+        )
         .order_by("nickname", "id")
     )
 
@@ -329,6 +352,9 @@ def list_plants(request: HttpRequest, filters: Query[PlantFilters]) -> PlantPage
         plants = plants.filter(location_id=filters.location_id)
     if filters.status is not None:
         plants = plants.filter(status=filters.status)
+    if filters.needs_routine is not None:
+        needing = Q(status__in=CARED_FOR, schedule_count=0)
+        plants = plants.filter(needing if filters.needs_routine else ~needing)
     page = plants[filters.offset : filters.offset + filters.limit]
     lang = language(request)
     return PlantPage(items=[_summary_out(plant, lang) for plant in page], count=plants.count())

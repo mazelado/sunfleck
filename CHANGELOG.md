@@ -11,6 +11,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Plants without a care routine** are marked "No routine yet" in the plant list, which can
+  show only them. Today's notice links straight to the plant when there's one, or to that
+  list.
 - **Move plants here** on a location's page: move plants from elsewhere, those without a
   location first. Their schedules adjust to the new location.
 

@@ -19,6 +19,10 @@ class PlantStatus(models.TextChoices):
     DECEASED = "deceased", _("Died")
 
 
+# Plants that are looked after: they get care, schedules and reminders.
+CARED_FOR = [PlantStatus.ACTIVE, PlantStatus.DORMANT]
+
+
 class ContainerMaterial(models.TextChoices):
     """What the plant grows in. Porous pots (terracotta, fabric) dry out faster."""
 

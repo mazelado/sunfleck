@@ -1,6 +1,8 @@
 import {
+  Badge,
   Button,
   Card,
+  Checkbox,
   Center,
   Group,
   Loader,
@@ -15,7 +17,7 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import { useSites } from "../../api/places";
 import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "../../api/plants";
@@ -35,15 +37,19 @@ export function PlantsPage() {
   const [q] = useDebouncedValue(search.trim(), 250);
   const [locationId, setLocationId] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  // In the address, so Today can link to the plants that need a routine.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const needsRoutine = searchParams.get("needs_routine") === "true";
   const filters = {
     q,
     locationId: locationId ? Number(locationId) : null,
     status: status as PlantStatus | null,
+    needsRoutine,
   };
   const plants = usePlants(filters);
   const items = plants.data?.pages.flatMap((page) => page.items) ?? [];
   const count = plants.data?.pages[0]?.count ?? 0;
-  const filtered = Boolean(filters.q || filters.locationId || filters.status);
+  const filtered = Boolean(filters.q || filters.locationId || filters.status || needsRoutine);
 
   return (
     <Stack gap="lg">
@@ -92,6 +98,21 @@ export function PlantsPage() {
             onChange={setStatus}
           />
         </Group>
+        <Checkbox
+          label={t("plants.onlyNeedsRoutine")}
+          checked={needsRoutine}
+          onChange={(event) => {
+            const checked = event.currentTarget.checked;
+            setSearchParams(
+              (params) => {
+                if (checked) params.set("needs_routine", "true");
+                else params.delete("needs_routine");
+                return params;
+              },
+              { replace: true },
+            );
+          }}
+        />
       </Stack>
 
       <ErrorAlert error={plants.error} />
@@ -150,6 +171,11 @@ function PlantCard({ plant }: { plant: PlantSummary }) {
         <Text size="xs" c="dimmed" truncate>
           {plant.location ? plant.location.name : t("plants.noLocation")}
         </Text>
+        {plant.needs_routine && (
+          <Badge variant="light" color="yellow" size="sm" tt="none" w="fit-content">
+            {t("plants.needsRoutine")}
+          </Badge>
+        )}
         <Text size="xs" c="dimmed" truncate>
           {plant.last_watered_at
             ? t("care.lastWatered", { when: relativeDay(plant.last_watered_at, i18n.language) })

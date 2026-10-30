@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, QuerySet
 from django.utils import timezone
 
 from sunfleck.accounts.models import Household
@@ -31,7 +31,7 @@ from sunfleck.care.models import (
 from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.light import grow_light_dli
 from sunfleck.places.models import LightSourceKind, LocationKind
-from sunfleck.plants.models import Plant, PlantStatus
+from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import CareContext
@@ -266,7 +266,6 @@ def recalculate_all() -> int:
 # --- Due care ---------------------------------------------------------------------------------
 
 # Plants that are still being looked after.
-CARED_FOR = [PlantStatus.ACTIVE, PlantStatus.DORMANT]
 
 
 @dataclass(frozen=True)
@@ -319,11 +318,9 @@ def due_tasks(household: Household, days_ahead: int = 7) -> list[Task]:
     )
 
 
-def unscheduled_plants(household: Household) -> int:
-    """How many plants being looked after have no care schedule."""
-    return Plant.objects.filter(
-        household=household, status__in=CARED_FOR, schedules__isnull=True
-    ).count()
+def unscheduled_plants(household: Household) -> QuerySet[Plant]:
+    """The plants being looked after that have no care schedule."""
+    return Plant.objects.filter(household=household, status__in=CARED_FOR, schedules__isnull=True)
 
 
 MAX_SNOOZE_DAYS = 60
