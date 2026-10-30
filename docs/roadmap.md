@@ -44,8 +44,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | Release | Phase | Status |
 |---|---|---|
 | **0.1 Azalea** | The first release (the MVP): see the [changelog](../CHANGELOG.md) | Released 2026-10-28 |
-| **0.2 Bougainvillea** | How much water to give (#43), and fixes from using 0.1 (#41, #42) | Next |
-| **0.3 Camellia** | [Easier everyday use](#easier-everyday-use) | Planned |
+| **0.2 Bougainvillea** | How much water to give (#43), and fixes from using 0.1 (#41, #42) | Released 2026-10-30 |
+| **0.3 Camellia** | [Easier everyday use](#easier-everyday-use) | Next |
 | **0.4 Dahlia** | [Smarter care](#smarter-care) | Planned |
 | **0.5 Echinacea** | [AI providers and care data](#ai-providers-and-care-data) | Planned |
 | **0.6 Fuchsia** | [Integrations](#integrations) | Planned |
@@ -56,12 +56,11 @@ ships in one release or a few, and when plans change, only the release plan belo
 
 ## Phases
 
-### Bougainvillea: water amounts and first fixes
+### Bougainvillea: water amounts and first fixes (released)
 
-- **How much water to give**, from the pot's size, with an optional pot height (#43, done).
-- **iPhone zoom:** fields with text smaller than 16 px make Safari zoom in, and it stays zoomed
-  (#41).
-- **Plant identification:** make it clear that **Use** set the species (#42).
+- **How much water to give**, from the pot's size, with an optional pot height (#43).
+- **iPhone zoom:** fields no longer make Safari zoom in (#41).
+- **Plant identification:** it's clear that **Use** set the species (#42).
 
 ### Easier everyday use
 
