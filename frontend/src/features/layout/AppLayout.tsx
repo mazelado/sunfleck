@@ -47,8 +47,8 @@ const DESTINATIONS: Destination[] = [
   { to: "/guide", label: "nav.guide", icon: IconBook },
 ];
 
-// The tab bar's height, above the iPhone's home indicator.
-const TAB_BAR_HEIGHT = "calc(4rem + env(safe-area-inset-bottom))";
+// The tab bar's height. Mantine adds the space for the iPhone's home indicator below it.
+const TAB_BAR_HEIGHT = "4rem";
 
 /** The frame around every page for signed-in people: the header with the main pages (on wide
  * screens) and the account menu, and a tab bar with the main pages on phones. */
@@ -190,13 +190,19 @@ export function AppLayout() {
           </Group>
         </Stack>
       </Modal>
-      <AppShell.Main>
+      {/* Mantine leaves the home indicator's space out of the room it keeps for the tab bar. */}
+      <AppShell.Main
+        style={{
+          paddingBottom:
+            "calc(var(--app-shell-footer-offset, 0rem) + var(--app-shell-padding) + env(safe-area-inset-bottom))",
+        }}
+      >
         <Container size="md" px={0}>
           <Outlet />
         </Container>
       </AppShell.Main>
       {!wide && (
-        <AppShell.Footer pb="env(safe-area-inset-bottom)">
+        <AppShell.Footer>
           <TabBar />
         </AppShell.Footer>
       )}
