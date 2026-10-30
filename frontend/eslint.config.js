@@ -7,7 +7,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
-  { ignores: ["dist", "src/api/schema.d.ts"] },
+  { ignores: ["dist", "src/api/schema.d.ts", "e2e/report", "e2e/results"] },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {

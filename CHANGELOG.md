@@ -15,6 +15,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   show only them. Today's notice links straight to the plant when there's one, or to that
   list.
 
+### Fixed
+
+- After signing out, signing in again starts on Today. It sometimes returned to the page you
+  signed out from instead.
+
 ## [0.2.0] - 2026-10-30
 
 **Bougainvillea.** How much water to give, and the first fixes from using 0.1.

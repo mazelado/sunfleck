@@ -37,14 +37,13 @@ export function AppLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const me = useMe().data;
-  const signOut = useSignOut();
+  const signOut = useSignOut(() => navigate("/sign-in", { replace: true }));
   const name = me?.display_name || me?.email || "";
   const { method: installMethod, install } = useInstall();
   const [iosHelp, setIosHelp] = useState(false);
 
   async function handleSignOut() {
     await signOut.mutateAsync();
-    await navigate("/sign-in");
   }
 
   return (

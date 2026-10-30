@@ -132,12 +132,14 @@ describe("signing in", () => {
         return HttpResponse.json({ status: 401 }, { status: 401 });
       }),
     );
-    const { user } = renderApp("/");
+    const { user, router } = renderApp("/plants");
 
     await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
     await user.click(await screen.findByRole("menuitem", { name: "Sign out" }));
 
     expect(await screen.findByRole("heading", { name: "Sign in" })).toBeVisible();
+    // Signing in again starts afresh, rather than returning to the last page.
+    expect(router.state.location.search).toBe("");
   });
 });
 

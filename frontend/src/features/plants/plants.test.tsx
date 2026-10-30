@@ -385,6 +385,8 @@ describe("plant form", () => {
     await waitFor(() => {
       expect(sent).toMatchObject({ taxon_id: 3, nickname: "Cheese plant" });
     });
+    // Saving opens the plant's page: wait for it, so its requests don't reach the next test.
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
   });
 
   it("shows server errors next to the field", async () => {

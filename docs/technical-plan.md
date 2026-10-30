@@ -667,6 +667,12 @@ During development, the Vite dev server (port 5173) forwards `/api` requests to 
 SQLite **and** PostgreSQL, frontend tests, Playwright tests, dataset validation, and a Docker
 build. Pull requests can't be merged unless CI passes (branch protection on `main`).
 
+**Browser tests, as built (0.3):** `frontend/e2e/` holds Playwright tests of the main journeys:
+setting up, adding a place, a room and a plant, accepting its routine, logging watering, and
+signing out and in. They run in Chromium as a phone (Pixel 7), in order, against a production
+build served by Gunicorn with a fresh database (`e2e/server.sh`). On failure, CI keeps the
+report, screenshots and traces as an artifact.
+
 ## 11. Build order (milestones)
 
 Each milestone is a handful of small pull requests and ends with something you can run and
