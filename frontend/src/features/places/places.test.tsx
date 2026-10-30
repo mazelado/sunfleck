@@ -319,4 +319,39 @@ describe("light sources", () => {
     expect(screen.getByText("(Not in use)")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Add a window" })).not.toBeInTheDocument();
   });
+
+  it("shows today's humidity estimated from the weather", async () => {
+    signInAs(viewer);
+    withSites([site({ locations: [location({ humidity: null })] })]);
+    server.use(
+      http.get("*/api/v1/locations/10", () =>
+        HttpResponse.json({ ...location({ humidity: null }), humidity_estimate: 28 }),
+      ),
+    );
+
+    renderApp("/places/1/locations/10");
+
+    expect(
+      await screen.findByText("About 28% humidity today, estimated from the weather."),
+    ).toBeVisible();
+  });
+
+  it("says when the location's own humidity is used instead", async () => {
+    signInAs(viewer);
+    withSites([site()]);
+    server.use(
+      http.get("*/api/v1/locations/10", () =>
+        HttpResponse.json({ ...location(), humidity_estimate: 28 }),
+      ),
+    );
+
+    renderApp("/places/1/locations/10");
+
+    expect(
+      await screen.findByText(
+        "About 28% humidity today, estimated from the weather. Watering uses the humidity set " +
+          "for this location instead.",
+      ),
+    ).toBeVisible();
+  });
 });

@@ -69,8 +69,12 @@ signing out are in the account menu (your picture at the top right).
   mark as a kind of watering).
 - **Schedules** say when each kind of care is due:
   - **Predicted** (watering and fertilizing): Sunfleck works out the interval from the care
-    profile, the season, the light, the temperature, the pot and, outdoors, recent and
-    forecast rain and heat. **Why?** on the plant's page shows what it took into account.
+    profile, the season, the light, the temperature, the humidity indoors, the pot and,
+    outdoors, recent and forecast rain and heat. **Why?** on the plant's page shows what it
+    took into account.
+  - **Humidity indoors**: dry air dries the soil sooner. Set a location's humidity if you
+    know it. If you don't, and the weather plugin is on, Sunfleck estimates it in cold
+    weather: heated winter air is dry, often 20–30%. The location's page shows the estimate.
   - **Every few days**: a fixed interval, for anything else, or if you prefer it.
 - **Soil feedback**: when you water, say whether the soil was **Too dry**, **Just right** or
   **Still wet**. Sunfleck adjusts that plant's watering from your last few answers.

@@ -4,7 +4,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
-import { type LightSource, useDeleteLightSource, useLocation } from "../../api/places";
+import {
+  type LightSource,
+  useDeleteLightSource,
+  useHumidityEstimate,
+  useLocation,
+} from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -24,6 +29,7 @@ export function LocationPage() {
   const units = useUnits();
   const deleteLight = useDeleteLightSource();
   const [dialog, setDialog] = useState<Dialog>(null);
+  const estimate = useHumidityEstimate(found.data).data;
 
   if (found.isPending) {
     return <FullPageLoader />;
@@ -51,6 +57,12 @@ export function LocationPage() {
           {conditions.length > 0 && (
             <Text size="sm" c="dimmed">
               {conditions.join(" · ")}
+            </Text>
+          )}
+          {estimate != null && (
+            <Text size="sm" c="dimmed">
+              {t("places.humidityEstimate", { percent: estimate })}
+              {location.humidity && ` ${t("places.humiditySettingWins")}`}
             </Text>
           )}
         </Stack>

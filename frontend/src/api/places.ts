@@ -45,6 +45,20 @@ export function useLocation(siteId: number, locationId: number) {
   };
 }
 
+/** Indoors: today's humidity estimated from the weather, in %, or null without one. */
+export function useHumidityEstimate(location: Location | undefined) {
+  const indoor = location?.kind === "indoor";
+  const id = location?.id ?? 0;
+  return useQuery({
+    queryKey: [...SITES, "location", id],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/locations/{location_id}", { params: { path: { location_id: id } } }),
+      ).humidity_estimate ?? null,
+    enabled: indoor,
+  });
+}
+
 export function useCreateSite() {
   const invalidate = useInvalidateSites();
   return useMutation({
