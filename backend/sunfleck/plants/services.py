@@ -172,6 +172,29 @@ def update_plant(plant: Plant, data: PlantData) -> Plant:
     return plant
 
 
+@transaction.atomic
+def move_plants(household: Household, location_id: int, plant_ids: list[int]) -> list[Plant]:
+    """Move plants into a location, keeping everything else about them.
+
+    The windows and grow lights that reached them belong to their old location, so they're
+    removed: the person chooses the new location's on each plant's page. Saving each plant
+    recalculates its schedules (see sunfleck.care.signals).
+
+    Raises:
+        PlantsError: If the location, or any of the plants, isn't the household's.
+    """
+    location = _location(household, location_id)
+    plants = list(household.plants.filter(pk__in=plant_ids))
+    if len(plants) != len(set(plant_ids)):
+        raise PlantsError("plant_not_found", "One of these plants doesn't exist.", "plant_ids")
+    moved = [plant for plant in plants if plant.location_id != location_id]
+    for plant in moved:
+        plant.location = location
+        plant.save(update_fields=["location", "updated_at"])
+        plant.light_links.all().delete()
+    return moved
+
+
 # --- Photos -----------------------------------------------------------------------------------
 
 

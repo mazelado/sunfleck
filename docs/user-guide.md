@@ -55,6 +55,9 @@ signing out are in the account menu (your picture at the top right).
 - **Photos**: add as many as you like; the first becomes the plant's cover. Photos are made
   smaller and stripped of their location data when uploaded.
 - **Status**: Active, Dormant, Given away, or Died. Only active and dormant plants need care.
+- **Moving plants**: on a location's page, **Move plants here** moves plants from elsewhere
+  (those without a location are listed first). Then choose, on each plant's page, which of
+  the new location's windows and grow lights reach it; its schedules adjust.
 
 ## Care, and when it's due
 
