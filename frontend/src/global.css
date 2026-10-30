@@ -1,0 +1,12 @@
+/*
+ * Styles for the whole app that Mantine's theme can't express.
+ *
+ * On touch screens, text in form fields is at least 16px: Safari on iPhone zooms in when a
+ * field with smaller text is focused, and stays zoomed afterwards. Mantine's default size
+ * ("sm") is 14px. Larger sizes keep their own. The expression in max() is Mantine's own.
+ */
+@media (pointer: coarse) {
+  .mantine-Input-input {
+    font-size: max(16px, var(--_input-fz, var(--input-fz, var(--mantine-font-size-md))));
+  }
+}
