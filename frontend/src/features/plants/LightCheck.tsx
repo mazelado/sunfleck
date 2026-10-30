@@ -1,7 +1,9 @@
-import { Paper, Stack, Table, Text, Title, VisuallyHidden } from "@mantine/core";
+import { Anchor, Paper, Stack, Table, Text, Title, VisuallyHidden } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
-import { usePlantLight } from "../../api/plants";
+import { type Plant, usePlantLight } from "../../api/plants";
+import { useCanEdit } from "../../lib/useCanEdit";
 
 type Season = "spring" | "summer" | "autumn" | "winter";
 type Verdict = "low" | "a_bit_low" | "good" | "bright";
@@ -14,12 +16,12 @@ const VERDICT_COLOR: Record<Verdict, string> = {
 };
 
 /** "Is this spot bright enough?": the plant's light in each season, compared with what it
- * likes, and a tip when it's too dim or too bright. */
-export function LightCheck({ plantId }: { plantId: number }) {
+ * likes, and a tip when it's too dim or too bright. When its light isn't known, what to add. */
+export function LightCheck({ plant }: { plant: Plant }) {
   const { t } = useTranslation();
-  const { data: report } = usePlantLight(plantId);
+  const { data: report, isSuccess } = usePlantLight(plant.id);
   if (!report) {
-    return null;
+    return isSuccess ? <MissingLight plant={plant} /> : null;
   }
   const season = (key: string) => t(`guide.seasons.${key as Season}`);
   const dim = report.seasons.filter((s) => s.verdict === "low" || s.verdict === "a_bit_low");
@@ -81,6 +83,40 @@ export function LightCheck({ plantId }: { plantId: number }) {
         {dim.length > 0 && <Text size="sm">{t("light.tipDim", { seasons: list(dim) })}</Text>}
         {bright.length > 0 && (
           <Text size="sm">{t("light.tipBright", { seasons: list(bright) })}</Text>
+        )}
+      </Stack>
+    </Paper>
+  );
+}
+
+/** Why there's no light check, and what to add for one: the windows or grow lights that reach
+ * an indoor plant, or how much sun an outdoor location gets. */
+function MissingLight({ plant }: { plant: Plant }) {
+  const { t } = useTranslation();
+  const canEdit = useCanEdit();
+  const location = plant.location;
+  if (!location || !plant.care_profile) {
+    return null;
+  }
+  const indoor = location.kind === "indoor";
+  const to = indoor
+    ? `/plants/${String(plant.id)}/edit`
+    : `/places/${String(location.site_id)}/locations/${String(location.id)}/edit`;
+  return (
+    <Paper withBorder radius="lg" p="lg">
+      <Stack gap="xs">
+        <Title order={2} fz="h4">
+          {t("light.title")}
+        </Title>
+        <Text size="sm">
+          {indoor
+            ? t("light.missingIndoor", { name: plant.nickname })
+            : t("light.missingOutdoor", { name: location.name })}
+        </Text>
+        {canEdit && (
+          <Anchor component={Link} to={to} size="sm">
+            {indoor ? t("light.addLights", { name: plant.nickname }) : t("light.setSun")}
+          </Anchor>
         )}
       </Stack>
     </Paper>

@@ -41,17 +41,24 @@ TYPICAL_POT_CM = 15
 # narrower than its top: the shape of most standard pots.
 POT_BASE_RATIO = 0.8
 
-# How much water to give, as a share of the pot's volume: enough to wet the soil that dried
-# since the last watering, and a little more to drain out of the bottom. The more of the soil
-# a profile lets dry, the more it takes. These are rough, and the app says so.
-WATER_SHARE = {
+# How much water to give in a pot: enough to wet again the soil that dried since the last
+# watering, and a little more to drain out of the bottom. How deep the soil dries depends on
+# the profile (the share of the pot's depth below), but in big pots only the top few inches
+# dry between waterings: the soil below stays moist. Potting soil holds about a fifth of its
+# volume as water a plant can use. These are rough, and the app says so.
+DRIED_DEPTH = {
     "keep_moist": 0.15,
-    "top_quarter": 0.2,
-    "top_third": 0.2,
-    "top_half": 0.25,
-    "mostly": 0.3,
-    "completely": 0.3,
+    "top_quarter": 0.25,
+    "top_third": 1 / 3,
+    "top_half": 0.5,
+    "mostly": 0.75,
+    "completely": 1.0,
 }
+MAX_DRIED_DEPTH_CM = 10
+SOIL_WATER = 0.2
+DRAIN_EXTRA = 1.1
+# The soil's surface is a little inside the rim.
+SOIL_DIAMETER_RATIO = 0.9
 # In the ground: about 25 mm (an inch) of water a week, in fewer, deeper waterings when the
 # interval is longer. 1 mm is 1 litre per square metre.
 GROUND_MM_PER_WEEK = 25
@@ -294,20 +301,26 @@ def pot_factors(conditions: Conditions) -> list[Factor]:
 def water_amount(profile: Profile, conditions: Conditions, interval_days: int) -> Factor | None:
     """Roughly how much water to give each time.
 
-    In a pot, a share of its volume (see WATER_SHARE). In the ground (or outdoors with no pot
-    size, which is most likely a bed), a depth of water, as rain is measured. Indoors without
-    a pot size, a hint to add it. These factors don't change the interval (multiplier 1).
+    In a pot, enough to wet the soil that dried (see DRIED_DEPTH). In the ground (or outdoors
+    with no pot size, which is most likely a bed), a depth of water, as rain is measured.
+    Indoors without a pot size, a hint to add it. These factors don't change the interval
+    (multiplier 1).
     """
     if not profile.in_soil:
         return None
     in_ground = conditions.pot_material == "in_ground"
     if conditions.pot_diameter_cm and not in_ground:
-        volume = pot_volume_l(conditions.pot_diameter_cm, conditions.pot_height_cm)
-        share = WATER_SHARE.get(profile.let_dry or "", WATER_SHARE["top_third"])
+        diameter = conditions.pot_diameter_cm
+        height = conditions.pot_height_cm or diameter
+        volume = pot_volume_l(diameter, conditions.pot_height_cm)
+        share = DRIED_DEPTH.get(profile.let_dry or "", DRIED_DEPTH["top_third"])
+        dried_cm = min(height * share, MAX_DRIED_DEPTH_CM)
+        surface_cm2 = math.pi * (diameter * SOIL_DIAMETER_RATIO / 2) ** 2
+        litres = surface_cm2 * dried_cm * SOIL_WATER * DRAIN_EXTRA / 1000
         return Factor(
             "water_amount",
             details={
-                "litres": round(volume * share, 2),
+                "litres": round(litres, 2),
                 "pot_litres": round(volume, 1),
                 "height_known": bool(conditions.pot_height_cm),
             },

@@ -9,6 +9,19 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **When a plant's light isn't known**, its page now says what to add (the windows or grow
+  lights that reach it, or a location's sun exposure) instead of leaving the light check out.
+
+### Fixed
+
+- **Water amounts for bigger pots** were far too high: they were a share of the whole pot's
+  volume, which grows with the cube of its width (2.8 gallons for a 15-inch pot). They're now
+  the water to wet again the soil that dried since the last watering, at most the top 10 cm
+  (4 in) or so: about 2 litres (half a gallon) for that pot. Small pots change little. Every
+  plant's amount is updated when Sunfleck starts.
+
 ## [0.4.0] - 2026-10-30
 
 **Dahlia.** Smarter care: humidity in the predictions, care at a glance, light through the

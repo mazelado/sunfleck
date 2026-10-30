@@ -387,9 +387,13 @@ the interval, and factors under 2% are left out):
    1–180 days).
 
 **How much water** (added after 0.1.0, issue #43): a watering prediction also says roughly how
-much to give, as a factor that doesn't change the interval. In a pot: a share of its volume,
-by how much soil the profile lets dry (15% for `keep_moist` up to 30% for `mostly` and
-`completely`), shown as "about 600 ml, or until a little drains from the bottom". In the
+much to give, as a factor that doesn't change the interval. In a pot: enough to wet the soil
+that dried again, plus 10% to drain. The soil dries to a share of the pot's depth set by the
+profile (15% for `keep_moist` up to all of it for `completely`), but at most 10 cm: in big pots
+the soil below stays moist. Potting soil holds about 20% of its volume as water a plant can
+use. (0.4.1 fixed the first version, a share of the whole pot's volume, which grew with the
+cube of the pot's width and gave several litres for big pots.) It's shown as "about 600 ml, or
+until a little drains from the bottom". In the
 ground, or outdoors without a pot size: a depth of water, 25 mm a week spread over the interval
 (10–40 mm). Indoors without a pot size, the app asks for it. Air plants get no amount.
 

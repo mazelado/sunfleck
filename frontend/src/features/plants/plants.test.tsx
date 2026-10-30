@@ -450,6 +450,30 @@ describe("plant form", () => {
 });
 
 describe("plant page", () => {
+  it("says what to add when the light at a plant's spot isn't known", async () => {
+    signInAs(gardener);
+    withPlant(
+      plant({
+        light_sources: [],
+        care_profile: { key: "tropical_aroid", name: "Tropical aroid", chosen: false },
+      }),
+    );
+    server.use(http.get("*/api/v1/care-profiles/tropical_aroid", () => apiError(404, "not_found")));
+
+    renderApp("/plants/7");
+
+    expect(
+      await screen.findByText(
+        "To see whether Monty gets enough light, tell Sunfleck which windows or grow lights " +
+          "reach it, and how far it is from each window.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole("link", { name: "Add the lights that reach Monty" })).toHaveAttribute(
+      "href",
+      "/plants/7/edit",
+    );
+  });
+
   it("checks whether the spot is bright enough through the year", async () => {
     signInAs(viewer);
     withPlant(plant());
