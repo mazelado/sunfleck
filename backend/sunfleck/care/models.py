@@ -137,6 +137,12 @@ class CareSchedule(models.Model):
     calculated_on = models.DateField(null=True, blank=True)
     # Put off until this day. A new due date (e.g. after the care is logged) ends the snooze.
     snoozed_until = models.DateField(_("snoozed until"), null=True, blank=True)
+    # Predicted watering, matched to how often the person actually waters: accepted from a
+    # suggestion (see learning.py), it multiplies the prediction until it's reset.
+    routine_multiplier = models.FloatField(_("your routine"), default=1.0)
+    routine_set_on = models.DateField(null=True, blank=True)
+    # A suggestion that was turned down isn't offered again for a while.
+    routine_dismissed_on = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

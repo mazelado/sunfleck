@@ -680,7 +680,9 @@
       },
       "rain": "Rain: {{amount}} in the last two days, so the soil is still moist",
       "rainForecast": "Rain forecast {{when}} ({{amount}}), so watering waits for it",
-      "hotSpell": "Hot spell: highs around {{max}}, above the {{ideal}} its care profile likes"
+      "hotSpell": "Hot spell: highs around {{max}}, above the {{ideal}} its care profile likes",
+      "yourRoutine": "Matched to how often you water",
+      "yourRoutineSince": "Matched to how often you water (since {{date}})"
     },
     "amount": {
       "pot": "About {{amount}} each time, or until a little drains from the bottom",
@@ -850,5 +852,13 @@
     "gallons_other": "{{value}} gallons",
     "mm": "{{value}} mm",
     "inches": "{{value}} in"
+  },
+  "routine": {
+    "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
+    "accept_one": "Water every day",
+    "accept_other": "Water every {{count}} days",
+    "dismiss": "Not now",
+    "matched": "Matched to how often you water, since {{date}}.",
+    "reset": "Use Sunfleck's own estimate again"
   }
 }

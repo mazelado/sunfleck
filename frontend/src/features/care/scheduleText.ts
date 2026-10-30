@@ -144,6 +144,10 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
         });
       case "limit":
         return t("schedules.factors.limit", { min: number("min_days"), max: number("max_days") });
+      case "your_routine":
+        return details.since
+          ? t("schedules.factors.yourRoutineSince", { date: date("since") ?? "" })
+          : t("schedules.factors.yourRoutine");
       case "not_logged":
         return t("schedules.factors.notLogged", { date: date("since") ?? "" });
       case "fertilize_interval":

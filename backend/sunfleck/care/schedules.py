@@ -160,6 +160,14 @@ def predict(schedule: CareSchedule, today: date) -> Prediction:
             conditions=conditions,
         )
         extra = plugin_adjustments(context)
+        if schedule.routine_multiplier != 1:
+            # Matched to how often the person waters (see learning.py).
+            routine = Factor(
+                "your_routine",
+                schedule.routine_multiplier,
+                {"since": schedule.routine_set_on.isoformat() if schedule.routine_set_on else None},
+            )
+            extra.append(Adjustment(routine))
         return predict_watering(profile, conditions, history, today, extra)
     return predict_fertilizing(profile, conditions, history, today)
 

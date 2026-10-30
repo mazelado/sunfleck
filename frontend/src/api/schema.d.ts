@@ -100,6 +100,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-schedules/{schedule_id}/routine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept Routine Suggestion
+         * @description Match predicted watering to how often the person waters, as suggested.
+         */
+        post: operations["sunfleck_care_api_accept_routine_suggestion"];
+        /**
+         * Reset Routine
+         * @description Go back to Sunfleck's own prediction.
+         */
+        delete: operations["sunfleck_care_api_reset_routine"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/care-schedules/{schedule_id}/routine/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dismiss Routine Suggestion
+         * @description Don't suggest matching the routine for a while.
+         */
+        post: operations["sunfleck_care_api_dismiss_routine_suggestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-schedules/{schedule_id}/snooze": {
         parameters: {
             query?: never;
@@ -2054,6 +2098,19 @@ export interface components {
             /** Items */
             items: components["schemas"]["ScheduleIn"][];
         };
+        /** RoutineSuggestionOut */
+        RoutineSuggestionOut: {
+            /**
+             * Schedule Days
+             * @description Days between waterings the schedule says now.
+             */
+            schedule_days: number;
+            /**
+             * Your Days
+             * @description Days between the person's recent waterings.
+             */
+            your_days: number;
+        };
         /** ScheduleChangeIn */
         ScheduleChangeIn: {
             /**
@@ -2124,6 +2181,13 @@ export interface components {
             origin: components["schemas"]["ScheduleOrigin"];
             /** Plant Id */
             plant_id: number;
+            /**
+             * Routine Since
+             * @description When the person's routine was accepted; none: Sunfleck's own prediction.
+             */
+            routine_since: string | null;
+            /** @description Predicted watering: a suggestion to match how often the person waters. */
+            routine_suggestion: components["schemas"]["RoutineSuggestionOut"] | null;
             /** Snoozed Until */
             snoozed_until: string | null;
             /**
@@ -2621,6 +2685,72 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_care_api_accept_routine_suggestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_reset_routine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_dismiss_routine_suggestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
+                };
             };
         };
     };

@@ -108,6 +108,9 @@ class Schedule(Model):
     enabled: bool
     started_on: date
     snoozed_until: date | None
+    # Watering matched to the person's routine (added in 0.4; older exports don't have it).
+    routine_multiplier: float = 1.0
+    routine_set_on: date | None = None
 
 
 class Plant(Model):

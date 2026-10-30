@@ -124,6 +124,8 @@ def _plant(plant: Plant) -> schema.Plant:
                 enabled=item.enabled,
                 started_on=item.started_on,
                 snoozed_until=item.snoozed_until,
+                routine_multiplier=item.routine_multiplier,
+                routine_set_on=item.routine_set_on,
             )
             for item in CareSchedule.objects.filter(plant=plant).select_related("care_type")
         ],

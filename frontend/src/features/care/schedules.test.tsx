@@ -86,6 +86,8 @@ const waterSchedule: Schedule = {
   started_on: "2026-04-01",
   snoozed_until: null,
   due_on: inDays(3),
+  routine_suggestion: null,
+  routine_since: null,
   interval_days: 6,
   next_due: inDays(3),
   factors: [
@@ -288,6 +290,64 @@ describe("how much water", () => {
 });
 
 describe("the care schedule", () => {
+  it("offers to match watering to how often it's actually done", async () => {
+    signInAs(gardener);
+    let schedule: Schedule = {
+      ...waterSchedule,
+      routine_suggestion: { schedule_days: 6, your_days: 9 },
+    };
+    withPlant([schedule]);
+    server.use(
+      http.get("*/api/v1/plants/7/schedules", () => HttpResponse.json([schedule])),
+      http.post("*/api/v1/care-schedules/1/routine", () => {
+        schedule = {
+          ...waterSchedule,
+          interval_days: 9,
+          routine_since: "2026-04-15",
+          factors: [
+            ...waterSchedule.factors,
+            { code: "your_routine", multiplier: 1.5, details: { since: "2026-04-15" } },
+          ],
+        };
+        return HttpResponse.json(schedule);
+      }),
+      http.delete("*/api/v1/care-schedules/1/routine", () => {
+        schedule = waterSchedule;
+        return HttpResponse.json(schedule);
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    expect(
+      await screen.findByText(
+        "You've been watering about every 9 days, but the schedule says every 6. Match the " +
+          "schedule to your routine?",
+      ),
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Water every 9 days" }));
+
+    expect(
+      await screen.findByText(/^Matched to how often you water, since Apr 15, 2026\./),
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Why?" }));
+    expect(screen.getByText(/Matched to how often you water \(since Apr 15, 2026\)/)).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Use Sunfleck's own estimate again" }));
+    await waitFor(() => {
+      expect(screen.queryByText(/^Matched to how often you water/)).not.toBeInTheDocument();
+    });
+  });
+
+  it("doesn't offer viewers to change the routine", async () => {
+    signInAs({ ...ada, role: "viewer" });
+    withPlant([{ ...waterSchedule, routine_suggestion: { schedule_days: 6, your_days: 9 } }]);
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("Due in 3 days")).toBeVisible();
+    expect(screen.queryByText(/You've been watering/)).not.toBeInTheDocument();
+  });
+
   it("says when care is due, and why", async () => {
     signInAs({ ...ada, role: "viewer" });
     withPlant([waterSchedule]);

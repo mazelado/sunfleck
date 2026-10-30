@@ -9,6 +9,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Learning from how you water**: when your last few waterings were all clearly further apart
+  (or closer together) than a plant's schedule, its page offers to match the schedule to your
+  routine, e.g. "You've been watering about every 9 days, but the schedule says every 6".
+  Nothing changes unless you accept; **Why?** then says so, and you can go back to Sunfleck's
+  own estimate. No suggestion when your soil feedback disagrees (e.g. watering less often, but
+  the soil was too dry). "Not now" hides it for a month.
+
 ### Fixed
 
 - On iPhones, the tab bar sat higher than needed: the space for the home indicator was counted

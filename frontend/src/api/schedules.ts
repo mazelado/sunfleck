@@ -106,3 +106,29 @@ export function useDeleteSchedule(plantId: number) {
     onSuccess: invalidate,
   });
 }
+
+/** Match predicted watering to how often the person waters, turn the suggestion down for a
+ * while, or go back to Sunfleck's own prediction. */
+export function useRoutine(plantId: number) {
+  const invalidate = useInvalidatePlant(plantId);
+  const path = (scheduleId: number) => ({ params: { path: { schedule_id: scheduleId } } });
+  return {
+    accept: useMutation({
+      mutationFn: async (scheduleId: number) =>
+        unwrap(await api.POST("/api/v1/care-schedules/{schedule_id}/routine", path(scheduleId))),
+      onSuccess: invalidate,
+    }),
+    dismiss: useMutation({
+      mutationFn: async (scheduleId: number) =>
+        unwrap(
+          await api.POST("/api/v1/care-schedules/{schedule_id}/routine/dismiss", path(scheduleId)),
+        ),
+      onSuccess: invalidate,
+    }),
+    reset: useMutation({
+      mutationFn: async (scheduleId: number) =>
+        unwrap(await api.DELETE("/api/v1/care-schedules/{schedule_id}/routine", path(scheduleId))),
+      onSuccess: invalidate,
+    }),
+  };
+}

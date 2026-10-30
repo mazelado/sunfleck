@@ -99,6 +99,8 @@ def test_accepting_the_routine_then_listing_schedules(client_as: ClientAs, monty
         "started_on": "2026-04-15",
         "snoozed_until": None,
         "due_on": "2026-04-22",
+        "routine_suggestion": None,
+        "routine_since": None,
         "interval_days": 7,
         "next_due": "2026-04-22",
         "factors": first["factors"],
