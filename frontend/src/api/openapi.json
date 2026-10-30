@@ -311,6 +311,54 @@
         "title": "CareEventOut",
         "type": "object"
       },
+      "CareLevelOut": {
+        "properties": {
+          "due_in_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Negative when overdue; None while it rests.",
+            "title": "Due In Days"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "1 just after the care, down to 0 when it's due; None while it rests.",
+            "title": "Level"
+          },
+          "resting_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "While it rests: when it starts again.",
+            "title": "Resting Until"
+          }
+        },
+        "required": [
+          "level",
+          "due_in_days",
+          "resting_until"
+        ],
+        "title": "CareLevelOut",
+        "type": "object"
+      },
       "CareProfileOut": {
         "properties": {
           "description": {
@@ -787,6 +835,48 @@
         "title": "FertilizingOut",
         "type": "object"
       },
+      "GlanceOut": {
+        "description": "For the slim water, fertilizer and light bars. Each is None when it isn't known.",
+        "properties": {
+          "fertilizer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareLevelOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "light": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LightLevelOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "water": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CareLevelOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "water",
+          "fertilizer",
+          "light"
+        ],
+        "title": "GlanceOut",
+        "type": "object"
+      },
       "HealthOut": {
         "properties": {
           "database": {
@@ -1142,6 +1232,26 @@
           "invited_by"
         ],
         "title": "InvitationPreviewOut",
+        "type": "object"
+      },
+      "LightLevelOut": {
+        "properties": {
+          "dli": {
+            "description": "The light at the plant's spot, mol/m²/day.",
+            "title": "Dli",
+            "type": "number"
+          },
+          "ideal": {
+            "description": "What its care profile likes there at this time of year.",
+            "title": "Ideal",
+            "type": "number"
+          }
+        },
+        "required": [
+          "dli",
+          "ideal"
+        ],
+        "title": "LightLevelOut",
         "type": "object"
       },
       "LightOut": {
@@ -2293,6 +2403,9 @@
             "title": "Created At",
             "type": "string"
           },
+          "glance": {
+            "$ref": "#/components/schemas/GlanceOut"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -2374,7 +2487,8 @@
           "last_watered_at",
           "species",
           "care_profile",
-          "created_at"
+          "created_at",
+          "glance"
         ],
         "title": "PlantOut",
         "type": "object"
@@ -2454,6 +2568,9 @@
             ],
             "title": "Cover Thumbnail Url"
           },
+          "glance": {
+            "$ref": "#/components/schemas/GlanceOut"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -2511,7 +2628,8 @@
           "cover_thumbnail_url",
           "last_watered_at",
           "species",
-          "needs_routine"
+          "needs_routine",
+          "glance"
         ],
         "title": "PlantSummaryOut",
         "type": "object"

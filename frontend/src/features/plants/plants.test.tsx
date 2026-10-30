@@ -115,6 +115,7 @@ function plant(overrides: Partial<Plant> = {}): Plant {
     species: null,
     care_profile: null,
     created_at: "2026-04-01T10:00:00Z",
+    glance: { water: null, fertilizer: null, light: null },
     ...overrides,
   };
 }
@@ -130,6 +131,7 @@ function summary(overrides: Partial<PlantSummary> = {}): PlantSummary {
     last_watered_at: null,
     species: null,
     needs_routine: false,
+    glance: { water: null, fertilizer: null, light: null },
     ...overrides,
   };
 }
@@ -148,6 +150,32 @@ function withPlant(data: Plant, photos: Photo[] = []) {
 }
 
 describe("plant list", () => {
+  it("shows care bars on each card, described for screen readers", async () => {
+    signInAs(viewer);
+    server.use(
+      http.get("*/api/v1/plants", () =>
+        HttpResponse.json({
+          items: [
+            summary({
+              glance: {
+                water: { level: 1, due_in_days: 1, resting_until: null },
+                fertilizer: null,
+                light: { dli: 10, ideal: 10 },
+              },
+            }),
+          ],
+          count: 1,
+        }),
+      ),
+    );
+
+    renderApp("/plants");
+
+    const card = await screen.findByRole("link", { name: /Monty/ });
+    expect(card).toHaveAccessibleName(/Water tomorrow/);
+    expect(card).toHaveAccessibleName(/Light: what this plant likes/);
+  });
+
   it("invites gardeners to add their first plant", async () => {
     signInAs(gardener);
 
@@ -462,6 +490,44 @@ describe("plant page", () => {
       ),
     ).toBeVisible();
     expect(screen.getByText("About 8 mol/m²/day of light here now")).toBeVisible();
+  });
+
+  it("shows care at a glance, in words as well as bars", async () => {
+    signInAs(viewer);
+    withPlant(
+      plant({
+        glance: {
+          water: { level: 0.4, due_in_days: 2, resting_until: null },
+          fertilizer: { level: null, due_in_days: null, resting_until: "2027-03-01" },
+          light: { dli: 6, ideal: 10 },
+        },
+      }),
+    );
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("Water in 2 days")).toBeVisible();
+    expect(screen.getByText("No fertilizer until Mar 1, 2027")).toBeVisible();
+    expect(screen.getByText("Light: a bit low for this plant")).toBeVisible();
+  });
+
+  it("says when care is due or overdue, and how the light compares", async () => {
+    signInAs(viewer);
+    withPlant(
+      plant({
+        glance: {
+          water: { level: 0, due_in_days: -3, resting_until: null },
+          fertilizer: { level: 0, due_in_days: 0, resting_until: null },
+          light: { dli: 30, ideal: 10 },
+        },
+      }),
+    );
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("Watering overdue by 3 days")).toBeVisible();
+    expect(screen.getByText("Fertilize today")).toBeVisible();
+    expect(screen.getByText("Light: brighter than this plant likes")).toBeVisible();
   });
 
   it("shows the plant's details and light in the person's units", async () => {

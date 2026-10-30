@@ -3,9 +3,10 @@
 Everyone in the household can see plants; Gardeners and Admins can change them.
 """
 
+from dataclasses import asdict
 from datetime import date, datetime
 
-from django.db.models import Count, Max, Q, QuerySet
+from django.db.models import Count, Max, Prefetch, Q, QuerySet
 from django.http import FileResponse, HttpRequest
 from django.urls import reverse
 from ninja import File, Form, Query, Router, Schema, Status
@@ -15,6 +16,8 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
+from sunfleck.care.glance import glance
+from sunfleck.care.models import CareSchedule
 from sunfleck.care.schedules import local_today
 from sunfleck.core.errors import ApiError
 from sunfleck.places.api import (
@@ -32,6 +35,7 @@ from sunfleck.plants.models import (
     ContainerMaterial,
     Photo,
     Plant,
+    PlantLight,
     PlantStatus,
     SoilType,
 )
@@ -118,6 +122,27 @@ class PlantCareProfileOut(Schema):
     chosen: bool = Field(description="Chosen for this plant, rather than from its species.")
 
 
+class CareLevelOut(Schema):
+    level: float | None = Field(
+        description="1 just after the care, down to 0 when it's due; None while it rests."
+    )
+    due_in_days: int | None = Field(description="Negative when overdue; None while it rests.")
+    resting_until: date | None = Field(description="While it rests: when it starts again.")
+
+
+class LightLevelOut(Schema):
+    dli: float = Field(description="The light at the plant's spot, mol/m²/day.")
+    ideal: float = Field(description="What its care profile likes there at this time of year.")
+
+
+class GlanceOut(Schema):
+    """For the slim water, fertilizer and light bars. Each is None when it isn't known."""
+
+    water: CareLevelOut | None
+    fertilizer: CareLevelOut | None
+    light: LightLevelOut | None
+
+
 class PlantSummaryOut(Schema):
     id: int
     nickname: str
@@ -129,6 +154,7 @@ class PlantSummaryOut(Schema):
     needs_routine: bool = Field(
         description="Looked after (active or dormant) but has no care schedule yet."
     )
+    glance: GlanceOut
 
 
 class PlantOut(Schema):
@@ -150,6 +176,7 @@ class PlantOut(Schema):
         description="The care profile that applies: chosen for it, or its species'."
     )
     created_at: datetime
+    glance: GlanceOut
 
 
 class MovePlantsIn(Schema):
@@ -250,6 +277,16 @@ def _summary_out(plant: Plant, lang: str) -> PlantSummaryOut:
         last_watered_at=_last_watered_at(plant),
         species=_species_out(plant, lang),
         needs_routine=_needs_routine(plant),
+        glance=_glance_out(plant),
+    )
+
+
+def _glance_out(plant: Plant) -> GlanceOut:
+    found = glance(plant)
+    return GlanceOut(
+        water=CareLevelOut(**asdict(found.water)) if found.water else None,
+        fertilizer=CareLevelOut(**asdict(found.fertilizer)) if found.fertilizer else None,
+        light=LightLevelOut(**asdict(found.light)) if found.light else None,
     )
 
 
@@ -283,6 +320,7 @@ def _plant_out(plant: Plant, lang: str) -> PlantOut:
         species=_species_out(plant, lang),
         care_profile=_care_profile_out(plant, lang),
         created_at=plant.created_at,
+        glance=_glance_out(plant),
     )
 
 
@@ -314,18 +352,17 @@ def _plants(household: Household) -> QuerySet[Plant]:
             last_watered_at=last_watered_at,
             schedule_count=Count("schedules", distinct=True),
         )
+        # For the care bars: each plant's schedules and the lights that reach it.
+        .prefetch_related(
+            Prefetch("schedules", CareSchedule.objects.select_related("care_type")),
+            Prefetch("light_links", PlantLight.objects.select_related("light_source")),
+        )
         .order_by("nickname", "id")
     )
 
 
 def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = (
-        _plants(household)
-        .select_related("cover_photo")
-        .prefetch_related("light_links__light_source")
-        .filter(pk=plant_id)
-        .first()
-    )
+    plant = _plants(household).select_related("cover_photo").filter(pk=plant_id).first()
     if plant is None:
         raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
     return plant
