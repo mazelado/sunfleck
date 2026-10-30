@@ -56,6 +56,10 @@ signing out are in the account menu (your picture at the top right).
   terracotta pots dry out sooner. With the pot's size, the plant's watering schedule also says
   roughly how much water to give each time. Without a height, a standard pot (about as tall as
   it is wide) is assumed.
+- **When it was last cared for**: adding a plant asks roughly when it was last watered and
+  fertilized, so its first due dates and care bars start from there. A rough answer is
+  enough; it's shown in its history as "Estimated when added". For a plant added before, log
+  its last watering with **Log with details** and set the date.
 - **Photos**: add as many as you like; the first becomes the plant's cover. Photos are made
   smaller and stripped of their location data when uploaded.
 - **Status**: Active, Dormant, Given away, or Died. Only active and dormant plants need care.

@@ -83,6 +83,9 @@ class CareEvent(models.Model):
         _("how was the soil?"), max_length=16, choices=Feedback.choices, blank=True
     )
     skipped = models.BooleanField(_("skipped"), default=False)
+    # Not logged as it happened, but estimated when the plant was added ("a few days ago"), so
+    # its first due dates are right. Not used to learn the person's routine.
+    estimated = models.BooleanField(_("estimated"), default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

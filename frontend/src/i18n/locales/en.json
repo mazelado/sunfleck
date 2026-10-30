@@ -436,7 +436,19 @@
     "deletePhotoTitle": "Delete this photo?",
     "deletePhotoConfirm": "This can't be undone.",
     "photoDeleted": "Photo deleted.",
-    "taken": "Taken {{date}}"
+    "taken": "Taken {{date}}",
+    "lastCare": {
+      "watered": "When was it last watered?",
+      "fertilized": "When was it last fertilized?",
+      "why": "So its first due dates are right. A rough idea is enough.",
+      "today": "Today",
+      "fewDays": "A few days ago",
+      "week": "About a week ago",
+      "unknown": "Don't know",
+      "thisMonth": "This month",
+      "fewMonths": "A few months ago",
+      "neverOrUnknown": "Never or don't know"
+    }
   },
   "care": {
     "types": {
@@ -529,7 +541,8 @@
       "temperature": "Thermometer",
       "heart": "Heart",
       "note": "Note"
-    }
+    },
+    "estimated": "Estimated when added"
   },
   "guide": {
     "title": "Care guide",

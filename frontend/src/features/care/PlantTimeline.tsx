@@ -145,6 +145,11 @@ function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
               {t("care.skipped")}
             </Badge>
           )}
+          {event.estimated && (
+            <Badge size="sm" variant="light" color="gray" tt="none">
+              {t("care.estimated")}
+            </Badge>
+          )}
           {event.feedback && (
             <Badge
               size="sm"

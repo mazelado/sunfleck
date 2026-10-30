@@ -256,6 +256,11 @@
           "care_type": {
             "$ref": "#/components/schemas/CareTypeOut"
           },
+          "estimated": {
+            "description": "Estimated when the plant was added, rather than logged as it happened.",
+            "title": "Estimated",
+            "type": "boolean"
+          },
           "feedback": {
             "anyOf": [
               {
@@ -306,7 +311,8 @@
           "performed_by",
           "notes",
           "feedback",
-          "skipped"
+          "skipped",
+          "estimated"
         ],
         "title": "CareEventOut",
         "type": "object"
@@ -2025,6 +2031,167 @@
           "chosen"
         ],
         "title": "PlantCareProfileOut",
+        "type": "object"
+      },
+      "PlantCreateIn": {
+        "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
+          "care_profile_key": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A care profile chosen for it; leave out to use its species' profile.",
+            "title": "Care Profile Key"
+          },
+          "container_diameter_cm": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Diameter Cm"
+          },
+          "container_height_cm": {
+            "anyOf": [
+              {
+                "maximum": 500,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Height Cm"
+          },
+          "container_material": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContainerMaterial"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_fertilized_days_ago": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Roughly when it was last fertilized; leave out if not known or never.",
+            "title": "Last Fertilized Days Ago"
+          },
+          "last_watered_days_ago": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Roughly when it was last watered (0: today); leave out if not known.",
+            "title": "Last Watered Days Ago"
+          },
+          "light_sources": {
+            "default": [],
+            "description": "The windows and grow lights that reach it.",
+            "items": {
+              "$ref": "#/components/schemas/PlantLightIn"
+            },
+            "maxItems": 50,
+            "title": "Light Sources",
+            "type": "array"
+          },
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Id"
+          },
+          "nickname": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Nickname",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 5000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "soil_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SoilType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlantStatus"
+              }
+            ],
+            "default": "active"
+          },
+          "taxon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its genus or species.",
+            "title": "Taxon Id"
+          }
+        },
+        "required": [
+          "nickname"
+        ],
+        "title": "PlantCreateIn",
         "type": "object"
       },
       "PlantFilters": {
@@ -6262,13 +6429,14 @@
         ]
       },
       "post": {
+        "description": "Add a plant. When it was last watered and fertilized, if known, is recorded as care\n(marked as estimated), so its first due dates start from there.",
         "operationId": "sunfleck_plants_api_create_plant",
         "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PlantIn"
+                "$ref": "#/components/schemas/PlantCreateIn"
               }
             }
           },

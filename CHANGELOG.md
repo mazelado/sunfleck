@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **When was it last cared for?** Adding a plant asks roughly when it was last watered and
+  fertilized (today, a few days ago, about a week ago, or don't know), so its first due dates
+  and care bars start from there instead of from the day it was added (#76). The answer is
+  kept in its history, marked "Estimated when added".
+
 ## [0.4.1] - 2026-10-30
 
 **Dahlia.** Fixes from using 0.4: sensible water amounts for bigger pots, and what to add

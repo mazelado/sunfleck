@@ -80,6 +80,7 @@ function event(id: number, plantId: number): CareEvent {
     notes: "",
     feedback: null,
     skipped: false,
+    estimated: false,
   };
 }
 

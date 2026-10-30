@@ -6,6 +6,7 @@ import {
   Group,
   NumberInput,
   Paper,
+  Radio,
   Select,
   Stack,
   Text,
@@ -92,7 +93,23 @@ interface PlantFormValues {
   species: ChosenSpecies | null;
   /** The care profile chosen for the plant; null uses its species' profile. */
   careProfileKey: string | null;
+  /** New plants: about how many days ago it was last watered and fertilized; "" if not known. */
+  lastWatered: string;
+  lastFertilized: string;
 }
+
+// When a new plant was last cared for, roughly, in days ago.
+const LAST_WATERED = [
+  ["0", "plants.lastCare.today"],
+  ["3", "plants.lastCare.fewDays"],
+  ["7", "plants.lastCare.week"],
+  ["", "plants.lastCare.unknown"],
+] as const;
+const LAST_FERTILIZED = [
+  ["14", "plants.lastCare.thisMonth"],
+  ["90", "plants.lastCare.fewMonths"],
+  ["", "plants.lastCare.neverOrUnknown"],
+] as const;
 
 function initialLights(plant: Plant | undefined, units: UnitSystem): Record<string, LightChoice> {
   const lights: Record<string, LightChoice> = {};
@@ -141,6 +158,8 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
       photo: null,
       species: plant?.species ?? null,
       careProfileKey: plant?.care_profile?.chosen ? plant.care_profile.key : null,
+      lastWatered: "",
+      lastFertilized: "",
     },
     validate: { nickname: isNotEmpty(t("validation.required")) },
   });
@@ -167,7 +186,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
     );
     let saved: Plant;
     try {
-      saved = await save.mutateAsync({
+      const body = {
         nickname: formValues.nickname,
         location_id: location ? location.id : null,
         status: formValues.status,
@@ -189,7 +208,15 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               light.kind === "window" && distance !== "" ? displayToCm(distance, units) : null,
           };
         }),
-      });
+      };
+      const daysAgo = (value: string) => (value === "" ? null : Number(value));
+      saved = plant
+        ? await updatePlant.mutateAsync(body)
+        : await createPlant.mutateAsync({
+            ...body,
+            last_watered_days_ago: daysAgo(formValues.lastWatered),
+            last_fertilized_days_ago: daysAgo(formValues.lastFertilized),
+          });
     } catch (error) {
       applyFieldErrors(form, error, {
         location_id: "locationId",
@@ -348,6 +375,31 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               description={t("common.optional")}
               {...form.getInputProps("acquiredOn")}
             />
+            {!plant && (
+              <>
+                <Radio.Group
+                  label={t("plants.lastCare.watered")}
+                  description={t("plants.lastCare.why")}
+                  {...form.getInputProps("lastWatered")}
+                >
+                  <Group gap="md" mt={6}>
+                    {LAST_WATERED.map(([value, label]) => (
+                      <Radio key={value} value={value} label={t(label)} />
+                    ))}
+                  </Group>
+                </Radio.Group>
+                <Radio.Group
+                  label={t("plants.lastCare.fertilized")}
+                  {...form.getInputProps("lastFertilized")}
+                >
+                  <Group gap="md" mt={6}>
+                    {LAST_FERTILIZED.map(([value, label]) => (
+                      <Radio key={value} value={value} label={t(label)} />
+                    ))}
+                  </Group>
+                </Radio.Group>
+              </>
+            )}
             <Textarea
               label={t("plants.notes")}
               description={t("common.optional")}
