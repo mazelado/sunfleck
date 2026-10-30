@@ -50,6 +50,7 @@ function careEvent(overrides: Partial<CareEvent> = {}): CareEvent {
     notes: "",
     feedback: null,
     skipped: false,
+    estimated: false,
     ...overrides,
   };
 }
@@ -207,6 +208,15 @@ describe("custom watering types", () => {
 });
 
 describe("history", () => {
+  it("marks care estimated when the plant was added", async () => {
+    signInAs(gardener);
+    withPlant([careItem(careEvent({ estimated: true }))]);
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("Estimated when added")).toBeVisible();
+  });
+
   it("shows care and photos, and asks about the soil after the latest watering", async () => {
     signInAs(gardener);
     const watering = careEvent();

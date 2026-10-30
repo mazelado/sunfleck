@@ -81,6 +81,18 @@ def test_no_suggestion_when_the_soil_disagrees(water: CareSchedule) -> None:
     assert routine_suggestion(water, TODAY) is None
 
 
+def test_waterings_estimated_when_the_plant_was_added_dont_count(water: CareSchedule) -> None:
+    watered(water, 1, 11, 21)
+    day = TODAY - timedelta(days=31)
+    CareEventFactory.create(
+        plant=water.plant,
+        performed_at=datetime(day.year, day.month, day.day, 9, tzinfo=UTC),
+        estimated=True,
+    )
+
+    assert routine_suggestion(water, TODAY) is None
+
+
 def test_only_predicted_watering_learns(water: CareSchedule) -> None:
     watered(water, 1, 11, 21, 31)
     water.mode = ScheduleMode.FIXED

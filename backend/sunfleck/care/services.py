@@ -112,6 +112,7 @@ class CareEventData:
     notes: str = ""
     feedback: Feedback | None = None
     skipped: bool = False
+    estimated: bool = False
 
 
 def _aware(plant: Plant, when: datetime) -> datetime:
@@ -138,6 +139,7 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
     event.notes = data.notes.strip()
     event.feedback = data.feedback or ""
     event.skipped = data.skipped
+    event.estimated = data.estimated
     event.save()
 
 
@@ -181,3 +183,24 @@ def update_care_event(event: CareEvent, data: CareEventData) -> CareEvent:
     """
     _apply_event(event, event.plant.household, data)
     return event
+
+
+def log_last_care(
+    plant: Plant,
+    user: User | None,
+    watered_days_ago: int | None,
+    fertilized_days_ago: int | None,
+) -> list[CareEvent]:
+    """When a plant is added: record roughly when it was last watered and fertilized, as the
+    person remembers it, so its first due dates (and care bars) start from there. None: not
+    known, so nothing is recorded."""
+    events = []
+    for key, days_ago in (("water", watered_days_ago), ("fertilize", fertilized_days_ago)):
+        if days_ago is None:
+            continue
+        care_type = care_types_for(plant.household).get(household=None, key=key)
+        when = timezone.now() - timedelta(days=days_ago)
+        events.append(
+            log_care(plant, CareEventData(care_type.pk, performed_at=when, estimated=True), user)
+        )
+    return events

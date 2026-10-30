@@ -271,6 +271,7 @@ class _Importer:
                 notes=event_item.notes,
                 feedback=event_item.feedback,
                 skipped=event_item.skipped,
+                estimated=event_item.estimated,
             )
             _check(event, f"care of {item.nickname!r}")
             events.append(event)

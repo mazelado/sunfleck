@@ -71,6 +71,9 @@ class CareEventOut(Schema):
     notes: str
     feedback: Feedback | None
     skipped: bool
+    estimated: bool = Field(
+        description="Estimated when the plant was added, rather than logged as it happened."
+    )
 
 
 class CareEventIn(Schema):
@@ -266,6 +269,7 @@ def _event_out(event: CareEvent) -> CareEventOut:
         notes=event.notes,
         feedback=Feedback(event.feedback) if event.feedback else None,
         skipped=event.skipped,
+        estimated=event.estimated,
     )
 
 

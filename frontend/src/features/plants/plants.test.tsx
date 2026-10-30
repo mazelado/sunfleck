@@ -269,6 +269,7 @@ describe("plant form", () => {
     await user.click(screen.getByRole("checkbox", { name: /Shelf light/ }));
     await user.type(screen.getByLabelText(/Pot diameter/), "17");
     await user.type(screen.getByLabelText(/Pot height/), "12");
+    await user.click(screen.getByRole("radio", { name: "A few days ago" }));
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
@@ -288,6 +289,9 @@ describe("plant form", () => {
         { light_source_id: 1, distance_cm: 80 },
         { light_source_id: 2, distance_cm: null },
       ],
+      // When it was last cared for: watered a few days ago; fertilized, not known.
+      last_watered_days_ago: 3,
+      last_fertilized_days_ago: null,
     });
   });
 

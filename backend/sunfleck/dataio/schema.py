@@ -98,6 +98,8 @@ class CareEvent(Model):
     notes: str
     feedback: str
     skipped: bool
+    # Estimated when the plant was added (added in 0.5; older exports don't have it).
+    estimated: bool = False
 
 
 class Schedule(Model):

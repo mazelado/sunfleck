@@ -14,6 +14,7 @@ import type { components } from "./schema";
 export type Plant = components["schemas"]["PlantOut"];
 export type PlantSummary = components["schemas"]["PlantSummaryOut"];
 export type PlantInput = components["schemas"]["PlantIn"];
+export type NewPlantInput = components["schemas"]["PlantCreateIn"];
 export type PlantStatus = components["schemas"]["PlantStatus"];
 export type ContainerMaterial = components["schemas"]["ContainerMaterial"];
 export type SoilType = components["schemas"]["SoilType"];
@@ -104,7 +105,7 @@ export function usePlant(plantId: number | null) {
 export function useCreatePlant() {
   const invalidate = useInvalidatePlants();
   return useMutation({
-    mutationFn: async (body: PlantInput) => unwrap(await api.POST("/api/v1/plants", { body })),
+    mutationFn: async (body: NewPlantInput) => unwrap(await api.POST("/api/v1/plants", { body })),
     onSuccess: invalidate,
   });
 }

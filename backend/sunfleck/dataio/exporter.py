@@ -110,6 +110,7 @@ def _plant(plant: Plant) -> schema.Plant:
                 notes=event.notes,
                 feedback=event.feedback,
                 skipped=event.skipped,
+                estimated=event.estimated,
             )
             for event in CareEvent.objects.filter(plant=plant)
             .select_related("care_type")

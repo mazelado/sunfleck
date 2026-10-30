@@ -49,7 +49,11 @@ def routine_suggestion(
     zone = plant_zone(schedule.plant)
     events = list(
         CareEvent.objects.filter(
-            plant=schedule.plant, care_type__counts_as_watering=True, skipped=False
+            plant=schedule.plant,
+            care_type__counts_as_watering=True,
+            skipped=False,
+            # A remembered "a few days ago" says nothing about the routine.
+            estimated=False,
         ).order_by("-performed_at")[: GAPS + 1]
     )
     if len(events) < GAPS + 1:

@@ -785,7 +785,11 @@ export interface paths {
          */
         get: operations["sunfleck_plants_api_list_plants"];
         put?: never;
-        /** Create Plant */
+        /**
+         * Create Plant
+         * @description Add a plant. When it was last watered and fertilized, if known, is recorded as care
+         *     (marked as estimated), so its first due dates start from there.
+         */
         post: operations["sunfleck_plants_api_create_plant"];
         delete?: never;
         options?: never;
@@ -1304,6 +1308,11 @@ export interface components {
         /** CareEventOut */
         CareEventOut: {
             care_type: components["schemas"]["CareTypeOut"];
+            /**
+             * Estimated
+             * @description Estimated when the plant was added, rather than logged as it happened.
+             */
+            estimated: boolean;
             feedback: components["schemas"]["Feedback"] | null;
             /** Id */
             id: number;
@@ -1947,6 +1956,54 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+        };
+        /** PlantCreateIn */
+        PlantCreateIn: {
+            /** Acquired On */
+            acquired_on?: string | null;
+            /**
+             * Care Profile Key
+             * @description A care profile chosen for it; leave out to use its species' profile.
+             */
+            care_profile_key?: string | null;
+            /** Container Diameter Cm */
+            container_diameter_cm?: number | null;
+            /** Container Height Cm */
+            container_height_cm?: number | null;
+            container_material?: components["schemas"]["ContainerMaterial"] | null;
+            /**
+             * Last Fertilized Days Ago
+             * @description Roughly when it was last fertilized; leave out if not known or never.
+             */
+            last_fertilized_days_ago?: number | null;
+            /**
+             * Last Watered Days Ago
+             * @description Roughly when it was last watered (0: today); leave out if not known.
+             */
+            last_watered_days_ago?: number | null;
+            /**
+             * Light Sources
+             * @description The windows and grow lights that reach it.
+             * @default []
+             */
+            light_sources: components["schemas"]["PlantLightIn"][];
+            /** Location Id */
+            location_id?: number | null;
+            /** Nickname */
+            nickname: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            soil_type?: components["schemas"]["SoilType"] | null;
+            /** @default active */
+            status: components["schemas"]["PlantStatus"];
+            /**
+             * Taxon Id
+             * @description Its genus or species.
+             */
+            taxon_id?: number | null;
         };
         /** PlantFilters */
         PlantFilters: {
@@ -4010,7 +4067,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PlantIn"];
+                "application/json": components["schemas"]["PlantCreateIn"];
             };
         };
         responses: {

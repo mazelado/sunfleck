@@ -6,6 +6,7 @@ Everyone in the household can see plants; Gardeners and Admins can change them.
 from dataclasses import asdict
 from datetime import date, datetime
 
+from django.db import transaction
 from django.db.models import Count, Max, Prefetch, Q, QuerySet
 from django.http import FileResponse, HttpRequest
 from django.urls import reverse
@@ -16,6 +17,7 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
+from sunfleck.care import services as care_services
 from sunfleck.care.glance import glance
 from sunfleck.care.models import CareSchedule
 from sunfleck.care.schedules import local_today
@@ -75,6 +77,21 @@ class PlantIn(Schema):
         default=None,
         max_length=50,
         description="A care profile chosen for it; leave out to use its species' profile.",
+    )
+
+
+class PlantCreateIn(PlantIn):
+    last_watered_days_ago: int | None = Field(
+        default=None,
+        ge=0,
+        le=365,
+        description="Roughly when it was last watered (0: today); leave out if not known.",
+    )
+    last_fertilized_days_ago: int | None = Field(
+        default=None,
+        ge=0,
+        le=365,
+        description="Roughly when it was last fertilized; leave out if not known or never.",
     )
 
 
@@ -329,7 +346,9 @@ def _plants_error(exc: services.PlantsError) -> ApiError:
 
 
 def _plant_data(data: PlantIn) -> services.PlantData:
-    fields = data.model_dump(exclude={"light_sources"})
+    fields = data.model_dump(
+        exclude={"light_sources", "last_watered_days_ago", "last_fertilized_days_ago"}
+    )
     lights = [services.PlantLightData(**light.model_dump()) for light in data.light_sources]
     return services.PlantData(**fields, light_sources=lights)
 
@@ -406,10 +425,20 @@ def list_plants(request: HttpRequest, filters: Query[PlantFilters]) -> PlantPage
 
 
 @router.post("/plants", response={201: PlantOut})
-def create_plant(request: HttpRequest, data: PlantIn) -> Status[PlantOut]:
-    household = require_role(request, Role.GARDENER).household
+def create_plant(request: HttpRequest, data: PlantCreateIn) -> Status[PlantOut]:
+    """Add a plant. When it was last watered and fertilized, if known, is recorded as care
+    (marked as estimated), so its first due dates start from there."""
+    membership = require_role(request, Role.GARDENER)
+    household = membership.household
     try:
-        plant = services.create_plant(household, _plant_data(data))
+        with transaction.atomic():
+            plant = services.create_plant(household, _plant_data(data))
+            care_services.log_last_care(
+                plant,
+                membership.user,
+                data.last_watered_days_ago,
+                data.last_fertilized_days_ago,
+            )
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return Status(201, _plant_out(_get_plant(household, plant.pk), language(request)))

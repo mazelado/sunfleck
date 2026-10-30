@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client
+from django.utils import timezone
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory
@@ -48,6 +49,47 @@ def _photo(plant: Plant) -> Photo:
 
 
 # --- Plants -----------------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_when_a_new_plant_was_last_cared_for_is_recorded_as_estimated_care(
+    client_as: ClientAs, location: Location
+) -> None:
+    gardener = client_as(Role.GARDENER)
+
+    response = send(
+        gardener,
+        "POST",
+        "/api/v1/plants",
+        {
+            "nickname": "Monty",
+            "location_id": location.pk,
+            "last_watered_days_ago": 3,
+            "last_fertilized_days_ago": 14,
+        },
+    )
+
+    plant = Plant.objects.get(pk=response.json()["id"])
+    events = {event.care_type.key: event for event in plant.care_events.all()}
+    assert set(events) == {"water", "fertilize"}
+    assert all(event.estimated for event in events.values())
+    assert (timezone.now() - events["water"].performed_at).days == 3
+    assert (timezone.now() - events["fertilize"].performed_at).days == 14
+    assert events["water"].performed_by is not None
+    timeline = gardener.get(f"/api/v1/plants/{plant.pk}/timeline").json()
+    care = [item["care_event"] for item in timeline["items"] if item["kind"] == "care"]
+    assert len(care) == 2
+    assert all(event["estimated"] for event in care)
+
+
+@pytest.mark.django_db
+def test_nothing_is_recorded_when_its_last_care_isnt_known(
+    client_as: ClientAs, location: Location
+) -> None:
+    response = send(client_as(Role.GARDENER), "POST", "/api/v1/plants", {"nickname": "Fern"})
+
+    assert response.status_code == 201
+    assert not Plant.objects.get(pk=response.json()["id"]).care_events.exists()
 
 
 @pytest.mark.django_db
