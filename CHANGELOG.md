@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **About Sunfleck**, in the account menu: which version is running, with its release notes,
+  the version of the care data, the licences and the source code, and credits.
+
 ### Fixed
 
 - On iPhones, the tab bar sat higher than needed: the space for the home indicator was counted
