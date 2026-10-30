@@ -15,6 +15,7 @@ import {
   IconBook,
   IconDeviceMobileDown,
   IconDroplet,
+  IconInfoCircle,
   IconChecklist,
   IconDatabaseExport,
   IconLogout,
@@ -142,6 +143,9 @@ export function AppLayout() {
                 </Menu.Item>
               )}
               <Menu.Divider />
+              <Menu.Item component={Link} to="/about" leftSection={<IconInfoCircle size={16} />}>
+                {t("nav.about")}
+              </Menu.Item>
               {installMethod && (
                 <Menu.Item
                   leftSection={<IconDeviceMobileDown size={16} />}

@@ -88,6 +88,8 @@ Care that learns from you and shows what's going on.
   and grow light through the year, on the plant and location pages.
 - **Indoor humidity estimated** from the outdoor weather and the room's temperature, and used
   by the predictions (#44).
+- **An About page:** which version is running, with its release notes, the licence and source
+  code, and credits (#66).
 
 ### AI providers and care data
 
@@ -140,6 +142,7 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **A design pass across the whole app:** typography, spacing, colour, illustrations for empty
   pages, and gentle motion, in light and dark themes. One of Sunfleck's goals is to be
   beautiful as well as useful.
+- **Cropping photos:** choose the crop and zoom of a profile picture before saving it (#67).
 - **Frontend plugin slots**, so plugins can add to the interface (widgets, plant page tabs).
 - A plugin catalog page and a plugin development guide.
 - **Offline care logging**, synced when the connection is back.

@@ -11,6 +11,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **About Sunfleck**, in the account menu: which version is running, with its release notes,
+  the version of the care data, the licences and the source code, and credits.
 - **Learning from how you water**: when your last few waterings were all clearly further apart
   (or closer together) than a plant's schedule, its page offers to match the schedule to your
   routine, e.g. "You've been watering about every 9 days, but the schedule says every 6".

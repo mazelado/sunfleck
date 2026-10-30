@@ -185,6 +185,9 @@ Database changes are applied automatically when it starts. Make a backup first, 
 latest release; to stay on a version, set it in `.env`, e.g. `SUNFLECK_VERSION=0.1` (0.1's bug
 fixes, but not 0.2).
 
+To check which version is running, open **About Sunfleck** in the account menu, or
+`curl http://localhost:8000/api/v1/health`.
+
 ## PostgreSQL and Redis (optional)
 
 SQLite, built in, is plenty for a household. To use **PostgreSQL** instead, set
