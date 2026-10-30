@@ -406,7 +406,7 @@ UI, for example: *"Watering moved 2 days later: cooler weather (−15%), lower w
 (−10%)."*
 
 Evapotranspiration-based outdoor watering and learning from the history of observed
-intervals (beyond feedback) are on the roadmap ([Smarter care](roadmap.md#smarter-care)).
+intervals (beyond feedback) are on the roadmap ([Smarter care](roadmap.md#dahlia-smarter-care-released)).
 
 ## 6. Plugin system
 
