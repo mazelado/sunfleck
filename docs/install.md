@@ -216,6 +216,11 @@ Set in `.env`; run `docker compose up -d` after changing them.
 
 ## Troubleshooting
 
+- **"required variable SECRET_KEY is missing a value"** when starting: `SECRET_KEY` in `.env`
+  is empty. Set it to a long random string (`openssl rand -base64 48`).
+- **"dependency failed to start: container … is unhealthy"**: the app stopped while starting.
+  `docker compose logs sunfleck` says why, for example a setting that's wrong or a data folder
+  that isn't writable (see below).
 - **"Bad Request (400)"**: the address you use isn't in `ALLOWED_HOSTS`.
 - **"CSRF verification failed" or signing in fails**: add the address, with `https://`, to
   `CSRF_TRUSTED_ORIGINS`; behind a reverse proxy, also set `SUNFLECK_BEHIND_PROXY=true`.
