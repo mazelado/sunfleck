@@ -47,8 +47,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.2 Bougainvillea** | How much water to give (#43), and fixes from using 0.1 (#41, #42) | Released 2026-10-30 |
 | **0.3 Camellia** | [Easier everyday use](#camellia-easier-everyday-use-released) | Released 2026-10-30 |
 | **0.4 Dahlia** | [Smarter care](#dahlia-smarter-care-released) | Released 2026-10-30 |
-| **0.5 Echinacea** | [AI providers and toxicity](#ai-providers-and-toxicity) | Next |
-| **0.6 Fuchsia** | [Integrations](#integrations) | Planned |
+| **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
+| **0.6 Fuchsia** | [Integrations](#integrations) | Next |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Planned |
 | **0.8 Hibiscus** | [Collector features](#collector-features) | Planned |
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
@@ -91,17 +91,17 @@ Care that learns from you and shows what's going on.
 - **An About page:** which version is running, with its release notes, the licence and source
   code, and credits (#66).
 
-### AI providers and toxicity
+### Echinacea: AI providers and toxicity (released)
 
 Optional plugins: off until an Admin turns them on, and each says exactly what it sends.
 
-- **AI provider plugins:** OpenAI-compatible first (which also covers local models through
-  Ollama), then Anthropic's own API.
-- **AI care profile suggestions** for unusual plants that match no built-in profile, always
-  reviewed before they're used.
-- **Toxicity flags** (pets and children) in the dataset, each with its sources. They only ever
-  say "known to be toxic" (with the source) or "unknown", never "safe". For pets, from the
-  ASPCA's toxic plant list, for the common houseplant genera first.
+- **An AI provider plugin** for OpenAI-compatible APIs, which also covers local models through
+  Ollama or LM Studio. (Anthropic's own API moved to the AI assistant.)
+- **AI care profile suggestions** for unusual plants that match no built-in profile: the AI
+  picks the closest built-in profile, and you choose whether to use it.
+- **Toxicity to pets** in the dataset, from the ASPCA's toxic plant list, for the common
+  houseplant genera first. Each flag cites its source, and only ever says "known to be toxic"
+  or "unknown", never "safe". (Toxicity to children moved to outdoor and edible gardening.)
 - **When was it last cared for?** Adding a plant asks when it was last watered and
   fertilized, so its first due dates and care bars are right from the start (#76).
 
@@ -124,6 +124,9 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 ### Outdoor and edible gardening
 
 - Garden beds and a simple **garden map**.
+- **Toxicity to children** in the dataset, with the same rules as for pets: "known to be
+  toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
+  control centres, since there's no single list like the ASPCA's.
 - **Frost dates** from the location; a sowing, transplanting and harvest calendar.
 - A harvest log, and a seed inventory.
 - Companion planting hints (as a plugin with its own data).
@@ -139,6 +142,7 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 
 ### AI assistant
 
+- **An AI provider plugin for Anthropic's API**, next to the OpenAI-compatible one.
 - **Photo diagnosis:** "what's wrong with my plant?", with likely causes and next steps,
   clearly labelled as suggestions.
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
