@@ -505,6 +505,107 @@
         "title": "CareProfileRef",
         "type": "object"
       },
+      "CareProfileRefOut": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name"
+        ],
+        "title": "CareProfileRefOut",
+        "type": "object"
+      },
+      "CareProfileSuggestionAvailableOut": {
+        "properties": {
+          "available": {
+            "description": "Whether an AI plugin is on to suggest care profiles.",
+            "title": "Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "CareProfileSuggestionAvailableOut",
+        "type": "object"
+      },
+      "CareProfileSuggestionIn": {
+        "properties": {
+          "indoor": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Whether it grows indoors.",
+            "title": "Indoor"
+          },
+          "name": {
+            "description": "What the plant is called.",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "taxon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its genus or species, if known.",
+            "title": "Taxon Id"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CareProfileSuggestionIn",
+        "type": "object"
+      },
+      "CareProfileSuggestionOut": {
+        "properties": {
+          "attribution": {
+            "description": "Which AI suggested it, shown with the suggestion.",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "confidence": {
+            "description": "high, medium or low.",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/CareProfileRefOut"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile",
+          "confidence",
+          "reason",
+          "attribution"
+        ],
+        "title": "CareProfileSuggestionOut",
+        "type": "object"
+      },
       "CareProfileSummaryOut": {
         "properties": {
           "description": {
@@ -4458,6 +4559,70 @@
         "summary": "Update Care Event",
         "tags": [
           "care"
+        ]
+      }
+    },
+    "/api/v1/care-profile-suggestions": {
+      "get": {
+        "description": "Whether care profiles can be suggested with AI (an AI plugin is on).",
+        "operationId": "sunfleck_taxonomy_api_suggest_available",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareProfileSuggestionAvailableOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Suggest Available",
+        "tags": [
+          "taxonomy"
+        ]
+      },
+      "post": {
+        "description": "Ask the household's AI plugin which built-in care profile fits a plant best, and why.\n\nSends the plant's name, its species (if known) and whether it grows indoors, with the\nlist of care profiles. The suggestion is only shown: choosing it is up to the person.",
+        "operationId": "sunfleck_taxonomy_api_suggest_care_profile",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareProfileSuggestionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareProfileSuggestionOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Suggest Care Profile",
+        "tags": [
+          "taxonomy"
         ]
       }
     },

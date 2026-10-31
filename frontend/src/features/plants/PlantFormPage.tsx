@@ -51,6 +51,7 @@ import { describeLight } from "../places/describe";
 import { IdentifyPlant } from "../taxonomy/IdentifyPlant";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
+import { SuggestCareProfile } from "./SuggestCareProfile";
 
 /** Add a plant (`/plants/new`, optionally `?location=<id>`) or edit one (`/plants/:id/edit`). */
 export function PlantFormPage() {
@@ -297,6 +298,22 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               data={careProfiles.map((profile) => ({ value: profile.key, label: profile.name }))}
               {...form.getInputProps("careProfileKey")}
             />
+            {!speciesProfile && !values.careProfileKey && (
+              <SuggestCareProfile
+                request={
+                  values.species || values.nickname.trim()
+                    ? {
+                        name: values.species?.scientific_name ?? values.nickname.trim(),
+                        taxon_id: values.species?.id ?? null,
+                        indoor: location ? location.kind === "indoor" : null,
+                      }
+                    : null
+                }
+                onUse={(key) => {
+                  form.setFieldValue("careProfileKey", key);
+                }}
+              />
+            )}
             {locations.length > 0 ? (
               <Select
                 label={t("plants.location")}

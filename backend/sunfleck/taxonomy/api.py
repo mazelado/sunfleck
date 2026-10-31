@@ -17,6 +17,7 @@ from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
 from sunfleck.taxonomy import identify as identification
+from sunfleck.taxonomy import suggest as suggestions
 from sunfleck.taxonomy.models import (
     CareArchetype,
     Taxon,
@@ -121,6 +122,28 @@ class SpeciesHitOut(SpeciesOut):
 
 class IdentifyAvailableOut(Schema):
     available: bool = Field(description="Whether a plugin that identifies plants is on.")
+
+
+class CareProfileSuggestionAvailableOut(Schema):
+    available: bool = Field(description="Whether an AI plugin is on to suggest care profiles.")
+
+
+class CareProfileSuggestionIn(Schema):
+    name: str = Field(min_length=1, max_length=150, description="What the plant is called.")
+    taxon_id: int | None = Field(default=None, description="Its genus or species, if known.")
+    indoor: bool | None = Field(default=None, description="Whether it grows indoors.")
+
+
+class CareProfileRefOut(Schema):
+    key: str
+    name: str
+
+
+class CareProfileSuggestionOut(Schema):
+    profile: CareProfileRefOut
+    confidence: str = Field(description="high, medium or low.")
+    reason: str
+    attribution: str = Field(description="Which AI suggested it, shown with the suggestion.")
 
 
 class CandidateOut(Schema):
@@ -252,6 +275,46 @@ def get_care_profile(request: HttpRequest, key: str) -> CareProfileOut:
         archetype.taxa.filter(rank=TaxonRank.GENUS).values_list("scientific_name", flat=True)
     )
     return _profile_out(archetype, language(request), genera)
+
+
+SUGGEST_ERROR_STATUS = {
+    "suggestion_unavailable": 404,
+    "ai_quota_exceeded": 429,
+    "ai_missing_settings": 502,
+    "ai_invalid_api_key": 502,
+    "ai_unavailable": 502,
+    "ai_invalid_answer": 502,
+}
+
+
+@router.get("/care-profile-suggestions", response=CareProfileSuggestionAvailableOut)
+def suggest_available(request: HttpRequest) -> CareProfileSuggestionAvailableOut:
+    """Whether care profiles can be suggested with AI (an AI plugin is on)."""
+    household = require_role(request, Role.VIEWER).household
+    return CareProfileSuggestionAvailableOut(available=suggestions.available(household))
+
+
+@router.post("/care-profile-suggestions", response=CareProfileSuggestionOut)
+def suggest_care_profile(
+    request: HttpRequest, data: CareProfileSuggestionIn
+) -> CareProfileSuggestionOut:
+    """Ask the household's AI plugin which built-in care profile fits a plant best, and why.
+
+    Sends the plant's name, its species (if known) and whether it grows indoors, with the
+    list of care profiles. The suggestion is only shown: choosing it is up to the person."""
+    household = require_role(request, Role.GARDENER).household
+    taxon = Taxon.objects.filter(pk=data.taxon_id).first() if data.taxon_id else None
+    lang = language(request)
+    try:
+        found = suggestions.suggest(household, data.name, taxon, data.indoor, lang)
+    except suggestions.SuggestError as exc:
+        raise ApiError(SUGGEST_ERROR_STATUS.get(exc.code, 502), exc.code, str(exc)) from exc
+    return CareProfileSuggestionOut(
+        profile=CareProfileRefOut(key=found.profile.key, name=translated(found.profile.name, lang)),
+        confidence=found.confidence,
+        reason=found.reason,
+        attribution=found.attribution,
+    )
 
 
 IDENTIFY_ERROR_STATUS = {

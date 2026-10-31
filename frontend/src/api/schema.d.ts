@@ -62,6 +62,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-profile-suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Suggest Available
+         * @description Whether care profiles can be suggested with AI (an AI plugin is on).
+         */
+        get: operations["sunfleck_taxonomy_api_suggest_available"];
+        put?: never;
+        /**
+         * Suggest Care Profile
+         * @description Ask the household's AI plugin which built-in care profile fits a plant best, and why.
+         *
+         *     Sends the plant's name, its species (if known) and whether it grows indoors, with the
+         *     list of care profiles. The suggestion is only shown: choosing it is up to the person.
+         */
+        post: operations["sunfleck_taxonomy_api_suggest_care_profile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-profiles": {
         parameters: {
             query?: never;
@@ -1395,6 +1422,55 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+        };
+        /** CareProfileRefOut */
+        CareProfileRefOut: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** CareProfileSuggestionAvailableOut */
+        CareProfileSuggestionAvailableOut: {
+            /**
+             * Available
+             * @description Whether an AI plugin is on to suggest care profiles.
+             */
+            available: boolean;
+        };
+        /** CareProfileSuggestionIn */
+        CareProfileSuggestionIn: {
+            /**
+             * Indoor
+             * @description Whether it grows indoors.
+             */
+            indoor?: boolean | null;
+            /**
+             * Name
+             * @description What the plant is called.
+             */
+            name: string;
+            /**
+             * Taxon Id
+             * @description Its genus or species, if known.
+             */
+            taxon_id?: number | null;
+        };
+        /** CareProfileSuggestionOut */
+        CareProfileSuggestionOut: {
+            /**
+             * Attribution
+             * @description Which AI suggested it, shown with the suggestion.
+             */
+            attribution: string;
+            /**
+             * Confidence
+             * @description high, medium or low.
+             */
+            confidence: string;
+            profile: components["schemas"]["CareProfileRefOut"];
+            /** Reason */
+            reason: string;
         };
         /** CareProfileSummaryOut */
         CareProfileSummaryOut: {
@@ -2850,6 +2926,50 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_taxonomy_api_suggest_available: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareProfileSuggestionAvailableOut"];
+                };
+            };
+        };
+    };
+    sunfleck_taxonomy_api_suggest_care_profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CareProfileSuggestionIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CareProfileSuggestionOut"];
+                };
             };
         };
     };

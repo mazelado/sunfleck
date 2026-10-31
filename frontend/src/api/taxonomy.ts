@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
 import { api, unwrap } from "./client";
 import type { components } from "./schema";
@@ -55,5 +55,24 @@ export function useCareProfile(key: string | null) {
       ),
     enabled: key !== null,
     ...REFERENCE,
+  });
+}
+
+export type CareProfileSuggestion = components["schemas"]["CareProfileSuggestionOut"];
+export type SuggestionRequest = components["schemas"]["CareProfileSuggestionIn"];
+
+/** Whether care profiles can be suggested with AI (an AI plugin is on). */
+export function useSuggestAvailable() {
+  return useQuery({
+    queryKey: ["care-profile-suggestions"],
+    queryFn: async () => unwrap(await api.GET("/api/v1/care-profile-suggestions")),
+  });
+}
+
+/** Ask the AI plugin which built-in care profile fits a plant best, and why. */
+export function useSuggestCareProfile() {
+  return useMutation({
+    mutationFn: async (body: SuggestionRequest) =>
+      unwrap(await api.POST("/api/v1/care-profile-suggestions", { body })),
   });
 }

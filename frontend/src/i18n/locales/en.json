@@ -231,7 +231,13 @@
     "household_not_empty": "Exports can only be imported into a household without places or plants yet.",
     "not_an_export": "This file isn't a Sunfleck export.",
     "export_too_new": "This export is from a newer version of Sunfleck. Update Sunfleck first.",
-    "invalid_export": "This export can't be imported because something in it isn't valid."
+    "invalid_export": "This export can't be imported because something in it isn't valid.",
+    "suggestion_unavailable": "No AI plugin is turned on.",
+    "ai_missing_settings": "The AI plugin isn't set up: an Admin can set its server address and model under Plugins.",
+    "ai_invalid_api_key": "The AI service didn't accept its API key. An Admin can check it under Plugins.",
+    "ai_quota_exceeded": "The AI service's limit has been reached. Try again later.",
+    "ai_unavailable": "The AI service can't be reached. Try again later.",
+    "ai_invalid_answer": "The AI didn't give a usable answer. Try again, or choose a care profile yourself."
   },
   "places": {
     "title": "Places",
@@ -948,5 +954,18 @@
     "dismiss": "Not now",
     "matched": "Matched to how often you water, since {{date}}.",
     "reset": "Use Sunfleck's own estimate again"
+  },
+  "suggest": {
+    "button": "Suggest with AI",
+    "needName": "Give it a name or species first.",
+    "result": "The AI suggests {{name}} ({{confidence}}).",
+    "confidence": {
+      "high": "fairly sure",
+      "medium": "not sure",
+      "low": "just a guess"
+    },
+    "check": "Check it against the plant before using it:",
+    "inGuide": "see the profile",
+    "use": "Use {{name}}"
   }
 }
