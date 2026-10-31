@@ -39,6 +39,30 @@ def test_the_dataset_is_loaded_by_migrate() -> None:
 
 
 @pytest.mark.django_db
+def test_toxicity_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> None:
+    source = "https://example.org/toxic-plants/monstera"
+
+    def change(genera: list[dict[str, Any]]) -> None:
+        monstera = next(entry for entry in genera if entry["genus"] == "Monstera")
+        monstera["toxicity"] = {"cats": "toxic", "dogs": "toxic", "sources": [source]}
+        monstera["species"][1]["toxicity"] = {"cats": "toxic", "sources": [source + "-vine"]}
+
+    _edit_genera(dataset_copy, change)
+    _set_version(dataset_copy, "2099.1.0")
+    load_care_data(dataset_copy)
+
+    genus = Taxon.objects.get(scientific_name="Monstera")
+    assert genus.toxicity == {"cats": "toxic", "dogs": "toxic", "sources": [source]}
+    assert Taxon.objects.get(scientific_name="Monstera deliciosa").toxicity == genus.toxicity
+    assert Taxon.objects.get(scientific_name="Monstera adansonii").toxicity == {
+        "cats": "toxic",
+        "sources": [source + "-vine"],
+    }
+    # Not in the dataset: unknown.
+    assert Taxon.objects.get(scientific_name="Lithops").toxicity == {}
+
+
+@pytest.mark.django_db
 def test_the_same_version_is_not_loaded_twice(dataset_copy: Path) -> None:
     result = load_care_data(dataset_copy)
 

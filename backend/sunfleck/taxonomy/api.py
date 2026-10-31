@@ -102,6 +102,15 @@ class CareProfileOut(Schema):
     genera: list[str] = Field(description="The genera with this care profile.")
 
 
+class ToxicityOut(Schema):
+    """Known toxicity to pets, as a source states it. None means unknown, never "safe"."""
+
+    cats: bool = Field(description="Known to be toxic to cats.")
+    dogs: bool = Field(description="Known to be toxic to dogs.")
+    sources: list[str] = Field(description="The page of each source that says so.")
+    note: str | None
+
+
 class SpeciesOut(Schema):
     id: int
     scientific_name: str
@@ -112,6 +121,7 @@ class SpeciesOut(Schema):
     synonyms: list[str] = Field(description="Older names.")
     note: str | None
     care_profile: CareProfileRef | None
+    toxicity: ToxicityOut | None = None
 
 
 class SpeciesHitOut(SpeciesOut):
@@ -196,6 +206,20 @@ def species_out(taxon: Taxon, lang: str) -> SpeciesOut:
         synonyms=taxon.synonyms,
         note=translated(taxon.note, lang) or None,
         care_profile=care_profile_ref(taxon.archetype, lang),
+        toxicity=toxicity_out(taxon, lang),
+    )
+
+
+def toxicity_out(taxon: Taxon, lang: str) -> ToxicityOut | None:
+    """Also used by the plants API."""
+    toxicity = taxon.toxicity
+    if not toxicity:
+        return None
+    return ToxicityOut(
+        cats=toxicity.get("cats") == "toxic",
+        dogs=toxicity.get("dogs") == "toxic",
+        sources=list(toxicity.get("sources", [])),
+        note=translated(toxicity.get("note", {}), lang) or None,
     )
 
 

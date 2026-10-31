@@ -41,7 +41,7 @@ from sunfleck.plants.models import (
     PlantStatus,
     SoilType,
 )
-from sunfleck.taxonomy.api import care_profile_ref, language
+from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
 from sunfleck.taxonomy.models import translated_names
 
 router = Router(tags=["plants"], auth=django_auth)
@@ -131,6 +131,9 @@ class PlantSpeciesOut(Schema):
     id: int
     scientific_name: str
     common_name: str | None
+    toxicity: ToxicityOut | None = Field(
+        default=None, description="Known toxicity to pets; None means unknown, never safe."
+    )
 
 
 class PlantCareProfileOut(Schema):
@@ -271,7 +274,10 @@ def _species_out(plant: Plant, lang: str) -> PlantSpeciesOut | None:
         return None
     names = translated_names(taxon.common_names, lang)
     return PlantSpeciesOut(
-        id=taxon.pk, scientific_name=taxon.scientific_name, common_name=names[0] if names else None
+        id=taxon.pk,
+        scientific_name=taxon.scientific_name,
+        common_name=names[0] if names else None,
+        toxicity=toxicity_out(taxon, lang),
     )
 
 

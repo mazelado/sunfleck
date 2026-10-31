@@ -121,6 +121,23 @@ def _set(path: list[str], value: Any) -> Callable[[Any], None]:
             "archetypes/tropical_aroid.yaml: example Monstera isn't a genus with this profile",
         ),
         (
+            # Toxicity is only ever "toxic", from a source: never "safe".
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(
+                    toxicity={"cats": "safe", "sources": ["https://example.org/monstera"]}
+                ),
+            ),
+            "toxicity/cats: 'toxic' was expected",
+        ),
+        (
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(toxicity={"cats": "toxic"}),
+            ),
+            "'sources' is a required property",
+        ),
+        (
             lambda root: _edit_yaml(root / "dataset.yaml", _set(["version"], "latest")),
             "dataset.yaml: version must look like 2026.10.0",
         ),

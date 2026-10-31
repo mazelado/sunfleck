@@ -125,6 +125,47 @@ describe("care guide", () => {
     expect(screen.getByText("Every 30 days, but not in Nov–Feb")).toBeVisible();
   });
 
+  it("shows known toxicity to pets with its source, and says when it isn't known", async () => {
+    signInAs(gardener);
+    withReferenceData();
+    server.use(
+      http.get("*/api/v1/species/3", () =>
+        HttpResponse.json({
+          ...deliciosa,
+          toxicity: {
+            cats: true,
+            dogs: true,
+            sources: ["https://www.aspca.org/pet-care/animal-poison-control/example"],
+            note: "Insoluble calcium oxalates",
+          },
+        }),
+      ),
+    );
+
+    renderApp("/guide/species/3");
+
+    expect(await screen.findByText("Known to be toxic to cats and dogs")).toBeVisible();
+    expect(screen.getByText("Insoluble calcium oxalates")).toBeVisible();
+    expect(screen.getByRole("link", { name: "aspca.org" })).toHaveAttribute(
+      "href",
+      "https://www.aspca.org/pet-care/animal-poison-control/example",
+    );
+  });
+
+  it("doesn't call a plant safe when its toxicity isn't known", async () => {
+    signInAs(gardener);
+    withReferenceData();
+
+    renderApp("/guide/species/3");
+
+    expect(
+      await screen.findByText(
+        "Toxicity to pets: not known. That doesn't mean it's safe: check with your vet or the " +
+          "ASPCA's list.",
+      ),
+    ).toBeVisible();
+  });
+
   it("shows a care profile's seasons, plants, and where its values come from", async () => {
     signInAs(gardener);
     withReferenceData();

@@ -2234,6 +2234,8 @@ export interface components {
             id: number;
             /** Scientific Name */
             scientific_name: string;
+            /** @description Known toxicity to pets; None means unknown, never safe. */
+            toxicity?: components["schemas"]["ToxicityOut"] | null;
         };
         /**
          * PlantStatus
@@ -2650,6 +2652,7 @@ export interface components {
              * @description Older names.
              */
             synonyms: string[];
+            toxicity?: components["schemas"]["ToxicityOut"] | null;
         };
         /** SpeciesOut */
         SpeciesOut: {
@@ -2675,6 +2678,7 @@ export interface components {
              * @description Older names.
              */
             synonyms: string[];
+            toxicity?: components["schemas"]["ToxicityOut"] | null;
         };
         /** SuggestionOut */
         SuggestionOut: {
@@ -2814,6 +2818,29 @@ export interface components {
              * @default 7
              */
             days_ahead: number;
+        };
+        /**
+         * ToxicityOut
+         * @description Known toxicity to pets, as a source states it. None means unknown, never "safe".
+         */
+        ToxicityOut: {
+            /**
+             * Cats
+             * @description Known to be toxic to cats.
+             */
+            cats: boolean;
+            /**
+             * Dogs
+             * @description Known to be toxic to dogs.
+             */
+            dogs: boolean;
+            /** Note */
+            note: string | null;
+            /**
+             * Sources
+             * @description The page of each source that says so.
+             */
+            sources: string[];
         };
         /**
          * UnitSystem
