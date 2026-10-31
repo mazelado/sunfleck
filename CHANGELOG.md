@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Fixed
+
+- **An error after an update**: an app that was open during an update could show "Unexpected
+  Application Error! 'text/html' is not a valid JavaScript MIME type" when opening a page.
+  The app now reloads itself once to get the new version, and a file that no longer exists is
+  reported as not found (#89).
+
 ## [0.5.0] - 2026-10-31
 
 **Echinacea.** AI suggestions and toxicity to pets: an optional AI plugin (OpenAI, or your own

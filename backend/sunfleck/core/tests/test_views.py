@@ -62,3 +62,12 @@ def test_sign_in_api_urls_are_not_handled_by_the_frontend(client: Client) -> Non
 
     assert response.status_code == 200
     assert b"<div id='root'>" not in response.content
+
+
+@pytest.mark.usefixtures("built_frontend")
+def test_a_missing_app_file_is_not_found_rather_than_the_app(client: Client) -> None:
+    # A page's script from before an update: the browser can't run HTML in its place.
+    response = client.get("/assets/AboutPage-BA94-1LF.js")
+
+    assert response.status_code == 404
+    assert b"<div id='root'>" not in response.content
