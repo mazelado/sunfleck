@@ -33,7 +33,14 @@ def test_search_species(client_as: ClientAs) -> None:
         "synonyms": [],
         "note": None,
         "care_profile": {"key": "tropical_aroid", "name": "Tropical aroid"},
-        "toxicity": None,
+        "toxicity": {
+            "cats": True,
+            "dogs": True,
+            "sources": [
+                "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
+            ],
+            "note": "Insoluble calcium oxalates",
+        },
         "matched_name": "Swiss cheese plant",
     }
 
@@ -143,7 +150,14 @@ def test_plant_gets_its_species_care_profile(client_as: ClientAs) -> None:
         "id": _taxon("Monstera deliciosa").pk,
         "scientific_name": "Monstera deliciosa",
         "common_name": "Swiss cheese plant",
-        "toxicity": None,
+        "toxicity": {
+            "cats": True,
+            "dogs": True,
+            "sources": [
+                "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
+            ],
+            "note": "Insoluble calcium oxalates",
+        },
     }
     assert plant["care_profile"] == {
         "key": "tropical_aroid",

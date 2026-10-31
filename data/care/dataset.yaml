@@ -2,6 +2,6 @@
 #
 # Bump `version` whenever anything in this folder changes: Sunfleck reloads the dataset into
 # its database when the version differs from the one it last loaded.
-version: 2026.10.0
+version: 2026.10.1
 name: Sunfleck care dataset
 license: CC-BY-SA-4.0

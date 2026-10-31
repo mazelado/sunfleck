@@ -45,6 +45,9 @@ def test_toxicity_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> 
     def change(genera: list[dict[str, Any]]) -> None:
         monstera = next(entry for entry in genera if entry["genus"] == "Monstera")
         monstera["toxicity"] = {"cats": "toxic", "dogs": "toxic", "sources": [source]}
+        # Species take their genus's toxicity unless they have their own: clear deliciosa's
+        # (it has one in the real dataset) so it exercises inheritance here, not its override.
+        monstera["species"][0].pop("toxicity", None)
         monstera["species"][1]["toxicity"] = {"cats": "toxic", "sources": [source + "-vine"]}
 
     _edit_genera(dataset_copy, change)
