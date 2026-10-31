@@ -71,6 +71,7 @@ see [SECURITY.md](SECURITY.md).
 
 Contributions are welcome, from code to translations and care profiles for more plants: see
 [CONTRIBUTING.md](CONTRIBUTING.md), including our policy on AI-assisted contributions.
+Everyone taking part is asked to follow the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
