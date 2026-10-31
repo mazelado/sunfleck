@@ -22,6 +22,13 @@ jobs:
         working-directory: docker
         run: |
           cp env.example .env
+          # The example's empty SECRET_KEY must stop Compose, with a message that says what to do.
+          if docker compose config --quiet 2> "$RUNNER_TEMP/compose-error.txt"; then
+            echo "Compose accepted an empty SECRET_KEY" >&2
+            exit 1
+          fi
+          grep -q "Set SECRET_KEY in .env" "$RUNNER_TEMP/compose-error.txt"
+          export SECRET_KEY=ci-only
           docker compose config --quiet
           docker compose -f compose.yaml -f compose.build.yaml config --quiet
       - name: Build

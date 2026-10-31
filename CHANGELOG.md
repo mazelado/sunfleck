@@ -11,6 +11,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Fixed
 
+- **A missing `SECRET_KEY` is now explained**: starting Sunfleck with `SECRET_KEY` empty in
+  `.env` only said "dependency failed to start: container … is unhealthy". `docker compose up`
+  now stops straight away and says to set `SECRET_KEY`, and the troubleshooting section covers
+  an unhealthy container.
 - **An error after an update**: an app that was open during an update could show "Unexpected
   Application Error! 'text/html' is not a valid JavaScript MIME type" when opening a page.
   The app now reloads itself once to get the new version, and a file that no longer exists is

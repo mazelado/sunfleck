@@ -18,6 +18,10 @@ services:
       # which the app runs as:  mkdir data && sudo chown 1000 data
       - sunfleck-data:/data
     env_file: .env
+    environment:
+      # Checked here too, so that a missing key stops `docker compose up` with this message,
+      # not with a container that's only reported as "unhealthy".
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env, to a long random string (openssl rand -base64 48)}
 
   # Background jobs (reminders, weather, nightly recalculation), from the same image and data.
   worker:
