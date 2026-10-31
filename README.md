@@ -58,6 +58,15 @@ and your phone, email, backups, upgrades and every setting.
 - [Roadmap](docs/roadmap.md): what's planned, and the release names
 - [Technical plan](docs/technical-plan.md) and [style guide](docs/STYLE_GUIDE.md)
 
+## About this project
+
+Sunfleck is a household project, shared as-is: built for one home's plants and opened up in
+case it's useful to others. Issues and pull requests are welcome, but there's no guaranteed
+support or timeline. Much of the code was written with an AI coding assistant, and every
+change is reviewed and tested before it's merged (see
+[CONTRIBUTING.md](CONTRIBUTING.md#ai-assisted-contributions)). To report a security problem,
+see [SECURITY.md](SECURITY.md).
+
 ## Contributing
 
 Contributions are welcome, from code to translations and care profiles for more plants: see
