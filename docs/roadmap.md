@@ -115,6 +115,8 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
 - **Import from HortusFox and Plant-it.**
 - **Public API documentation** and personal API tokens.
+- **A Test button for each plugin** on the Plugins page, to check its settings work before
+  saving them (#93).
 - **A care data provider plugin: Open Plantbook** (moved from Echinacea to keep that release
   smaller). Care data for plants the dataset doesn't cover, fetched with the person's own free
   account. Its data has no formal licence, so it stays a plugin and isn't copied into
