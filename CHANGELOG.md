@@ -11,6 +11,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Suggest a care profile with AI**, for plants whose species has no care profile: with an AI
+  plugin on, **Suggest with AI** on the plant form asks which built-in profile fits best, and
+  why ("Hoyas grow on trees and like to dry out a little"). The AI can only choose one of the
+  built-in profiles, so the care itself always comes from the reviewed dataset, and nothing
+  changes until you use the suggestion.
 - **AI plugin (OpenAI-compatible)**, off until an Admin turns it on: suggestions from an AI
   model through OpenAI, or a model you run yourself with Ollama or LM Studio. It's only asked
   when you ask for a suggestion, and every answer is checked before it's used. Plugins can

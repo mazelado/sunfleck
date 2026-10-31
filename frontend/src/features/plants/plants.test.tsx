@@ -295,6 +295,55 @@ describe("plant form", () => {
     });
   });
 
+  it("suggests a care profile with AI, to use or not", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    let asked: unknown;
+    server.use(
+      http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: true })),
+      http.post("*/api/v1/care-profile-suggestions", async ({ request }) => {
+        asked = await request.json();
+        return HttpResponse.json({
+          profile: { key: "epiphytic_orchid", name: "Epiphytic orchid" },
+          confidence: "medium",
+          reason: "Hoyas grow on trees and like to dry out a little.",
+          attribution: "Suggested by AI (llama3.1)",
+        });
+      }),
+      http.get("*/api/v1/care-profiles", () =>
+        HttpResponse.json([
+          {
+            key: "epiphytic_orchid",
+            name: "Epiphytic orchid",
+            description: "",
+            setting: "indoor",
+            genus_count: 3,
+          },
+        ]),
+      ),
+    );
+    const { user } = renderApp("/plants/new?location=10");
+
+    await user.type(await screen.findByLabelText(/^Name/), "Wax plant");
+    await user.click(await screen.findByRole("button", { name: "Suggest with AI" }));
+
+    expect(await screen.findByText("The AI suggests Epiphytic orchid (not sure).")).toBeVisible();
+    expect(screen.getByText("Hoyas grow on trees and like to dry out a little.")).toBeVisible();
+    expect(asked).toEqual({ name: "Wax plant", taxon_id: null, indoor: true });
+    await user.click(screen.getByRole("button", { name: "Use Epiphytic orchid" }));
+    expect(screen.getByRole("combobox", { name: /Care profile/ })).toHaveValue("Epiphytic orchid");
+  });
+
+  it("offers no AI suggestion without an AI plugin", async () => {
+    signInAs(gardener);
+    withSites([home]);
+
+    renderApp("/plants/new");
+
+    expect(await screen.findByLabelText(/^Name/)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Suggest with AI" })).not.toBeInTheDocument();
+  });
+
   it("uploads the photo chosen with a new plant", async () => {
     signInAs(gardener);
     withSites([home]);

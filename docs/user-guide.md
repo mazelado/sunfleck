@@ -50,6 +50,9 @@ signing out are in the account menu (your picture at the top right).
 - A plant has a **name**, a **species** (search by common, scientific or older names) and a
   **care profile**, which comes with its species. Choose another care profile if it needs
   different care, or if you don't know the species. The **Care guide** describes each profile.
+- **No care profile for its species?** If an Admin turned on an AI plugin, **Suggest with AI**
+  asks which of the built-in care profiles fits it best, and why. It only suggests: check the
+  profile in the Care guide, then use it or choose another.
 - **Identify it from a photo** when adding it, if an Admin turned on the Pl@ntNet plugin:
   pick one of the suggestions to set its species.
 - Add its **pot** (width, and height if you like; material) and **soil**: plants in small or

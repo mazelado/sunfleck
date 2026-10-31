@@ -42,6 +42,7 @@ export const server = setupServer(
   ),
   http.get("*/api/v1/import", () => HttpResponse.json({ allowed: true })),
   http.get("*/api/v1/identify", () => HttpResponse.json({ available: false })),
+  http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: false })),
   http.get("*/api/v1/notifications", () =>
     HttpResponse.json({
       preferences: { digest_time: "08:00:00", reminder_time: null, timezone: "Europe/Amsterdam" },
