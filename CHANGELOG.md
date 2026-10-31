@@ -11,6 +11,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Toxicity to pets**: 28 houseplant genera and species now carry a "known to be toxic to
+  cats / dogs" flag, each linking to the specific ASPCA Animal Poison Control entry it comes
+  from (#84). Everything else stays "unknown" rather than guessed as safe.
 - **Suggest a care profile with AI**, for plants whose species has no care profile: with an AI
   plugin on, **Suggest with AI** on the plant form asks which built-in profile fits best, and
   why ("Hoyas grow on trees and like to dry out a little"). The AI can only choose one of the

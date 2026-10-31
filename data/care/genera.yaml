@@ -16,6 +16,13 @@ genera:
       en:
       - Swiss cheese plant
       - split-leaf philodendron
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant
+      note:
+        en: Insoluble calcium oxalates
   - name: Monstera adansonii
     common_names:
       en:
@@ -27,6 +34,13 @@ genera:
   common_names:
     en:
     - philodendron
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/heartleaf-philodendron
+    note:
+      en: Insoluble calcium oxalates
   species:
   - name: Philodendron hederaceum
     common_names:
@@ -53,6 +67,13 @@ genera:
     synonyms:
     - Philodendron bipinnatifidum
     - Philodendron selloum
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/tree-philodendron
+      note:
+        en: Calcium oxalate crystals
 - genus: Epipremnum
   family: Araceae
   archetype: tropical_aroid
@@ -68,6 +89,13 @@ genera:
       - pothos
     synonyms:
     - Scindapsus aureus
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/golden-pothos
+      note:
+        en: Insoluble calcium oxalates
 - genus: Scindapsus
   family: Araceae
   archetype: tropical_aroid
@@ -80,6 +108,13 @@ genera:
       en:
       - satin pothos
       - silver pothos
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/satin-pothos
+      note:
+        en: Insoluble calcium oxalates
 - genus: Rhaphidophora
   family: Araceae
   archetype: tropical_aroid
@@ -95,6 +130,13 @@ genera:
     en:
     - anthurium
     - flamingo flower
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/flamingo-flower
+    note:
+      en: Insoluble calcium oxalates. ASPCA's entry names the related species Anthurium scherzeranum.
   species:
   - name: Anthurium andraeanum
     common_names:
@@ -113,12 +155,26 @@ genera:
       en:
       - arrowhead plant
       - arrowhead vine
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/arrow-head-vine
+      note:
+        en: Insoluble calcium oxalates
 - genus: Aglaonema
   family: Araceae
   archetype: tropical_aroid
   common_names:
     en:
     - Chinese evergreen
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/chinese-evergreen
+    note:
+      en: Insoluble calcium oxalates. ASPCA's entry names the related species Aglaonema modestum.
   species:
   - name: Aglaonema commutatum
     common_names:
@@ -130,6 +186,13 @@ genera:
   common_names:
     en:
     - dumb cane
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/dumbcane
+    note:
+      en: Insoluble calcium oxalates and a proteolytic enzyme
   species:
   - name: Dieffenbachia seguine
     common_names:
@@ -141,6 +204,13 @@ genera:
   common_names:
     en:
     - peace lily
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/peace-lily
+    note:
+      en: Insoluble calcium oxalates
   species:
   - name: Spathiphyllum wallisii
     common_names:
@@ -225,12 +295,26 @@ genera:
       en:
       - taro
       - elephant ear
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/elephant-ears-colocasia-esculenta
+      note:
+        en: Insoluble calcium oxalates
 - genus: Caladium
   family: Araceae
   archetype: humid_tropical_foliage
   common_names:
     en:
     - angel wings
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/caladium
+    note:
+      en: Insoluble calcium oxalates
 - genus: Fittonia
   family: Acanthaceae
   archetype: humid_tropical_foliage
@@ -276,6 +360,13 @@ genera:
     en:
     - snake plant
     - mother-in-law's tongue
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/snake-plant
+    note:
+      en: Saponins
 - genus: Aspidistra
   family: Asparagaceae
   archetype: low_light_tough
@@ -316,6 +407,11 @@ genera:
     common_names:
       en:
       - small-leaf spiderwort
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/inch-plant
 - genus: Pilea
   family: Urticaceae
   archetype: easy_foliage
@@ -341,6 +437,13 @@ genera:
       en:
       - English ivy
       - common ivy
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/english-ivy
+      note:
+        en: Triterpenoid saponins (hederagenin)
 - genus: Plectranthus
   family: Lamiaceae
   archetype: easy_foliage
@@ -413,12 +516,26 @@ genera:
     common_names:
       en:
       - weeping fig
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/weeping-fig
+      note:
+        en: Proteolytic enzyme (ficin) and psoralen (ficusin)
 - genus: Schefflera
   family: Araliaceae
   archetype: indoor_tree
   common_names:
     en:
     - umbrella tree
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/schefflera
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Schefflera arboricola
     common_names:
@@ -436,6 +553,13 @@ genera:
     common_names:
       en:
       - corn plant
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/corn-plant
+      note:
+        en: Saponins
   - name: Dracaena trifasciata
     common_names:
       en:
@@ -444,6 +568,13 @@ genera:
     synonyms:
     - Sansevieria trifasciata
     archetype: low_light_tough
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/snake-plant
+      note:
+        en: Saponins
 - genus: Pachira
   family: Malvaceae
   archetype: indoor_tree
@@ -468,6 +599,13 @@ genera:
       en:
       - bird of paradise
       - crane flower
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/bird-paradise-flower
+      note:
+        en: Gastrointestinal irritants
   - name: Strelitzia nicolai
     common_names:
       en:
@@ -480,12 +618,26 @@ genera:
     en:
     - ti plant
     - cabbage tree
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/ti-plant
+    note:
+      en: Saponins
 - genus: Polyscias
   family: Araliaceae
   archetype: indoor_tree
   common_names:
     en:
     - aralia
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/geranium-leaf-aralia
+    note:
+      en: Saponins
 - genus: Fatsia
   family: Araliaceae
   archetype: indoor_tree
@@ -654,6 +806,13 @@ genera:
   common_names:
     en:
     - begonia
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia
+    note:
+      en: Soluble calcium oxalates
   species:
   - name: Begonia maculata
     common_names:
@@ -721,6 +880,11 @@ genera:
   common_names:
     en:
     - crassula
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/jade-plant
   species:
   - name: Crassula ovata
     common_names:
@@ -745,6 +909,13 @@ genera:
   common_names:
     en:
     - kalanchoe
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/kalanchoe
+    note:
+      en: Bufadienolides
   species:
   - name: Kalanchoe blossfeldiana
     common_names:
@@ -787,6 +958,13 @@ genera:
       en:
       - aloe vera
       - medicinal aloe
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/aloe
+      note:
+        en: Saponins and anthraquinones
 - genus: Haworthiopsis
   family: Asphodelaceae
   archetype: succulent
@@ -832,6 +1010,13 @@ genera:
   common_names:
     en:
     - yucca
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+    - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/yucca
+    note:
+      en: Saponins
 - genus: Beaucarnea
   family: Asparagaceae
   archetype: succulent
@@ -913,6 +1098,13 @@ genera:
     common_names:
       en:
       - desert rose
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/desert-rose
+      note:
+        en: Cardiac glycosides
 - genus: Mammillaria
   family: Cactaceae
   archetype: desert_cactus
