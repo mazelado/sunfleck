@@ -117,6 +117,8 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **Public API documentation** and personal API tokens.
 - **A Test button for each plugin** on the Plugins page, to check its settings work before
   saving them (#93).
+- **New README screenshots**, with plant photos, made by a script so they can be made again
+  after visual changes (#101).
 - **Collapsible plugin cards**, so the Plugins page stays tidy: collapsed, a card still shows
   its name, whether it's on, any error, and that it sends data (#95).
 - **A care data provider plugin: Open Plantbook** (moved from Echinacea to keep that release
@@ -162,7 +164,8 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **A usability test:** a few people from real households do the core tasks cold and fill in
   the System Usability Scale, and a heuristic review rates the problems, to compare with 0.7's
   click counts (#97).
-- **Cropping photos:** choose the crop and zoom of a profile picture before saving it (#67).
+- **Cropping photos:** choose the crop and zoom of a profile picture or a plant photo before
+  saving it (#67). The README screenshots are made again after the design pass (#101).
 - **Frontend plugin slots**, so plugins can add to the interface (widgets, plant page tabs).
 - A plugin catalog page and a plugin development guide.
 - **Offline care logging**, synced when the connection is back.
