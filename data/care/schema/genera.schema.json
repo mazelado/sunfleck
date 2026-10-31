@@ -21,6 +21,7 @@
         "common_names": { "$ref": "#/$defs/commonNames" },
         "synonyms": { "type": "array", "items": { "$ref": "#/$defs/genusName" }, "uniqueItems": true },
         "note": { "$ref": "#/$defs/translated" },
+        "toxicity": { "$ref": "#/$defs/toxicity" },
         "species": { "type": "array", "items": { "$ref": "#/$defs/species" } }
       }
     },
@@ -33,6 +34,26 @@
         "common_names": { "$ref": "#/$defs/commonNames" },
         "synonyms": { "type": "array", "items": { "$ref": "#/$defs/speciesName" }, "uniqueItems": true },
         "archetype": { "$ref": "#/$defs/archetypeKey" },
+        "note": { "$ref": "#/$defs/translated" },
+        "toxicity": { "$ref": "#/$defs/toxicity" }
+      }
+    },
+    "toxicity": {
+      "description": "Known toxicity to pets, only as a source states it. Absent means unknown, never safe.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources"],
+      "anyOf": [{ "required": ["cats"] }, { "required": ["dogs"] }],
+      "properties": {
+        "cats": { "const": "toxic" },
+        "dogs": { "const": "toxic" },
+        "sources": {
+          "description": "The page of each source that names this plant as toxic, e.g. its ASPCA entry.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^https://" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
         "note": { "$ref": "#/$defs/translated" }
       }
     },

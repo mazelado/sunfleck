@@ -7,6 +7,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { sentenceCase } from "../../lib/text";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { CareProfileFacts } from "./CareProfileFacts";
+import { ToxicityNotice } from "./Toxicity";
 
 /** A genus or species: its names, and the care its profile suggests. */
 export function SpeciesPage() {
@@ -46,6 +47,7 @@ export function SpeciesPage() {
           </Text>
         )}
       </Stack>
+      <ToxicityNotice toxicity={data.toxicity} showUnknown />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="xs">
           {details.map(([label, value]) => (

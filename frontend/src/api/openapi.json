@@ -2803,6 +2803,17 @@
           "scientific_name": {
             "title": "Scientific Name",
             "type": "string"
+          },
+          "toxicity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToxicityOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Known toxicity to pets; None means unknown, never safe."
           }
         },
         "required": [
@@ -3904,6 +3915,16 @@
             },
             "title": "Synonyms",
             "type": "array"
+          },
+          "toxicity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToxicityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -3985,6 +4006,16 @@
             },
             "title": "Synonyms",
             "type": "array"
+          },
+          "toxicity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToxicityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -4365,6 +4396,48 @@
           }
         },
         "title": "TodayQuery",
+        "type": "object"
+      },
+      "ToxicityOut": {
+        "description": "Known toxicity to pets, as a source states it. None means unknown, never \"safe\".",
+        "properties": {
+          "cats": {
+            "description": "Known to be toxic to cats.",
+            "title": "Cats",
+            "type": "boolean"
+          },
+          "dogs": {
+            "description": "Known to be toxic to dogs.",
+            "title": "Dogs",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "sources": {
+            "description": "The page of each source that says so.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "cats",
+          "dogs",
+          "sources",
+          "note"
+        ],
+        "title": "ToxicityOut",
         "type": "object"
       },
       "UnitSystem": {

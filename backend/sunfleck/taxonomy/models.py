@@ -62,6 +62,10 @@ class Taxon(models.Model):
     common_names = models.JSONField(_("common names"), default=dict)
     synonyms = models.JSONField(_("older names"), default=list)
     note = models.JSONField(_("note"), default=dict)
+    # Known toxicity to pets, as in the dataset: {"cats": "toxic", "dogs": "toxic", "sources":
+    # [...], "note": {...}}. Empty means unknown (never "safe"). A species without its own
+    # takes its genus's.
+    toxicity = models.JSONField(_("toxicity"), default=dict)
     archetype = models.ForeignKey(
         CareArchetype,
         on_delete=models.SET_NULL,

@@ -33,6 +33,7 @@ import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
 import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
+import { ToxicityNotice } from "../taxonomy/Toxicity";
 import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
 import { LightCheck } from "./LightCheck";
@@ -121,6 +122,8 @@ export function PlantPage() {
           </Button>
         )}
       </Group>
+
+      <ToxicityNotice toxicity={data.species?.toxicity} />
 
       <CareGlance glance={data.glance} />
 

@@ -62,6 +62,32 @@ months for gardens in the southern hemisphere.
   now part of *Dracaena*, but keeps its own entry because snake plants need much drier care.
 - Each scientific name, synonym or not, may appear only once.
 
+### Toxicity to pets
+
+A genus or species can say it's **known to be toxic** to cats and dogs, with the source:
+
+```yaml
+- genus: Example
+  toxicity:
+    cats: toxic
+    dogs: toxic
+    sources:
+      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/<entry>
+    note:
+      en: Insoluble calcium oxalates   # optional: what the source names as the toxic part
+```
+
+- **Only "toxic", never "safe".** Without `toxicity`, a plant's toxicity is *unknown*, and
+  Sunfleck says exactly that. Even where a source lists a plant as non-toxic, it isn't recorded:
+  a wrong "safe" can hurt a pet; a missing "toxic" only leaves the person to check.
+- **Every flag has a source**: the page of the source's own entry for that plant, currently
+  the [ASPCA Animal Poison Control](https://www.aspca.org/pet-care/animal-poison-control) list
+  for cats and dogs. Check each entry by hand. The facts can be used, but the list itself is
+  copyrighted: cite its entries, don't copy it wholesale.
+- **Genus or species:** put the flag on the genus only when the source lists its common
+  species. When species differ, put it on those species. A species without its own
+  `toxicity` takes its genus's.
+
 ## Contributing
 
 This is a great place to help without writing code.

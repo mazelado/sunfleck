@@ -33,6 +33,7 @@ def test_search_species(client_as: ClientAs) -> None:
         "synonyms": [],
         "note": None,
         "care_profile": {"key": "tropical_aroid", "name": "Tropical aroid"},
+        "toxicity": None,
         "matched_name": "Swiss cheese plant",
     }
 
@@ -102,6 +103,32 @@ def test_carnivores_are_never_fertilized(client_as: ClientAs) -> None:
 
 
 @pytest.mark.django_db
+def test_known_toxicity_is_shown_with_its_source(client_as: ClientAs) -> None:
+    client = client_as(Role.GARDENER)
+    monstera = _taxon("Monstera deliciosa")
+    monstera.toxicity = {
+        "cats": "toxic",
+        "sources": ["https://example.org/toxic-plants/monstera"],
+        "note": {"en": "Insoluble calcium oxalates"},
+    }
+    monstera.save()
+    expected = {
+        "cats": True,
+        "dogs": False,
+        "sources": ["https://example.org/toxic-plants/monstera"],
+        "note": "Insoluble calcium oxalates",
+    }
+
+    species = client.get(f"/api/v1/species/{monstera.pk}").json()
+    plant = send(client, "POST", "/api/v1/plants", {"nickname": "Monty", "taxon_id": monstera.pk})
+
+    assert species["toxicity"] == expected
+    assert plant.json()["species"]["toxicity"] == expected
+    # Not known: no flag at all, rather than "safe".
+    assert client.get(f"/api/v1/species/{_taxon('Lithops').pk}").json()["toxicity"] is None
+
+
+@pytest.mark.django_db
 def test_plant_gets_its_species_care_profile(client_as: ClientAs) -> None:
     client = client_as(Role.GARDENER)
 
@@ -116,6 +143,7 @@ def test_plant_gets_its_species_care_profile(client_as: ClientAs) -> None:
         "id": _taxon("Monstera deliciosa").pk,
         "scientific_name": "Monstera deliciosa",
         "common_name": "Swiss cheese plant",
+        "toxicity": None,
     }
     assert plant["care_profile"] == {
         "key": "tropical_aroid",

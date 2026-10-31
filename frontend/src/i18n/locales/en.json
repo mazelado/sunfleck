@@ -967,5 +967,13 @@
     "check": "Check it against the plant before using it:",
     "inGuide": "see the profile",
     "use": "Use {{name}}"
+  },
+  "toxicity": {
+    "title": "Known to be toxic to {{animals}}",
+    "catsAndDogs": "cats and dogs",
+    "cats": "cats",
+    "dogs": "dogs",
+    "source": "Source:",
+    "unknown": "Toxicity to pets: not known. That doesn't mean it's safe: check with your vet or the ASPCA's list."
   }
 }
