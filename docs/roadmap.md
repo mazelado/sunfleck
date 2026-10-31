@@ -134,6 +134,9 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **Frost dates** from the location; a sowing, transplanting and harvest calendar.
 - A harvest log, and a seed inventory.
 - Companion planting hints (as a plugin with its own data).
+- **Add a window or grow light from the plant form**, without leaving it (#98).
+- **Measuring how easy Sunfleck is to use:** click counts for the core tasks, with budgets that
+  the browser tests check, and a list of dead ends to fix (#97).
 
 ### Collector features
 
@@ -156,6 +159,9 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **A design pass across the whole app:** typography, spacing, colour, illustrations for empty
   pages, and gentle motion, in light and dark themes. One of Sunfleck's goals is to be
   beautiful as well as useful.
+- **A usability test:** a few people from real households do the core tasks cold and fill in
+  the System Usability Scale, and a heuristic review rates the problems, to compare with 0.7's
+  click counts (#97).
 - **Cropping photos:** choose the crop and zoom of a profile picture before saving it (#67).
 - **Frontend plugin slots**, so plugins can add to the interface (widgets, plant page tabs).
 - A plugin catalog page and a plugin development guide.
