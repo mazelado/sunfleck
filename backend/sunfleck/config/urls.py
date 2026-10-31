@@ -11,6 +11,8 @@ urlpatterns = [
     path("api/v1/", api.urls),
     # Sign-in, sign-out, and password resets (django-allauth's JSON API for the React app).
     path("_allauth/", include("allauth.headless.urls")),
-    # Everything else belongs to the React app, which handles its own routes.
-    re_path(r"^(?!api/|admin/|static/|_allauth/).*$", frontend_index, name="frontend"),
+    # Everything else belongs to the React app, which handles its own routes. Not its files
+    # (assets/): one that's gone, like a page's script from before an update, must be a 404,
+    # not an HTML page the browser can't run.
+    re_path(r"^(?!api/|admin/|static/|_allauth/|assets/).*$", frontend_index, name="frontend"),
 ]

@@ -11,14 +11,16 @@ import { NotFoundPage } from "./features/layout/NotFoundPage";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
 import { TodayPage } from "./features/today/TodayPage";
+import { loadPageCode } from "./lib/stalePages";
 
 /**
  * A page loaded when it's first opened, so the app starts with less to download. (The service
- * worker then fetches the rest in the background, so later visits are instant.)
+ * worker then fetches the rest in the background, so later visits are instant.) If the code
+ * is gone because the app was updated, the app reloads itself (see `loadPageCode`).
  */
 function page<Module>(load: () => Promise<Module>, name: keyof Module) {
   return {
-    lazy: async () => ({ Component: (await load())[name] as ComponentType }),
+    lazy: async () => ({ Component: (await loadPageCode(load))[name] as ComponentType }),
   } satisfies Partial<RouteObject>;
 }
 
