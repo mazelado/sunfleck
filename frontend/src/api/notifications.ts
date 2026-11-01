@@ -89,3 +89,32 @@ export function useTestChannel() {
     onSettled: invalidate,
   });
 }
+
+const CALENDAR = [...NOTIFICATIONS, "calendar"] as const;
+
+/** Whether the person has a calendar address (never the address itself). */
+export function useCalendar() {
+  return useQuery({
+    queryKey: CALENDAR,
+    queryFn: async () => unwrap(await api.GET("/api/v1/notifications/calendar")),
+  });
+}
+
+/** A new calendar address, replacing any old one. It's only in the answer, once. */
+export function useCreateCalendar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => unwrap(await api.POST("/api/v1/notifications/calendar")),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CALENDAR }),
+  });
+}
+
+export function useDeleteCalendar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      unwrap(await api.DELETE("/api/v1/notifications/calendar"));
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CALENDAR }),
+  });
+}

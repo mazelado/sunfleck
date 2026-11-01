@@ -50,6 +50,9 @@ export const server = setupServer(
     }),
   ),
   http.get("*/api/v1/notifications/preview", () => HttpResponse.json({ message: null })),
+  http.get("*/api/v1/notifications/calendar", () =>
+    HttpResponse.json({ active: false, created_at: null, last_read_at: null }),
+  ),
   http.get("*/api/v1/plants/:plantId/schedules", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/routine-suggestion", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/timeline", () =>

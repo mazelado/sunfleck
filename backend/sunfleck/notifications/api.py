@@ -6,7 +6,8 @@ never sent back: only the kind of service.
 
 from datetime import datetime, time
 
-from django.http import HttpRequest
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 from ninja import Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -14,8 +15,8 @@ from pydantic import Field
 from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
-from sunfleck.notifications import services
-from sunfleck.notifications.models import NotificationChannel, NotificationPreferences
+from sunfleck.notifications import calendar, services
+from sunfleck.notifications.models import CalendarFeed, NotificationChannel, NotificationPreferences
 
 router = Router(tags=["notifications"], auth=django_auth)
 
@@ -163,3 +164,56 @@ def preview(request: HttpRequest) -> PreviewOut:
     return PreviewOut(
         message=MessageOut(title=message.title, body=message.body) if message else None
     )
+
+
+# --- Calendar feed ----------------------------------------------------------------------------
+
+
+class CalendarOut(Schema):
+    active: bool = Field(description="Whether the person has a calendar address.")
+    created_at: datetime | None
+    last_read_at: datetime | None = Field(description="When a calendar app last read it.")
+
+
+class CalendarAddressOut(Schema):
+    url: str = Field(description="The private calendar address. It can't be shown again.")
+
+
+def _calendar_out(feed: CalendarFeed | None) -> CalendarOut:
+    return CalendarOut(
+        active=feed is not None,
+        created_at=feed.created_at if feed else None,
+        last_read_at=feed.last_read_at if feed else None,
+    )
+
+
+@router.get("/notifications/calendar", response=CalendarOut)
+def get_calendar(request: HttpRequest) -> CalendarOut:
+    """Whether the signed-in person has a calendar address (not the address itself)."""
+    return _calendar_out(CalendarFeed.objects.filter(user=_user(request)).first())
+
+
+@router.post("/notifications/calendar", response={201: CalendarAddressOut})
+def create_calendar(request: HttpRequest) -> Status[CalendarAddressOut]:
+    """Make a new private calendar address, replacing (and stopping) any old one."""
+    token = calendar.create(_user(request))
+    base = settings.PUBLIC_URL or request.build_absolute_uri("/").rstrip("/")
+    return Status(201, CalendarAddressOut(url=f"{base}/api/v1/calendar/{token}.ics"))
+
+
+@router.delete("/notifications/calendar", response={204: None})
+def delete_calendar(request: HttpRequest) -> Status[None]:
+    """Stop the calendar address: calendar apps can't read it any more."""
+    calendar.delete(_user(request))
+    return Status(204, None)
+
+
+@router.get("/calendar/{token}.ics", auth=None, include_in_schema=False)
+def calendar_feed(request: HttpRequest, token: str) -> HttpResponse:
+    """The care calendar itself, for calendar apps: the token in the address is the key."""
+    user = calendar.user_for(token)
+    if user is None:
+        raise ApiError(404, "calendar_not_found", "This calendar address doesn't exist.")
+    response = HttpResponse(calendar.feed(user), content_type="text/calendar; charset=utf-8")
+    response["Cache-Control"] = "private, max-age=300"
+    return response
