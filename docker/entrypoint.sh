@@ -12,9 +12,12 @@ fi
 case "$1" in
   web)
     python manage.py migrate --noinput
+    # The timeout covers the slowest request Sunfleck makes while someone waits: an AI model
+    # that has to load first (up to 2 x 120 s). Gunicorn's own default, 30 s, cut it off.
     exec gunicorn sunfleck.config.wsgi \
       --bind 0.0.0.0:8000 \
       --workers "${WEB_CONCURRENCY:-2}" \
+      --timeout "${WEB_TIMEOUT:-250}" \
       --access-logfile - \
       --no-control-socket
     ;;
