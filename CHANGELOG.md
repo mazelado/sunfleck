@@ -16,6 +16,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
   plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
   can be reached. Plugins add a test with the new `check_settings` hook.
+- **Care in your calendar**: under Notifications, **Get a calendar address** gives you a
+  private iCal feed of the next two weeks of care, for Google Calendar, Apple Calendar and
+  others. The address is shown once (only a hash of it is kept), and a new one stops the old.
 - **Outdoor watering that follows the weather**: with the weather plugin on, outdoor plants are
   due when a soil water balance says the soil is dry again: the water the weather took since
   watering (Open-Meteo's evapotranspiration), the rain, and what the soil holds. **Why?** shows

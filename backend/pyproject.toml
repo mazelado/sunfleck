@@ -25,6 +25,7 @@ dependencies = [
     "huey>=3.5",
     "apprise>=1.9",
     "cryptography>=44",
+    "icalendar>=6",
 ]
 
 [project.optional-dependencies]

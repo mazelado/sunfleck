@@ -152,6 +152,61 @@
         "title": "BulkCareIn",
         "type": "object"
       },
+      "CalendarAddressOut": {
+        "properties": {
+          "url": {
+            "description": "The private calendar address. It can't be shown again.",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "CalendarAddressOut",
+        "type": "object"
+      },
+      "CalendarOut": {
+        "properties": {
+          "active": {
+            "description": "Whether the person has a calendar address.",
+            "title": "Active",
+            "type": "boolean"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "last_read_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When a calendar app last read it.",
+            "title": "Last Read At"
+          }
+        },
+        "required": [
+          "active",
+          "created_at",
+          "last_read_at"
+        ],
+        "title": "CalendarOut",
+        "type": "object"
+      },
       "CandidateOut": {
         "properties": {
           "common_names": {
@@ -6214,6 +6269,79 @@
           }
         ],
         "summary": "Get Notifications",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/calendar": {
+      "delete": {
+        "description": "Stop the calendar address: calendar apps can't read it any more.",
+        "operationId": "sunfleck_notifications_api_delete_calendar",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Calendar",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "get": {
+        "description": "Whether the signed-in person has a calendar address (not the address itself).",
+        "operationId": "sunfleck_notifications_api_get_calendar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Calendar",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "post": {
+        "description": "Make a new private calendar address, replacing (and stopping) any old one.",
+        "operationId": "sunfleck_notifications_api_create_calendar",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarAddressOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Calendar",
         "tags": [
           "notifications"
         ]

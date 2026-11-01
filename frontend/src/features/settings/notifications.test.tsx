@@ -242,4 +242,74 @@ describe("notifications", () => {
 
     expect(await screen.findByText(/Nothing needs care today/)).toBeVisible();
   });
+
+  it("give a private calendar address, shown once", async () => {
+    signInAs(ada);
+    let active = false;
+    server.use(
+      http.get("*/api/v1/notifications/calendar", () =>
+        HttpResponse.json({
+          active,
+          created_at: active ? "2026-04-15T10:00:00Z" : null,
+          last_read_at: null,
+        }),
+      ),
+      http.post("*/api/v1/notifications/calendar", () => {
+        active = true;
+        return HttpResponse.json(
+          { url: "https://plants.example.com/api/v1/calendar/s3cret.ics" },
+          { status: 201 },
+        );
+      }),
+    );
+    const { user } = renderApp("/settings/notifications");
+
+    await user.click(await screen.findByRole("button", { name: "Get a calendar address" }));
+
+    expect(await screen.findByRole("textbox", { name: "Your calendar address" })).toHaveValue(
+      "https://plants.example.com/api/v1/calendar/s3cret.ics",
+    );
+    expect(screen.getByText(/it's only shown this once/)).toBeVisible();
+    expect(screen.getByRole("link", { name: "Open it in your calendar app" })).toHaveAttribute(
+      "href",
+      "webcal://plants.example.com/api/v1/calendar/s3cret.ics",
+    );
+    expect(screen.queryByRole("button", { name: "Get a calendar address" })).toBeNull();
+  });
+
+  it("say when there's a calendar address, and make a new one only when asked", async () => {
+    signInAs(ada);
+    let made = 0;
+    server.use(
+      http.get("*/api/v1/notifications/calendar", () =>
+        HttpResponse.json({
+          active: true,
+          created_at: "2026-04-15T10:00:00Z",
+          last_read_at: null,
+        }),
+      ),
+      http.post("*/api/v1/notifications/calendar", () => {
+        made += 1;
+        return HttpResponse.json(
+          { url: "https://plants.example.com/api/v1/calendar/new.ics" },
+          { status: 201 },
+        );
+      }),
+    );
+    const { user } = renderApp("/settings/notifications");
+
+    expect(
+      await screen.findByText(/You have a calendar address.*No calendar app has read it yet\./),
+    ).toBeVisible();
+    expect(screen.queryByRole("textbox", { name: "Your calendar address" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "New address" }));
+    expect(screen.getByText(/will stop getting updates/)).toBeVisible();
+    expect(made).toBe(0);
+    await user.click(screen.getByRole("button", { name: "Make a new address" }));
+
+    expect(await screen.findByRole("textbox", { name: "Your calendar address" })).toHaveValue(
+      "https://plants.example.com/api/v1/calendar/new.ics",
+    );
+    expect(made).toBe(1);
+  });
 });

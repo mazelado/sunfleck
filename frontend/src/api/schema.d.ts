@@ -626,6 +626,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Calendar
+         * @description Whether the signed-in person has a calendar address (not the address itself).
+         */
+        get: operations["sunfleck_notifications_api_get_calendar"];
+        put?: never;
+        /**
+         * Create Calendar
+         * @description Make a new private calendar address, replacing (and stopping) any old one.
+         */
+        post: operations["sunfleck_notifications_api_create_calendar"];
+        /**
+         * Delete Calendar
+         * @description Stop the calendar address: calendar apps can't read it any more.
+         */
+        delete: operations["sunfleck_notifications_api_delete_calendar"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications/channels": {
         parameters: {
             query?: never;
@@ -1308,6 +1336,29 @@ export interface components {
              * @default false
              */
             skipped: boolean;
+        };
+        /** CalendarAddressOut */
+        CalendarAddressOut: {
+            /**
+             * Url
+             * @description The private calendar address. It can't be shown again.
+             */
+            url: string;
+        };
+        /** CalendarOut */
+        CalendarOut: {
+            /**
+             * Active
+             * @description Whether the person has a calendar address.
+             */
+            active: boolean;
+            /** Created At */
+            created_at: string | null;
+            /**
+             * Last Read At
+             * @description When a calendar app last read it.
+             */
+            last_read_at: string | null;
         };
         /** CandidateOut */
         CandidateOut: {
@@ -3982,6 +4033,64 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["NotificationsOut"];
                 };
+            };
+        };
+    };
+    sunfleck_notifications_api_get_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_create_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarAddressOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_delete_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

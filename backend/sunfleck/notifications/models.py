@@ -89,3 +89,25 @@ class NotificationLog(models.Model):
 
     def __str__(self) -> str:
         return f"{self.kind} · {self.user} · {self.local_date}: {self.status}"
+
+
+class CalendarFeed(models.Model):
+    """A person's private calendar address (an iCal feed of the household's care).
+
+    The address holds a random token that's shown once. Only its hash is kept, like a password,
+    so a leaked database doesn't give the feeds away.
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="calendar_feed"
+    )
+    token_hash = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_read_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("calendar feed")
+        verbose_name_plural = _("calendar feeds")
+
+    def __str__(self) -> str:
+        return f"Calendar · {self.user}"
