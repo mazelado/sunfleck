@@ -812,6 +812,23 @@
   },
   "notifications": {
     "title": "Notifications",
+    "calendar": {
+      "title": "Calendar",
+      "help": "Add your household's care for the next two weeks to Google Calendar, Apple Calendar or another calendar app. They check for changes every few hours (Google about once a day), so use it to plan your week, and the digest to be reminded.",
+      "create": "Get a calendar address",
+      "address": "Your calendar address",
+      "copyNow": "Copy it now: it's only shown this once. Anyone with this address can see your plants' care, and so can your calendar app's company.",
+      "open": "Open it in your calendar app",
+      "active": "You have a calendar address, made on {{created}}.",
+      "lastRead": "A calendar app last read it on {{when}}.",
+      "neverRead": "No calendar app has read it yet.",
+      "new": "New address",
+      "replaceWarning": "Calendars using the current address will stop getting updates, until you give them the new one.",
+      "replace": "Make a new address",
+      "stop": "Stop",
+      "stopTitle": "Stop the calendar?",
+      "stopMessage": "Calendar apps using this address will stop getting updates. You can get a new address later."
+    },
     "intro": "Get a daily digest of the care that's due, on your phone or by email. Sunfleck sends it through Apprise, which supports ntfy, Telegram, email, Discord, Signal and about 100 more.",
     "channels": "Where to send them",
     "noChannels": "Add somewhere to send them, then send a test to check it works.",
