@@ -121,6 +121,12 @@ Under **Notifications**, each person chooses where theirs go and when:
 - **When**: a **daily digest** of what needs care (and frost warnings), at the time you choose,
   in your time zone, and optionally an **evening reminder** of what's still not done. Nothing
   is sent on days with nothing to do.
+- **Calendar**: **Get a calendar address** to see the next two weeks of care in Google
+  Calendar, Apple Calendar or another calendar app (add it there as a calendar "from URL" or
+  "subscription"). The address is shown only once, and anyone who has it can see your plants'
+  care, so keep it to yourself; **New address** stops the old one. Calendar apps check for
+  changes every few hours (Google about once a day), so use it to plan the week, and the digest
+  to be reminded.
 
 ## Your household
 
