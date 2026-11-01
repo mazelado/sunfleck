@@ -213,6 +213,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `DATABASE_URL` | SQLite in the volume | PostgreSQL ([above](#postgresql-and-redis-optional)) |
 | `HUEY_REDIS_URL` | *(file in the volume)* | Redis for the job queue |
 | `LOG_LEVEL` | `INFO` | How much to log: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
+| `WEB_TIMEOUT` | `250` | Seconds a request may take before it's stopped. Long enough for an AI model that has to load first; lower it if you don't use AI plugins |
 
 ## Troubleshooting
 

@@ -22,6 +22,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **ntfy with an access token**: the help under a notification address, and the user guide,
   now show where the token goes (`ntfys://tk_token@your-server/your-topic`).
 
+### Fixed
+
+- **AI suggestions from a slow model**, such as an Ollama model that has to load first, could
+  fail after 30 seconds: the web server stopped any request that took longer. It now allows
+  250 seconds (`WEB_TIMEOUT`), longer than the AI plugin waits for an answer. Identifying a
+  plant with Pl@ntNet, which waits up to 30 seconds, is no longer cut off either.
+
 ## [0.5.1] - 2026-10-31
 
 **Echinacea.** Fixes from using 0.5: no more error page when the app was open during an update,
