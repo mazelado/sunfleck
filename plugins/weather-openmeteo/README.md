@@ -14,6 +14,7 @@ A built-in [Sunfleck](../../README.md) plugin that brings in the weather from
     profile's seasonal intervals already allow for it.
 
 Admins turn it on for their household in **Settings → Plugins**. It's off until then.
+**Test** checks that Open-Meteo can be reached from your server.
 
 ## What it sends
 
@@ -22,6 +23,8 @@ rounded to 2 decimals (about 1 km)**. Nothing else, and no account or key. The w
 each site's forecast once it's 3 hours old (it checks hourly); the Today page and plants'
 schedules also fetch one if needed. See Open-Meteo's
 [terms](https://open-meteo.com/en/terms): its free API is for non-commercial use.
+
+**Test** asks for the weather at a fixed place (Greenwich, London), not at your sites.
 
 If Open-Meteo can't be reached, the latest forecast is used for up to a day, and it isn't asked
 again for 15 minutes. Admins see the error on the Plugins page.

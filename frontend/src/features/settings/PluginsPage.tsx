@@ -12,10 +12,17 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconAlertTriangle, IconWorldUpload } from "@tabler/icons-react";
+import { IconAlertTriangle, IconCircleCheck, IconWorldUpload } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { type Plugin, usePlugins, useUpdatePlugin } from "../../api/plugins";
+import {
+  type Plugin,
+  type SettingsCheck,
+  useCheckPlugin,
+  usePlugins,
+  useUpdatePlugin,
+} from "../../api/plugins";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { formatDateAndTime } from "../../lib/relativeTime";
@@ -70,6 +77,9 @@ interface PluginFormValues {
 function PluginCard({ plugin }: { plugin: Plugin }) {
   const { t, i18n } = useTranslation();
   const update = useUpdatePlugin();
+  const check = useCheckPlugin();
+  // The last test's result, for the settings as they were then.
+  const [checked, setChecked] = useState<SettingsCheck | null>(null);
   const applyFieldErrors = useApplyFieldErrors();
   const units = useUnits();
   const schema = plugin.settings_schema ?? {};
@@ -78,23 +88,36 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
       enabled: plugin.enabled,
       settings: settingsForDisplay(schema, plugin.settings ?? {}, units),
     },
+    onValuesChange: () => {
+      setChecked(null);
+    },
   });
+  const fieldNames = Object.fromEntries(
+    Object.keys(plugin.settings ?? {}).map((key) => [key, `settings.${key}`]),
+  );
+  const settingsToSend = (values: PluginFormValues) =>
+    settingsFromDisplay(schema, values.settings, plugin.settings ?? {}, units);
+
+  const handleCheck = async () => {
+    setChecked(null);
+    try {
+      setChecked(
+        await check.mutateAsync({ id: plugin.id, settings: settingsToSend(form.getValues()) }),
+      );
+    } catch (error) {
+      applyFieldErrors(form, error, fieldNames);
+    }
+  };
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
       await update.mutateAsync({
         id: plugin.id,
-        body: {
-          ...values,
-          settings: settingsFromDisplay(schema, values.settings, plugin.settings ?? {}, units),
-        },
+        body: { ...values, settings: settingsToSend(values) },
       });
       notifications.show({ message: t("plugins.saved", { name: plugin.name }) });
     } catch (error) {
-      const fields = Object.fromEntries(
-        Object.keys(plugin.settings ?? {}).map((key) => [key, `settings.${key}`]),
-      );
-      applyFieldErrors(form, error, fields);
+      applyFieldErrors(form, error, fieldNames);
     }
   });
 
@@ -159,13 +182,48 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
               inputProps={(key, options) => form.getInputProps(`settings.${key}`, options)}
             />
           )}
+          {checked && <CheckResult checked={checked} />}
           <Group>
             <Button type="submit" loading={update.isPending}>
               {t("common.save")}
             </Button>
+            {plugin.can_check && (
+              <Button
+                variant="default"
+                loading={check.isPending}
+                title={t("plugins.testHelp")}
+                aria-label={t("plugins.testName", { name: plugin.name })}
+                onClick={() => {
+                  void handleCheck();
+                }}
+              >
+                {t("plugins.test")}
+              </Button>
+            )}
           </Group>
         </Stack>
       </form>
     </Paper>
+  );
+}
+
+function CheckResult({ checked }: { checked: SettingsCheck }) {
+  const { t } = useTranslation();
+  const problem = checked.problem;
+  return (
+    <Alert
+      color={problem ? "red" : "green"}
+      icon={problem ? <IconAlertTriangle /> : <IconCircleCheck />}
+      p="sm"
+      title={
+        problem
+          ? t(`plugins.problem.${problem as "failed"}`, {
+              defaultValue: t("plugins.problem.failed"),
+            })
+          : t("plugins.works")
+      }
+    >
+      {checked.details && <Text size="sm">{checked.details}</Text>}
+    </Alert>
   );
 }

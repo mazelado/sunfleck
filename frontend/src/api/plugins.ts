@@ -5,6 +5,7 @@ import type { components } from "./schema";
 
 export type Plugin = components["schemas"]["PluginOut"];
 export type PluginInput = components["schemas"]["PluginIn"];
+export type SettingsCheck = components["schemas"]["SettingsCheckOut"];
 
 const PLUGINS = ["plugins"] as const;
 
@@ -28,5 +29,18 @@ export function useUpdatePlugin() {
       ),
     // Plugins change what other pages show (e.g. weather on Today).
     onSuccess: () => queryClient.invalidateQueries(),
+  });
+}
+
+/** Test a plugin with the settings in its form, without saving them. */
+export function useCheckPlugin() {
+  return useMutation({
+    mutationFn: async ({ id, settings }: { id: string; settings: PluginInput["settings"] }) =>
+      unwrap(
+        await api.POST("/api/v1/plugins/{plugin_id}/check", {
+          params: { path: { plugin_id: id } },
+          body: { settings },
+        }),
+      ),
   });
 }

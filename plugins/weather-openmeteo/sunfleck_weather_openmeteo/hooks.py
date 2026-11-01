@@ -11,12 +11,13 @@ from sunfleck.plugins import (
     CareContext,
     Factor,
     PeriodicJob,
+    SettingsCheck,
     SiteConditions,
     hookimpl,
     is_enabled,
 )
 
-from sunfleck_weather_openmeteo import Settings, plugin
+from sunfleck_weather_openmeteo import Settings, plugin, weather
 from sunfleck_weather_openmeteo.weather import Forecast, WeatherError, forecast_for
 
 ATTRIBUTION = "Weather data by Open-Meteo.com"
@@ -166,3 +167,10 @@ def refresh_forecasts() -> int:
             continue  # logged in forecast_for; tried again next time
         usable += 1
     return usable
+
+
+@hookimpl
+def check_settings() -> SettingsCheck:
+    """Whether Open-Meteo can be reached from this server: its settings can't be wrong in a way
+    a test would show."""
+    return weather.check()

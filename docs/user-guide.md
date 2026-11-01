@@ -139,7 +139,8 @@ language, units (metric, or imperial: inches and °F), and password.
 ## Plugins
 
 Admins turn plugins on under **Plugins**. They're off until then, because they send data to
-outside services: each one says exactly what it sends.
+outside services: each one says exactly what it sends. **Test** checks a plugin's settings
+before you save them, for example that an API key is accepted.
 
 - **Weather (Open-Meteo)**: weather on Today, frost warnings, and outdoor watering that waits
   after rain and comes sooner in a heat wave. It sends each site's location, rounded to about

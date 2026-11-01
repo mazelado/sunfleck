@@ -773,7 +773,19 @@
     "sendsData": "When on, it sends data to:",
     "lastError": "It last failed on {{when}}:",
     "saved": "{{name}} saved",
-    "secretSaved": "Saved. Leave empty to keep it."
+    "secretSaved": "Saved. Leave empty to keep it.",
+    "test": "Test",
+    "testName": "Test {{name}}",
+    "testHelp": "Tests the settings above, without saving them.",
+    "works": "It works.",
+    "problem": {
+      "missing_settings": "Something it needs is missing, or wasn't found.",
+      "invalid_api_key": "The API key wasn't accepted.",
+      "quota_exceeded": "The quota or rate limit is used up.",
+      "unavailable": "The service couldn't be reached.",
+      "invalid_answer": "The service answered something unexpected.",
+      "failed": "The plugin failed while testing."
+    }
   },
   "weather": {
     "today": "Today",

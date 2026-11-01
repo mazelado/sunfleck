@@ -14,7 +14,7 @@ from typing import Any
 
 from django.utils import timezone
 from sunfleck.places.models import Site
-from sunfleck.plugins import mark_site_out_of_date
+from sunfleck.plugins import SettingsCheck, mark_site_out_of_date
 
 from sunfleck_weather_openmeteo import plugin
 from sunfleck_weather_openmeteo.models import SiteWeather
@@ -32,6 +32,9 @@ PAST_DAYS = 3
 FORECAST_DAYS = 7
 # Rounding coordinates to 2 decimals keeps a site's location to about 1 km.
 COORDINATE_DECIMALS = 2
+# Testing the plugin asks for the weather here (Greenwich), not at the household's sites.
+CHECK_LATITUDE = 51.48
+CHECK_LONGITUDE = 0.0
 
 
 class WeatherError(Exception):
@@ -185,6 +188,19 @@ def fetch(site: Site) -> Forecast:
     except (OSError, ValueError) as exc:  # network errors, timeouts, invalid JSON
         raise WeatherError(f"Open-Meteo couldn't be reached: {exc}") from exc
     return parse(data, timezone.now())
+
+
+def check() -> SettingsCheck:
+    """Whether Open-Meteo can be reached and answers a forecast, for a fixed place."""
+    try:
+        data = download(request_url(CHECK_LATITUDE, CHECK_LONGITUDE))
+    except (OSError, ValueError) as exc:  # network errors, timeouts, invalid JSON
+        return SettingsCheck("unavailable", f"Open-Meteo couldn't be reached: {exc}")
+    try:
+        parse(data, timezone.now())
+    except WeatherError as exc:
+        return SettingsCheck("invalid_answer", str(exc))
+    return SettingsCheck(details="Open-Meteo answered with a forecast.")
 
 
 def forecast_for(site: Site) -> Forecast:

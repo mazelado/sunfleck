@@ -23,6 +23,7 @@ __all__ = [
     "PeriodicJob",
     "PhotoToIdentify",
     "Profile",
+    "SettingsCheck",
     "SiteConditions",
 ]
 
@@ -149,3 +150,19 @@ class AiAnswer:
     attribution: str
     data: Mapping[str, Any] | None = None
     problem: str | None = None
+
+
+@dataclass(frozen=True)
+class SettingsCheck:
+    """What a `check_settings` hook found: whether the plugin works with the settings.
+
+    `problem` is None when it works, or one of `missing_settings` (something needed isn't
+    set, or the service doesn't know it, e.g. a model), `invalid_api_key`, `quota_exceeded`,
+    `unavailable` (the service can't be reached or is down) or `invalid_answer` (it answered
+    something unexpected); Sunfleck reports `failed` when the hook raises an exception.
+    `details` is shown to the Admin as it is, e.g. which model answered, or what the service
+    said.
+    """
+
+    problem: str | None = None
+    details: str = ""

@@ -45,6 +45,7 @@ plugin = PluginInfo(
     hooks="sunfleck_weather_openmeteo.hooks",
     settings_schema=Settings,
     sends_data_to=(
-        "api.open-meteo.com: each site's location, rounded to about 1 km, every few hours",
+        "api.open-meteo.com: each site's location, rounded to about 1 km, every few hours "
+        "(testing the plugin sends a fixed place instead)",
     ),
 )

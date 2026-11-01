@@ -29,6 +29,7 @@ plugin = PluginInfo(
     settings_schema=Settings,
     sends_data_to=(
         "my-api.plantnet.org: the photos you choose to identify (without where they were "
-        "taken), your language, and the API key; only when you ask for an identification",
+        "taken), your language, and the API key; only when you ask for an identification (testing "
+        "the plugin sends a blank image)",
     ),
 )
