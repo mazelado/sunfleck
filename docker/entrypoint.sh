@@ -2,10 +2,27 @@
 # Container entry point. Usage: web (default) | worker | manage <command> | any other command.
 set -e
 
+# Everything in the data folder must be writable, not only the folder: a file left by a command
+# run as root (e.g. the job queue) otherwise fails later, and only in the worker's log.
 data_dir="${SUNFLECK_DATA_DIR:-/data}"
+owner="$(id -u):$(id -g)"
+# Images before 0.6.1 had an empty job queue owned by root in /data, which new volumes copied.
+# Nothing could write to it, so it holds no jobs: remove it, and Sunfleck makes a new one.
+for file in "$data_dir"/huey.sqlite3*; do
+  if [ -e "$file" ] && [ ! -w "$file" ] && [ -w "$data_dir" ] && rm -f "$file" 2>/dev/null; then
+    echo "Removed $file, which Sunfleck couldn't write to. It's made again, empty." >&2
+  fi
+done
 if [ ! -w "$data_dir" ]; then
-  echo "Error: $data_dir isn't writable by user ID $(id -u), which Sunfleck runs as." >&2
-  echo "If $data_dir is a folder on your computer, fix it with: sudo chown $(id -u) <folder>" >&2
+  not_writable="$data_dir"
+else
+  not_writable=$(find "$data_dir" ! -writable -print -quit 2>/dev/null || true)
+fi
+if [ -n "$not_writable" ]; then
+  echo "Error: $not_writable isn't writable by user ID $(id -u), which Sunfleck runs as." >&2
+  echo "Give everything in $data_dir back to Sunfleck. In the folder with compose.yaml, run:" >&2
+  echo "  docker compose run --rm -u root --entrypoint chown sunfleck -R $owner $data_dir" >&2
+  echo "If $data_dir is a folder on your computer instead: sudo chown -R $owner <folder>" >&2
   exit 1
 fi
 

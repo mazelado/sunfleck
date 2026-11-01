@@ -47,7 +47,10 @@ ENV PATH=/app/.venv/bin:$PATH \
     SUNFLECK_CARE_DATA_DIR=/app/data/care
 
 # Static files are collected at build time; the placeholder key is used only for this step.
-RUN SECRET_KEY=build-only python manage.py collectstatic --noinput
+# Its data folder is thrown away: anything left in /data is copied into every new volume, owned
+# by root. The job queue was, which stopped the worker.
+RUN SECRET_KEY=build-only SUNFLECK_DATA_DIR=/tmp/build-data python manage.py collectstatic --noinput \
+    && rm -rf /tmp/build-data
 
 RUN useradd --system --uid 1000 --home-dir /data sunfleck \
     && mkdir -p /data \

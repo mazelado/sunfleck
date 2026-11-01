@@ -15,6 +15,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   checks and app files. Warnings and errors are still logged. Set `SUNFLECK_ACCESS_LOG=true`
   to log every request again.
 
+### Fixed
+
+- **The worker couldn't run its jobs** on Docker installs: the image came with an empty job
+  queue owned by root, which each new volume copied, so the worker failed quietly and
+  reminders, weather updates and nightly recalculations didn't run. The image no longer has it,
+  and Sunfleck removes the old one when it starts.
+- **Data files Sunfleck can't write to** now stop it at startup, with the command that fixes
+  them, instead of making the worker fail quietly.
+
 ## [0.6.0] - 2026-11-01
 
 **Fuchsia.** Care where you are: notifications from the app itself, care in your calendar,
