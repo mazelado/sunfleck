@@ -113,7 +113,11 @@ Under **Notifications**, each person chooses where theirs go and when:
 - **Channels**: ntfy, Telegram, email, Discord, Signal and many more, as an
   [Apprise address](https://github.com/caronc/apprise/wiki). Add one, then **Send a test**.
   The easiest is [ntfy](https://ntfy.sh): install its app, subscribe to a topic name nobody
-  would guess, and add `ntfy://ntfy.sh/that-topic`.
+  would guess, and add `ntfy://ntfy.sh/that-topic`. If your topic needs an access token, or you
+  run your own ntfy server, put the token in front of the server's name:
+  `ntfys://tk_yourtoken@ntfy.example.com/that-topic` (`ntfys://` sends it over HTTPS; ntfy.sh
+  always is). A token that doesn't start with `tk_` goes at the end instead:
+  `ntfys://ntfy.example.com/that-topic?token=yourtoken`.
 - **When**: a **daily digest** of what needs care (and frost warnings), at the time you choose,
   in your time zone, and optionally an **evening reminder** of what's still not done. Nothing
   is sent on days with nothing to do.

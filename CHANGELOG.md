@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **ntfy with an access token**: the help under a notification address, and the user guide,
+  now show where the token goes (`ntfys://tk_token@your-server/your-topic`).
+
 ## [0.5.1] - 2026-10-31
 
 **Echinacea.** Fixes from using 0.5: no more error page when the app was open during an update,
