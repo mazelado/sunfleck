@@ -81,7 +81,7 @@ Key points:
   Compose runs them as two services sharing one data volume.
 - **The browser and API share one origin**, so authentication uses secure session cookies
   with CSRF protection. That's simpler and safer than storing tokens in the browser. Personal
-  API tokens for third-party tools come later (the roadmap's [Integrations](roadmap.md#integrations) phase).
+  API tokens for third-party tools come later (the roadmap's [More integrations](roadmap.md#more-integrations) phase).
 - **The prediction engine is plain Python** with no Django imports, so it's fast to test and
   easy to reason about (see section 5).
 
@@ -125,7 +125,7 @@ Adding it later would mean rewriting every query.
 ### Authentication
 - **django-allauth in headless mode** provides sign-in, sign-out, password reset, email
   verification, and later MFA, through a JSON API that the React app calls.
-- **OIDC** (roadmap: [Integrations](roadmap.md#integrations)) uses allauth's built-in OpenID Connect provider support. We plan for
+- **OIDC** (roadmap: [More integrations](roadmap.md#more-integrations)) uses allauth's built-in OpenID Connect provider support. We plan for
   it now by keying users on email address and never assuming that a user has a password.
 - A **first-run setup** screen creates the first Admin account. After that, open sign-up is
   **off** by default; Admins invite users.

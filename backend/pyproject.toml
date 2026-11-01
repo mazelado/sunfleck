@@ -1,6 +1,6 @@
 [project]
 name = "sunfleck"
-version = "0.5.1"
+version = "0.6.0"
 description = "Self-hosted plant care for indoor and outdoor plants."
 readme = "../README.md"
 license = "AGPL-3.0-only"

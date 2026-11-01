@@ -48,8 +48,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.3 Camellia** | [Easier everyday use](#camellia-easier-everyday-use-released) | Released 2026-10-30 |
 | **0.4 Dahlia** | [Smarter care](#dahlia-smarter-care-released) | Released 2026-10-30 |
 | **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
-| **0.6 Fuchsia** | [Integrations](#integrations) | Next |
-| **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Planned |
+| **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
+| **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Next |
 | **0.8 Hibiscus** | [Collector features](#collector-features) | Planned |
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
@@ -108,7 +108,7 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 - **When was it last cared for?** Adding a plant asks when it was last watered and
   fertilized, so its first due dates and care bars are right from the start (#76).
 
-### Integrations
+### Fuchsia: integrations (released)
 
 - **Weather-adaptive outdoor watering** from Open-Meteo's evapotranspiration (ET₀) and rainfall,
   with a documented formula.

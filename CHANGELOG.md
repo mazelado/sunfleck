@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-01
+
+**Fuchsia.** Care where you are: notifications from the app itself, care in your calendar,
+and outdoor watering that follows the weather. Plugins can be tested before saving, and their
+page is tidier.
+
 ### Added
 
 - **Test a plugin before saving it**: plugins that can be checked have a **Test** button on
@@ -218,7 +224,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mazelado/sunfleck/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/mazelado/sunfleck/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mazelado/sunfleck/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mazelado/sunfleck/compare/v0.4.0...v0.4.1
