@@ -25,6 +25,7 @@ from sunfleck.plugins.types import (
     SettingsCheck,
     SiteConditions,
 )
+from sunfleck.prediction.engine import soil_water_mm, water_use
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
@@ -53,6 +54,8 @@ __all__ = [
     "is_enabled",
     "mark_site_out_of_date",
     "require_enabled",
+    "soil_water_mm",
+    "water_use",
 ]
 
 hookimpl = pluggy.HookimplMarker("sunfleck")

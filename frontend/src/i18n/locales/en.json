@@ -722,6 +722,8 @@
       "rain": "Rain: {{amount}} in the last two days, so the soil is still moist",
       "rainForecast": "Rain forecast {{when}} ({{amount}}), so watering waits for it",
       "hotSpell": "Hot spell: highs around {{max}}, above the {{ideal}} its care profile likes",
+      "waterBalance": "Since it was watered, the weather took {{used}} of water from the soil and rain gave back {{rain}}; the soil holds {{capacity}}, so it's dry again on {{when}}",
+      "waterBalanceLater": "Since it was watered, the weather took {{used}} of water from the soil and rain gave back {{rain}}; the soil holds {{capacity}}, so it won't be dry before the forecast ends",
       "yourRoutine": "Matched to how often you water",
       "yourRoutineSince": "Matched to how often you water (since {{date}})"
     },

@@ -14,6 +14,8 @@ from sunfleck.prediction.engine import (
     predict_fertilizing,
     predict_fixed,
     predict_watering,
+    soil_water_mm,
+    water_use,
 )
 from sunfleck.prediction.light import GrowLight, Window
 from sunfleck.prediction.seasons import Season
@@ -523,3 +525,32 @@ def test_plugins_can_put_watering_off() -> None:
 
     assert put_off.next_due == date(2026, 4, 25)
     assert already_later.next_due == date(2026, 4, 20)  # due later than the 18th anyway
+
+
+def test_plugins_can_give_a_due_date_of_their_own_within_limits() -> None:
+    # Watered on the 13th, every 7 days in spring: due on the 20th, within the 17th to 27th.
+    def due(*days: date) -> date | None:
+        balance = [Adjustment(Factor("water_balance"), due_on=day) for day in days]
+        return predict_watering(AROID, Conditions(), WATERED, SPRING_DAY, balance).next_due
+
+    assert due(date(2026, 4, 18)) == date(2026, 4, 18)
+    assert due(date(2026, 4, 24), date(2026, 4, 19)) == date(2026, 4, 19)  # the earliest
+    assert due(date(2026, 4, 14)) == date(2026, 4, 17)  # at least half the interval
+    assert due(date(2026, 5, 30)) == date(2026, 4, 27)  # at most double
+
+
+def test_the_soil_holds_the_water_of_the_depth_that_may_dry() -> None:
+    cactus = Profile(**{**AROID.__dict__, "let_dry": "completely"})
+    fern = Profile(**{**AROID.__dict__, "let_dry": "keep_moist"})
+    pot = Conditions(indoor=False, pot_diameter_cm=20, pot_height_cm=18)
+
+    # A third of 18 cm, holding a fifth of it as water: 6 cm, 12 mm.
+    assert soil_water_mm(AROID, pot) == pytest.approx(12)
+    # Only the top 10 cm or so dry, however deep the pot (or the ground, 30 cm of roots).
+    assert soil_water_mm(cactus, pot) == pytest.approx(20)
+    assert soil_water_mm(cactus, Conditions(indoor=False)) == pytest.approx(20)
+    assert soil_water_mm(fern, Conditions(indoor=False, pot_material="in_ground")) == pytest.approx(
+        9
+    )
+    # Plants kept moist use more water than succulents.
+    assert water_use(fern) > water_use(AROID) > water_use(cactus)

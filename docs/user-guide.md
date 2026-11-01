@@ -154,8 +154,8 @@ outside services: each one says exactly what it sends. **Test** checks a plugin'
 before you save them, for example that an API key is accepted. Plugins that are off are folded
 away: open one with the arrow next to its name, or just turn it on.
 
-- **Weather (Open-Meteo)**: weather on Today, frost warnings, and outdoor watering that waits
-  after rain and comes sooner in a heat wave. It sends each site's location, rounded to about
+- **Weather (Open-Meteo)**: weather on Today, frost warnings, and outdoor watering that follows
+  how much water the weather took from the soil since watering, and the rain. It sends each site's location, rounded to about
   1 km.
 - **Plant identification (Pl@ntNet)**: identifying plants from photos. It needs a free API key
   from [my.plantnet.org](https://my.plantnet.org), and sends only the photos you identify.

@@ -40,6 +40,10 @@ class CareContext:
     today: date
     profile: Profile
     conditions: Conditions
+    # When it was last done (watered), and when the plant's routine started, in its own time
+    # zone: a water balance counts from the first, or the second if it's never been done.
+    last_done: date | None = None
+    started_on: date | None = None
 
 
 @dataclass(frozen=True)
