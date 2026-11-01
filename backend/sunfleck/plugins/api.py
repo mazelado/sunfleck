@@ -37,6 +37,7 @@ class PluginOut(Schema):
     )
     last_error: str | None
     last_error_at: datetime | None
+    can_check: bool = Field(description="Whether the plugin's settings can be tested.")
 
 
 class ProblemOut(Schema):
@@ -47,6 +48,21 @@ class ProblemOut(Schema):
 class PluginsOut(Schema):
     plugins: list[PluginOut]
     problems: list[ProblemOut] = Field(description="Installed plugins that couldn't be loaded.")
+
+
+class SettingsIn(Schema):
+    settings: dict[str, Any] = Field(
+        default_factory=dict, description="Leave a secret setting empty to use its saved value."
+    )
+
+
+class SettingsCheckOut(Schema):
+    works: bool
+    problem: str | None = Field(
+        description="Why it doesn't work: `missing_settings`, `invalid_api_key`, "
+        "`quota_exceeded`, `unavailable`, `invalid_answer` or `failed`."
+    )
+    details: str = Field(description="What the plugin found, shown as it is.")
 
 
 class PluginIn(Schema):
@@ -80,7 +96,13 @@ def _plugin_out(state: services.State) -> PluginOut:
         settings_schema=info.settings_schema.model_json_schema() if info.settings_schema else None,
         last_error=state.last_error or None,
         last_error_at=state.last_error_at,
+        can_check=services.can_check(info.id),
     )
+
+
+def _api_error(exc: services.PluginError) -> ApiError:
+    status = 404 if exc.code in ("plugin_not_found", "plugin_cannot_check") else 422
+    return ApiError(status, exc.code, str(exc), {"field": exc.field} if exc.field else {})
 
 
 @router.get("/plugins", response=PluginsOut)
@@ -99,8 +121,19 @@ def update_plugin(request: HttpRequest, plugin_id: str, data: PluginIn) -> Plugi
     try:
         state = services.update(household, plugin_id, data.enabled, data.settings)
     except services.PluginError as exc:
-        status = 404 if exc.code == "plugin_not_found" else 422
-        raise ApiError(
-            status, exc.code, str(exc), {"field": exc.field} if exc.field else {}
-        ) from exc
+        raise _api_error(exc) from exc
     return _plugin_out(state)
+
+
+@router.post("/plugins/{plugin_id}/check", response=SettingsCheckOut)
+def check_plugin(request: HttpRequest, plugin_id: str, data: SettingsIn) -> SettingsCheckOut:
+    """Test a plugin with the settings from its form, which needn't be saved, whether or not
+    it's on. Nothing is saved."""
+    household = require_role(request, Role.ADMIN).household
+    try:
+        found = services.check(household, plugin_id, data.settings)
+    except services.PluginError as exc:
+        raise _api_error(exc) from exc
+    return SettingsCheckOut(
+        works=found.problem is None, problem=found.problem, details=found.details
+    )

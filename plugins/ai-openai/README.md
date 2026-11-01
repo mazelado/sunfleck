@@ -26,9 +26,14 @@ about 7B parameters) may give poor suggestions.
 
 The API key is stored encrypted and never shown again.
 
+**Test** asks the model a tiny question with the settings in the form, before you save them,
+and says what went wrong if it doesn't answer: a wrong address, a model the server doesn't
+have, a refused key. A model that has to be loaded first can take a minute.
+
 ## What it sends
 
-Only when someone asks for a suggestion, to the server you set: Sunfleck's question (for a
+Only when someone asks for a suggestion (or an Admin clicks **Test**, which sends a tiny
+question of its own), to the server you set: Sunfleck's question (for a
 care profile: the plant's species and family, and whether it grows indoors or outdoors), the
 instructions for the answer, and the API key. The service's own terms apply to what it does
 with them.

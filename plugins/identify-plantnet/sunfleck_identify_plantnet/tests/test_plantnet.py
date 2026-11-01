@@ -11,9 +11,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client
 from sunfleck.accounts.models import Household, Role
 from sunfleck.plants.tests.factories import image_bytes
-from sunfleck.plugins import services
+from sunfleck.plugins import SettingsCheck, services
 
-from sunfleck_identify_plantnet import plantnet
+from sunfleck_identify_plantnet import Settings, hooks, plantnet
 
 ClientAs = Callable[[Role], Client]
 
@@ -258,3 +258,57 @@ def test_the_api_key_is_kept_secret(client_as: ClientAs, household: Household) -
     [ours] = [p for p in plugins if p["id"] == "identify_plantnet"]
     assert ours["secrets_set"] == ["api_key"]
     assert "very-secret-key" not in json.dumps(plugins)
+
+
+# --- Testing the API key ----------------------------------------------------------------------
+
+
+def key(value: str) -> Settings:
+    return Settings.model_validate({"api_key": value})
+
+
+def test_testing_sends_a_blank_image_with_the_key(service: FakePlantNet) -> None:
+    # A valid key, and no plant in the image: Pl@ntNet's "species not found".
+    service.status = 404
+    service.body = {"message": "Species not found"}
+
+    found = hooks.check_settings(key("my-key"))
+
+    assert found == SettingsCheck(details="Pl@ntNet accepted the API key.")
+    assert service.query()["api-key"] == ["my-key"]
+    assert service.parts()[0] == ("images", plantnet.BLANK_JPEG)
+
+
+def test_testing_says_how_many_identifications_are_left(service: FakePlantNet) -> None:
+    service.body = {**ANSWER, "remainingIdentificationRequests": 487}
+
+    found = hooks.check_settings(key("my-key"))
+
+    assert found.details == "Pl@ntNet accepted the API key. 487 identifications left today."
+
+
+@pytest.mark.parametrize(
+    ("status", "problem"),
+    [
+        (401, "invalid_api_key"),
+        (429, "quota_exceeded"),
+        (503, "unavailable"),
+        (400, "invalid_answer"),
+    ],
+)
+def test_testing_says_what_went_wrong(service: FakePlantNet, status: int, problem: str) -> None:
+    service.status = status
+    service.body = {"message": "Something"}
+
+    found = hooks.check_settings(key("my-key"))
+
+    assert found.problem == problem
+    assert found.details
+    assert "my-key" not in found.details
+
+
+def test_testing_without_a_key_asks_for_one(service: FakePlantNet) -> None:
+    found = hooks.check_settings(key(" "))
+
+    assert found.problem == "missing_settings"
+    assert service.requests == []

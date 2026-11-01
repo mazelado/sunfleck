@@ -38,6 +38,7 @@ const rain: Plugin = {
   secrets_set: [],
   last_error: null,
   last_error_at: null,
+  can_check: false,
 };
 
 function withPlugins(plugins: Plugin[], problems: { source: string; message: string }[] = []) {
@@ -45,6 +46,67 @@ function withPlugins(plugins: Plugin[], problems: { source: string; message: str
 }
 
 describe("plugins", () => {
+  it("are tested with the settings in the form, without saving them", async () => {
+    signInAs(admin);
+    withPlugins([{ ...rain, can_check: true }]);
+    let sent: unknown = null;
+    let saved = false;
+    server.use(
+      http.post("*/api/v1/plugins/rain/check", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json({ works: true, problem: null, details: "Rain gauge answered." });
+      }),
+      http.put("*/api/v1/plugins/rain", () => {
+        saved = true;
+        return HttpResponse.json(rain);
+      }),
+    );
+    const { user } = renderApp("/settings/plugins");
+
+    const threshold = await screen.findByRole("textbox", { name: "Rain threshold (mm)" });
+    await user.clear(threshold);
+    await user.type(threshold, "8");
+    await user.click(screen.getByRole("button", { name: "Test Rain" }));
+
+    expect(await screen.findByText("It works.")).toBeVisible();
+    expect(screen.getByText("Rain gauge answered.")).toBeVisible();
+    expect(sent).toEqual({ settings: { threshold_mm: 8, mood: "calm", alerts: true } });
+    expect(saved).toBe(false);
+    // Changing a setting makes the result out of date.
+    await user.type(threshold, "0");
+    expect(screen.queryByText("It works.")).not.toBeInTheDocument();
+  });
+
+  it("say what's wrong when a test fails", async () => {
+    signInAs(admin);
+    withPlugins([{ ...rain, can_check: true }]);
+    server.use(
+      http.post("*/api/v1/plugins/rain/check", () =>
+        HttpResponse.json({
+          works: false,
+          problem: "invalid_api_key",
+          details: "The service refused the key.",
+        }),
+      ),
+    );
+    const { user } = renderApp("/settings/plugins");
+
+    await user.click(await screen.findByRole("button", { name: "Test Rain" }));
+
+    expect(await screen.findByText("The API key wasn't accepted.")).toBeVisible();
+    expect(screen.getByText("The service refused the key.")).toBeVisible();
+  });
+
+  it("have no Test button when they can't be tested", async () => {
+    signInAs(admin);
+    withPlugins([rain]);
+
+    renderApp("/settings/plugins");
+
+    expect(await screen.findByRole("heading", { name: "Rain" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /^Test/ })).not.toBeInTheDocument();
+  });
+
   it("are turned on with their settings, made from the plugin's schema", async () => {
     signInAs(admin);
     withPlugins([rain]);

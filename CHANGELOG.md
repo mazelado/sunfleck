@@ -9,6 +9,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Test a plugin before saving it**: plugins that can be checked have a **Test** button on
+  the Plugins page, which tries the settings in the form without saving them, and says what's
+  wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
+  plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
+  can be reached. Plugins add a test with the new `check_settings` hook.
+
 ### Changed
 
 - **ntfy with an access token**: the help under a notification address, and the user guide,

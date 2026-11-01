@@ -74,6 +74,11 @@ class Registry:
         caller = self.manager.subset_hook_caller(hook, remove_plugins=others)
         return list(caller(**kwargs))
 
+    def call_plugin(self, hook: str, plugin_id: str, **kwargs: Any) -> list[Any]:
+        """Call one plugin's hook with the arguments given, whether or not it's on. Its
+        exceptions are the caller's to handle."""
+        return self._call_one(hook, plugin_id, **kwargs)
+
     def call(
         self, hook: str, household: Household, expect: type | None = None, **kwargs: Any
     ) -> list[Answer]:

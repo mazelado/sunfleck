@@ -4,10 +4,10 @@ from typing import Any
 import pytest
 from sunfleck.accounts.models import Household
 from sunfleck.ai import services as ai
-from sunfleck.plugins import AiAnswer, AiTask
+from sunfleck.plugins import AiAnswer, AiTask, SettingsCheck
 from sunfleck.plugins import services as plugin_services
 
-from sunfleck_ai_openai import client
+from sunfleck_ai_openai import Settings, client, hooks
 
 TASK = AiTask(
     name="greeting",
@@ -149,3 +149,51 @@ def test_answers_of_the_wrong_shape_are_refused(server: FakeServer, household: H
     answer = ai.ask(household, TASK)
 
     assert answer == AiAnswer("Suggested by AI (gpt-4.1-mini)", problem="invalid_answer")
+
+
+# --- Testing the settings ---------------------------------------------------------------------
+
+
+def settings(**values: Any) -> Settings:
+    return Settings.model_validate(
+        {"base_url": "http://ollama:11434/v1", "model": "llama3.1", **values}
+    )
+
+
+def test_testing_asks_the_model_a_tiny_question(server: FakeServer) -> None:
+    server.responses = [ok('{"ok": true}')]
+
+    found = hooks.check_settings(settings())
+
+    assert found == SettingsCheck(details="llama3.1 answered, at http://ollama:11434/v1.")
+    [(url, body, _)] = server.requests
+    assert url == "http://ollama:11434/v1/chat/completions"
+    assert body["model"] == "llama3.1"
+
+
+@pytest.mark.parametrize(
+    ("response", "problem", "says"),
+    [
+        (client.Response(404, b"model not found"), "missing_settings", "no model called"),
+        (client.Response(401, b"bad key"), "invalid_api_key", "refused the API key"),
+        (OSError("connection refused"), "unavailable", "not localhost"),
+        (ok('{"ok": false}'), "invalid_answer", "not as asked"),
+        (ok("I'm sorry, I can't do that."), "invalid_answer", "not with JSON"),
+    ],
+)
+def test_testing_says_what_went_wrong(
+    server: FakeServer, response: client.Response | Exception, problem: str, says: str
+) -> None:
+    server.responses = [response]
+
+    found = hooks.check_settings(settings())
+
+    assert found.problem == problem
+    assert says in found.details
+
+
+def test_testing_without_a_model_asks_for_one(server: FakeServer) -> None:
+    found = hooks.check_settings(settings(model=" "))
+
+    assert found.problem == "missing_settings"
+    assert server.requests == []

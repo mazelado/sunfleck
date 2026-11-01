@@ -4,6 +4,7 @@ POST /v2/identify/all with the photos as multipart `images`, each with an `organ
 ("auto" lets Pl@ntNet tell what the photo shows). It answers the species it may be, best first.
 """
 
+import base64
 import json
 import logging
 import urllib.error
@@ -13,7 +14,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Any
 
-from sunfleck.plugins import Candidate, Identification, PhotoToIdentify
+from sunfleck.plugins import Candidate, Identification, PhotoToIdentify, SettingsCheck
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,21 @@ URL = "https://my-api.plantnet.org/v2/identify/all"
 TIMEOUT_SECONDS = 30
 MAX_RESULTS = 5
 ATTRIBUTION = "Identified by Pl@ntNet"
+# A plain grey 64 px JPEG, which shows no plant: testing the plugin sends it, so that a valid
+# key gets "species not found" rather than using up an identification on a real photo.
+BLANK_JPEG = base64.b64decode(
+    "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERX"
+    "RTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Nj"
+    "Y2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCABAAEADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAA"
+    "AAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAk"
+    "M2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKT"
+    "lJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QA"
+    "HwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdh"
+    "cRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hp"
+    "anN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk"
+    "5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo"
+    "oooAKKKKACiiigAooooAKKKKACiiigAooooA/9k="
+)
 
 
 class PlantNetError(Exception):
@@ -97,6 +113,25 @@ def identify(photos: list[PhotoToIdentify], language: str, api_key: str) -> Iden
     if response.status != 200:
         raise PlantNetError(f"HTTP {response.status}: {response.body[:200]!r}")
     return _read(response.body)
+
+
+PROBLEM_DETAILS = {
+    "invalid_api_key": "Pl@ntNet refused the API key. Check it at my.plantnet.org.",
+    "quota_exceeded": "The API key's identifications for today are used up.",
+    "unavailable": "Pl@ntNet couldn't be reached, or is having problems.",
+}
+
+
+def check(api_key: str) -> SettingsCheck:
+    """Whether Pl@ntNet accepts the API key, by sending it a blank image."""
+    try:
+        found = identify([PhotoToIdentify(BLANK_JPEG)], "en", api_key)
+    except PlantNetError as exc:
+        return SettingsCheck("invalid_answer", f"Pl@ntNet answered something unexpected: {exc}")
+    if found.problem is not None:
+        return SettingsCheck(found.problem, PROBLEM_DETAILS.get(found.problem, ""))
+    left = f" {found.remaining} identifications left today." if found.remaining is not None else ""
+    return SettingsCheck(details=f"Pl@ntNet accepted the API key.{left}")
 
 
 def _read(body: bytes) -> Identification:

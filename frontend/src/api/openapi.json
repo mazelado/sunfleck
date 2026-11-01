@@ -2934,6 +2934,11 @@
       },
       "PluginOut": {
         "properties": {
+          "can_check": {
+            "description": "Whether the plugin's settings can be tested.",
+            "title": "Can Check",
+            "type": "boolean"
+          },
           "description": {
             "title": "Description",
             "type": "string"
@@ -3031,7 +3036,8 @@
           "secrets_set",
           "settings_schema",
           "last_error",
-          "last_error_at"
+          "last_error_at",
+          "can_check"
         ],
         "title": "PluginOut",
         "type": "object"
@@ -3540,6 +3546,50 @@
           "winter"
         ],
         "title": "SeasonalDays",
+        "type": "object"
+      },
+      "SettingsCheckOut": {
+        "properties": {
+          "details": {
+            "description": "What the plugin found, shown as it is.",
+            "title": "Details",
+            "type": "string"
+          },
+          "problem": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why it doesn't work: `missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer` or `failed`.",
+            "title": "Problem"
+          },
+          "works": {
+            "title": "Works",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "works",
+          "problem",
+          "details"
+        ],
+        "title": "SettingsCheckOut",
+        "type": "object"
+      },
+      "SettingsIn": {
+        "properties": {
+          "settings": {
+            "additionalProperties": true,
+            "description": "Leave a secret setting empty to use its saved value.",
+            "title": "Settings",
+            "type": "object"
+          }
+        },
+        "title": "SettingsIn",
         "type": "object"
       },
       "SetupIn": {
@@ -7450,6 +7500,54 @@
           }
         ],
         "summary": "Update Plugin",
+        "tags": [
+          "plugins"
+        ]
+      }
+    },
+    "/api/v1/plugins/{plugin_id}/check": {
+      "post": {
+        "description": "Test a plugin with the settings from its form, which needn't be saved, whether or not\nit's on. Nothing is saved.",
+        "operationId": "sunfleck_plugins_api_check_plugin",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsCheckOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Check Plugin",
         "tags": [
           "plugins"
         ]
