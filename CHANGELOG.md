@@ -16,6 +16,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
   plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
   can be reached. Plugins add a test with the new `check_settings` hook.
+- **Tidier Plugins page**: each plugin's card folds away, still showing its name, whether it's
+  on, and badges for an error, for sending data and for unsaved changes (#95). Plugins that are
+  off start folded; turning one on opens it, so **Save** and what it sends are in sight. Your
+  choice is remembered in the browser.
 
 ### Changed
 
