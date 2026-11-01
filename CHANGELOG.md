@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **Quieter logs**: the web server no longer logs every request, most of which are health
+  checks and app files. Warnings and errors are still logged. Set `SUNFLECK_ACCESS_LOG=true`
+  to log every request again.
+
 ## [0.6.0] - 2026-11-01
 
 **Fuchsia.** Care where you are: notifications from the app itself, care in your calendar,
