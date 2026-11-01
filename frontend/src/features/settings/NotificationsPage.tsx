@@ -14,7 +14,13 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconAlertTriangle, IconCalendar, IconPencil, IconSend } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconBell,
+  IconCalendar,
+  IconPencil,
+  IconSend,
+} from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +28,7 @@ import {
   type Channel,
   type NotificationPreferences,
   useAddChannel,
+  useAddPushDevice,
   useCalendar,
   useCreateCalendar,
   useDeleteCalendar,
@@ -37,10 +44,13 @@ import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { CopyableLink } from "../../components/CopyableLink";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
+import { deviceLabel, PushPermissionError, PushServiceError, pushSupport } from "../../lib/push";
 import { formatDateAndTime } from "../../lib/relativeTime";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
 const APPRISE_WIKI = "https://github.com/caronc/apprise/wiki";
+// The kind of channel a device becomes when it gets notifications from the app itself.
+const WEB_PUSH = "webpush";
 
 /** Each person's own notifications: where they go, when, and what today's would say. */
 export function NotificationsPage() {
@@ -74,6 +84,7 @@ export function NotificationsPage() {
           {data.data.channels.map((channel) => (
             <ChannelRow key={channel.id} channel={channel} />
           ))}
+          <ThisDevice />
           <AddChannelForm />
         </Stack>
       </Paper>
@@ -108,7 +119,7 @@ function ChannelRow({ channel }: { channel: Channel }) {
           <Group gap="xs">
             <Text fw={500}>{channel.label}</Text>
             <Badge variant="light" color="gray" tt="none">
-              {channel.service}
+              {channel.service === WEB_PUSH ? t("notifications.push.badge") : channel.service}
             </Badge>
           </Group>
           <Switch
@@ -221,27 +232,29 @@ function EditChannelForm({ channel, onDone }: { channel: Channel; onDone: () => 
           maxLength={100}
           {...form.getInputProps("label")}
         />
-        <TextInput
-          label={t("notifications.newUrl")}
-          description={
-            <>
-              {t("notifications.newUrlHelp")}{" "}
-              <Anchor
-                href={APPRISE_WIKI}
-                target="_blank"
-                rel="noreferrer"
-                size="xs"
-                underline="always"
-              >
-                {t("notifications.allServices")}
-              </Anchor>
-            </>
-          }
-          autoComplete="off"
-          spellCheck={false}
-          maxLength={2000}
-          {...form.getInputProps("url")}
-        />
+        {channel.service !== WEB_PUSH && (
+          <TextInput
+            label={t("notifications.newUrl")}
+            description={
+              <>
+                {t("notifications.newUrlHelp")}{" "}
+                <Anchor
+                  href={APPRISE_WIKI}
+                  target="_blank"
+                  rel="noreferrer"
+                  size="xs"
+                  underline="always"
+                >
+                  {t("notifications.allServices")}
+                </Anchor>
+              </>
+            }
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={2000}
+            {...form.getInputProps("url")}
+          />
+        )}
         <Group gap="xs">
           <Button type="submit" loading={update.isPending}>
             {t("common.save")}
@@ -557,6 +570,69 @@ function CalendarFeed() {
               </Group>
             )}
           </Stack>
+        )}
+      </Stack>
+    </Paper>
+  );
+}
+
+/** Notifications from the app itself on this device (Web Push), where the browser allows it. */
+function ThisDevice() {
+  const { t } = useTranslation();
+  const errorMessage = useErrorMessage();
+  const add = useAddPushDevice();
+  const [support, setSupport] = useState(pushSupport);
+
+  async function turnOn() {
+    try {
+      const channel = await add.mutateAsync(deviceLabel());
+      notifications.show({ message: t("notifications.push.added", { label: channel.label }) });
+    } catch (error) {
+      setSupport(pushSupport());
+      notifications.show({
+        color: "red",
+        message:
+          error instanceof PushPermissionError
+            ? t("notifications.push.notAllowed")
+            : error instanceof PushServiceError
+              ? t("notifications.push.serviceError")
+              : errorMessage(error),
+      });
+    }
+  }
+
+  return (
+    <Paper withBorder radius="md" p="sm">
+      <Stack gap="xs">
+        <Stack gap={2}>
+          <Title order={3} fz="h5">
+            {t("notifications.push.title")}
+          </Title>
+          <Text size="sm" c="dimmed">
+            {t("notifications.push.help")}
+          </Text>
+        </Stack>
+        {support === "supported" ? (
+          <Group>
+            <Button
+              variant="light"
+              leftSection={<IconBell size={16} />}
+              loading={add.isPending}
+              onClick={() => void turnOn()}
+            >
+              {t("notifications.push.turnOn")}
+            </Button>
+          </Group>
+        ) : (
+          <Text size="sm">
+            {t(
+              support === "needs_install"
+                ? "notifications.push.needsInstall"
+                : support === "blocked"
+                  ? "notifications.push.blocked"
+                  : "notifications.push.unsupported",
+            )}
+          </Text>
         )}
       </Stack>
     </Paper>

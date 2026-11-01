@@ -110,6 +110,11 @@ yet**.
 
 Under **Notifications**, each person chooses where theirs go and when:
 
+- **This device**: **Get notifications on this device** sends them as notifications from
+  Sunfleck itself, with no other app. Do it on each phone or computer you want them on. On
+  iPhone and iPad, add Sunfleck to the Home Screen first and turn them on from there. The
+  device then shows in the list like the channels below, where you can test, rename or pause
+  it.
 - **Channels**: ntfy, Telegram, email, Discord, Signal and many more, as an
   [Apprise address](https://github.com/caronc/apprise/wiki). Add one, then **Send a test**.
   The easiest is [ntfy](https://ntfy.sh): install its app, subscribe to a topic name nobody

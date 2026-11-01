@@ -749,6 +749,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/push/devices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Push Device
+         * @description Get notifications on this device: it becomes a channel like the others.
+         */
+        post: operations["sunfleck_notifications_api_add_push_device"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/push/key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Push Key
+         * @description The key a browser needs to subscribe this device to notifications.
+         */
+        get: operations["sunfleck_notifications_api_push_key"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/people/{user_id}/avatar": {
         parameters: {
             query?: never;
@@ -2429,6 +2469,26 @@ export interface components {
             message: string;
             /** Source */
             source: string;
+        };
+        /** PushDeviceIn */
+        PushDeviceIn: {
+            /** Label */
+            label: string;
+            /**
+             * Subscription
+             * @description The browser's PushSubscription, as `subscription.toJSON()` gives it.
+             */
+            subscription: {
+                [key: string]: unknown;
+            };
+        };
+        /** PushKeyOut */
+        PushKeyOut: {
+            /**
+             * Public Key
+             * @description The server's VAPID key, as `applicationServerKey`.
+             */
+            public_key: string;
         };
         /**
          * Role
@@ -4226,6 +4286,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PreviewOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_add_push_device: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushDeviceIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChannelOut"];
+                };
+            };
+        };
+    };
+    sunfleck_notifications_api_push_key: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushKeyOut"];
                 };
             };
         };

@@ -3,6 +3,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
+from typing import Any
 from zoneinfo import ZoneInfo, available_timezones
 
 from django.conf import settings
@@ -13,7 +14,7 @@ from django.utils.translation import gettext
 from sunfleck.accounts.models import User
 from sunfleck.accounts.permissions import get_membership
 from sunfleck.core.crypto import DecryptionError, decrypt, encrypt
-from sunfleck.notifications import delivery
+from sunfleck.notifications import delivery, push
 from sunfleck.notifications.digest import Message, compose
 from sunfleck.notifications.models import (
     NotificationChannel,
@@ -112,14 +113,43 @@ def add_channel(user: User, label: str, url: str) -> NotificationChannel:
     )
 
 
+def add_push_device(user: User, label: str, subscription: dict[str, Any]) -> NotificationChannel:
+    """Turn on Web Push for a device: a channel holding its browser's subscription. The same
+    device turning it on again replaces its channel.
+
+    Raises:
+        NotificationError: If the subscription isn't one a browser could have made.
+    """
+    try:
+        stored = push.check_subscription(subscription)
+    except ValueError as exc:
+        raise NotificationError("invalid_subscription", str(exc)) from exc
+    endpoint = push.endpoint_of(stored)
+    for existing in user.notification_channels.filter(service=push.SERVICE):
+        try:
+            same = push.endpoint_of(decrypt(existing.url_encrypted)) == endpoint
+        except DecryptionError:
+            same = False
+        if same:
+            existing.delete()
+    return NotificationChannel.objects.create(
+        user=user, label=label.strip(), url_encrypted=encrypt(stored), service=push.SERVICE
+    )
+
+
 def update_channel(
     channel: NotificationChannel, label: str, enabled: bool, url: str | None = None
 ) -> NotificationChannel:
     """Rename, pause or resume a channel; with `url`, change its address too.
 
     Raises:
-        NotificationError: If Apprise doesn't support the new URL.
+        NotificationError: If Apprise doesn't support the new URL, or the channel is a device's
+            (whose address only its browser can give).
     """
+    if url and channel.service == push.SERVICE:
+        raise NotificationError(
+            "push_device_address", "A device's address can't be changed.", "url"
+        )
     if url:
         url = _check_url(url)
         channel.url_encrypted = encrypt(url)
@@ -134,7 +164,16 @@ def update_channel(
 def _send(channel: NotificationChannel, message: Message) -> str | None:
     """Send a message on a channel and record how it went; return the error, if any."""
     try:
-        delivery.send(decrypt(channel.url_encrypted), message.title, message.body)
+        if channel.service == push.SERVICE:
+            push.send(decrypt(channel.url_encrypted), message.title, message.body)
+        else:
+            delivery.send(decrypt(channel.url_encrypted), message.title, message.body)
+    except push.SubscriptionGoneError as exc:
+        # It won't come back: pause it, and say why.
+        channel.enabled = False
+        channel.last_error = str(exc)
+        channel.save(update_fields=["enabled", "last_error"])
+        return str(exc)
     except (delivery.DeliveryError, DecryptionError) as exc:
         logger.warning("Notification to channel %s failed: %s", channel.pk, exc)
         channel.last_error = str(exc)
