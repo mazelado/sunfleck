@@ -1,9 +1,11 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import type { UserEvent } from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { Plugin } from "../../api/plugins";
+import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
 
@@ -45,7 +47,17 @@ function withPlugins(plugins: Plugin[], problems: { source: string; message: str
   server.use(http.get("*/api/v1/plugins", () => HttpResponse.json({ plugins, problems })));
 }
 
+/** Open a plugin's card: those that are off start collapsed. */
+async function openDetails(user: UserEvent, name: string) {
+  await user.click(await screen.findByRole("button", { name: `Details and settings of ${name}` }));
+}
+
 describe("plugins", () => {
+  beforeEach(() => {
+    // Which cards are open is remembered in the browser.
+    localStorage.clear();
+  });
+
   it("are tested with the settings in the form, without saving them", async () => {
     signInAs(admin);
     withPlugins([{ ...rain, can_check: true }]);
@@ -63,6 +75,7 @@ describe("plugins", () => {
     );
     const { user } = renderApp("/settings/plugins");
 
+    await openDetails(user, "Rain");
     const threshold = await screen.findByRole("textbox", { name: "Rain threshold (mm)" });
     await user.clear(threshold);
     await user.type(threshold, "8");
@@ -91,6 +104,7 @@ describe("plugins", () => {
     );
     const { user } = renderApp("/settings/plugins");
 
+    await openDetails(user, "Rain");
     await user.click(await screen.findByRole("button", { name: "Test Rain" }));
 
     expect(await screen.findByText("The API key wasn't accepted.")).toBeVisible();
@@ -120,6 +134,7 @@ describe("plugins", () => {
     const { user } = renderApp("/settings/plugins");
 
     expect(await screen.findByRole("heading", { name: "Rain" })).toBeVisible();
+    await openDetails(user, "Rain");
     expect(screen.getByText("rain.example: site latitude and longitude")).toBeVisible();
     const threshold = screen.getByRole("textbox", { name: "Rain threshold (mm)" });
     expect(threshold).toHaveValue("5");
@@ -166,6 +181,7 @@ describe("plugins", () => {
     );
     const { user } = renderApp("/settings/plugins");
 
+    await openDetails(user, "Frost");
     const below = await screen.findByRole("textbox", { name: "Frost below (°F)" });
     expect(below).toHaveValue("36");
     expect(screen.getByRole("textbox", { name: "Rain (in)" })).toHaveValue("0.2");
@@ -226,6 +242,7 @@ describe("plugins", () => {
     );
     const { user } = renderApp("/settings/plugins");
 
+    await openDetails(user, "Rain");
     await user.click(await screen.findByRole("button", { name: "Save" }));
 
     expect(await screen.findByText("This setting isn't valid.")).toBeVisible();
@@ -253,6 +270,60 @@ describe("plugins", () => {
     expect(await screen.findByText("care_factors: RuntimeError: boom")).toBeVisible();
     expect(screen.getByText(/It last failed on/)).toBeVisible();
     expect(screen.getByText("Snow: Couldn't be loaded: No module named 'snow'")).toBeVisible();
+  });
+
+  it("fold away, keeping what matters in sight", async () => {
+    signInAs(admin);
+    withPlugins([
+      rain,
+      {
+        ...rain,
+        id: "sun",
+        name: "Sun",
+        enabled: true,
+        sends_data_to: [],
+        settings: null,
+        settings_schema: null,
+      },
+    ]);
+    const { user } = renderApp("/settings/plugins");
+
+    // Off: folded, with what it sends shown as a badge.
+    const details = await screen.findByRole("button", { name: "Details and settings of Rain" });
+    expect(details).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByText("Sends data")).toBeVisible();
+    expect(screen.queryByRole("textbox", { name: "Rain threshold (mm)" })).toBeNull();
+    // On: open.
+    expect(screen.getByRole("button", { name: "Details and settings of Sun" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+
+    await user.click(details);
+    expect(details).toHaveAttribute("aria-expanded", "true");
+    const threshold = screen.getByRole("textbox", { name: "Rain threshold (mm)" });
+    await user.type(threshold, "0");
+    await user.click(details);
+    // Folded again, with the change kept and flagged.
+    expect(screen.getByText("Unsaved changes")).toBeVisible();
+    await user.click(details);
+    expect(screen.getByRole("textbox", { name: "Rain threshold (mm)" })).toHaveValue("50");
+    expect(await accessibilityProblems()).toEqual([]);
+  });
+
+  it("open when turned on, so saving and what it sends are in sight", async () => {
+    signInAs(admin);
+    withPlugins([rain]);
+    const { user } = renderApp("/settings/plugins");
+
+    await user.click(await screen.findByRole("switch", { name: "Rain is on" }));
+
+    expect(screen.getByRole("button", { name: "Details and settings of Rain" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(screen.getByText("rain.example: site latitude and longitude")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Save" })).toBeVisible();
   });
 
   it("are in the menu for Admins only", async () => {
