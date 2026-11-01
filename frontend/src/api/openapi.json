@@ -3195,6 +3195,42 @@
         "title": "ProblemOut",
         "type": "object"
       },
+      "PushDeviceIn": {
+        "properties": {
+          "label": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "subscription": {
+            "additionalProperties": true,
+            "description": "The browser's PushSubscription, as `subscription.toJSON()` gives it.",
+            "title": "Subscription",
+            "type": "object"
+          }
+        },
+        "required": [
+          "label",
+          "subscription"
+        ],
+        "title": "PushDeviceIn",
+        "type": "object"
+      },
+      "PushKeyOut": {
+        "properties": {
+          "public_key": {
+            "description": "The server's VAPID key, as `applicationServerKey`.",
+            "title": "Public Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "public_key"
+        ],
+        "title": "PushKeyOut",
+        "type": "object"
+      },
       "Role": {
         "description": "What a member may do in their household, from least to most access.",
         "enum": [
@@ -6558,6 +6594,72 @@
           }
         ],
         "summary": "Preview",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/push/devices": {
+      "post": {
+        "description": "Get notifications on this device: it becomes a channel like the others.",
+        "operationId": "sunfleck_notifications_api_add_push_device",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushDeviceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Add Push Device",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/push/key": {
+      "get": {
+        "description": "The key a browser needs to subscribe this device to notifications.",
+        "operationId": "sunfleck_notifications_api_push_key",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushKeyOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Push Key",
         "tags": [
           "notifications"
         ]

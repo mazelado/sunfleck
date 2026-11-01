@@ -21,8 +21,9 @@ season and the weather, and learns from how you find the soil.
   explanation of why. Tell it whether the soil was too dry or still wet, and it adapts.
 - **One tap on your phone**: a Today page with what's due, snooze and skip, a care timeline,
   and an app you can install on your home screen.
-- **Reminders where you want them**: a daily digest and an evening reminder through ntfy,
-  Telegram, email, Discord, Signal and about 100 other services.
+- **Reminders where you want them**: a daily digest and an evening reminder as notifications
+  from the app itself, or through ntfy, Telegram, email, Discord, Signal and about 100 other
+  services. Care for the next two weeks can also go in your calendar.
 - **Weather-aware** (optional plugin, Open-Meteo): outdoor watering waits after rain and comes
   sooner in heat, with frost warnings.
 - **Plant identification** (optional plugin, Pl@ntNet): identify a plant from a photo.

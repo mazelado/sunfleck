@@ -38,6 +38,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
+        // Showing push notifications, and opening the app when one is tapped.
+        importScripts: ["/push-sw.js"],
         // Pages come from the server first, which also sets the cookie that protects forms
         // (CSRF). Only when it can't be reached does the app open from the stored copy (every
         // page of the app is the same index.html).

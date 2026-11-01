@@ -26,6 +26,7 @@ dependencies = [
     "apprise>=1.9",
     "cryptography>=44",
     "icalendar>=6",
+    "pywebpush>=2",
 ]
 
 [project.optional-dependencies]
@@ -100,7 +101,15 @@ plugins = ["mypy_django_plugin.main"]
 exclude = ["/migrations/"]
 
 [[tool.mypy.overrides]]
-module = ["allauth", "allauth.*", "huey", "huey.*"]  # no type information published
+module = [  # no type information published
+    "allauth",
+    "allauth.*",
+    "huey",
+    "huey.*",
+    "py_vapid",
+    "py_vapid.*",
+    "pywebpush",
+]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

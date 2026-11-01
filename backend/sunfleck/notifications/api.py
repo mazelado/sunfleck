@@ -5,6 +5,7 @@ never sent back: only the kind of service.
 """
 
 from datetime import datetime, time
+from typing import Any
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
@@ -15,7 +16,7 @@ from pydantic import Field
 from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
-from sunfleck.notifications import calendar, services
+from sunfleck.notifications import calendar, push, services
 from sunfleck.notifications.models import CalendarFeed, NotificationChannel, NotificationPreferences
 
 router = Router(tags=["notifications"], auth=django_auth)
@@ -164,6 +165,37 @@ def preview(request: HttpRequest) -> PreviewOut:
     return PreviewOut(
         message=MessageOut(title=message.title, body=message.body) if message else None
     )
+
+
+# --- Web Push ---------------------------------------------------------------------------------
+
+
+class PushKeyOut(Schema):
+    public_key: str = Field(description="The server's VAPID key, as `applicationServerKey`.")
+
+
+class PushDeviceIn(Schema):
+    label: str = Field(min_length=1, max_length=100)
+    subscription: dict[str, Any] = Field(
+        description="The browser's PushSubscription, as `subscription.toJSON()` gives it."
+    )
+
+
+@router.get("/notifications/push/key", response=PushKeyOut)
+def push_key(request: HttpRequest) -> PushKeyOut:
+    """The key a browser needs to subscribe this device to notifications."""
+    _user(request)
+    return PushKeyOut(public_key=push.public_key())
+
+
+@router.post("/notifications/push/devices", response={201: ChannelOut})
+def add_push_device(request: HttpRequest, data: PushDeviceIn) -> Status[ChannelOut]:
+    """Get notifications on this device: it becomes a channel like the others."""
+    try:
+        channel = services.add_push_device(_user(request), data.label, data.subscription)
+    except services.NotificationError as exc:
+        raise _error(exc) from exc
+    return Status(201, _channel_out(channel))
 
 
 # --- Calendar feed ----------------------------------------------------------------------------

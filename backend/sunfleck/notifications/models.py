@@ -111,3 +111,20 @@ class CalendarFeed(models.Model):
 
     def __str__(self) -> str:
         return f"Calendar · {self.user}"
+
+
+class PushKey(models.Model):
+    """The server's key pair for Web Push (VAPID), made once. Browsers get the public key when
+    they subscribe; pushes are signed with the private one, which is stored encrypted."""
+
+    private_key_encrypted = models.TextField()
+    # Base64url, as browsers take it (`applicationServerKey`).
+    public_key = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("push key")
+        verbose_name_plural = _("push keys")
+
+    def __str__(self) -> str:
+        return f"Push key {self.public_key[:12]}…"

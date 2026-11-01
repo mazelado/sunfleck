@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { subscribeThisDevice } from "../lib/push";
 import { api, unwrap } from "./client";
 import type { components } from "./schema";
 
@@ -116,5 +117,22 @@ export function useDeleteCalendar() {
       unwrap(await api.DELETE("/api/v1/notifications/calendar"));
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: CALENDAR }),
+  });
+}
+
+/** Get notifications on this device: subscribe it, then add it as a channel. */
+export function useAddPushDevice() {
+  const invalidate = useInvalidate();
+  return useMutation({
+    mutationFn: async (label: string) => {
+      const { public_key } = unwrap(await api.GET("/api/v1/notifications/push/key"));
+      const subscription = await subscribeThisDevice(public_key);
+      return unwrap(
+        await api.POST("/api/v1/notifications/push/devices", {
+          body: { label, subscription: subscription as Record<string, unknown> },
+        }),
+      );
+    },
+    onSuccess: invalidate,
   });
 }

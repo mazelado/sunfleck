@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Channel } from "../../api/notifications";
 import { renderApp } from "../../test/render";
@@ -311,5 +311,161 @@ describe("notifications", () => {
       "https://plants.example.com/api/v1/calendar/new.ics",
     );
     expect(made).toBe(1);
+  });
+
+  describe("on this device (Web Push)", () => {
+    const subscription = {
+      endpoint: "https://fcm.googleapis.com/fcm/send/abc",
+      keys: { p256dh: "BNcR", auth: "tBHI" },
+    };
+
+    function stubPush(permission: NotificationPermission, subscribe = true) {
+      // Only its presence is checked.
+      vi.stubGlobal("PushManager", function PushManager() {
+        // A stand-in.
+      });
+      vi.stubGlobal("Notification", {
+        permission: "default",
+        requestPermission: () => Promise.resolve(permission),
+      });
+      Object.defineProperty(navigator, "serviceWorker", {
+        configurable: true,
+        value: {
+          ready: Promise.resolve({
+            pushManager: {
+              subscribe: () =>
+                subscribe
+                  ? Promise.resolve({ toJSON: () => subscription })
+                  : Promise.reject(new DOMException("push service error", "AbortError")),
+            },
+          }),
+        },
+      });
+    }
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      Reflect.deleteProperty(navigator, "serviceWorker");
+    });
+
+    it("are turned on, adding the device as a channel", async () => {
+      signInAs(ada);
+      stubPush("granted");
+      let sent: unknown = null;
+      server.use(
+        http.get("*/api/v1/notifications/push/key", () =>
+          HttpResponse.json({ public_key: "BIJ-mWSIT3Unc3geyfAf" }),
+        ),
+        http.post("*/api/v1/notifications/push/devices", async ({ request }) => {
+          sent = await request.json();
+          return HttpResponse.json(
+            {
+              id: 9,
+              label: "This device",
+              service: "webpush",
+              enabled: true,
+              last_sent_at: null,
+              last_error: null,
+            },
+            { status: 201 },
+          );
+        }),
+      );
+      const { user } = renderApp("/settings/notifications");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Get notifications on this device" }),
+      );
+
+      expect(
+        await screen.findByText(
+          "Notifications are on for This device. Send a test to check they arrive.",
+        ),
+      ).toBeVisible();
+      expect(sent).toEqual({ label: "This device", subscription });
+    });
+
+    it("change nothing when notifications aren't allowed", async () => {
+      signInAs(ada);
+      stubPush("denied");
+      let added = false;
+      server.use(
+        http.get("*/api/v1/notifications/push/key", () =>
+          HttpResponse.json({ public_key: "BIJ-mWSIT3Unc3geyfAf" }),
+        ),
+        http.post("*/api/v1/notifications/push/devices", () => {
+          added = true;
+          return HttpResponse.json({}, { status: 201 });
+        }),
+      );
+      const { user } = renderApp("/settings/notifications");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Get notifications on this device" }),
+      );
+
+      expect(
+        await screen.findByText("Notifications weren't allowed, so nothing changed."),
+      ).toBeVisible();
+      expect(added).toBe(false);
+    });
+
+    it("say when the browser's push service can't be reached", async () => {
+      signInAs(ada);
+      stubPush("granted", false);
+      server.use(
+        http.get("*/api/v1/notifications/push/key", () =>
+          HttpResponse.json({ public_key: "BIJ-mWSIT3Unc3geyfAf" }),
+        ),
+      );
+      const { user } = renderApp("/settings/notifications");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Get notifications on this device" }),
+      );
+
+      expect(await screen.findByText(/couldn't reach its push service/)).toBeVisible();
+    });
+
+    it("say so when the browser can't get them", async () => {
+      signInAs(ada);
+
+      renderApp("/settings/notifications");
+
+      expect(await screen.findByText(/This browser can't get notifications/)).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Get notifications on this device" })).toBeNull();
+    });
+
+    it("show a device like a channel, without an address to change", async () => {
+      signInAs(ada);
+      server.use(
+        http.get("*/api/v1/notifications", () =>
+          HttpResponse.json({
+            preferences: {
+              digest_time: "08:00:00",
+              reminder_time: null,
+              timezone: "Europe/Amsterdam",
+            },
+            channels: [
+              {
+                id: 9,
+                label: "Pixel",
+                service: "webpush",
+                enabled: true,
+                last_sent_at: null,
+                last_error: null,
+              },
+            ],
+          }),
+        ),
+      );
+      const { user } = renderApp("/settings/notifications");
+
+      expect(await screen.findByText("This app (Web Push)")).toBeVisible();
+      await user.click(screen.getByRole("button", { name: "Edit Pixel" }));
+      const form = screen.getByRole("form", { name: "Edit Pixel" });
+      expect(within(form).getByRole("textbox", { name: /^Name/ })).toHaveValue("Pixel");
+      expect(within(form).queryByRole("textbox", { name: /address/i })).toBeNull();
+    });
   });
 });

@@ -138,6 +138,11 @@ encryption. Special characters in the user name or password must be URL-encoded 
   are set up by each person under **Notifications** in the account menu. They go through
   [Apprise](https://github.com/caronc/apprise/wiki), which supports ntfy, Telegram, email,
   Discord, Signal, Gotify and about 100 more. The worker container sends them.
+  - **Web Push**, notifications from Sunfleck itself, needs Sunfleck reached over **HTTPS**
+    (see above): browsers only allow it on secure sites. Set `SUNFLECK_PUBLIC_URL` to that
+    https address, which push services are given as the contact for your server. The keys
+    are made the first time someone turns it on. On iPhone and iPad it works in the app added
+    to the Home Screen (iOS 16.4 or later).
 - **Plugins** are turned on by an Admin under **Plugins**. They're off by default, since they
   send data to outside services; the page says exactly what each sends.
   - **Weather (Open-Meteo)**: each site's weather on Today, frost warnings, and outdoor

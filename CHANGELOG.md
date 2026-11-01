@@ -16,6 +16,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
   plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
   can be reached. Plugins add a test with the new `check_settings` hook.
+- **Notifications from the app itself (Web Push)**: under Notifications, **Get notifications
+  on this device** sends the digest and reminders to that phone or computer, without ntfy or
+  another app. Each device then shows as a channel to test, rename or pause. It needs Sunfleck
+  over HTTPS; on iPhone and iPad, the app added to the Home Screen.
 - **Care in your calendar**: under Notifications, **Get a calendar address** gives you a
   private iCal feed of the next two weeks of care, for Google Calendar, Apple Calendar and
   others. The address is shown once (only a hash of it is kept), and a new one stops the old.
