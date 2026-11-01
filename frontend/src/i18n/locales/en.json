@@ -803,7 +803,7 @@
     "label": "Name",
     "labelPlaceholder": "e.g. My phone",
     "url": "Address (Apprise URL)",
-    "urlHelp": "For example ntfy://ntfy.sh/your-own-topic, tgram://bot-token/chat-id, or mailto://user:password@gmail.com. It's stored encrypted.",
+    "urlHelp": "For example ntfy://ntfy.sh/your-own-topic (with an access token: ntfys://tk_token@your-server/your-topic), tgram://bot-token/chat-id, or mailto://user:password@gmail.com. It's stored encrypted.",
     "allServices": "All services and their addresses",
     "inUse": "In use",
     "test": "Send a test",
