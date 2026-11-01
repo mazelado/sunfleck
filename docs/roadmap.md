@@ -54,6 +54,9 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
+Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia to keep it
+smaller. Each goes into a release when there's room, or when someone needs it.
+
 ## Phases
 
 ### Bougainvillea: water amounts and first fixes (released)
@@ -107,23 +110,27 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 
 ### Integrations
 
-- **Home Assistant / MQTT** sensor readings (soil moisture, light, temperature, humidity), and
-  reminders triggered by sensor thresholds.
 - **Weather-adaptive outdoor watering** from Open-Meteo's evapotranspiration (ET₀) and rainfall,
   with a documented formula.
 - **Web Push** notifications, and an **iCal** feed of care.
-- **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
-- **Import from HortusFox and Plant-it.**
-- **Public API documentation** and personal API tokens.
 - **A Test button for each plugin** on the Plugins page, to check its settings work before
   saving them (#93).
 - **New README screenshots**, with plant photos, made by a script so they can be made again
   after visual changes (#101).
 - **Collapsible plugin cards**, so the Plugins page stays tidy: collapsed, a card still shows
   its name, whether it's on, any error, and that it sends data (#95).
-- **A care data provider plugin: Open Plantbook** (moved from Echinacea to keep that release
-  smaller). Care data for plants the dataset doesn't cover, fetched with the person's own free
-  account. Its data has no formal licence, so it stays a plugin and isn't copied into
+
+### More integrations
+
+Split from Fuchsia (0.6), not yet scheduled.
+
+- **Home Assistant / MQTT** sensor readings (soil moisture, light, temperature, humidity), and
+  reminders triggered by sensor thresholds.
+- **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
+- **Import from HortusFox and Plant-it.**
+- **Public API documentation** and personal API tokens.
+- **A care data provider plugin: Open Plantbook** (moved from Echinacea, then from Fuchsia).
+  Care data for plants the dataset doesn't cover, fetched with the person's own free account. Its data has no formal licence, so it stays a plugin and isn't copied into
   Sunfleck's CC BY-SA dataset. Perenual and Trefle could follow if there's a need: Perenual's
   free tier is non-commercial and limited to 100 requests a day, and Trefle is in beta.
 
