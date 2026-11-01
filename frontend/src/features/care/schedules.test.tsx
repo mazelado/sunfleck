@@ -213,6 +213,19 @@ describe("wording", () => {
       text: "Hot spell: highs around 88°F, above the 77°F its care profile likes",
       effect: "18% sooner",
     });
+    const balance = { capacity_mm: 20, used_mm: 16, rain_mm: 0, water_use: 0.8 };
+    expect(
+      explain({
+        code: "water_balance",
+        multiplier: 1,
+        details: { ...balance, dry_on: "2026-04-16" },
+      }).text,
+    ).toBe(
+      "Since it was watered, the weather took 0.63 in of water from the soil and rain gave back 0 in; the soil holds 0.79 in, so it's dry again on Apr 16, 2026",
+    );
+    expect(
+      explain({ code: "water_balance", multiplier: 1, details: { ...balance, dry_on: null } }).text,
+    ).toMatch(/won't be dry before the forecast ends$/);
     expect(explain({ code: "from_a_plugin", multiplier: 1, details: {} })).toEqual({
       text: "from_a_plugin",
       effect: null,

@@ -179,6 +179,17 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
           when: date("on") ?? "",
           amount: formatPrecipitation(number("mm"), units),
         });
+      case "water_balance": {
+        const amounts = {
+          used: formatPrecipitation(number("used_mm"), units),
+          rain: formatPrecipitation(number("rain_mm"), units),
+          capacity: formatPrecipitation(number("capacity_mm"), units),
+        };
+        const dryOn = date("dry_on");
+        return dryOn
+          ? t("schedules.factors.waterBalance", { ...amounts, when: dryOn })
+          : t("schedules.factors.waterBalanceLater", amounts);
+      }
       case "hot_spell":
         return t("schedules.factors.hotSpell", {
           max: temperature(number("max_c")),

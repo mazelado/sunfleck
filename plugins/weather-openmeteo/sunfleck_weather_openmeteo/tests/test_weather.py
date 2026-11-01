@@ -32,6 +32,7 @@ def open_meteo(
     highs: list[float] | None = None,
     rain: list[float] | None = None,
     dew_points: list[float] | None = None,
+    et0: list[float] | None = None,
 ) -> dict[str, Any]:
     """An answer like Open-Meteo's: 3 past days, today (the 15th), and 6 days ahead."""
     days = [(TODAY + timedelta(days=offset)).isoformat() for offset in range(-3, 7)]
@@ -49,6 +50,8 @@ def open_meteo(
             "precipitation_sum": rain or [0.0] * 10,
             "weather_code": [3] * 10,
             "dew_point_2m_mean": dew_points or [2.0] * 10,
+            # Left out unless given, like forecasts stored before 0.6.
+            **({"et0_fao_evapotranspiration": et0} if et0 else {}),
         },
     }
 
@@ -109,10 +112,11 @@ def test_it_sends_only_the_rounded_location(service: FakeOpenMeteo, site: Site) 
         "longitude": "4.89",
         "current": "temperature_2m,weather_code",
         "daily": (
-            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,dew_point_2m_mean"
+            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,"
+            "dew_point_2m_mean,et0_fao_evapotranspiration"
         ),
         "timezone": "auto",
-        "past_days": "3",
+        "past_days": "31",
         "forecast_days": "7",
     }
 
@@ -541,3 +545,79 @@ def test_testing_says_when_open_meteo_cant_be_used(
 
     assert found.problem == problem
     assert found.details
+
+
+# --- The water balance (with ET₀) -------------------------------------------------------------
+
+
+def test_the_soil_dries_by_what_the_weather_takes(
+    service: FakeOpenMeteo, household: Household, rose: CareSchedule
+) -> None:
+    # The rose's soil holds 20 mm (the top 10 cm, a fifth of it water), and it uses 0.8 of
+    # ET₀: 5 mm a day takes 4 mm. Watered on the 9th, before the forecast's first day (the
+    # 12th): from full on the 12th, it's dry on the 16th.
+    service.answer = open_meteo(et0=[5.0] * 10)
+    turn_on(household)
+
+    recalculated(rose)
+
+    assert rose.next_due == date(2026, 4, 16)
+    assert factor(rose, "water_balance") == {
+        "code": "water_balance",
+        "multiplier": 1.0,
+        "details": {
+            "capacity_mm": 20.0,
+            "used_mm": 16.0,  # the 12th to today, the 15th
+            "rain_mm": 0.0,
+            "water_use": 0.8,
+            "since": "2026-04-09",
+            "dry_on": "2026-04-16",
+        },
+    }
+    # The balance counts rain and heat itself: no rules of thumb on top.
+    assert factor(rose, "rain") is None
+    assert factor(rose, "hot_spell") is None
+
+
+def test_rain_puts_water_back(
+    service: FakeOpenMeteo, household: Household, rose: CareSchedule
+) -> None:
+    # 15 mm on the 13th: the first 2 mm are lost, the rest refills the soil (up to 20 mm).
+    service.answer = open_meteo(et0=[5.0] * 10, rain=[0, 15.0, 0, 0, 0, 0, 0, 0, 0, 0])
+    turn_on(household)
+
+    recalculated(rose)
+
+    assert rose.next_due == date(2026, 4, 18)
+    details = (factor(rose, "water_balance") or {})["details"]
+    assert details["rain_mm"] == 13.0
+    assert details["dry_on"] == "2026-04-18"
+
+
+def test_in_cool_weather_watering_waits_but_not_forever(
+    service: FakeOpenMeteo, household: Household, rose: CareSchedule
+) -> None:
+    # 0.8 mm a day: not dry by the forecast's end, so due after it (the 22nd)...
+    service.answer = open_meteo(et0=[1.0] * 10)
+    turn_on(household)
+    recalculated(rose)
+    assert rose.next_due == date(2026, 4, 22)
+    assert (factor(rose, "water_balance") or {})["details"]["dry_on"] is None
+
+    # ...but never more than double the usual interval (10 days in spring) after watering.
+    rose.plant.care_events.all().delete()
+    CareEventFactory.create(plant=rose.plant, performed_at=datetime(2026, 4, 1, 8, tzinfo=UTC))
+    recalculated(rose)
+    assert rose.next_due == date(2026, 4, 21)
+
+
+def test_without_et0_the_rules_of_thumb_still_apply(
+    service: FakeOpenMeteo, household: Household, rose: CareSchedule
+) -> None:
+    service.answer = open_meteo(rain=[0, 0, 4.0, 2.5, 0, 0, 0, 0, 0, 0])
+    turn_on(household)
+
+    recalculated(rose)
+
+    assert factor(rose, "water_balance") is None
+    assert factor(rose, "rain") is not None

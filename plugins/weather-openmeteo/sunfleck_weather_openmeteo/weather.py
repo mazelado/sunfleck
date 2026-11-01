@@ -28,7 +28,8 @@ REFRESH_AFTER = timedelta(hours=3)
 USABLE_FOR = timedelta(hours=24)
 # After a failed fetch, wait this long before trying again.
 RETRY_AFTER = timedelta(minutes=15)
-PAST_DAYS = 3
+# Past days, for the water balance since outdoor plants were last watered.
+PAST_DAYS = 31
 FORECAST_DAYS = 7
 # Rounding coordinates to 2 decimals keeps a site's location to about 1 km.
 COORDINATE_DECIMALS = 2
@@ -50,6 +51,9 @@ class Day:
     weather_code: int | None
     # The day's average dew point, for estimating indoor humidity.
     dew_point_c: float | None = None
+    # Reference evapotranspiration (FAO-56 Penman-Monteith), the water the weather takes out of
+    # the soil and plants, in mm: for the outdoor water balance.
+    et0_mm: float | None = None
 
 
 @dataclass(frozen=True)
@@ -77,6 +81,7 @@ class Forecast:
                     "precipitation_mm": day.precipitation_mm,
                     "weather_code": day.weather_code,
                     "dew_point_c": day.dew_point_c,
+                    "et0_mm": day.et0_mm,
                 }
                 for day in self.days
             ],
@@ -95,8 +100,9 @@ class Forecast:
                     max_c=day["max_c"],
                     precipitation_mm=day["precipitation_mm"],
                     weather_code=day["weather_code"],
-                    # Forecasts stored before 0.4 don't have it.
+                    # Forecasts stored before 0.4 don't have it, nor ET₀ before 0.6.
                     dew_point_c=day.get("dew_point_c"),
+                    et0_mm=day.get("et0_mm"),
                 )
                 for day in data["days"]
             ),
@@ -109,7 +115,8 @@ def request_url(latitude: float, longitude: float) -> str:
         "longitude": round(longitude, COORDINATE_DECIMALS),
         "current": "temperature_2m,weather_code",
         "daily": (
-            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,dew_point_2m_mean"
+            "temperature_2m_min,temperature_2m_max,precipitation_sum,weather_code,"
+            "dew_point_2m_mean,et0_fao_evapotranspiration"
         ),
         "timezone": "auto",
         "past_days": PAST_DAYS,
@@ -151,7 +158,8 @@ def parse(data: Any, fetched_at: datetime) -> Forecast:
             )
         ]
         dew_points = daily.get("dew_point_2m_mean") or [None] * len(dates)
-        if any(len(column) != len(dates) for column in [*columns, dew_points]):
+        et0 = daily.get("et0_fao_evapotranspiration") or [None] * len(dates)
+        if any(len(column) != len(dates) for column in [*columns, dew_points, et0]):
             raise WeatherError("The daily forecast's columns have different lengths.")
         days = tuple(
             Day(
@@ -161,9 +169,10 @@ def parse(data: Any, fetched_at: datetime) -> Forecast:
                 rain,
                 None if code is None else int(code),
                 dew_point,
+                evapotranspiration,
             )
-            for day, low, high, rain, code, dew_point in zip(
-                dates, *columns, dew_points, strict=True
+            for day, low, high, rain, code, dew_point, evapotranspiration in zip(
+                dates, *columns, dew_points, et0, strict=True
             )
         )
         code = current.get("weather_code")

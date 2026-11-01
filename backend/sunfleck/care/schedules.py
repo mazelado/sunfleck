@@ -171,6 +171,8 @@ def predict(schedule: CareSchedule, today: date) -> Prediction:
             today=today,
             profile=profile,
             conditions=conditions,
+            last_done=history.last_done,
+            started_on=history.started_on,
         )
         extra = plugin_adjustments(context)
         if schedule.routine_multiplier != 1:

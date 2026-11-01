@@ -16,6 +16,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
   plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
   can be reached. Plugins add a test with the new `check_settings` hook.
+- **Outdoor watering that follows the weather**: with the weather plugin on, outdoor plants are
+  due when a soil water balance says the soil is dry again: the water the weather took since
+  watering (Open-Meteo's evapotranspiration), the rain, and what the soil holds. **Why?** shows
+  the numbers; the plugin's README has the formula. Plugins can give a due date of their own
+  (`Adjustment.due_on`) and know when a plant was last watered.
 - **Tidier Plugins page**: each plugin's card folds away, still showing its name, whether it's
   on, and badges for an error, for sending data and for unsaved changes (#95). Plugins that are
   off start folded; turning one on opens it, so **Save** and what it sends are in sight. Your

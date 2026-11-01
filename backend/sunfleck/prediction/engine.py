@@ -56,6 +56,22 @@ DRIED_DEPTH = {
 }
 MAX_DRIED_DEPTH_CM = 10
 SOIL_WATER = 0.2
+# Without a pot (a bed, or a plant in the ground), the depth of soil its roots draw on.
+GROUND_ROOT_CM = 30
+# How much water a plant uses compared with the reference grass of evapotranspiration (ET₀),
+# FAO-56's crop coefficient, from how much its profile lets the soil dry: plants kept moist
+# use more, succulents much less. Rough, like the depths above.
+WATER_USE = {
+    "keep_moist": 1.0,
+    "top_quarter": 0.9,
+    "top_third": 0.8,
+    "top_half": 0.7,
+    "mostly": 0.5,
+    "completely": 0.4,
+}
+# A plugin's own due date (e.g. from a soil water balance) is kept between these shares of
+# the interval worked out here, so one odd forecast can't go too far.
+OWN_DUE_LIMITS = (0.5, 2.0)
 DRAIN_EXTRA = 1.1
 # The soil's surface is a little inside the rim.
 SOIL_DIAMETER_RATIO = 0.9
@@ -157,6 +173,9 @@ class Adjustment:
 
     factor: Factor
     not_before: date | None = None
+    # A due date of the plugin's own, e.g. from a soil water balance: used instead of the
+    # interval's (the earliest, if several), within OWN_DUE_LIMITS of it.
+    due_on: date | None = None
 
 
 @dataclass(frozen=True)
@@ -298,6 +317,22 @@ def pot_factors(conditions: Conditions) -> list[Factor]:
     return factors
 
 
+def soil_water_mm(profile: Profile, conditions: Conditions) -> float:
+    """The water the soil holds for the plant between waterings, as a depth in mm (1 mm is 1
+    litre per square metre): the soil that may dry (see DRIED_DEPTH) times the water it holds.
+    """
+    share = DRIED_DEPTH.get(profile.let_dry or "", DRIED_DEPTH["top_third"])
+    in_pot = bool(conditions.pot_diameter_cm) and conditions.pot_material != "in_ground"
+    depth = (conditions.pot_height_cm or conditions.pot_diameter_cm or 0) if in_pot else 0
+    dried_cm = min((depth or GROUND_ROOT_CM) * share, MAX_DRIED_DEPTH_CM)
+    return dried_cm * 10 * SOIL_WATER
+
+
+def water_use(profile: Profile) -> float:
+    """How much water the plant uses compared with evapotranspiration's reference (ET₀)."""
+    return WATER_USE.get(profile.let_dry or "", WATER_USE["top_third"])
+
+
 def water_amount(profile: Profile, conditions: Conditions, interval_days: int) -> Factor | None:
     """Roughly how much water to give each time.
 
@@ -416,6 +451,11 @@ def predict_watering(
     due, counted_from_start = _due(history, interval)
     if counted_from_start:
         factors.append(Factor("not_logged", details={"since": history.started_on.isoformat()}))
+    own = [adjustment.due_on for adjustment in extra if adjustment.due_on]
+    if own:
+        start = history.last_done or history.started_on
+        low, high = (start + timedelta(days=_days(interval * share)) for share in OWN_DUE_LIMITS)
+        due = min(max(min(own), low), high)
     # If it falls in a resting season, wait for that season to end.
     if not watered_in(max(due, today)):
         resumes = next_month_start(max(due, today), watered_in)
