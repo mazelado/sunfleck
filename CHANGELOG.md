@@ -17,9 +17,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Fixed
 
+- **The worker couldn't run its jobs** on Docker installs: the image came with an empty job
+  queue owned by root, which each new volume copied, so the worker failed quietly and
+  reminders, weather updates and nightly recalculations didn't run. The image no longer has it,
+  and Sunfleck removes the old one when it starts.
 - **Data files Sunfleck can't write to** now stop it at startup, with the command that fixes
-  them. Before, a file owned by root (such as the job queue) only made the worker fail quietly,
-  so reminders, weather updates and nightly recalculations didn't run.
+  them, instead of making the worker fail quietly.
 
 ## [0.6.0] - 2026-11-01
 

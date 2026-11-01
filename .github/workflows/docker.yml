@@ -50,6 +50,12 @@ jobs:
           curl --fail --silent http://localhost:8000/api/v1/health
           curl --fail --silent http://localhost:8000/ | grep --quiet '<div id="root">'
           curl --fail --silent http://localhost:8000/plants/1 | grep --quiet '<div id="root">'
+      - name: Check the job queue left by older images is removed
+        run: |
+          docker exec --user root sunfleck chown root /data/huey.sqlite3
+          docker run --rm --volumes-from sunfleck sunfleck:ci true 2> "$RUNNER_TEMP/start-log.txt"
+          cat "$RUNNER_TEMP/start-log.txt"
+          grep -q "Removed /data/huey.sqlite3" "$RUNNER_TEMP/start-log.txt"
       - name: Check a data file owned by root stops it with the fix
         run: |
           docker exec --user root sunfleck touch /data/owned-by-root

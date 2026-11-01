@@ -6,6 +6,13 @@ set -e
 # run as root (e.g. the job queue) otherwise fails later, and only in the worker's log.
 data_dir="${SUNFLECK_DATA_DIR:-/data}"
 owner="$(id -u):$(id -g)"
+# Images before 0.6.1 had an empty job queue owned by root in /data, which new volumes copied.
+# Nothing could write to it, so it holds no jobs: remove it, and Sunfleck makes a new one.
+for file in "$data_dir"/huey.sqlite3*; do
+  if [ -e "$file" ] && [ ! -w "$file" ] && [ -w "$data_dir" ] && rm -f "$file" 2>/dev/null; then
+    echo "Removed $file, which Sunfleck couldn't write to. It's made again, empty." >&2
+  fi
+done
 if [ ! -w "$data_dir" ]; then
   not_writable="$data_dir"
 else
