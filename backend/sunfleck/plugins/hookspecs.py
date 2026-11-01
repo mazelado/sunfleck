@@ -20,6 +20,7 @@ from sunfleck.plugins.types import (
     Identification,
     PeriodicJob,
     PhotoToIdentify,
+    SettingsCheck,
     SiteConditions,
 )
 
@@ -83,4 +84,14 @@ def complete_json(task: AiTask, settings: BaseModel | None) -> AiAnswer | None:
 
     Called only when Sunfleck needs an AI answer (e.g. suggesting a care profile), never in
     the background. The first enabled plugin that answers is used.
+    """
+
+
+@hookspec
+def check_settings(settings: BaseModel | None) -> SettingsCheck | None:
+    """Check that the plugin works with `settings`, e.g. by asking its service something small.
+
+    Called when an Admin clicks **Test** on the Plugins page, with the settings in the form,
+    which may not be saved yet, and whether or not the plugin is on. Plugins without this hook
+    have no Test button. Keep it quick and cheap: it's only run when asked.
     """

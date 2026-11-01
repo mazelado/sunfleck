@@ -9,17 +9,25 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Test a plugin before saving it**: plugins that can be checked have a **Test** button on
+  the Plugins page, which tries the settings in the form without saving them, and says what's
+  wrong if they don't work (#93). The AI plugin asks the model a tiny question, the Pl@ntNet
+  plugin checks the API key with a blank image, and the weather plugin checks that Open-Meteo
+  can be reached. Plugins add a test with the new `check_settings` hook.
+
+### Changed
+
+- **ntfy with an access token**: the help under a notification address, and the user guide,
+  now show where the token goes (`ntfys://tk_token@your-server/your-topic`).
+
 ### Fixed
 
 - **AI suggestions from a slow model**, such as an Ollama model that has to load first, could
   fail after 30 seconds: the web server stopped any request that took longer. It now allows
   250 seconds (`WEB_TIMEOUT`), longer than the AI plugin waits for an answer. Identifying a
   plant with Pl@ntNet, which waits up to 30 seconds, is no longer cut off either.
-
-### Changed
-
-- **ntfy with an access token**: the help under a notification address, and the user guide,
-  now show where the token goes (`ntfys://tk_token@your-server/your-topic`).
 
 ## [0.5.1] - 2026-10-31
 

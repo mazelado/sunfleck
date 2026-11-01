@@ -22,6 +22,7 @@ from sunfleck.plugins.types import (
     PeriodicJob,
     PhotoToIdentify,
     Profile,
+    SettingsCheck,
     SiteConditions,
 )
 
@@ -46,6 +47,7 @@ __all__ = [
     "PhotoToIdentify",
     "PluginInfo",
     "Profile",
+    "SettingsCheck",
     "SiteConditions",
     "hookimpl",
     "is_enabled",

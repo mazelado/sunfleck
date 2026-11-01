@@ -26,6 +26,7 @@ from sunfleck.plugins import (
     CareContext,
     Factor,
     PluginInfo,
+    SettingsCheck,
     discovery,
     hookimpl,
     require_enabled,
@@ -394,6 +395,7 @@ def test_admins_see_the_installed_plugins(client_as: ClientAs, rain: RainHooks) 
         "secrets_set": [],
         "last_error": None,
         "last_error_at": None,
+        "can_check": False,
     }
     assert schema["properties"]["threshold_mm"] == {
         "default": 5,
@@ -504,3 +506,121 @@ def test_a_secret_that_cant_be_decrypted_must_be_entered_again(
     assert state.secrets_set == frozenset()
     assert isinstance(state.settings, KeySettings)
     assert state.settings.api_key.get_secret_value() == ""
+
+
+# --- Testing settings -------------------------------------------------------------------------
+
+
+class CheckedHooks:
+    """A fake plugin whose service only knows one API key."""
+
+    def __init__(self) -> None:
+        self.checked: list[str] = []
+        self.fail = False
+
+    @hookimpl
+    def check_settings(self, settings: KeySettings) -> SettingsCheck:
+        if self.fail:
+            raise RuntimeError("the service is on fire")
+        key = settings.api_key.get_secret_value()
+        self.checked.append(key)
+        if key != "good-key":
+            return SettingsCheck("invalid_api_key", "The service said: unknown key")
+        return SettingsCheck(details=f"Connected to the {settings.region} region")
+
+
+@pytest.fixture
+def checked() -> Iterator[CheckedHooks]:
+    hooks = CheckedHooks()
+    registry.add(PluginInfo("checked", "Checked", "1", "1", settings_schema=KeySettings), hooks)
+    yield hooks
+    registry.remove("checked")
+
+
+def test_admins_test_settings_before_saving_them(
+    client_as: ClientAs, household: Household, checked: CheckedHooks
+) -> None:
+    admin = client_as(Role.ADMIN)
+    [listed] = [p for p in admin.get("/api/v1/plugins").json()["plugins"] if p["id"] == "checked"]
+    assert listed["can_check"] is True
+
+    good = send(
+        admin,
+        "POST",
+        "/api/v1/plugins/checked/check",
+        {"settings": {"api_key": "good-key", "region": "us"}},
+    )
+    bad = send(admin, "POST", "/api/v1/plugins/checked/check", {"settings": {"api_key": "typo"}})
+
+    # The plugin is off, and nothing is saved.
+    assert good.json() == {
+        "works": True,
+        "problem": None,
+        "details": "Connected to the us region",
+    }
+    assert bad.json() == {
+        "works": False,
+        "problem": "invalid_api_key",
+        "details": "The service said: unknown key",
+    }
+    assert not PluginSetting.objects.filter(plugin_id="checked").exists()
+
+
+def test_testing_with_an_empty_secret_uses_the_saved_one(
+    client_as: ClientAs, household: Household, checked: CheckedHooks
+) -> None:
+    services.update(household, "checked", True, {"api_key": "good-key"})
+
+    response = send(
+        client_as(Role.ADMIN), "POST", "/api/v1/plugins/checked/check", {"settings": {}}
+    )
+
+    assert response.json()["works"] is True
+    assert checked.checked == ["good-key"]
+
+
+def test_testing_invalid_settings_says_which_one(
+    client_as: ClientAs, checked: CheckedHooks
+) -> None:
+    response = send(
+        client_as(Role.ADMIN),
+        "POST",
+        "/api/v1/plugins/checked/check",
+        {"settings": {"region": ["not", "text"]}},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["details"] == {"field": "region"}
+
+
+def test_a_plugin_failing_its_test_is_shown_but_not_kept(
+    client_as: ClientAs, household: Household, checked: CheckedHooks
+) -> None:
+    checked.fail = True
+
+    response = send(client_as(Role.ADMIN), "POST", "/api/v1/plugins/checked/check", {})
+
+    assert response.json() == {
+        "works": False,
+        "problem": "failed",
+        "details": "RuntimeError: the service is on fire",
+    }
+    assert not PluginSetting.objects.filter(plugin_id="checked").exists()
+
+
+def test_plugins_without_a_test_cant_be_tested(client_as: ClientAs, rain: RainHooks) -> None:
+    admin = client_as(Role.ADMIN)
+
+    untestable = send(admin, "POST", "/api/v1/plugins/rain/check", {})
+    missing = send(admin, "POST", "/api/v1/plugins/snow/check", {})
+
+    assert untestable.status_code == 404
+    assert untestable.json()["error"]["code"] == "plugin_cannot_check"
+    assert missing.json()["error"]["code"] == "plugin_not_found"
+
+
+def test_only_admins_test_plugins(client_as: ClientAs, checked: CheckedHooks) -> None:
+    response = send(client_as(Role.GARDENER), "POST", "/api/v1/plugins/checked/check", {})
+
+    assert response.status_code == 403
+    assert checked.checked == []

@@ -18,10 +18,12 @@ from sunfleck.core.crypto import DecryptionError, decrypt, encrypt
 from sunfleck.plugins.info import PluginInfo
 from sunfleck.plugins.models import PluginSetting
 from sunfleck.plugins.registry import registry
+from sunfleck.plugins.types import SettingsCheck
 
 logger = logging.getLogger(__name__)
 
 MAX_ERROR_LENGTH = 500
+CHECK_HOOK = "check_settings"
 
 
 class PluginError(Exception):
@@ -107,32 +109,50 @@ def is_enabled(household: Household, plugin_id: str) -> bool:
     return plugin_id in registry.plugins and states(household, [plugin_id])[plugin_id].enabled
 
 
+def _plugin(plugin_id: str) -> PluginInfo:
+    info = registry.plugins.get(plugin_id)
+    if info is None:
+        raise PluginError("plugin_not_found", "This plugin isn't installed.")
+    return info
+
+
+def _validated(
+    household: Household, info: PluginInfo, settings: dict[str, Any]
+) -> BaseModel | None:
+    """The settings from the plugin's form, validated.
+
+    Raises:
+        PluginError: If a setting is invalid.
+    """
+    if info.settings_schema is None:
+        return None
+    settings = {**settings}
+    # A secret left empty keeps its stored value, since the browser never gets it.
+    existing = PluginSetting.objects.filter(household=household, plugin_id=info.id).first()
+    stored = _decrypted(info, existing.secrets) if existing else {}
+    for name in secret_fields(info.settings_schema):
+        if not settings.get(name) and stored.get(name):
+            settings[name] = stored[name]
+    try:
+        return info.settings_schema.model_validate(settings)
+    except ValidationError as exc:
+        error = exc.errors()[0]
+        field = ".".join(str(part) for part in error["loc"]) or None
+        raise PluginError("invalid_plugin_setting", error["msg"], field) from exc
+
+
 def update(household: Household, plugin_id: str, enabled: bool, settings: dict[str, Any]) -> State:
     """Turn a plugin on or off for the household and change its settings.
 
     Raises:
         PluginError: If there's no such plugin, or a setting is invalid.
     """
-    info = registry.plugins.get(plugin_id)
-    if info is None:
-        raise PluginError("plugin_not_found", "This plugin isn't installed.")
+    info = _plugin(plugin_id)
+    validated = _validated(household, info, settings)
     values: dict[str, Any] = {}
     secrets: dict[str, str] = {}
-    if info.settings_schema is not None:
+    if validated is not None:
         secret_names = secret_fields(info.settings_schema)
-        settings = {**settings}
-        # A secret left empty keeps its stored value, since the browser never gets it.
-        existing = PluginSetting.objects.filter(household=household, plugin_id=plugin_id).first()
-        stored = _decrypted(info, existing.secrets) if existing else {}
-        for name in secret_names:
-            if not settings.get(name) and stored.get(name):
-                settings[name] = stored[name]
-        try:
-            validated = info.settings_schema.model_validate(settings)
-        except ValidationError as exc:
-            error = exc.errors()[0]
-            field = ".".join(str(part) for part in error["loc"]) or None
-            raise PluginError("invalid_plugin_setting", error["msg"], field) from exc
         values = validated.model_dump(mode="json", exclude=secret_names)
         for name in secret_names:
             secret = getattr(validated, name)
@@ -154,6 +174,34 @@ def update(household: Household, plugin_id: str, enabled: bool, settings: dict[s
 
     mark_out_of_date(household=household)
     return _state(info, row)
+
+
+def can_check(plugin_id: str) -> bool:
+    """Whether the plugin can check its settings (it implements `check_settings`)."""
+    return plugin_id in registry.implementers(CHECK_HOOK)
+
+
+def check(household: Household, plugin_id: str, settings: dict[str, Any]) -> SettingsCheck:
+    """Check that a plugin works with the settings from its form, which may not be saved yet,
+    whether or not it's on. A failure is shown to the Admin, not kept as the plugin's error.
+
+    Raises:
+        PluginError: If there's no such plugin, it can't check its settings, or a setting is
+            invalid.
+    """
+    info = _plugin(plugin_id)
+    if not can_check(plugin_id):
+        raise PluginError("plugin_cannot_check", "This plugin can't be tested.")
+    validated = _validated(household, info, settings)
+    try:
+        results = registry.call_plugin(CHECK_HOOK, plugin_id, settings=validated)
+    except Exception as exc:  # a broken plugin must never stop the app
+        logger.exception("Plugin %s failed in %s", plugin_id, CHECK_HOOK)
+        return SettingsCheck("failed", f"{type(exc).__name__}: {exc}"[:MAX_ERROR_LENGTH])
+    result = results[0] if results else None
+    if not isinstance(result, SettingsCheck):
+        return SettingsCheck("failed", f"expected SettingsCheck, got {type(result).__name__}")
+    return result
 
 
 def record_error(household: Household, plugin_id: str, hook: str, exc: BaseException) -> None:

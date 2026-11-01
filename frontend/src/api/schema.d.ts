@@ -1076,6 +1076,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plugins/{plugin_id}/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Plugin
+         * @description Test a plugin with the settings from its form, which needn't be saved, whether or not
+         *     it's on. Nothing is saved.
+         */
+        post: operations["sunfleck_plugins_api_check_plugin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -2276,6 +2297,11 @@ export interface components {
         };
         /** PluginOut */
         PluginOut: {
+            /**
+             * Can Check
+             * @description Whether the plugin's settings can be tested.
+             */
+            can_check: boolean;
             /** Description */
             description: string;
             /** Enabled */
@@ -2510,6 +2536,31 @@ export interface components {
             summer: number | null;
             /** Winter */
             winter: number | null;
+        };
+        /** SettingsCheckOut */
+        SettingsCheckOut: {
+            /**
+             * Details
+             * @description What the plugin found, shown as it is.
+             */
+            details: string;
+            /**
+             * Problem
+             * @description Why it doesn't work: `missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer` or `failed`.
+             */
+            problem: string | null;
+            /** Works */
+            works: boolean;
+        };
+        /** SettingsIn */
+        SettingsIn: {
+            /**
+             * Settings
+             * @description Leave a secret setting empty to use its saved value.
+             */
+            settings?: {
+                [key: string]: unknown;
+            };
         };
         /** SetupIn */
         SetupIn: {
@@ -4622,6 +4673,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PluginOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plugins_api_check_plugin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plugin_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettingsIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsCheckOut"];
                 };
             };
         };

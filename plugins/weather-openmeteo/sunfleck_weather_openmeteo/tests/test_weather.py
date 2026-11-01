@@ -13,6 +13,7 @@ from sunfleck.care.tests.factories import CareEventFactory, builtin
 from sunfleck.places.models import Location, LocationKind, Site
 from sunfleck.places.tests.factories import LocationFactory, SiteFactory
 from sunfleck.plants.tests.factories import PlantFactory
+from sunfleck.plugins import SettingsCheck
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareArchetype
 
@@ -513,3 +514,30 @@ def test_settings_say_their_units_so_people_see_their_own() -> None:
     assert properties["frost_c"]["unit"] == "celsius"
     assert properties["rain_mm"]["unit"] == "mm"
     assert "°C" not in properties["frost_c"]["title"]
+
+
+# --- Testing the plugin -----------------------------------------------------------------------
+
+
+def test_testing_asks_for_a_fixed_place_not_the_households(service: FakeOpenMeteo) -> None:
+    found = hooks.check_settings()
+
+    assert found == SettingsCheck(details="Open-Meteo answered with a forecast.")
+    [url] = service.urls
+    query = parse_qs(urlparse(url).query)
+    assert (query["latitude"], query["longitude"]) == (["51.48"], ["0.0"])
+
+
+@pytest.mark.parametrize(
+    ("answer", "problem"),
+    [(OSError("Name or service not known"), "unavailable"), ("not a forecast", "invalid_answer")],
+)
+def test_testing_says_when_open_meteo_cant_be_used(
+    service: FakeOpenMeteo, answer: Any, problem: str
+) -> None:
+    service.answer = answer
+
+    found = hooks.check_settings()
+
+    assert found.problem == problem
+    assert found.details
