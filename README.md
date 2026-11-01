@@ -7,9 +7,18 @@ season and the weather, and learns from how you find the soil.
 *A sunfleck is a brief patch of sunlight that reaches the forest floor through the canopy.*
 
 <p align="center">
-  <img src="docs/images/today.png" alt="The Today page: the weather at home with a frost warning, a plant whose watering is overdue, and one coming up" width="260">
-  <img src="docs/images/plant.png" alt="A plant's page: its species, location, care buttons, and its watering schedule with why it's every 10 days" width="260">
-  <img src="docs/images/plants.png" alt="The plants list: cards for three plants with their location and when they were last watered" width="260">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/today-dark.jpg">
+    <img src="docs/images/today.jpg" alt="The Today page: rain at home with a frost warning for tomorrow night, two plants in the living room to water (one a day overdue), and an aloe coming up later in the week" width="260">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/plant-dark.jpg">
+    <img src="docs/images/plant.jpg" alt="A golden pothos's page: its photo, species and room, a warning that it's toxic to cats and dogs, and bars for water, fertilizer and light" width="260">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/plants-dark.jpg">
+    <img src="docs/images/plants.jpg" alt="The plants list: photo cards for an aloe, an avocado seedling, a dragon tree and a flaming Katy, with their rooms, when they were watered, and care bars" width="260">
+  </picture>
 </p>
 
 ## Features
@@ -77,4 +86,5 @@ Everyone taking part is asked to follow the [code of conduct](CODE_OF_CONDUCT.md
 
 Sunfleck is [AGPL-3.0](LICENSE). The care dataset (`data/care`) is
 [CC BY-SA 4.0](data/care/LICENSE). Weather data by [Open-Meteo.com](https://open-meteo.com)
-(CC BY 4.0); plant identification by [Pl@ntNet](https://plantnet.org).
+(CC BY 4.0); plant identification by [Pl@ntNet](https://plantnet.org). The plant photos in
+the screenshots are the maintainer's, [CC BY-SA 4.0](docs/screenshots/photos/README.md).

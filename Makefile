@@ -6,7 +6,7 @@ DEV_ENV := DEBUG=true
 
 .DEFAULT_GOAL := help
 .PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
-	test-frontend e2e lint lint-backend lint-frontend format api-types messages docker
+	test-frontend e2e screenshots lint lint-backend lint-frontend format api-types messages docker
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
@@ -49,6 +49,10 @@ test-frontend: ## Run the frontend tests
 e2e: ## Run the browser tests against a production build (starts its own server)
 	$(FRONTEND) npm run build
 	$(FRONTEND) npm run e2e
+
+screenshots: ## Make the README's screenshots again, of a demo household (docs/images)
+	$(FRONTEND) npm run build
+	$(FRONTEND) npm run screenshots
 
 lint: lint-backend lint-frontend ## Run every check that CI runs (except tests)
 
