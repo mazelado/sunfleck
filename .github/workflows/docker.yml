@@ -50,6 +50,16 @@ jobs:
           curl --fail --silent http://localhost:8000/api/v1/health
           curl --fail --silent http://localhost:8000/ | grep --quiet '<div id="root">'
           curl --fail --silent http://localhost:8000/plants/1 | grep --quiet '<div id="root">'
+      - name: Check a data file owned by root stops it with the fix
+        run: |
+          docker exec --user root sunfleck touch /data/owned-by-root
+          if docker run --rm --volumes-from sunfleck sunfleck:ci true 2> "$RUNNER_TEMP/start-error.txt"; then
+            echo "Started with a data file it can't write to" >&2
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/start-error.txt"
+          grep -q "/data/owned-by-root isn't writable" "$RUNNER_TEMP/start-error.txt"
+          grep -q "chown sunfleck -R 1000:" "$RUNNER_TEMP/start-error.txt"
       - name: Show logs
         if: always()
         run: docker logs sunfleck || true

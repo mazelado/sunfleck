@@ -15,6 +15,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   checks and app files. Warnings and errors are still logged. Set `SUNFLECK_ACCESS_LOG=true`
   to log every request again.
 
+### Fixed
+
+- **Data files Sunfleck can't write to** now stop it at startup, with the command that fixes
+  them. Before, a file owned by root (such as the job queue) only made the worker fail quietly,
+  so reminders, weather updates and nightly recalculations didn't run.
+
 ## [0.6.0] - 2026-11-01
 
 **Fuchsia.** Care where you are: notifications from the app itself, care in your calendar,

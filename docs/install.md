@@ -235,8 +235,11 @@ Set in `.env`; run `docker compose up -d` after changing them.
   has no connection. `docker compose ps` shows whether it's up.
 - **No reminders arrive**: check the worker is running (`docker compose ps`), then use
   **Send a test** on the Notifications page, which shows the error if sending fails.
-- **"…isn't writable by user ID 1000"** when using a folder instead of the volume: Sunfleck
-  runs as user 1000; give it the folder with `sudo chown 1000 <folder>`.
+- **"…isn't writable by user ID 1000"**: Sunfleck runs as user 1000, and something in its data
+  belongs to another user, usually because a command was run as root. Give it back with
+  `docker compose run --rm -u root --entrypoint chown sunfleck -R 1000:999 /data`, or, when
+  using a folder instead of the volume, `sudo chown -R 1000:999 <folder>`. The message shows the
+  exact command.
 - **Stored secrets can't be read** after changing `SECRET_KEY`: set `SUNFLECK_ENCRYPTION_KEY`
   (and keep it), then enter notification addresses and API keys again.
 - Anything else: `docker compose logs` usually says what's wrong. Please
