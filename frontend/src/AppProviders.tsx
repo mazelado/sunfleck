@@ -3,10 +3,11 @@ import "@mantine/notifications/styles.css";
 import "./global.css";
 import "./i18n";
 
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, Modal, mergeThemeOverrides } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { cssVariablesResolver, theme } from "./theme";
 
@@ -25,10 +26,23 @@ export function AppProviders({
   env = "default",
 }: AppProvidersProps) {
   const [queryClient] = useState(() => providedClient ?? new QueryClient());
+  const { t } = useTranslation();
+  // Mantine's close button (×) has no name of its own, so screen readers only said "button".
+  const localTheme = useMemo(
+    () =>
+      mergeThemeOverrides(theme, {
+        components: {
+          Modal: Modal.extend({
+            defaultProps: { closeButtonProps: { "aria-label": t("common.close") } },
+          }),
+        },
+      }),
+    [t],
+  );
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider
-        theme={theme}
+        theme={localTheme}
         cssVariablesResolver={cssVariablesResolver}
         defaultColorScheme="auto"
         env={env}

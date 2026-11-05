@@ -9,6 +9,16 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Add a window or grow light from the plant form** (#98): when a plant's room has no lights
+  yet, or is missing one, add it without leaving the form. The new light is chosen for the
+  plant, and nothing typed is lost.
+
+### Fixed
+
+- **Screen readers name the close button of dialogs** ("Close"), instead of only "button".
+
 ## [0.6.1] - 2026-11-01
 
 **Fuchsia.** Fixes from using 0.6: the background worker now runs its jobs on Docker
