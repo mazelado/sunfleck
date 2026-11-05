@@ -14,6 +14,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Add a window or grow light from the plant form** (#98): when a plant's room has no lights
   yet, or is missing one, add it without leaving the form. The new light is chosen for the
   plant, and nothing typed is lost.
+- **In the care dataset:** the Madagascar dragon tree (*Dracaena marginata*), known to be toxic
+  to cats and dogs (ASPCA), and the avocado (*Persea americana*), as an indoor tree.
 
 ### Changed
 
