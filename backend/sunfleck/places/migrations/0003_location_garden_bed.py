@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("places", "0002_remove_lightsource_distance_cm"),
     ]
@@ -13,9 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="location",
             name="bed_length_cm",
-            field=models.PositiveIntegerField(
-                blank=True, null=True, verbose_name="bed length"
-            ),
+            field=models.PositiveIntegerField(blank=True, null=True, verbose_name="bed length"),
         ),
         migrations.AddField(
             model_name="location",
@@ -30,8 +27,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="location",
             name="bed_width_cm",
-            field=models.PositiveIntegerField(
-                blank=True, null=True, verbose_name="bed width"
-            ),
+            field=models.PositiveIntegerField(blank=True, null=True, verbose_name="bed width"),
         ),
     ]
