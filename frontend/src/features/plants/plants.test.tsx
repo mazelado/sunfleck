@@ -7,6 +7,7 @@ import type { Identification } from "../../api/identify";
 import type { LightSource, Location, Site } from "../../api/places";
 import type { Photo, Plant, PlantSummary } from "../../api/plants";
 import type { Species } from "../../api/taxonomy";
+import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
 
@@ -295,6 +296,62 @@ describe("plant form", () => {
       // When it was last cared for: watered a few days ago; fertilized, not known.
       last_watered_days_ago: 3,
       last_fertilized_days_ago: null,
+    });
+  });
+
+  it("adds a window from the form when the room has no lights yet", async () => {
+    signInAs(gardener);
+    const kitchen: Location = { ...livingRoom, id: 11, name: "Kitchen", light_sources: [] };
+    const newWindow: LightSource = { ...bayWindow, id: 3, name: "Kitchen window", direction: "E" };
+    let rooms = [kitchen];
+    let addedLight: unknown;
+    let plantsSent = 0;
+    let sent: unknown;
+    server.use(
+      http.get("*/api/v1/sites", () => HttpResponse.json([{ ...home, locations: rooms }])),
+      http.post("*/api/v1/locations/11/light-sources", async ({ request }) => {
+        addedLight = await request.json();
+        rooms = [{ ...kitchen, light_sources: [newWindow] }];
+        return HttpResponse.json(newWindow, { status: 201 });
+      }),
+      http.post("*/api/v1/plants", async ({ request }) => {
+        plantsSent += 1;
+        sent = await request.json();
+        return HttpResponse.json(plant(), { status: 201 });
+      }),
+    );
+    withPlant(plant());
+    const { user } = renderApp("/plants/new?location=11");
+
+    await user.type(await screen.findByLabelText(/^Name/), "Monty");
+    expect(
+      await screen.findByText("This location has no windows or grow lights yet."),
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Add a window or grow light" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a window" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    // A new light can be either kind here.
+    expect(within(dialog).getByRole("radio", { name: "Grow light" })).toBeInTheDocument();
+    await user.type(within(dialog).getByLabelText(/^Name/), "Kitchen window");
+    const direction = within(dialog).getByRole("combobox", { name: /Direction it faces/ });
+    await user.click(direction);
+    const listbox = document.getElementById(direction.getAttribute("aria-controls") ?? "");
+    if (!listbox) throw new Error("The direction dropdown didn't open");
+    await user.click(within(listbox).getByRole("option", { name: "East", hidden: true }));
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    // The new light is chosen, and the plant, with its name, isn't saved yet.
+    expect(await screen.findByRole("checkbox", { name: /Kitchen window/ })).toBeChecked();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/^Name/)).toHaveValue("Monty");
+    expect(plantsSent).toBe(0);
+    expect(addedLight).toMatchObject({ kind: "window", name: "Kitchen window", direction: "E" });
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(sent).toMatchObject({
+      location_id: 11,
+      light_sources: [{ light_source_id: 3, distance_cm: null }],
     });
   });
 

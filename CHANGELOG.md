@@ -11,10 +11,18 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Add a window or grow light from the plant form** (#98): when a plant's room has no lights
+  yet, or is missing one, add it without leaving the form. The new light is chosen for the
+  plant, and nothing typed is lost.
 - **Garden beds**: an outdoor location can be a raised bed or a bed in the ground, with its
   width and length. Raised beds dry out sooner, so their plants are watered a little more
   often, and a bed's size gives how much water the whole bed needs ("about 20 mm: 60 L for the
   whole bed"). Exports include beds, and older exports still import.
+
+### Fixed
+
+- **Screen readers name the close button of dialogs and notifications** ("Close"), instead of
+  only "button".
 
 ## [0.6.1] - 2026-11-01
 
