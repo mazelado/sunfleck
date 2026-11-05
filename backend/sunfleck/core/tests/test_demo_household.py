@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -29,7 +29,7 @@ def test_the_same_plants_need_water_in_every_season(month: int) -> None:
     # The browser tests (frontend/e2e/effort.e2e.ts) rely on it, whatever the date.
     with time_machine.travel(datetime(2026, month, 15, 10, tzinfo=UTC), tick=False):
         call_command("demo_household", photos=PHOTOS)
-        today = datetime(2026, month, 15).date()
+        today = date(2026, month, 15)
 
         due = {
             schedule.plant.nickname: (schedule.next_due - today).days
