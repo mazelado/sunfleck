@@ -195,6 +195,8 @@ describe("today", () => {
       });
     });
     expect(await screen.findByText("Watered: 2 plants")).toBeVisible();
+    // Its close button has a name for screen readers.
+    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
   });
 
   it("snoozes and skips care", async () => {
