@@ -1,28 +1,41 @@
 """Frost dates from 20 years of Open-Meteo's past daily lows."""
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from datetime import date, timedelta
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 import pytest
+import time_machine
 from sunfleck.accounts.models import Household
 from sunfleck.places import frost as places_frost
 from sunfleck.places.models import FrostSource, Site
 from sunfleck.places.tests.factories import SiteFactory
 from sunfleck.plugins import FrostDates
 
-from sunfleck_weather_openmeteo import frost
-from sunfleck_weather_openmeteo.tests.test_weather import (  # noqa: F401 - fixtures
-    FakeOpenMeteo,
-    frozen_time,
-    service,
-    site,
-    turn_on,
-)
+from sunfleck_weather_openmeteo import frost, weather
+from sunfleck_weather_openmeteo.tests.test_weather import NOW, FakeOpenMeteo, turn_on
 from sunfleck_weather_openmeteo.weather import WeatherError
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture(autouse=True)
+def frozen_time() -> Iterator[None]:
+    with time_machine.travel(NOW, tick=False):  # 15 April 2026
+        yield
+
+
+@pytest.fixture
+def service(monkeypatch: pytest.MonkeyPatch) -> FakeOpenMeteo:
+    fake = FakeOpenMeteo()
+    monkeypatch.setattr(weather, "download", fake)
+    return fake
+
+
+@pytest.fixture
+def site(household: Household) -> Site:
+    return SiteFactory.create(household=household, latitude=52.37403, longitude=4.88969)
 
 
 def archive(
