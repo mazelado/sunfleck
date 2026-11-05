@@ -93,6 +93,14 @@
         "title": "AlertOut",
         "type": "object"
       },
+      "BedType": {
+        "enum": [
+          "raised",
+          "in_ground"
+        ],
+        "title": "BedType",
+        "type": "string"
+      },
       "BulkCareIn": {
         "properties": {
           "care_type_id": {
@@ -1647,6 +1655,43 @@
       },
       "LocationIn": {
         "properties": {
+          "bed_length_cm": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bed Length Cm"
+          },
+          "bed_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BedType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Outdoors: a garden bed's kind."
+          },
+          "bed_width_cm": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bed Width Cm"
+          },
           "exposure": {
             "anyOf": [
               {
@@ -1720,6 +1765,38 @@
       },
       "LocationOut": {
         "properties": {
+          "bed_length_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bed Length Cm"
+          },
+          "bed_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BedType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bed_width_cm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bed Width Cm"
+          },
           "exposure": {
             "anyOf": [
               {
@@ -1806,6 +1883,9 @@
           "temperature_max_c",
           "humidity",
           "exposure",
+          "bed_type",
+          "bed_width_cm",
+          "bed_length_cm",
           "light_sources"
         ],
         "title": "LocationOut",

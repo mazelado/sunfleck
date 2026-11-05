@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Garden beds**: an outdoor location can be a raised bed or a bed in the ground, with its
+  width and length. Raised beds dry out sooner, so their plants are watered a little more
+  often, and a bed's size gives how much water the whole bed needs ("about 20 mm: 60 L for the
+  whole bed"). Exports include beds, and older exports still import.
+
 ## [0.6.1] - 2026-11-01
 
 **Fuchsia.** Fixes from using 0.6: the background worker now runs its jobs on Docker

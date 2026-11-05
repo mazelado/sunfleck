@@ -151,6 +151,9 @@ class _Importer:
                     temperature_max_c=loc.temperature_max_c,
                     humidity=loc.humidity,
                     exposure=loc.exposure,
+                    bed_type=loc.bed_type,
+                    bed_width_cm=loc.bed_width_cm,
+                    bed_length_cm=loc.bed_length_cm,
                 )
                 _check(location, f"location {loc.name!r}")
                 location.save()

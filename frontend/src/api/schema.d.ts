@@ -1352,6 +1352,11 @@ export interface components {
              */
             on: string;
         };
+        /**
+         * BedType
+         * @enum {string}
+         */
+        BedType: "raised" | "in_ground";
         /** BulkCareIn */
         BulkCareIn: {
             /** Care Type Id */
@@ -1971,6 +1976,12 @@ export interface components {
         };
         /** LocationIn */
         LocationIn: {
+            /** Bed Length Cm */
+            bed_length_cm?: number | null;
+            /** @description Outdoors: a garden bed's kind. */
+            bed_type?: components["schemas"]["BedType"] | null;
+            /** Bed Width Cm */
+            bed_width_cm?: number | null;
             exposure?: components["schemas"]["Exposure"] | null;
             humidity?: components["schemas"]["Humidity"] | null;
             kind: components["schemas"]["LocationKind"];
@@ -1988,6 +1999,11 @@ export interface components {
         LocationKind: "indoor" | "outdoor";
         /** LocationOut */
         LocationOut: {
+            /** Bed Length Cm */
+            bed_length_cm: number | null;
+            bed_type: components["schemas"]["BedType"] | null;
+            /** Bed Width Cm */
+            bed_width_cm: number | null;
             exposure: components["schemas"]["Exposure"] | null;
             humidity: components["schemas"]["Humidity"] | null;
             /**

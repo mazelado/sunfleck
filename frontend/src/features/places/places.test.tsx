@@ -34,6 +34,9 @@ function location(overrides: Partial<Location> = {}): Location {
     temperature_max_c: 24,
     humidity: "medium",
     exposure: null,
+    bed_type: null,
+    bed_width_cm: null,
+    bed_length_cm: null,
     light_sources: [],
     ...overrides,
   };
@@ -201,6 +204,64 @@ describe("location form", () => {
 
     expect(await screen.findByRole("combobox", { name: "Sun exposure" })).toBeVisible();
     expect(screen.queryByLabelText("Lowest")).not.toBeInTheDocument();
+  });
+});
+
+describe("garden beds", () => {
+  it("makes an outdoor location a raised bed with its size, in the person's units", async () => {
+    signInAs({ ...gardener, unit_system: "imperial" });
+    withSites([site({ locations: [] })]);
+    let sent: unknown;
+    server.use(
+      http.post("*/api/v1/sites/1/locations", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(location({ id: 12, kind: "outdoor" }), { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/places/1/locations/new");
+
+    await user.type(await screen.findByLabelText(/^Name/), "Vegetable bed");
+    await user.click(screen.getByText("Outdoor"));
+    // The size is asked only for a bed.
+    expect(screen.queryByLabelText("Width (in)")).not.toBeInTheDocument();
+    const bedType = screen.getByRole("combobox", { name: /Garden bed/ });
+    await user.click(bedType);
+    const listbox = document.getElementById(bedType.getAttribute("aria-controls") ?? "");
+    if (!listbox) throw new Error("The bed dropdown didn't open");
+    await user.click(within(listbox).getByRole("option", { name: "Raised bed", hidden: true }));
+    await user.type(screen.getByLabelText("Width (in)"), "48");
+    await user.type(screen.getByLabelText("Length (in)"), "96");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(sent).toMatchObject({
+        kind: "outdoor",
+        bed_type: "raised",
+        bed_width_cm: 122,
+        bed_length_cm: 244,
+      });
+    });
+  });
+
+  it("describes a bed with its kind and size", async () => {
+    signInAs(gardener);
+    withSites([
+      site({
+        locations: [
+          location({
+            id: 11,
+            name: "Vegetable bed",
+            kind: "outdoor",
+            bed_type: "raised",
+            bed_width_cm: 120,
+            bed_length_cm: 240,
+          }),
+        ],
+      }),
+    ]);
+    renderApp("/places/1");
+
+    expect(await screen.findByText(/Raised bed · 120 × 240 cm/)).toBeVisible();
   });
 });
 

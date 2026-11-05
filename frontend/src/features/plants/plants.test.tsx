@@ -68,6 +68,9 @@ const livingRoom: Location = {
   temperature_max_c: 24,
   humidity: "medium",
   exposure: null,
+  bed_type: null,
+  bed_width_cm: null,
+  bed_length_cm: null,
   light_sources: [bayWindow, growLight],
 };
 

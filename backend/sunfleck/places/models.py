@@ -63,6 +63,11 @@ class Exposure(models.TextChoices):
     SHADE = "shade", _("Shade")
 
 
+class BedType(models.TextChoices):
+    RAISED = "raised", _("Raised bed")
+    IN_GROUND = "in_ground", _("In the ground")
+
+
 class Location(models.Model):
     """An area within a site where plants live: a room or shelf, or a bed or balcony."""
 
@@ -77,6 +82,12 @@ class Location(models.Model):
     exposure = models.CharField(
         _("sun exposure"), max_length=16, choices=Exposure.choices, blank=True
     )
+    # A garden bed (outdoor, optional): its kind and size.
+    bed_type = models.CharField(
+        _("kind of bed"), max_length=16, choices=BedType.choices, blank=True
+    )
+    bed_width_cm = models.PositiveIntegerField(_("bed width"), null=True, blank=True)
+    bed_length_cm = models.PositiveIntegerField(_("bed length"), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

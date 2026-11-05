@@ -36,6 +36,9 @@ signing out are in the account menu (your picture at the top right).
   coordinates instead.)
 - A **location** is a room or a bed in a site: **indoor** or **outdoor**. Indoors, give its
   temperature range and humidity if you know them; outdoors, how much sun it gets.
+- A **garden bed** is an outdoor location marked as a raised bed or a bed in the ground. A
+  raised bed dries out sooner, so its plants are watered a little more often. With its width
+  and length, the watering amount also says how much water the whole bed needs.
 - **Light** indoors comes from **windows** (with the direction they face) and **grow
   lights** (with their brightness and when they're on). Each plant says which reach it, and
   how far it is from a window. Sunfleck estimates how much light each plant gets, which

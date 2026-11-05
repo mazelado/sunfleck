@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
 
 import {
+  type BedType,
   type Exposure,
   type Humidity,
   type Location,
@@ -29,7 +30,14 @@ import {
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
-import { celsiusToDisplay, displayToCelsius, temperatureUnit } from "../../lib/units";
+import {
+  celsiusToDisplay,
+  cmToDisplay,
+  displayToCelsius,
+  displayToCm,
+  lengthUnit,
+  temperatureUnit,
+} from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
 import { useApplyFieldErrors } from "../auth/serverErrors";
@@ -62,6 +70,9 @@ interface LocationFormValues {
   temperature_max: number | "";
   humidity: Humidity | null;
   exposure: Exposure | null;
+  bed_type: BedType | null;
+  bed_width: number | "";
+  bed_length: number | "";
 }
 
 function LocationForm({ site, location }: { site: Site; location?: Location }) {
@@ -85,12 +96,17 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
       temperature_max: toDisplay(location?.temperature_max_c),
       humidity: location?.humidity ?? null,
       exposure: location?.exposure ?? null,
+      bed_type: location?.bed_type ?? null,
+      bed_width: location?.bed_width_cm ? cmToDisplay(location.bed_width_cm, units) : "",
+      bed_length: location?.bed_length_cm ? cmToDisplay(location.bed_length_cm, units) : "",
     },
     validate: { name: isNotEmpty(t("validation.required")) },
   });
   const indoor = form.getValues().kind === "indoor";
   const unit = temperatureUnit(units);
   const toCelsius = (value: number | "") => (value === "" ? null : displayToCelsius(value, units));
+  const toCm = (value: number | "") => (value === "" ? null : displayToCm(value, units));
+  const isBed = !indoor && form.getValues().bed_type !== null;
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
@@ -101,6 +117,9 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
         temperature_max_c: toCelsius(values.temperature_max),
         humidity: values.humidity,
         exposure: values.exposure,
+        bed_type: values.bed_type,
+        bed_width_cm: values.bed_type ? toCm(values.bed_width) : null,
+        bed_length_cm: values.bed_type ? toCm(values.bed_length) : null,
       });
       await navigate(`${sitePath}/locations/${String(saved.id)}`);
     } catch (error) {
@@ -108,6 +127,8 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
       applyFieldErrors(form, error, {
         temperature_min_c: "temperature_min",
         temperature_max_c: "temperature_max",
+        bed_width_cm: "bed_width",
+        bed_length_cm: "bed_length",
       });
     }
   });
@@ -195,6 +216,38 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
                 ]}
                 {...form.getInputProps("exposure")}
               />
+            )}
+            {!indoor && (
+              <Select
+                label={t("places.bedType")}
+                description={t("places.bedTypeHelp")}
+                placeholder={t("places.notABed")}
+                clearable
+                data={[
+                  { value: "raised", label: t("places.bedRaised") },
+                  { value: "in_ground", label: t("places.bedInGround") },
+                ]}
+                {...form.getInputProps("bed_type")}
+              />
+            )}
+            {isBed && (
+              <Stack gap={4}>
+                <Group grow align="flex-start">
+                  <NumberInput
+                    label={`${t("places.bedWidth")} (${lengthUnit(units)})`}
+                    min={1}
+                    {...form.getInputProps("bed_width")}
+                  />
+                  <NumberInput
+                    label={`${t("places.bedLength")} (${lengthUnit(units)})`}
+                    min={1}
+                    {...form.getInputProps("bed_length")}
+                  />
+                </Group>
+                <Text size="xs" c="dimmed">
+                  {t("places.bedSizeHelp")}
+                </Text>
+              </Stack>
             )}
             <Group justify="space-between">
               <Button type="submit" loading={save.isPending}>

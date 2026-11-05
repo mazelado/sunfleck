@@ -12,6 +12,7 @@ export type LightSourceInput = components["schemas"]["LightSourceIn"];
 export type Direction = components["schemas"]["Direction"];
 export type Humidity = components["schemas"]["Humidity"];
 export type Exposure = components["schemas"]["Exposure"];
+export type BedType = components["schemas"]["BedType"];
 
 const SITES = ["sites"] as const;
 

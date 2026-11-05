@@ -11,6 +11,7 @@ from django.db import transaction
 
 from sunfleck.accounts.models import Household
 from sunfleck.places.models import (
+    BedType,
     Direction,
     Exposure,
     Humidity,
@@ -85,6 +86,9 @@ class LocationData:
     temperature_max_c: float | None = None
     humidity: Humidity | None = None
     exposure: Exposure | None = None
+    bed_type: BedType | None = None
+    bed_width_cm: int | None = None
+    bed_length_cm: int | None = None
 
 
 def _apply_location(location: Location, data: LocationData) -> None:
@@ -103,6 +107,9 @@ def _apply_location(location: Location, data: LocationData) -> None:
     location.temperature_max_c = high if indoor else None
     location.humidity = (data.humidity or "") if indoor else ""
     location.exposure = "" if indoor else (data.exposure or "")
+    location.bed_type = "" if indoor else (data.bed_type or "")
+    location.bed_width_cm = None if indoor else data.bed_width_cm
+    location.bed_length_cm = None if indoor else data.bed_length_cm
 
 
 def create_location(site: Site, data: LocationData) -> Location:
