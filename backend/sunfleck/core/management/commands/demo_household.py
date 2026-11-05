@@ -35,7 +35,7 @@ PLANTS: list[tuple[str, str | None, str | None, str, str, int]] = [
     ("Flaming Katy", "Kalanchoe blossfeldiana", None, "Living room", "flaming-katy.webp", 12),
     ("Dragon tree", "Dracaena", None, "Living room", "dracaena.webp", 12),
     ("Aloe", "Aloe vera", None, "Kitchen", "aloe-vera.webp", 15),
-    ("Avocado seedling", None, "tropical_aroid", "Kitchen", "avocado-seedling.webp", 2),
+    ("Avocado seedling", None, "tropical_aroid", "Kitchen", "avocado-seedling.webp", 10),
 ]
 
 
