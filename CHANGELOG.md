@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **In the care dataset:** the Madagascar dragon tree (*Dracaena marginata*), known to be toxic
+  to cats and dogs (ASPCA), and the avocado (*Persea americana*), as an indoor tree.
+
 ## [0.6.1] - 2026-11-01
 
 **Fuchsia.** Fixes from using 0.6: the background worker now runs its jobs on Docker
