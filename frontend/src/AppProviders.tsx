@@ -3,7 +3,7 @@ import "@mantine/notifications/styles.css";
 import "./global.css";
 import "./i18n";
 
-import { MantineProvider, Modal, mergeThemeOverrides } from "@mantine/core";
+import { MantineProvider, Modal, mergeThemeOverrides, Notification } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useMemo, useState } from "react";
@@ -27,12 +27,16 @@ export function AppProviders({
 }: AppProvidersProps) {
   const [queryClient] = useState(() => providedClient ?? new QueryClient());
   const { t } = useTranslation();
-  // Mantine's close button (×) has no name of its own, so screen readers only said "button".
+  // Mantine's close buttons (×) have no name of their own, so screen readers only said
+  // "button": in dialogs, and in notifications such as "Watered" with its Undo.
   const localTheme = useMemo(
     () =>
       mergeThemeOverrides(theme, {
         components: {
           Modal: Modal.extend({
+            defaultProps: { closeButtonProps: { "aria-label": t("common.close") } },
+          }),
+          Notification: Notification.extend({
             defaultProps: { closeButtonProps: { "aria-label": t("common.close") } },
           }),
         },

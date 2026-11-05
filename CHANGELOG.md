@@ -17,7 +17,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Fixed
 
-- **Screen readers name the close button of dialogs** ("Close"), instead of only "button".
+- **Screen readers name the close button of dialogs and notifications** ("Close"), instead of
+  only "button".
 
 ## [0.6.1] - 2026-11-01
 
