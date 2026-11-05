@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("places", "0003_location_garden_bed"),
     ]
@@ -13,9 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="site",
             name="first_frost",
-            field=models.DateField(
-                blank=True, null=True, verbose_name="first autumn frost"
-            ),
+            field=models.DateField(blank=True, null=True, verbose_name="first autumn frost"),
         ),
         migrations.AddField(
             model_name="site",
@@ -38,8 +35,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="site",
             name="last_frost",
-            field=models.DateField(
-                blank=True, null=True, verbose_name="last spring frost"
-            ),
+            field=models.DateField(blank=True, null=True, verbose_name="last spring frost"),
         ),
     ]
