@@ -15,6 +15,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   yet, or is missing one, add it without leaving the form. The new light is chosen for the
   plant, and nothing typed is lost.
 
+### Changed
+
+- **How much to water plants in the ground follows the soil water balance** (with the weather
+  plugin): a watering puts back what the soil holds, 10 to 20 mm depending on the plant,
+  instead of 25 mm a week spread over the interval. Plugins can give the amount with
+  `Adjustment.amount_mm`.
+
 ### Fixed
 
 - **Screen readers name the close button of dialogs and notifications** ("Close"), instead of
