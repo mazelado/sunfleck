@@ -39,8 +39,12 @@ interface LightSourceFormProps {
   /** The light source to edit; leave out to add a new one of `kind`. */
   light?: LightSource;
   kind: "window" | "grow_light";
+  /** Let a new light be either kind, not only `kind` (it's always a choice when editing). */
+  chooseKind?: boolean;
   opened: boolean;
   onClose: () => void;
+  /** Called with the light once it's saved, before the dialog closes. */
+  onSaved?: (light: LightSource) => void;
 }
 
 interface LightFormValues {
@@ -60,8 +64,10 @@ export function LightSourceForm({
   locationId,
   light,
   kind,
+  chooseKind = false,
   opened,
   onClose,
+  onSaved,
 }: LightSourceFormProps) {
   const { t } = useTranslation();
   const applyFieldErrors = useApplyFieldErrors();
@@ -92,7 +98,7 @@ export function LightSourceForm({
 
   const handleSubmit = form.onSubmit(async (formValues) => {
     try {
-      await save.mutateAsync({
+      const saved = await save.mutateAsync({
         id: light?.id,
         body: {
           kind: formValues.kind,
@@ -104,6 +110,7 @@ export function LightSourceForm({
           enabled: formValues.enabled,
         },
       });
+      onSaved?.(saved);
       close();
     } catch (error) {
       applyFieldErrors(form, error, {
@@ -127,7 +134,7 @@ export function LightSourceForm({
       <form onSubmit={handleSubmit} noValidate>
         <Stack gap="sm">
           <ErrorAlert error={save.error} />
-          {light && (
+          {(light || chooseKind) && (
             <SegmentedControl
               fullWidth
               data={[

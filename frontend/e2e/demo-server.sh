@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Starts Sunfleck as in production with the demo household (see the demo_household command),
-# for the README's screenshots. Playwright runs it; build the frontend first.
+# for the README's screenshots and the click-count tests. Playwright runs it, on PORT (8401 by
+# default); build the frontend first.
 set -euo pipefail
 cd "$(dirname "$0")/../../backend"
 
@@ -13,4 +14,4 @@ uv run --quiet python manage.py migrate --verbosity 0
 uv run --quiet python manage.py collectstatic --noinput --verbosity 0
 uv run --quiet python manage.py demo_household --photos ../docs/screenshots/photos
 # Not exec: the trap above removes the data when Playwright stops the server.
-uv run --quiet gunicorn sunfleck.config.wsgi --bind 127.0.0.1:8401 --workers 2
+uv run --quiet gunicorn sunfleck.config.wsgi --bind "127.0.0.1:${PORT:-8401}" --workers 2
