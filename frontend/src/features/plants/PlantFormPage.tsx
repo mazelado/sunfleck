@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconBulb, IconPhoto, IconWindow } from "@tabler/icons-react";
+import { IconBulb, IconPhoto, IconPlus, IconWindow } from "@tabler/icons-react";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
@@ -48,6 +48,7 @@ import { useUnits } from "../../lib/useUnits";
 import { type Species, useCareProfiles } from "../../api/taxonomy";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { describeLight } from "../places/describe";
+import { LightSourceForm } from "../places/LightSourceForm";
 import { IdentifyPlant } from "../taxonomy/IdentifyPlant";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
@@ -167,6 +168,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
   const values = form.getValues();
   const location = locations.find((each) => String(each.id) === values.locationId);
   const careProfiles = useCareProfiles().data ?? [];
+  const [addingLight, setAddingLight] = useState(false);
   // The species' own care profile, shown when no other is chosen.
   const [speciesProfile, setSpeciesProfile] = useState(
     plant?.care_profile && !plant.care_profile.chosen ? plant.care_profile.name : null,
@@ -340,6 +342,9 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
                 onChange={(id, choice) => {
                   form.setFieldValue(`lights.${String(id)}`, choice);
                 }}
+                onAddLight={() => {
+                  setAddingLight(true);
+                }}
               />
             )}
             <Select
@@ -446,6 +451,21 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
             </Group>
           </Stack>
         </form>
+        {/* Outside the plant's form: a form can't hold another one, even in a dialog. */}
+        {location && location.kind !== "outdoor" && (
+          <LightSourceForm
+            locationId={location.id}
+            kind="window"
+            chooseKind
+            opened={addingLight}
+            onClose={() => {
+              setAddingLight(false);
+            }}
+            onSaved={(light) => {
+              form.setFieldValue(`lights.${String(light.id)}`, { checked: true, distance: "" });
+            }}
+          />
+        )}
       </Paper>
     </Stack>
   );
@@ -457,10 +477,12 @@ interface LightPickerProps {
   error: React.ReactNode;
   units: UnitSystem;
   onChange: (id: number, choice: LightChoice) => void;
+  /** Open the dialog to add a window or grow light to the location. */
+  onAddLight: () => void;
 }
 
 /** "Which lights reach this plant?": the location's windows and grow lights to tick. */
-function LightPicker({ location, lights, error, units, onChange }: LightPickerProps) {
+function LightPicker({ location, lights, error, units, onChange, onAddLight }: LightPickerProps) {
   const { t } = useTranslation();
   if (location.kind === "outdoor") {
     return (
@@ -478,7 +500,7 @@ function LightPicker({ location, lights, error, units, onChange }: LightPickerPr
         <Text size="xs" c="dimmed">
           {location.light_sources.length > 0
             ? t("plants.whichLightsHelp")
-            : `${t("plants.noLightsInLocation")} ${t("plants.addLightsHint")}`}
+            : t("plants.noLightsInLocation")}
         </Text>
       </Stack>
       {location.light_sources.map((light) => {
@@ -524,6 +546,16 @@ function LightPicker({ location, lights, error, units, onChange }: LightPickerPr
           </Stack>
         );
       })}
+      <Group>
+        <Button
+          variant="light"
+          size="xs"
+          leftSection={<IconPlus size={14} aria-hidden />}
+          onClick={onAddLight}
+        >
+          {t("plants.addLight")}
+        </Button>
+      </Group>
       {error && (
         <Text size="xs" c="red">
           {error}
