@@ -1,4 +1,6 @@
+from collections.abc import Mapping
 from datetime import date
+from typing import Any
 
 import pytest
 from django.conf import settings
@@ -537,6 +539,24 @@ def test_plugins_can_give_a_due_date_of_their_own_within_limits() -> None:
     assert due(date(2026, 4, 24), date(2026, 4, 19)) == date(2026, 4, 19)  # the earliest
     assert due(date(2026, 4, 14)) == date(2026, 4, 17)  # at least half the interval
     assert due(date(2026, 5, 30)) == date(2026, 4, 27)  # at most double
+
+
+def test_a_plugin_can_say_how_much_water_to_give_in_the_ground() -> None:
+    in_ground = Conditions(indoor=False, pot_diameter_cm=8, pot_material="in_ground")
+    pot = Conditions(indoor=False, pot_diameter_cm=20, pot_height_cm=18)
+
+    def amount(conditions: Conditions, *mm: float) -> Mapping[str, Any]:
+        balance = [Adjustment(Factor("water_balance"), amount_mm=each) for each in mm]
+        prediction = predict_watering(AROID, conditions, WATERED, SPRING_DAY, balance)
+        return factor(prediction, "water_amount").details
+
+    # Instead of 25 mm a week (30 mm here), what the soil water balance lets dry...
+    assert amount(in_ground, 20) == {"depth_mm": 20, "in_ground": True}
+    # ...the least, if several say, within 10 to 40 mm.
+    assert amount(in_ground, 33, 21) == {"depth_mm": 20, "in_ground": True}
+    assert amount(in_ground, 4) == {"depth_mm": 10, "in_ground": True}
+    # A pot's amount already comes from the soil that dries.
+    assert amount(pot, 20) == amount(pot)
 
 
 def test_the_soil_holds_the_water_of_the_depth_that_may_dry() -> None:

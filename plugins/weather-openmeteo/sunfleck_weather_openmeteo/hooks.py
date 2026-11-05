@@ -146,6 +146,8 @@ def _water_balance(context: CareContext, forecast: Forecast) -> Adjustment | Non
     return Adjustment(
         Factor("water_balance", details=details),
         due_on=dry_on or last + timedelta(days=1),
+        # Due when the soil it holds is used up, so a watering puts that back.
+        amount_mm=capacity,
     )
 
 
