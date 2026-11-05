@@ -49,13 +49,13 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.4 Dahlia** | [Smarter care](#dahlia-smarter-care-released) | Released 2026-10-30 |
 | **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
-| **0.7 Gardenia** | [Outdoor and edible gardening](#outdoor-and-edible-gardening) | Next |
+| **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening) | In progress |
 | **0.8 Hibiscus** | [Collector features](#collector-features) | Planned |
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
-Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia to keep it
-smaller. Each goes into a release when there's room, or when someone needs it.
+Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia, and
+[more gardening](#more-gardening), split from Gardenia, to keep each release smaller. Each goes into a release when there's room, or when someone needs it.
 
 ## Phases
 
@@ -134,18 +134,29 @@ Split from Fuchsia (0.6), not yet scheduled.
   Sunfleck's CC BY-SA dataset. Perenual and Trefle could follow if there's a need: Perenual's
   free tier is non-commercial and limited to 100 requests a day, and Trefle is in beta.
 
-### Outdoor and edible gardening
+### Gardenia: outdoor and edible gardening
 
-- Garden beds and a simple **garden map**.
-- **Toxicity to children** in the dataset, with the same rules as for pets: "known to be
-  toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
-  control centres, since there's no single list like the ASPCA's.
-- **Frost dates** from the location; a sowing, transplanting and harvest calendar.
-- A harvest log, and a seed inventory.
-- Companion planting hints (as a plugin with its own data).
+Growing food outside, and fewer clicks for everyday tasks.
+
 - **Add a window or grow light from the plant form**, without leaving it (#98).
 - **Measuring how easy Sunfleck is to use:** click counts for the core tasks, with budgets that
   the browser tests check, and a list of dead ends to fix (#97).
+- **Garden beds:** an outdoor place with a size, for the plants grown in it.
+- **Frost dates** from the location; a sowing, transplanting and harvest calendar.
+- A harvest log, and a seed inventory.
+- **Follow-ups from Fuchsia:** water amounts for plants in the ground from the soil water
+  balance, not the weekly rule; Dracaena marginata and the avocado (Persea americana) in the
+  dataset.
+
+### More gardening
+
+Split from Gardenia (0.7), not yet scheduled.
+
+- A simple **garden map** of the beds and what grows in them.
+- Companion planting hints (as a plugin with its own data).
+- **Toxicity to children** in the dataset, with the same rules as for pets: "known to be
+  toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
+  control centres, since there's no single list like the ASPCA's.
 
 ### Collector features
 
