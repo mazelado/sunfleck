@@ -9,7 +9,7 @@ prediction also says roughly how much water to give (see `water_amount`).
 
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, timedelta
 from typing import Any
 
@@ -182,6 +182,10 @@ class Adjustment:
     # A due date of the plugin's own, e.g. from a soil water balance: used instead of the
     # interval's (the earliest, if several), within OWN_DUE_LIMITS of it.
     due_on: date | None = None
+    # How much water to give, as a depth in mm, when the plugin knows better than the rule of
+    # thumb (e.g. what the soil water balance lets dry): for plants in the ground or a bed,
+    # within GROUND_MM_LIMITS. A pot's amount already comes from the soil that dries.
+    amount_mm: float | None = None
 
 
 @dataclass(frozen=True)
@@ -454,6 +458,10 @@ def predict_watering(
         )
     interval = _days(base * multiplier)
     amount = water_amount(profile, conditions, interval)
+    own_amount = min((a.amount_mm for a in extra if a.amount_mm), default=None)
+    if amount and own_amount and "depth_mm" in amount.details:
+        depth = _clamp(own_amount, *GROUND_MM_LIMITS)
+        amount = replace(amount, details={**amount.details, "depth_mm": round(depth / 5) * 5})
     if amount:
         factors.append(amount)
 
