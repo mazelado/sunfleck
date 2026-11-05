@@ -137,6 +137,8 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
           : t("schedules.factors.potMaterial", {
               material: t(`plants.materials.${String(details.material) as "plastic"}`),
             });
+      case "raised_bed":
+        return t("schedules.factors.raisedBed");
       case "dormant":
         return t("schedules.factors.dormant");
       case "feedback":
@@ -234,6 +236,12 @@ export function describeWaterAmount(
   }
   const { unit, value } = waterDepth(Number(details.depth_mm), units);
   const depth = t(`amounts.${unit}`, { value: format(value) });
+  if (typeof details.bed_area_m2 === "number") {
+    // A depth of water over the bed: 1 mm on 1 m² is 1 litre.
+    const bed = waterVolume(Number(details.depth_mm) * details.bed_area_m2, units);
+    const amount = t(`amounts.${bed.unit}`, { value: format(bed.value), count: bed.value });
+    return t("schedules.amount.bed", { depth, amount });
+  }
   return details.in_ground
     ? t("schedules.amount.ground", { depth })
     : t("schedules.amount.groundGuess", { depth });

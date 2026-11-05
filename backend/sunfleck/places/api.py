@@ -18,6 +18,7 @@ from sunfleck.places import light_report, services
 from sunfleck.places.humidity import estimated_humidity
 from sunfleck.places.light import grow_light_dli, hours_on
 from sunfleck.places.models import (
+    BedType,
     Direction,
     Exposure,
     Humidity,
@@ -64,6 +65,9 @@ class LocationIn(Schema):
     temperature_max_c: float | None = Field(default=None, ge=-50, le=60)
     humidity: Humidity | None = None
     exposure: Exposure | None = None
+    bed_type: BedType | None = Field(default=None, description="Outdoors: a garden bed's kind.")
+    bed_width_cm: int | None = Field(default=None, ge=1, le=10_000)
+    bed_length_cm: int | None = Field(default=None, ge=1, le=10_000)
 
 
 class LocationOut(Schema):
@@ -75,6 +79,9 @@ class LocationOut(Schema):
     temperature_max_c: float | None
     humidity: Humidity | None
     exposure: Exposure | None
+    bed_type: BedType | None
+    bed_width_cm: int | None
+    bed_length_cm: int | None
     light_sources: list[LightSourceOut]
     humidity_estimate: int | None = Field(
         default=None,
@@ -182,6 +189,9 @@ def _location_out(location: Location, *, with_estimate: bool = False) -> Locatio
         temperature_max_c=location.temperature_max_c,
         humidity=Humidity(location.humidity) if location.humidity else None,
         exposure=Exposure(location.exposure) if location.exposure else None,
+        bed_type=BedType(location.bed_type) if location.bed_type else None,
+        bed_width_cm=location.bed_width_cm,
+        bed_length_cm=location.bed_length_cm,
         light_sources=[light_source_out(light) for light in location.light_sources.all()],
         humidity_estimate=round(estimate) if estimate is not None else None,
     )

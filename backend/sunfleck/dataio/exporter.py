@@ -49,6 +49,9 @@ def _sites(household: Household) -> list[schema.Site]:
                     temperature_max_c=location.temperature_max_c,
                     humidity=location.humidity,
                     exposure=location.exposure,
+                    bed_type=location.bed_type,
+                    bed_width_cm=location.bed_width_cm,
+                    bed_length_cm=location.bed_length_cm,
                     light_sources=[
                         schema.LightSource(
                             ref=light.pk,

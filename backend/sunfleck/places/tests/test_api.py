@@ -160,6 +160,21 @@ def test_location_validation_errors(client_as: ClientAs, site: Site) -> None:
 
 
 @pytest.mark.django_db
+def test_an_outdoor_location_can_be_a_garden_bed(client_as: ClientAs, location: Location) -> None:
+    client = client_as(Role.GARDENER)
+    url = f"/api/v1/locations/{location.pk}"
+    bed = {"name": "Vegetable bed", "kind": "outdoor", "bed_type": "raised"}
+
+    updated = send(client, "PUT", url, {**bed, "bed_width_cm": 120, "bed_length_cm": 240})
+    too_big = send(client, "PUT", url, {**bed, "bed_width_cm": 20_000})
+
+    assert updated.status_code == 200
+    data = updated.json()
+    assert (data["bed_type"], data["bed_width_cm"], data["bed_length_cm"]) == ("raised", 120, 240)
+    assert too_big.json()["error"]["code"] == "validation_error"
+
+
+@pytest.mark.django_db
 def test_update_and_delete_a_location(client_as: ClientAs, location: Location) -> None:
     client = client_as(Role.GARDENER)
     url = f"/api/v1/locations/{location.pk}"
@@ -168,6 +183,7 @@ def test_update_and_delete_a_location(client_as: ClientAs, location: Location) -
 
     assert updated.json()["kind"] == "outdoor"
     assert updated.json()["exposure"] == "shade"
+    assert (updated.json()["bed_type"], updated.json()["bed_width_cm"]) == (None, None)
     assert client.get(url).json()["name"] == "Patio"
     assert send(client, "DELETE", url).status_code == 204
     assert client.get(url).status_code == 404

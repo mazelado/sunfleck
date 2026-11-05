@@ -313,6 +313,16 @@ describe("how much water", () => {
     );
   });
 
+  it("adds up the water for a whole garden bed", () => {
+    // 30 mm on 3 m² is 90 litres, about 23.75 gallons.
+    expect(amount({ depth_mm: 30, in_ground: true, bed_area_m2: 3 })).toBe(
+      "About 30 mm of water each time, as if that much rain fell: 90 L for the whole bed",
+    );
+    expect(amount({ depth_mm: 30, in_ground: true, bed_area_m2: 3 }, "imperial")).toMatch(
+      /: 23\.75 gallons for the whole bed$/,
+    );
+  });
+
   it("asks for the pot's size, or says nothing without an amount", () => {
     const noPot = { code: "no_pot_size", multiplier: 1, details: {} };
     expect(describeWaterAmount([season, noPot], { t, locale: "en", units: "metric" })).toBe(

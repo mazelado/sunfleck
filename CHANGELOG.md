@@ -16,6 +16,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plant, and nothing typed is lost.
 - **In the care dataset:** the Madagascar dragon tree (*Dracaena marginata*), known to be toxic
   to cats and dogs (ASPCA), and the avocado (*Persea americana*), as an indoor tree.
+- **Garden beds**: an outdoor location can be a raised bed or a bed in the ground, with its
+  width and length. Raised beds dry out sooner, so their plants are watered a little more
+  often, and a bed's size gives how much water the whole bed needs ("about 20 mm: 60 L for the
+  whole bed"). Exports include beds, and older exports still import.
 
 ### Changed
 

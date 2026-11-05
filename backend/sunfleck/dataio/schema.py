@@ -62,6 +62,10 @@ class Location(Model):
     temperature_max_c: float | None
     humidity: str
     exposure: str
+    # Added in 0.7: exports from earlier versions have no garden beds.
+    bed_type: str = ""
+    bed_width_cm: int | None = None
+    bed_length_cm: int | None = None
     light_sources: list[LightSource] = Field(default_factory=list)
 
 

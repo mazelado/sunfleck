@@ -1,12 +1,31 @@
 import type { TFunction } from "i18next";
 
 import type { LightSource, Location } from "../../api/places";
-import { celsiusToDisplay, temperatureUnit, type UnitSystem } from "../../lib/units";
+import {
+  celsiusToDisplay,
+  cmToDisplay,
+  lengthUnit,
+  temperatureUnit,
+  type UnitSystem,
+} from "../../lib/units";
 
 /** One-line descriptions of places data, shared by the list and detail pages. */
 export function describeConditions(location: Location, t: TFunction, units: UnitSystem): string[] {
   const parts: string[] = [];
   if (location.kind === "outdoor") {
+    if (location.bed_type) {
+      parts.push(t(`places.bed${pascal(location.bed_type)}` as "places.bedRaised"));
+    }
+    const { bed_width_cm: width, bed_length_cm: length } = location;
+    if (location.bed_type && width && length) {
+      parts.push(
+        t("places.bedSize", {
+          width: cmToDisplay(width, units),
+          length: cmToDisplay(length, units),
+          unit: lengthUnit(units),
+        }),
+      );
+    }
     if (location.exposure) {
       parts.push(t(`places.exposure${pascal(location.exposure)}` as "places.exposureShade"));
     }

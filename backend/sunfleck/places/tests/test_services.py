@@ -56,12 +56,16 @@ def test_indoor_location_keeps_only_indoor_fields() -> None:
             temperature_max_c=24,
             humidity="medium",  # type: ignore[arg-type]
             exposure="full_sun",  # type: ignore[arg-type]
+            bed_type="raised",  # type: ignore[arg-type]
+            bed_width_cm=120,
+            bed_length_cm=240,
         ),
     )
 
     assert (location.temperature_min_c, location.temperature_max_c) == (16, 24)
     assert location.humidity == "medium"
     assert location.exposure == ""
+    assert (location.bed_type, location.bed_width_cm, location.bed_length_cm) == ("", None, None)
 
 
 @pytest.mark.django_db
@@ -74,12 +78,20 @@ def test_outdoor_location_keeps_only_outdoor_fields() -> None:
             temperature_min_c=16,
             humidity="medium",  # type: ignore[arg-type]
             exposure="part_shade",  # type: ignore[arg-type]
+            bed_type="raised",  # type: ignore[arg-type]
+            bed_width_cm=120,
+            bed_length_cm=240,
         ),
     )
 
     assert location.temperature_min_c is None
     assert location.humidity == ""
     assert location.exposure == "part_shade"
+    assert (location.bed_type, location.bed_width_cm, location.bed_length_cm) == (
+        "raised",
+        120,
+        240,
+    )
 
 
 @pytest.mark.django_db

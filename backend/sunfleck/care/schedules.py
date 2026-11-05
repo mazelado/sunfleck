@@ -31,7 +31,7 @@ from sunfleck.care.models import (
 from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.humidity import location_humidity
 from sunfleck.places.light import grow_light_dli
-from sunfleck.places.models import LightSourceKind, LocationKind
+from sunfleck.places.models import BedType, LightSourceKind, LocationKind
 from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
@@ -84,11 +84,14 @@ def conditions_for(plant: Plant) -> Conditions:
     if location is None:
         return plant_only
     if location.kind == LocationKind.OUTDOOR:
+        width, length = location.bed_width_cm, location.bed_length_cm
         return replace(
             plant_only,
             indoor=False,
             latitude=location.site.latitude,
             exposure=location.exposure or None,
+            raised_bed=location.bed_type == BedType.RAISED,
+            bed_area_m2=width * length / 10_000 if width and length else None,
         )
     windows, grow_lights = plant_lights(plant)
     humidity = location_humidity(location)

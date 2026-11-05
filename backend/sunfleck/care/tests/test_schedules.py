@@ -104,6 +104,22 @@ def test_conditions_of_an_outdoor_plant(monty: Plant, living_room: Location) -> 
     )
 
 
+def test_conditions_of_a_plant_in_a_garden_bed(monty: Plant, living_room: Location) -> None:
+    living_room.kind = LocationKind.OUTDOOR
+    living_room.bed_type = "raised"
+    living_room.bed_width_cm, living_room.bed_length_cm = 120, 250
+    living_room.save()
+
+    conditions = schedules.conditions_for(monty)
+
+    assert (conditions.raised_bed, conditions.bed_area_m2) == (True, 3.0)
+    # Without its size, the bed's area isn't known.
+    living_room.bed_type, living_room.bed_length_cm = "in_ground", None
+    living_room.save()
+    conditions = schedules.conditions_for(monty)
+    assert (conditions.raised_bed, conditions.bed_area_m2) == (False, None)
+
+
 def test_conditions_of_a_plant_without_a_location(household: Household) -> None:
     plant = PlantFactory.create(household=household, container_material="")
 

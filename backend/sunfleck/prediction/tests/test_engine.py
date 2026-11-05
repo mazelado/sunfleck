@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from dataclasses import replace
 from datetime import date
 from typing import Any
 
@@ -314,6 +315,29 @@ def test_in_the_ground_watering_is_a_depth_of_water() -> None:
     }
 
 
+def test_a_raised_bed_dries_sooner_and_its_amount_covers_the_whole_bed() -> None:
+    bed = Conditions(indoor=False, pot_material="in_ground", bed_area_m2=3.0)
+    raised = replace(bed, raised_bed=True)
+
+    in_ground = predict_watering(AROID, bed, WATERED, SPRING_DAY)
+    in_raised = predict_watering(AROID, raised, WATERED, SPRING_DAY)
+
+    assert "raised_bed" not in codes(in_ground)
+    assert factor(in_raised, "raised_bed").multiplier == pytest.approx(0.85)
+    assert in_raised.interval_days is not None
+    assert in_ground.interval_days is not None
+    assert in_raised.interval_days < in_ground.interval_days
+    # 30 mm on 3 m²: the app shows about 90 litres for the bed.
+    assert factor(in_ground, "water_amount").details == {
+        "depth_mm": 30,
+        "in_ground": True,
+        "bed_area_m2": 3.0,
+    }
+    # A potted plant standing in a raised bed dries like its pot.
+    potted = replace(raised, pot_diameter_cm=20, pot_material=None)
+    assert "raised_bed" not in codes(predict_watering(AROID, potted, WATERED, SPRING_DAY))
+
+
 def test_indoors_without_a_pot_size_it_asks_for_one() -> None:
     prediction = predict_watering(AROID, LIVING_ROOM, WATERED, SPRING_DAY)
 
@@ -557,6 +581,9 @@ def test_a_plugin_can_say_how_much_water_to_give_in_the_ground() -> None:
     assert amount(in_ground, 4) == {"depth_mm": 10, "in_ground": True}
     # A pot's amount already comes from the soil that dries.
     assert amount(pot, 20) == amount(pot)
+    # A bed's area stays, for the water for the whole bed.
+    bed = replace(in_ground, pot_diameter_cm=None, bed_area_m2=3.0)
+    assert amount(bed, 20) == {"depth_mm": 20, "in_ground": True, "bed_area_m2": 3.0}
 
 
 def test_the_soil_holds_the_water_of_the_depth_that_may_dry() -> None:

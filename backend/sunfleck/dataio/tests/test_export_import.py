@@ -60,7 +60,15 @@ def filled(household: Household, ada: Membership) -> Household:
     room = Location.objects.create(
         site=site, name="Living room", kind=LocationKind.INDOOR, humidity="medium"
     )
-    Location.objects.create(site=site, name="Garden", kind=LocationKind.OUTDOOR, exposure="shade")
+    Location.objects.create(
+        site=site,
+        name="Garden",
+        kind=LocationKind.OUTDOOR,
+        exposure="shade",
+        bed_type="raised",
+        bed_width_cm=120,
+        bed_length_cm=240,
+    )
     window = LightSource.objects.create(location=room, kind="window", name="Bay", direction="S")
     LightSource.objects.create(
         location=room,
@@ -222,6 +230,18 @@ def test_exports_from_before_pot_heights_import(filled: Household) -> None:
 
     monty = Plant.objects.get(household=target, nickname="Monty")
     assert (monty.container_diameter_cm, monty.container_height_cm) == (17, None)
+
+
+def test_exports_from_before_garden_beds_import(filled: Household) -> None:
+    def drop_beds(exported: dict[str, Any]) -> None:
+        for location in exported["sites"][0]["locations"]:
+            del location["bed_type"], location["bed_width_cm"], location["bed_length_cm"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_beds)))
+
+    garden = Location.objects.get(site__household=target, name="Garden")
+    assert (garden.bed_type, garden.bed_width_cm, garden.bed_length_cm) == ("", None, None)
 
 
 def test_exports_from_before_routines_import(filled: Household) -> None:

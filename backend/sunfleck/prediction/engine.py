@@ -86,6 +86,9 @@ POT_MATERIAL = {
     "in_ground": 1.3,
 }
 
+# A raised bed drains and warms faster than the ground around it, so it dries sooner.
+RAISED_BED = 0.85
+
 DORMANT = 1.5
 
 # The air the care profiles' intervals assume, in % relative humidity. Drier air dries the
@@ -155,6 +158,9 @@ class Conditions:
     pot_height_cm: int | None = None
     pot_material: str | None = None
     dormant: bool = False
+    # Outdoors, in a garden bed: whether it's raised, and its area if its size is known.
+    raised_bed: bool = False
+    bed_area_m2: float | None = None
 
 
 @dataclass(frozen=True)
@@ -318,6 +324,8 @@ def pot_factors(conditions: Conditions) -> list[Factor]:
                 {"material": conditions.pot_material},
             )
         )
+    if conditions.raised_bed and not (conditions.pot_diameter_cm and not in_ground):
+        factors.append(Factor("raised_bed", RAISED_BED))
     return factors
 
 
@@ -366,10 +374,11 @@ def water_amount(profile: Profile, conditions: Conditions, interval_days: int) -
         )
     if in_ground or conditions.indoor is False:
         depth = _clamp(GROUND_MM_PER_WEEK * interval_days / 7, *GROUND_MM_LIMITS)
-        return Factor(
-            "water_amount",
-            details={"depth_mm": round(depth / 5) * 5, "in_ground": in_ground},
-        )
+        details: dict[str, Any] = {"depth_mm": round(depth / 5) * 5, "in_ground": in_ground}
+        if conditions.bed_area_m2:
+            # For the whole bed, in litres: the depth (in mm) times the area (in m²).
+            details["bed_area_m2"] = round(conditions.bed_area_m2, 2)
+        return Factor("water_amount", details=details)
     return Factor("no_pot_size")
 
 
