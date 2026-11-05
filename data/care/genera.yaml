@@ -560,6 +560,18 @@ genera:
       - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/corn-plant
       note:
         en: Saponins
+  - name: Dracaena marginata
+    common_names:
+      en:
+      - Madagascar dragon tree
+      - red-edged dracaena
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/madagascar-dragon-tree
+      note:
+        en: Saponins
   - name: Dracaena trifasciata
     common_names:
       en:
@@ -587,6 +599,18 @@ genera:
       en:
       - money tree
       - Guiana chestnut
+- genus: Persea
+  family: Lauraceae
+  archetype: indoor_tree
+  common_names:
+    en:
+    - avocado
+  species:
+  - name: Persea americana
+    common_names:
+      en:
+      - avocado
+      - alligator pear
 - genus: Strelitzia
   family: Strelitziaceae
   archetype: indoor_tree

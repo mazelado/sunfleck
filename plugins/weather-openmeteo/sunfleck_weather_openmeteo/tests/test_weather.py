@@ -574,6 +574,8 @@ def test_the_soil_dries_by_what_the_weather_takes(
             "dry_on": "2026-04-16",
         },
     }
+    # A watering puts back what the soil holds, not 25 mm a week.
+    assert (factor(rose, "water_amount") or {})["details"]["depth_mm"] == 20
     # The balance counts rain and heat itself: no rules of thumb on top.
     assert factor(rose, "rain") is None
     assert factor(rose, "hot_spell") is None

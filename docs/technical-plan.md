@@ -395,7 +395,8 @@ use. (0.4.1 fixed the first version, a share of the whole pot's volume, which gr
 cube of the pot's width and gave several litres for big pots.) It's shown as "about 600 ml, or
 until a little drains from the bottom". In the
 ground, or outdoors without a pot size: a depth of water, 25 mm a week spread over the interval
-(10–40 mm). Indoors without a pot size, the app asks for it. Air plants get no amount.
+(10–40 mm); with the weather plugin's soil water balance, what the soil holds instead (since
+0.7). Indoors without a pot size, the app asks for it. Air plants get no amount.
 
 The next due date counts from the last watering (or from when the routine started, until
 watering is logged). If that falls in a season without watering, it moves to when the season

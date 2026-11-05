@@ -56,6 +56,10 @@ A simplified version of the FAO-56 method
    day the water stored runs out, or the day after the forecast if it doesn't.
 5. **Limits:** Sunfleck keeps that day between half and double the interval it works out
    otherwise, so one odd forecast can't go too far.
+6. **How much to give:** in the ground or a bed, a watering puts back what the soil holds
+   (step 1), shown as a depth of water: 10 to 20 mm, rounded to 5 mm. Without the balance,
+   Sunfleck's rule of thumb is 25 mm a week. In a pot, the amount already comes from the soil
+   that dries.
 
 **Why?** on the plant's page shows the numbers: the water taken since watering, the rain, what
 the soil holds, and the day it's dry. These are rough, like the rest of Sunfleck's estimates:
