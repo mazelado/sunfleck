@@ -29,13 +29,21 @@ from sunfleck.taxonomy.models import Taxon
 PASSWORD = "a long and unusual passphrase"  # noqa: S105 - a demo account, said so in --help
 TIMEZONE = "Europe/Amsterdam"
 
-# (nickname, species or genus, care profile if neither is known, room, photo, watered days ago)
-PLANTS: list[tuple[str, str | None, str | None, str, str, int]] = [
-    ("Golden pothos", "Epipremnum aureum", None, "Living room", "golden-pothos.webp", 9),
-    ("Flaming Katy", "Kalanchoe blossfeldiana", None, "Living room", "flaming-katy.webp", 12),
-    ("Dragon tree", "Dracaena", None, "Living room", "dracaena.webp", 12),
-    ("Aloe", "Aloe vera", None, "Kitchen", "aloe-vera.webp", 15),
-    ("Avocado seedling", None, "tropical_aroid", "Kitchen", "avocado-seedling.webp", 10),
+# When each plant was last watered, from its own predicted interval, so the same plants need
+# water in every season (the browser tests rely on it): due today, due in a few days, or
+# watered recently.
+DUE, SOON, WATERED = "due", "soon", "watered"
+SOON_DAYS = 4
+WATERED_DAYS_AGO = 2
+FERTILIZED_DAYS_AGO = 10
+
+# (nickname, species or genus, care profile if neither is known, room, photo, watering)
+PLANTS: list[tuple[str, str | None, str | None, str, str, str]] = [
+    ("Golden pothos", "Epipremnum aureum", None, "Living room", "golden-pothos.webp", DUE),
+    ("Flaming Katy", "Kalanchoe blossfeldiana", None, "Living room", "flaming-katy.webp", WATERED),
+    ("Dragon tree", "Dracaena marginata", None, "Living room", "dracaena.webp", DUE),
+    ("Aloe", "Aloe vera", None, "Kitchen", "aloe-vera.webp", SOON),
+    ("Avocado seedling", "Persea americana", None, "Kitchen", "avocado-seedling.webp", DUE),
 ]
 
 
@@ -76,7 +84,7 @@ class Command(BaseCommand):
         water = CareType.objects.get(household=None, key="water")
         fertilize = CareType.objects.get(household=None, key="fertilize")
         now = timezone.now()
-        for nickname, species, profile, room_name, photo, watered_days_ago in PLANTS:
+        for nickname, species, profile, room_name, photo, watering in PLANTS:
             room, window = rooms[room_name]
             taxon = Taxon.objects.filter(scientific_name=species).first() if species else None
             plant = plants.create_plant(
@@ -92,15 +100,20 @@ class Command(BaseCommand):
             )
             with (photos / photo).open("rb") as file:
                 plants.add_photo(plant, file, (photos / photo).stat().st_size)
-            for care_type, days_ago in ((water, watered_days_ago), (fertilize, 25)):
+            for care_type in (water, fertilize):
+                schedule = schedules.create_schedule(
+                    plant, schedules.ScheduleData(care_type.pk, ScheduleMode.PREDICTED)
+                )
+                if care_type == water:
+                    days_ago = _watered_days_ago(watering, schedule.interval_days)
+                else:
+                    days_ago = FERTILIZED_DAYS_AGO
                 log_care(
                     plant,
                     CareEventData(care_type.pk, performed_at=now - timedelta(days=days_ago)),
                     user,
                 )
-                schedules.create_schedule(
-                    plant, schedules.ScheduleData(care_type.pk, ScheduleMode.PREDICTED)
-                )
+                schedules.recalculate(schedule)
         self.stdout.write(f"Made the demo household; sign in as {user.email}.")
 
     def _weather(self, household: Any, site: Any) -> None:
@@ -132,3 +145,13 @@ class Command(BaseCommand):
                 "fetched_at": datetime.now(tz=ZoneInfo("UTC")),
             },
         )
+
+
+def _watered_days_ago(watering: str, interval_days: int | None) -> int:
+    """How long ago to have watered, so the plant is due today, soon, or not for a while."""
+    interval = interval_days or 14  # no watering now (a resting season): any will do
+    if watering == DUE:
+        return interval
+    if watering == SOON:
+        return max(interval - SOON_DAYS, 1)
+    return WATERED_DAYS_AGO
