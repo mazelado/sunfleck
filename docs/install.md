@@ -145,8 +145,9 @@ encryption. Special characters in the user name or password must be URL-encoded 
     to the Home Screen (iOS 16.4 or later).
 - **Plugins** are turned on by an Admin under **Plugins**. They're off by default, since they
   send data to outside services; the page says exactly what each sends.
-  - **Weather (Open-Meteo)**: each site's weather on Today, frost warnings, and outdoor
-    watering that follows the rain and heat. Free, no account needed.
+  - **Weather (Open-Meteo)**: each site's weather on Today, frost warnings and frost dates,
+    and outdoor watering that follows the rain and heat. Free, no account needed. It reaches
+    `api.open-meteo.com` and `archive-api.open-meteo.com`.
   - **Plant identification (Pl@ntNet)**: identify a plant from a photo when adding it. Needs
     a free API key from [my.plantnet.org](https://my.plantnet.org) (500 identifications a day).
 

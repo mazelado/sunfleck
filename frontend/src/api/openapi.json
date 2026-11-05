@@ -1005,6 +1005,50 @@
         "title": "FertilizingOut",
         "type": "object"
       },
+      "FrostDatesIn": {
+        "properties": {
+          "first_frost": {
+            "anyOf": [
+              {
+                "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "10-25"
+            ],
+            "title": "First Frost"
+          },
+          "last_frost": {
+            "anyOf": [
+              {
+                "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "04-20"
+            ],
+            "title": "Last Frost"
+          }
+        },
+        "title": "FrostDatesIn",
+        "type": "object"
+      },
+      "FrostSource": {
+        "enum": [
+          "estimated",
+          "entered"
+        ],
+        "title": "FrostSource",
+        "type": "string"
+      },
       "GlanceOut": {
         "description": "For the slim water, fertilizer and light bars. Each is None when it isn't known.",
         "properties": {
@@ -3951,9 +3995,56 @@
       },
       "SiteOut": {
         "properties": {
+          "first_frost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The typical first autumn frost, as MM-DD.",
+            "title": "First Frost"
+          },
+          "frost_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FrostSource"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where the frost dates come from; none while they're not known."
+          },
+          "frost_years": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For an estimate: the years of weather it's from.",
+            "title": "Frost Years"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
+          },
+          "last_frost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The typical last spring frost, as MM-DD. With `frost_source` but none, it typically doesn't freeze in spring there.",
+            "title": "Last Frost"
           },
           "latitude": {
             "title": "Latitude",
@@ -3985,6 +4076,10 @@
           "latitude",
           "longitude",
           "timezone",
+          "last_frost",
+          "first_frost",
+          "frost_source",
+          "frost_years",
           "locations"
         ],
         "title": "SiteOut",
@@ -8090,6 +8185,54 @@
           }
         ],
         "summary": "Update Site",
+        "tags": [
+          "places"
+        ]
+      }
+    },
+    "/api/v1/sites/{site_id}/frost-dates": {
+      "put": {
+        "description": "Enter the site's typical frost dates. Leaving both out goes back to an estimate, from a\nplugin that can make one (within the hour).",
+        "operationId": "sunfleck_places_api_set_frost_dates",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "title": "Site Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrostDatesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Set Frost Dates",
         "tags": [
           "places"
         ]

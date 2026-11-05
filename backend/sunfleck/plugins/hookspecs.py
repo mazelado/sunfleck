@@ -17,6 +17,7 @@ from sunfleck.plugins.types import (
     AiAnswer,
     AiTask,
     CareContext,
+    FrostDates,
     Identification,
     PeriodicJob,
     PhotoToIdentify,
@@ -56,6 +57,13 @@ def care_factors(context: CareContext, settings: BaseModel | None) -> list[Adjus
 @hookspec
 def site_conditions(site: "Site", settings: BaseModel | None) -> SiteConditions | None:
     """Current conditions and today's forecast at a site, shown on the Today page."""
+
+
+@hookspec
+def frost_dates(site: "Site", settings: BaseModel | None) -> FrostDates | None:
+    """The site's typical last spring frost and first autumn frost, e.g. estimated from past
+    weather. Called once for each site without them (and again when it moves), in the worker:
+    it may take a while. None when it can't tell."""
 
 
 @hookspec

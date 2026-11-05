@@ -14,6 +14,7 @@ from sunfleck.places.models import (
     BedType,
     Direction,
     Exposure,
+    FrostSource,
     Humidity,
     LightSource,
     LightSourceKind,
@@ -69,8 +70,13 @@ def create_site(household: Household, data: SiteData) -> Site:
 
 def update_site(site: Site, data: SiteData) -> Site:
     data = _validated_site(data)
+    moved = (site.latitude, site.longitude) != (data.latitude, data.longitude)
     for field, value in data.__dict__.items():
         setattr(site, field, value)
+    if moved and site.frost_source == FrostSource.ESTIMATED:
+        # Estimated for where it was: estimate them again (see places.frost).
+        site.last_frost = site.first_frost = site.frost_years = None
+        site.frost_source = ""
     site.save()
     return site
 

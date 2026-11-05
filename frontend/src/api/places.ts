@@ -95,6 +95,21 @@ export function useUpdateSite(siteId: number) {
   });
 }
 
+/** Enter a site's frost dates ("MM-DD"); leaving both out goes back to an estimate. */
+export function useSetFrostDates(siteId: number) {
+  const invalidate = useInvalidateSites();
+  return useMutation({
+    mutationFn: async (body: { last_frost: string | null; first_frost: string | null }) =>
+      unwrap(
+        await api.PUT("/api/v1/sites/{site_id}/frost-dates", {
+          params: { path: { site_id: siteId } },
+          body,
+        }),
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function useDeleteSite() {
   const invalidate = useInvalidateSites();
   return useMutation({

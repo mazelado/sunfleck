@@ -56,6 +56,10 @@ def filled(household: Household, ada: Membership) -> Household:
         latitude=52.37,
         longitude=4.89,
         timezone="Europe/Amsterdam",
+        last_frost=date(2000, 4, 9),
+        first_frost=date(2000, 10, 25),
+        frost_source="estimated",
+        frost_years=20,
     )
     room = Location.objects.create(
         site=site, name="Living room", kind=LocationKind.INDOOR, humidity="medium"

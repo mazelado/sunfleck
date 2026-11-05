@@ -47,5 +47,6 @@ plugin = PluginInfo(
     sends_data_to=(
         "api.open-meteo.com: each site's location, rounded to about 1 km, every few hours "
         "(testing the plugin sends a fixed place instead)",
+        "archive-api.open-meteo.com: the same, once per site, for its frost dates",
     ),
 )

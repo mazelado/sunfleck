@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { LightSource, Location, Site } from "../../api/places";
+import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
 
@@ -49,6 +50,10 @@ function site(overrides: Partial<Site> = {}): Site {
     latitude: 52.37,
     longitude: 4.89,
     timezone: "Europe/Amsterdam",
+    last_frost: null,
+    first_frost: null,
+    frost_source: null,
+    frost_years: null,
     locations: [location()],
     ...overrides,
   };
@@ -262,6 +267,60 @@ describe("garden beds", () => {
     renderApp("/places/1");
 
     expect(await screen.findByText(/Raised bed · 120 × 240 cm/)).toBeVisible();
+  });
+});
+
+describe("frost dates", () => {
+  it("shows the estimate, and where it's from", async () => {
+    signInAs(viewer);
+    withSites([
+      site({
+        last_frost: "04-09",
+        first_frost: null,
+        frost_source: "estimated",
+        frost_years: 20,
+      }),
+    ]);
+    renderApp("/places/1");
+
+    expect(await screen.findByText("Last spring frost: around April 9")).toBeVisible();
+    expect(screen.getByText("First autumn frost: usually none")).toBeVisible();
+    expect(screen.getByText(/Estimated from 20 years of weather/)).toBeVisible();
+    // Read-only for viewers.
+    expect(screen.queryByRole("button", { name: "Edit" })).not.toBeInTheDocument();
+  });
+
+  it("lets a gardener enter them, or go back to the estimate", async () => {
+    signInAs(gardener);
+    let entered = site();
+    const sent: unknown[] = [];
+    server.use(
+      http.get("*/api/v1/sites", () => HttpResponse.json([entered])),
+      http.put("*/api/v1/sites/1/frost-dates", async ({ request }) => {
+        const body = (await request.json()) as { last_frost: string | null };
+        sent.push(body);
+        entered = { ...entered, ...body, frost_source: body.last_frost ? "entered" : null };
+        return HttpResponse.json(entered);
+      }),
+    );
+    const { user } = renderApp("/places/1");
+
+    expect(await screen.findByText(/Not known yet/)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Enter them" }));
+    const dialog = await screen.findByRole("dialog", { name: "Frost dates" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    await user.type(within(dialog).getByLabelText("Last spring frost"), "2026-05-15");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Last spring frost: around May 15")).toBeVisible();
+    expect(screen.getByText("Entered by your household.")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Use the estimate instead" }));
+
+    expect(await screen.findByText(/Not known yet/)).toBeVisible();
+    expect(sent).toEqual([
+      { last_frost: "05-15", first_frost: null },
+      { last_frost: null, first_frost: null },
+    ]);
   });
 });
 
