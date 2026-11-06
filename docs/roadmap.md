@@ -50,12 +50,14 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
-| **0.8 Hibiscus** | [Collector features](#collector-features) | Next |
+| **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features) | In progress |
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
-Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia, and
-[more gardening](#more-gardening), split from Gardenia, to keep each release smaller. Each goes into a release when there's room, or when someone needs it.
+Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
+[more gardening](#more-gardening), split from Gardenia, and
+[more collector features](#more-collector-features), split from Hibiscus, to keep each release
+smaller. Each goes into a release when there's room, or when someone needs it.
 
 ## Phases
 
@@ -159,14 +161,27 @@ Split from Gardenia (0.7), not yet scheduled.
   toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
   control centres, since there's no single list like the ASPCA's.
 
-### Collector features
+### Hibiscus: collector features
 
-- **Propagation and lineage:** cuttings, divisions and seedlings ("this plant came from that
-  one").
+Growing more plants from the ones you have, and finding each one's page quickly.
+
+- **The dead ends found by the click counts** (#97), first:
+  - add a place and a room from the plant form, without losing it (#120);
+  - add a care type where care is logged or scheduled, not only in Settings (#121);
+  - Today shows a new household how to get started (#122).
+- **Propagation and lineage:** a cutting, division, offset or seedling is a new plant with its
+  parent and how it was made ("a cutting of Monty"). The parent's page lists its offspring.
+- **QR and NFC labels** that open the plant's page: a printable sheet of QR labels for the
+  plants chosen, and writing an NFC tag where the browser can (Chrome on Android).
+- **A wishlist** of plants wanted.
+
+### More collector features
+
+Split from Hibiscus (0.8), not yet scheduled.
+
 - A supplies inventory (soil, fertilizer, pots), with optional reminders to restock.
-- **QR and NFC labels** that open the plant's page.
-- Statistics and charts, and a growth time-lapse from photos.
-- A wishlist of plants wanted.
+- Statistics and charts.
+- A growth time-lapse from photos.
 
 ### AI assistant
 
