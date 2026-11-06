@@ -22,6 +22,7 @@ dependencies = [
     "sunfleck-weather-openmeteo",
     "sunfleck-identify-plantnet",
     "sunfleck-ai-openai",
+    "sunfleck-ai-anthropic",
     "huey>=3.5",
     "apprise>=1.9",
     "cryptography>=44",
@@ -57,6 +58,7 @@ package = false
 sunfleck-weather-openmeteo = { path = "../plugins/weather-openmeteo", editable = true }
 sunfleck-identify-plantnet = { path = "../plugins/identify-plantnet", editable = true }
 sunfleck-ai-openai = { path = "../plugins/ai-openai", editable = true }
+sunfleck-ai-anthropic = { path = "../plugins/ai-anthropic", editable = true }
 
 # --- Ruff: formatting and linting -------------------------------------------------------------
 
@@ -125,6 +127,7 @@ module = [
     "sunfleck_weather_openmeteo.tests.*",
     "sunfleck_identify_plantnet.tests.*",
     "sunfleck_ai_openai.tests.*",
+    "sunfleck_ai_anthropic.tests.*",
 ]
 disallow_untyped_calls = false
 
