@@ -1,43 +1,87 @@
-import { Button, Paper, Stack, Text, Title } from "@mantine/core";
-import { IconMapPin, IconPlant2 } from "@tabler/icons-react";
+import { Button, Group, Paper, Stack, Text, ThemeIcon, Title, VisuallyHidden } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { useSites } from "../../api/places";
-import { usePlants } from "../../api/plants";
+import type { Site } from "../../api/places";
 
-/** Where to start: places and plants. Shown on Today until there's care to do. */
-export function GettingStarted() {
+interface Step {
+  key: "place" | "location" | "plant";
+  done: boolean;
+  /** Where to do it; only the next step has a button. */
+  to: string;
+}
+
+/**
+ * The first steps in a new household, in order: a place, a location in it, and a plant there.
+ * Shown on Today until the household has a plant; each step is ticked off once it's done, and
+ * the next one has a button.
+ */
+export function GettingStarted({ sites, canEdit }: { sites: Site[]; canEdit: boolean }) {
   const { t } = useTranslation();
-  const sites = useSites().data;
-  const plantCount = usePlants().data?.pages[0]?.count;
+  const titleId = useId();
+  const firstSite = sites[0];
+  const firstLocation = sites.flatMap((site) => site.locations)[0];
+  const steps: Step[] = [
+    { key: "place", done: firstSite !== undefined, to: "/places/new" },
+    {
+      key: "location",
+      done: firstLocation !== undefined,
+      to: firstSite ? `/places/${String(firstSite.id)}/locations/new` : "/places",
+    },
+    {
+      key: "plant",
+      done: false,
+      to: firstLocation ? `/plants/new?location=${String(firstLocation.id)}` : "/plants/new",
+    },
+  ];
+  const next = steps.find((step) => !step.done);
+
   return (
-    <Stack gap="sm">
-      <Title order={2} fz="h4">
-        {t("today.gettingStarted")}
-      </Title>
-      <Paper withBorder radius="lg" p="lg">
-        <Stack gap="sm" align="flex-start">
-          <Text>
-            {sites && sites.length > 0
-              ? t("home.placesSummary", { count: sites.length })
-              : t("home.placesCta")}
+    <Paper withBorder radius="lg" p="lg" component="section" aria-labelledby={titleId}>
+      <Stack gap="md">
+        <Stack gap={4}>
+          <Title order={2} fz="h4" id={titleId}>
+            {t("today.gettingStarted")}
+          </Title>
+          <Text size="sm" c="dimmed">
+            {canEdit ? t("home.intro") : t("home.introViewer")}
           </Text>
-          <Button component={Link} to="/places" leftSection={<IconMapPin size={16} />}>
-            {t("home.goToPlaces")}
-          </Button>
         </Stack>
-      </Paper>
-      <Paper withBorder radius="lg" p="lg">
-        <Stack gap="sm" align="flex-start">
-          <Text>
-            {plantCount ? t("home.plantsSummary", { count: plantCount }) : t("home.plantsCta")}
-          </Text>
-          <Button component={Link} to="/plants" leftSection={<IconPlant2 size={16} />}>
-            {t("home.goToPlants")}
-          </Button>
+        <Stack gap="sm" component="ol" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {steps.map((step, index) => (
+            <Group key={step.key} component="li" gap="sm" wrap="nowrap" align="flex-start">
+              <ThemeIcon
+                radius="xl"
+                variant={step.done ? "filled" : "light"}
+                color={step.done ? "leaf" : "gray"}
+                aria-hidden
+              >
+                {step.done ? <IconCheck size={16} /> : <Text size="sm">{index + 1}</Text>}
+              </ThemeIcon>
+              <Stack gap={6} align="flex-start" style={{ flex: 1 }}>
+                <Text fw={step === next ? 600 : undefined} c={step.done ? "dimmed" : undefined}>
+                  {t(`home.steps.${step.key}`)}
+                  {step.done && <VisuallyHidden>{` (${t("home.done")})`}</VisuallyHidden>}
+                </Text>
+                {step === next && (
+                  <>
+                    <Text size="sm" c="dimmed">
+                      {t(`home.stepHelp.${step.key}`)}
+                    </Text>
+                    {canEdit && (
+                      <Button component={Link} to={step.to} size="sm">
+                        {t(`home.stepAction.${step.key}`)}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Stack>
+            </Group>
+          ))}
         </Stack>
-      </Paper>
-    </Stack>
+      </Stack>
+    </Paper>
   );
 }

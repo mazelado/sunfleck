@@ -18,6 +18,9 @@ the weather, and they get better as you tell it how the soil was.
 
 ## Getting started
 
+Until your household has a plant, **Today** shows these steps, ticks off each one that's done,
+and has a button for the next.
+
 1. **Add a place** (Places → Add a place): your home or garden, with its location on a map.
    The location sets its time zone, seasons and, with the weather plugin, its weather.
 2. **Add locations** to it: rooms or garden beds, with their windows and grow lights.

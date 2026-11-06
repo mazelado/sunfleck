@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **Today shows a new household how to get started** (#122): until there's a plant, a
+  checklist (a place, a location in it, a first plant) replaces the empty lists of care, ticks
+  off each step that's done, and has a button for the next. It replaces the two cards that
+  linked to the Places and Plants pages.
+
 ## [0.7.0] - 2026-11-06
 
 **Gardenia.** Growing food outside: garden beds with their size, frost dates for each place, a

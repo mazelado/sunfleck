@@ -30,6 +30,8 @@ import { type Task, useLogCareForPlants, useSnooze, useToday } from "../../api/t
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
+import { useSites } from "../../api/places";
+import { usePlants } from "../../api/plants";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { CareEventDialog } from "../care/CareEventDialog";
 import { CareIcon } from "../care/icons";
@@ -46,6 +48,8 @@ export function TodayPage() {
   const { t, i18n } = useTranslation();
   const today = useToday();
   const canEdit = useCanEdit();
+  const places = useSites().data;
+  const plantCount = usePlants().data?.pages[0]?.count;
 
   if (today.isPending) {
     return <FullPageLoader />;
@@ -67,6 +71,8 @@ export function TodayPage() {
       : t("today.noLocation"),
   );
   const byDay = groupBy(upcoming, (task) => task.due_on);
+  // A new household, with no plants and so no care: the first steps instead of empty lists.
+  const isNew = plantCount === 0 && places !== undefined && tasks.length === 0 && unscheduled === 0;
 
   return (
     <Stack gap="lg">
@@ -82,6 +88,8 @@ export function TodayPage() {
           }).format(new Date())}
         </Text>
       </Stack>
+
+      {isNew && <GettingStarted sites={places} canEdit={canEdit} />}
 
       {sites.map((conditions) => (
         <WeatherCard
@@ -110,47 +118,49 @@ export function TodayPage() {
 
       <GardenNote />
 
-      <Stack gap="sm">
-        <Title order={2} fz="h4">
-          {t("today.needsCare")}
-        </Title>
-        {due.length === 0 && <Text c="dimmed">{t("today.allCaughtUp")}</Text>}
-        {[...byLocation].map(([location, group]) => (
-          <TaskGroup
-            key={location}
-            title={location}
-            tasks={group}
-            canEdit={canEdit}
-            bulk={canEdit}
-          />
-        ))}
-      </Stack>
+      {!isNew && (
+        <>
+          <Stack gap="sm">
+            <Title order={2} fz="h4">
+              {t("today.needsCare")}
+            </Title>
+            {due.length === 0 && <Text c="dimmed">{t("today.allCaughtUp")}</Text>}
+            {[...byLocation].map(([location, group]) => (
+              <TaskGroup
+                key={location}
+                title={location}
+                tasks={group}
+                canEdit={canEdit}
+                bulk={canEdit}
+              />
+            ))}
+          </Stack>
 
-      <Stack gap="sm">
-        <Title order={2} fz="h4">
-          {t("today.comingUp")}
-        </Title>
-        {upcoming.length === 0 && <Text c="dimmed">{t("today.nothingComingUp")}</Text>}
-        {[...byDay].map(([day, group]) => (
-          <TaskGroup
-            key={day}
-            title={
-              group[0]?.days_until === 1
-                ? t("today.tomorrow")
-                : new Intl.DateTimeFormat(i18n.language, {
-                    weekday: "long",
-                    month: "short",
-                    day: "numeric",
-                  }).format(new Date(`${day}T12:00:00`))
-            }
-            tasks={group}
-            canEdit={canEdit}
-            bulk={false}
-          />
-        ))}
-      </Stack>
-
-      {tasks.length === 0 && unscheduled === 0 && <GettingStarted />}
+          <Stack gap="sm">
+            <Title order={2} fz="h4">
+              {t("today.comingUp")}
+            </Title>
+            {upcoming.length === 0 && <Text c="dimmed">{t("today.nothingComingUp")}</Text>}
+            {[...byDay].map(([day, group]) => (
+              <TaskGroup
+                key={day}
+                title={
+                  group[0]?.days_until === 1
+                    ? t("today.tomorrow")
+                    : new Intl.DateTimeFormat(i18n.language, {
+                        weekday: "long",
+                        month: "short",
+                        day: "numeric",
+                      }).format(new Date(`${day}T12:00:00`))
+                }
+                tasks={group}
+                canEdit={canEdit}
+                bulk={false}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
     </Stack>
   );
 }
