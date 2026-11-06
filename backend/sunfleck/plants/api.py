@@ -41,9 +41,10 @@ from sunfleck.plants.models import (
     PlantStatus,
     PropagationMethod,
     SoilType,
+    Wish,
 )
 from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
-from sunfleck.taxonomy.models import translated_names
+from sunfleck.taxonomy.models import Taxon, translated_names
 
 router = Router(tags=["plants"], auth=django_auth)
 
@@ -97,6 +98,9 @@ class PlantCreateIn(PlantIn):
         le=365,
         description="Roughly when it was last fertilized; leave out if not known or never.",
     )
+    from_wish_id: int | None = Field(
+        default=None, description="The wishlist entry it was on; taken off the wishlist."
+    )
 
 
 class PlantLocationOut(Schema):
@@ -138,6 +142,27 @@ class PlantSpeciesOut(Schema):
     toxicity: ToxicityOut | None = Field(
         default=None, description="Known toxicity to pets; None means unknown, never safe."
     )
+
+
+class WishIn(Schema):
+    name: str = Field(min_length=1, max_length=100)
+    taxon_id: int | None = Field(default=None, description="Its species, if known.")
+    link: str = Field(
+        default="",
+        max_length=500,
+        pattern=r"^(https?://\S+)?$",
+        description="Where to get it, e.g. a shop's page.",
+    )
+    notes: str = Field(default="", max_length=2000)
+
+
+class WishOut(Schema):
+    id: int
+    name: str
+    species: PlantSpeciesOut | None
+    link: str
+    notes: str
+    created_at: datetime
 
 
 class PlantCareProfileOut(Schema):
@@ -305,7 +330,10 @@ def _last_watered_at(plant: Plant) -> datetime | None:
 
 
 def _species_out(plant: Plant, lang: str) -> PlantSpeciesOut | None:
-    taxon = plant.taxon
+    return _taxon_out(plant.taxon, lang)
+
+
+def _taxon_out(taxon: Taxon | None, lang: str) -> PlantSpeciesOut | None:
     if taxon is None:
         return None
     names = translated_names(taxon.common_names, lang)
@@ -418,7 +446,12 @@ def _plants_error(exc: services.PlantsError) -> ApiError:
 
 def _plant_data(data: PlantIn) -> services.PlantData:
     fields = data.model_dump(
-        exclude={"light_sources", "last_watered_days_ago", "last_fertilized_days_ago"}
+        exclude={
+            "light_sources",
+            "last_watered_days_ago",
+            "last_fertilized_days_ago",
+            "from_wish_id",
+        }
     )
     lights = [services.PlantLightData(**light.model_dump()) for light in data.light_sources]
     return services.PlantData(**fields, light_sources=lights)
@@ -510,6 +543,9 @@ def create_plant(request: HttpRequest, data: PlantCreateIn) -> Status[PlantOut]:
                 data.last_watered_days_ago,
                 data.last_fertilized_days_ago,
             )
+            if data.from_wish_id is not None:
+                # Got it: off the wishlist (if someone hasn't taken it off already).
+                household.wishlist.filter(pk=data.from_wish_id).delete()
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return Status(201, _plant_out(_get_plant(household, plant.pk), language(request)))
@@ -676,3 +712,60 @@ def get_photo_image(request: HttpRequest, photo_id: int) -> FileResponse:
 def get_photo_thumbnail(request: HttpRequest, photo_id: int) -> FileResponse:
     """A small version of the photo (WebP, at most 512 px on its long edge)."""
     return _photo_file(request, photo_id, "thumbnail")
+
+
+# --- The wishlist -----------------------------------------------------------------------------
+
+
+def _wish_out(wish: Wish, lang: str) -> WishOut:
+    return WishOut(
+        id=wish.pk,
+        name=wish.name,
+        species=_taxon_out(wish.taxon, lang),
+        link=wish.link,
+        notes=wish.notes,
+        created_at=wish.created_at,
+    )
+
+
+def _get_wish(household: Household, wish_id: int) -> Wish:
+    wish = household.wishlist.select_related("taxon").filter(pk=wish_id).first()
+    if wish is None:
+        raise ApiError(404, "wish_not_found", "This isn't on the wishlist.")
+    return wish
+
+
+@router.get("/wishlist", response=list[WishOut])
+def list_wishlist(request: HttpRequest) -> list[WishOut]:
+    """The plants the household would like to have, by name."""
+    household = require_role(request, Role.VIEWER).household
+    lang = language(request)
+    return [_wish_out(wish, lang) for wish in household.wishlist.select_related("taxon")]
+
+
+@router.post("/wishlist", response={201: WishOut})
+def add_wish(request: HttpRequest, data: WishIn) -> Status[WishOut]:
+    household = require_role(request, Role.GARDENER).household
+    try:
+        wish = services.save_wish(household, None, services.WishData(**data.model_dump()))
+    except services.PlantsError as exc:
+        raise _plants_error(exc) from exc
+    return Status(201, _wish_out(wish, language(request)))
+
+
+@router.put("/wishlist/{wish_id}", response=WishOut)
+def update_wish(request: HttpRequest, wish_id: int, data: WishIn) -> WishOut:
+    household = require_role(request, Role.GARDENER).household
+    wish = _get_wish(household, wish_id)
+    try:
+        services.save_wish(household, wish, services.WishData(**data.model_dump()))
+    except services.PlantsError as exc:
+        raise _plants_error(exc) from exc
+    return _wish_out(wish, language(request))
+
+
+@router.delete("/wishlist/{wish_id}", response={204: None})
+def delete_wish(request: HttpRequest, wish_id: int) -> Status[None]:
+    household = require_role(request, Role.GARDENER).household
+    _get_wish(household, wish_id).delete()
+    return Status(204, None)

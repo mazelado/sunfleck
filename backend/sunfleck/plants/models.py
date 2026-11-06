@@ -205,3 +205,31 @@ class Photo(models.Model):
 
     def __str__(self) -> str:
         return self.caption or f"{self.plant} ({self.taken_at:%Y-%m-%d})"
+
+
+class Wish(models.Model):
+    """A plant the household would like to have."""
+
+    household = models.ForeignKey(Household, on_delete=models.CASCADE, related_name="wishlist")
+    name = models.CharField(_("name"), max_length=100)
+    taxon = models.ForeignKey(
+        Taxon,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name=_("species"),
+    )
+    # Where to get it, e.g. a shop's page.
+    link = models.URLField(_("link"), max_length=500, blank=True)
+    notes = models.TextField(_("notes"), blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("wish")
+        verbose_name_plural = _("wishlist")
+        ordering = ["name", "id"]
+
+    def __str__(self) -> str:
+        return self.name

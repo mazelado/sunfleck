@@ -1472,6 +1472,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/wishlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Wishlist
+         * @description The plants the household would like to have, by name.
+         */
+        get: operations["sunfleck_plants_api_list_wishlist"];
+        put?: never;
+        /** Add Wish */
+        post: operations["sunfleck_plants_api_add_wish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wishlist/{wish_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Wish */
+        put: operations["sunfleck_plants_api_update_wish"];
+        post?: never;
+        /** Delete Wish */
+        delete: operations["sunfleck_plants_api_delete_wish"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2489,6 +2528,11 @@ export interface components {
             /** Container Height Cm */
             container_height_cm?: number | null;
             container_material?: components["schemas"]["ContainerMaterial"] | null;
+            /**
+             * From Wish Id
+             * @description The wishlist entry it was on; taken off the wishlist.
+             */
+            from_wish_id?: number | null;
             /**
              * Last Fertilized Days Ago
              * @description Roughly when it was last fertilized; leave out if not known or never.
@@ -3515,6 +3559,44 @@ export interface components {
              * @enum {string}
              */
             let_dry: "keep_moist" | "top_quarter" | "top_third" | "top_half" | "mostly" | "completely";
+        };
+        /** WishIn */
+        WishIn: {
+            /**
+             * Link
+             * @description Where to get it, e.g. a shop's page.
+             * @default
+             */
+            link: string;
+            /** Name */
+            name: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Taxon Id
+             * @description Its species, if known.
+             */
+            taxon_id?: number | null;
+        };
+        /** WishOut */
+        WishOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** Link */
+            link: string;
+            /** Name */
+            name: string;
+            /** Notes */
+            notes: string;
+            species: components["schemas"]["PlantSpeciesOut"] | null;
         };
     };
     responses: never;
@@ -5917,6 +5999,96 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TodayOut"];
                 };
+            };
+        };
+    };
+    sunfleck_plants_api_list_wishlist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WishOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_add_wish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WishIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WishOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_update_wish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wish_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WishIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WishOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_delete_wish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                wish_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

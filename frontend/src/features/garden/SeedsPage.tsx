@@ -126,6 +126,7 @@ function SeedCard({ seed, canEdit, onEdit }: { seed: Seed; canEdit: boolean; onE
             size="xs"
             leftSection={<IconPencil size={14} />}
             onClick={onEdit}
+            style={{ flexShrink: 0 }}
             aria-label={t("seeds.edit", { name: seed.name })}
           >
             {t("common.edit")}

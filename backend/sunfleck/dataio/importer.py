@@ -26,7 +26,7 @@ from sunfleck.core.images import MAX_UPLOAD_BYTES
 from sunfleck.dataio import schema
 from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import LightSource, Location, Site
-from sunfleck.plants.models import Photo, Plant, PlantLight
+from sunfleck.plants.models import Photo, Plant, PlantLight, Wish
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.taxonomy.models import CareArchetype, Taxon
@@ -349,13 +349,30 @@ class _Importer:
             if item.enabled and plugin_services.secret_fields(info.settings_schema):
                 self.summary.plugins_needing_keys.append(info.name)
 
+    def species(self, scientific_name: str | None) -> Taxon | None:
+        """The species with this name; None, noted as unknown, if it isn't in the dataset."""
+        if not scientific_name:
+            return None
+        taxon = Taxon.objects.filter(scientific_name=scientific_name).first()
+        if taxon is None and scientific_name not in self.summary.unknown_species:
+            self.summary.unknown_species.append(scientific_name)
+        return taxon
+
+    def import_wishlist(self, wishlist: list[schema.Wish]) -> None:
+        for item in wishlist:
+            wish = Wish(
+                household=self.household,
+                taxon=self.species(item.species),
+                name=item.name,
+                link=item.link,
+                notes=item.notes,
+            )
+            _check(wish, f"wish {item.name!r}")
+            wish.save()
+
     def import_seeds(self, seeds: list[schema.Seed]) -> None:
         for item in seeds:
-            taxon = None
-            if item.species:
-                taxon = Taxon.objects.filter(scientific_name=item.species).first()
-                if taxon is None and item.species not in self.summary.unknown_species:
-                    self.summary.unknown_species.append(item.species)
+            taxon = self.species(item.species)
             packet = SeedPacket(
                 household=self.household,
                 taxon=taxon,
@@ -378,6 +395,7 @@ class _Importer:
             self.import_plant(plant)
         self.link_parents(data.plants)
         self.import_seeds(data.seeds)
+        self.import_wishlist(data.wishlist)
         self.import_plugins(data.plugins)
         return self.summary
 
@@ -413,6 +431,7 @@ def is_empty(household: Household) -> bool:
         household.sites.exists()
         or household.plants.exists()
         or household.seeds.exists()
+        or household.wishlist.exists()
         or CareType.objects.filter(household=household).exists()
     )
 

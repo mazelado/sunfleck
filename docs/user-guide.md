@@ -102,6 +102,14 @@ signing out are in the account menu (your picture at the top right).
   (those without a location are listed first). Then choose, on each plant's page, which of
   the new location's windows and grow lights reach it; its schedules adjust.
 
+## Wishlist
+
+- **Wishlist** (from the Plants page) lists plants you'd like to have: a name, the species if
+  you know it, where to get it (a link) and notes. On a species' page in the Care guide,
+  **Add to the wishlist** adds it in one tap.
+- **Got it** opens the new plant's form with its name and species filled in; when you save
+  the plant, it comes off the wishlist. Exports include the wishlist.
+
 ## Seeds
 
 **Seeds** (from the Plants page) lists the seeds you have: their species, variety, how many,

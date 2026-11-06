@@ -17,9 +17,9 @@ from sunfleck.care.tests.factories import CareEventFactory, builtin
 from sunfleck.places.models import Location
 from sunfleck.places.tests.factories import LocationFactory, WindowFactory
 from sunfleck.plants import services
-from sunfleck.plants.models import Photo, Plant, PlantLight
+from sunfleck.plants.models import Photo, Plant, PlantLight, Wish
 from sunfleck.plants.tests.factories import PlantFactory, image_bytes
-from sunfleck.taxonomy.models import CareArchetype
+from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 ClientAs = Callable[[Role], Client]
 
@@ -536,3 +536,83 @@ def test_deleting_the_parent_keeps_how_a_plant_was_grown(
 
     lineage = client.get(f"/api/v1/plants/{child.pk}").json()["lineage"]
     assert (lineage["parent"], lineage["propagation_method"]) == (None, "offset")
+
+
+# --- The wishlist -----------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_the_wishlist_lists_plants_wanted(client_as: ClientAs, household: Household) -> None:
+    client = client_as(Role.GARDENER)
+    monstera = Taxon.objects.get(scientific_name="Monstera deliciosa")
+
+    added = send(
+        client,
+        "POST",
+        "/api/v1/wishlist",
+        {
+            "name": " Variegated monstera ",
+            "taxon_id": monstera.pk,
+            "link": "https://plants.example.com/monstera",
+            "notes": "Half-moon",
+        },
+    )
+    send(client, "POST", "/api/v1/wishlist", {"name": "Anthurium"})
+
+    assert added.status_code == 201
+    wish = added.json()
+    assert (wish["name"], wish["species"]["scientific_name"]) == (
+        "Variegated monstera",
+        "Monstera deliciosa",
+    )
+    listed = client_as(Role.VIEWER).get("/api/v1/wishlist").json()
+    assert [item["name"] for item in listed] == ["Anthurium", "Variegated monstera"]
+
+    changed = send(
+        client, "PUT", f"/api/v1/wishlist/{wish['id']}", {"name": "Monstera", "notes": "Any"}
+    )
+    assert (changed.json()["name"], changed.json()["species"]) == ("Monstera", None)
+    assert send(client, "DELETE", f"/api/v1/wishlist/{wish['id']}").status_code == 204
+    assert [item["name"] for item in client.get("/api/v1/wishlist").json()] == ["Anthurium"]
+
+
+@pytest.mark.django_db
+def test_the_wishlist_checks_what_it_gets(client_as: ClientAs, household: Household) -> None:
+    client = client_as(Role.GARDENER)
+
+    assert send(client, "POST", "/api/v1/wishlist", {"name": ""}).status_code == 422
+    not_a_link = {"name": "Hoya", "link": "javascript:alert(1)"}
+    assert send(client, "POST", "/api/v1/wishlist", not_a_link).status_code == 422
+    unknown = send(client, "POST", "/api/v1/wishlist", {"name": "Hoya", "taxon_id": 999_999})
+    assert unknown.json()["error"]["code"] == "species_not_found"
+    assert (
+        send(client_as(Role.VIEWER), "POST", "/api/v1/wishlist", {"name": "Hoya"}).status_code
+        == 403
+    )
+    theirs = Wish.objects.create(household=HouseholdFactory.create(), name="Theirs")
+    assert send(client, "DELETE", f"/api/v1/wishlist/{theirs.pk}").status_code == 404
+
+
+@pytest.mark.django_db
+def test_a_plant_from_the_wishlist_comes_off_it(client_as: ClientAs, household: Household) -> None:
+    wish = Wish.objects.create(household=household, name="Hoya")
+    other = Wish.objects.create(household=household, name="Anthurium")
+    theirs = Wish.objects.create(household=HouseholdFactory.create(), name="Hoya")
+
+    response = send(
+        client_as(Role.GARDENER),
+        "POST",
+        "/api/v1/plants",
+        {"nickname": "Hoya", "from_wish_id": wish.pk},
+    )
+
+    assert response.status_code == 201
+    assert list(Wish.objects.filter(household=household)) == [other]
+    # Another household's wish isn't touched, even if asked.
+    send(
+        client_as(Role.GARDENER),
+        "POST",
+        "/api/v1/plants",
+        {"nickname": "X", "from_wish_id": theirs.pk},
+    )
+    assert Wish.objects.filter(pk=theirs.pk).exists()

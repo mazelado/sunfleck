@@ -125,6 +125,24 @@ describe("care guide", () => {
     expect(screen.getByText("Every 30 days, but not in Nov–Feb")).toBeVisible();
   });
 
+  it("adds a species to the wishlist", async () => {
+    signInAs({ ...ada, role: "gardener" });
+    withReferenceData();
+    let sent: unknown;
+    server.use(
+      http.post("*/api/v1/wishlist", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json({}, { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/guide/species/3");
+
+    await user.click(await screen.findByRole("button", { name: "Add to the wishlist" }));
+
+    expect(await screen.findByText("Swiss cheese plant is on the wishlist.")).toBeVisible();
+    expect(sent).toEqual({ name: "Swiss cheese plant", taxon_id: 3, link: "", notes: "" });
+  });
+
   it("shows known toxicity to pets with its source, and says when it isn't known", async () => {
     signInAs(gardener);
     withReferenceData();
