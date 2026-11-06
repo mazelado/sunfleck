@@ -52,12 +52,12 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
-| **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Next |
+| **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful) | In progress |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
 [more gardening](#more-gardening), split from Gardenia, and
-[more collector features](#more-collector-features), split from Hibiscus, to keep each release
-smaller. Each goes into a release when there's room, or when someone needs it.
+[more collector features](#more-collector-features), split from Hibiscus, and
+[more platform](#more-platform), split from Jasmine, to keep each release smaller. Each goes into a release when there's room, or when someone needs it.
 
 ## Phases
 
@@ -198,20 +198,38 @@ Help from an AI model, only when it's asked for and only with an AI plugin an Ad
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
   Conversations are kept on the plant, for the household to read and continue.
 
-### Mature and beautiful
+### Jasmine: mature and beautiful
+
+Making what Sunfleck already does solid and beautiful, rather than adding more.
 
 - **A design pass across the whole app:** typography, spacing, colour, illustrations for empty
   pages, and gentle motion, in light and dark themes. One of Sunfleck's goals is to be
-  beautiful as well as useful.
-- **A usability test:** a few people from real households do the core tasks cold and fill in
-  the System Usability Scale, and a heuristic review rates the problems, to compare with 0.7's
-  click counts (#97).
+  beautiful as well as useful. It starts from a few directions mocked up on the Today and
+  plant pages; the one chosen is then applied everywhere.
 - **Cropping photos:** choose the crop and zoom of a profile picture or a plant photo before
   saving it (#67). The README screenshots are made again after the design pass (#101).
+- **A usability test:** a few people from real households do the core tasks cold and fill in
+  the System Usability Scale, and a heuristic review rates the problems, to compare with 0.7's
+  click counts (#97). The test script, forms and heuristic review come with the release; the
+  sessions are run by the maintainer, and what they find is fixed before 1.0.
+- **A security review and a deep code quality review**, together, once the features for 1.0
+  are in, so they look at the code that ships. Their findings are rated and fixed before the
+  release:
+  - security: access between households and roles, authentication and sessions, uploads,
+    secrets, what plugins can reach, and dependencies;
+  - code quality: correctness, dead and duplicated code, complexity, consistency with the
+    style guide, error handling, and gaps in the tests, across the backend, the frontend and
+    the built-in plugins.
+- **Stability:** the API and the plugin interface are declared stable, with how they may
+  change from 1.0 on, and upgrades are guaranteed from any 0.x release with a backup.
+
+### More platform
+
+Split from Jasmine (1.0), not yet scheduled.
+
 - **Frontend plugin slots**, so plugins can add to the interface (widgets, plant page tabs).
 - A plugin catalog page and a plugin development guide.
 - **Offline care logging**, synced when the connection is back.
-- A security review, a stable API and plugin interface, and upgrade guarantees.
 
 ## Done in the first release
 
