@@ -23,6 +23,8 @@ IMAGE_MAX_EDGE = 2048
 THUMBNAIL_MAX_EDGE = 512
 # Enough for plant identification services, which work on smaller images still.
 IDENTIFY_MAX_EDGE = 1280
+# AI models read photos up to about this size; larger ones are scaled down by the service.
+AI_MAX_EDGE = 1568
 AVATAR_SIZE = 256
 ALLOWED_FORMATS = {"JPEG", "MPO", "PNG", "WEBP", "HEIF", "AVIF"}
 IMAGE_QUALITY = 82
@@ -101,9 +103,23 @@ def jpeg_for_identification(file: IO[bytes]) -> bytes:
     Raises:
         ImageError: If the file isn't a supported image or is too large to process.
     """
-    _, image, _ = _open(file, IDENTIFY_MAX_EDGE)
+    return _jpeg(file, IDENTIFY_MAX_EDGE)
+
+
+def jpeg_for_ai(file: IO[bytes]) -> bytes:
+    """A JPEG copy of the photo to send to an AI model: upright, at most 1568 px on its long
+    edge, and without metadata (no GPS position).
+
+    Raises:
+        ImageError: If the file isn't a supported image or is too large to process.
+    """
+    return _jpeg(file, AI_MAX_EDGE)
+
+
+def _jpeg(file: IO[bytes], max_edge: int) -> bytes:
+    _, image, _ = _open(file, max_edge)
     image = image.convert("RGB")
-    image.thumbnail((IDENTIFY_MAX_EDGE, IDENTIFY_MAX_EDGE), Image.Resampling.LANCZOS)
+    image.thumbnail((max_edge, max_edge), Image.Resampling.LANCZOS)
     buffer = io.BytesIO()
     image.save(buffer, "JPEG", quality=IMAGE_QUALITY)
     return buffer.getvalue()

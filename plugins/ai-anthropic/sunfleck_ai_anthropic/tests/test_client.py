@@ -1,3 +1,4 @@
+import dataclasses
 import json
 from typing import Any
 
@@ -7,7 +8,7 @@ import pytest
 from pydantic import SecretStr
 from sunfleck.accounts.models import Household
 from sunfleck.ai import services as ai
-from sunfleck.plugins import AiAnswer, AiTask, SettingsCheck
+from sunfleck.plugins import AiAnswer, AiImage, AiTask, SettingsCheck
 from sunfleck.plugins import services as plugin_services
 
 from sunfleck_ai_anthropic import Settings, client, hooks
@@ -232,3 +233,29 @@ def test_testing_without_a_key_asks_for_one(api: FakeApi) -> None:
 
     assert check.problem == "missing_settings"
     assert api.requests == []
+
+
+def test_photos_go_before_the_question_with_more_thought(api: FakeApi) -> None:
+    api.responses = [httpx2.Response(200, json=message('{"greeting": "Hi"}'))]
+    task = dataclasses.replace(TASK, images=(AiImage("image/jpeg", b"\xff\xd8photo"),))
+
+    client.complete(task, "sk-ant-test", "claude-sonnet-5-5")
+
+    body = api.body()
+    assert body["messages"] == [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": "/9hwaG90bw==",
+                    },
+                },
+                {"type": "text", "text": "Say hello to Ada."},
+            ],
+        }
+    ]
+    assert body["output_config"]["effort"] == "medium"

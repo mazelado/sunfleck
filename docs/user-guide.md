@@ -71,6 +71,12 @@ signing out are in the account menu (your picture at the top right).
 - **No care profile for its species?** If an Admin turned on an AI plugin, **Suggest with AI**
   asks which of the built-in care profiles fits it best, and why. It only suggests: check the
   profile in the Care guide, then use it or choose another.
+- **What's wrong?** On a plant's page, if an Admin turned on an AI plugin: take or choose a
+  photo that shows the problem, and add a few words if you like ("lower leaves turning yellow
+  since last week"). The AI looks at it together with the plant's care, place and recent
+  history, and suggests likely causes and what to do, and says when to act soon. They're
+  suggestions: check them against the plant. The photo can be kept on the plant, with your
+  words as its caption, to compare later.
 - **Identify it from a photo** when adding it, if an Admin turned on the Pl@ntNet plugin:
   pick one of the suggestions to set its species.
 - Add its **pot** (width, and height if you like; material) and **soil**: plants in small or
@@ -222,7 +228,8 @@ away: open one with the arrow next to its name, or just turn it on.
   from [my.plantnet.org](https://my.plantnet.org), and sends only the photos you identify.
 - **AI (OpenAI-compatible)**: suggestions from an AI model, through OpenAI or a model you run
   yourself with Ollama or LM Studio (then nothing leaves your network). It's only asked when
-  you ask for a suggestion, and you review every suggestion before it's used. See its
+  you ask for a suggestion, and you review every suggestion before it's used. **What's
+  wrong?** needs a model that can look at photos. See its
   [setup guide](../plugins/ai-openai/README.md).
 - **AI (Claude)**: the same, through Anthropic's Claude models, with your own API key from
   [console.anthropic.com](https://console.anthropic.com). Claude Sonnet by default. See its

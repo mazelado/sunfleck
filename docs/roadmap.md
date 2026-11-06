@@ -192,8 +192,8 @@ Help from an AI model, only when it's asked for and only with an AI plugin an Ad
 - **An AI provider plugin for Anthropic's API**, next to the OpenAI-compatible one, first, so
   the rest can be tried against it. Claude Sonnet by default; the model is a setting.
 - **Photo diagnosis:** "what's wrong with my plant?" from a photo taken or picked for it (a
-  close-up of the problem), with a few words if you like. Only that photo is sent, and only
-  when asked. The answer gives likely causes and next steps, clearly labelled as suggestions,
+  close-up of the problem), with a few words if you like. Only that photo and the plant's
+  details are sent, and only when asked. The answer gives likely causes and next steps, clearly labelled as suggestions,
   and the photo can be kept on the plant.
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
   Conversations are kept on the plant, for the household to read and continue.

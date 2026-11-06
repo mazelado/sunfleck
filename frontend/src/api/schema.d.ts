@@ -1013,6 +1013,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plants/{plant_id}/diagnosis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Diagnose Plant
+         * @description What might be wrong with the plant, from a photo of the problem (and a few words, if
+         *     given), with the household's AI plugin. Sends the photo (resized, without metadata), the
+         *     words, and the plant's species, conditions, schedules and recent care; only when asked.
+         *     The answer is suggestions. With `keep_photo`, the photo is added to the plant's photos.
+         */
+        post: operations["sunfleck_plants_api_diagnose_plant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plants/{plant_id}/harvests": {
         parameters: {
             query?: never;
@@ -1846,6 +1869,21 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** CauseOut */
+        CauseOut: {
+            /** Cause */
+            cause: string;
+            /**
+             * Likelihood
+             * @description `likely` or `possible`.
+             */
+            likelihood: string;
+            /**
+             * Signs
+             * @description What in the photo or the plant's history points to it.
+             */
+            signs: string;
+        };
         /** ChannelIn */
         ChannelIn: {
             /** Label */
@@ -1930,6 +1968,32 @@ export interface components {
              * @description The first and last week, from the frost date (negative is before it).
              */
             weeks: number[];
+        };
+        /** DiagnosisOut */
+        DiagnosisOut: {
+            /**
+             * Attribution
+             * @description Which AI suggested it, to show with it.
+             */
+            attribution: string;
+            /** Causes */
+            causes: components["schemas"]["CauseOut"][];
+            /** Next Steps */
+            next_steps: string[];
+            /** @description The photo, if it was kept on the plant. */
+            photo: components["schemas"]["PhotoOut"] | null;
+            /**
+             * Photo Clear
+             * @description False if the photo didn't clearly show the problem.
+             */
+            photo_clear: boolean;
+            /** Summary */
+            summary: string;
+            /**
+             * Urgent
+             * @description The plant could be lost within days without action.
+             */
+            urgent: boolean;
         };
         /**
          * Direction
@@ -5254,6 +5318,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_diagnose_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Description
+                     * @default
+                     */
+                    description?: string;
+                    /**
+                     * File
+                     * Format: binary
+                     */
+                    file: string;
+                    /**
+                     * Keep Photo
+                     * @default false
+                     */
+                    keep_photo?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiagnosisOut"];
                 };
             };
         };

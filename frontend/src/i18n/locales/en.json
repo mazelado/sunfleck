@@ -244,11 +244,13 @@
     "export_too_new": "This export is from a newer version of Sunfleck. Update Sunfleck first.",
     "invalid_export": "This export can't be imported because something in it isn't valid.",
     "suggestion_unavailable": "No AI plugin is turned on.",
-    "ai_missing_settings": "The AI plugin isn't set up: an Admin can set its server address and model under Plugins.",
+    "ai_missing_settings": "The AI plugin isn't set up: an Admin can finish setting it up under Plugins.",
     "ai_invalid_api_key": "The AI service didn't accept its API key. An Admin can check it under Plugins.",
     "ai_quota_exceeded": "The AI service's limit has been reached. Try again later.",
     "ai_unavailable": "The AI service can't be reached. Try again later.",
-    "ai_invalid_answer": "The AI didn't give a usable answer. Try again, or choose a care profile yourself."
+    "ai_invalid_answer": "The AI didn't give a usable answer. Try again.",
+    "ai_unsupported": "The AI model can't look at photos. An Admin can choose one that can under Plugins.",
+    "diagnosis_unavailable": "No AI plugin is turned on."
   },
   "places": {
     "title": "Places",
@@ -1245,6 +1247,31 @@
     "check": "Check it against the plant before using it:",
     "inGuide": "see the profile",
     "use": "Use {{name}}"
+  },
+  "diagnosis": {
+    "button": "What's wrong?",
+    "title": "What's wrong with {{name}}?",
+    "intro": "Take or choose a photo that shows the problem. The AI looks at it together with this plant's care, place and history, and suggests likely causes and what to do.",
+    "photo": "Take or choose a photo",
+    "otherPhoto": "Another photo",
+    "description": "What did you notice?",
+    "descriptionHelp": "Optional, e.g. \"lower leaves turning yellow since last week\".",
+    "keepPhoto": "Keep the photo on the plant",
+    "privacy": "The photo, what you wrote and the plant's details are sent to the household's AI service.",
+    "ask": "Ask the AI",
+    "waiting": "Looking at the photo… This can take a minute.",
+    "again": "Ask about another photo",
+    "urgent": "Act soon",
+    "urgentHelp": "Without help, the plant could be lost within days.",
+    "unclear": "The photo didn't show the problem clearly, so this is less certain. A closer, well-lit photo may help.",
+    "causes": "Possible causes",
+    "likelihood": {
+      "likely": "likely",
+      "possible": "possible"
+    },
+    "nextSteps": "What to do",
+    "photoKept": "The photo was added to the plant's photos.",
+    "check": "These are suggestions: check them against the plant before acting."
   },
   "toxicity": {
     "title": "Known to be toxic to {{animals}}",

@@ -33,6 +33,7 @@ import { PlantCareCard } from "../taxonomy/PlantCareCard";
 import { describeLight } from "../places/describe";
 import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
+import { DiagnosePlant } from "./DiagnosePlant";
 import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
@@ -131,6 +132,7 @@ export function PlantPage() {
       <CareGlance glance={data.glance} />
 
       {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
+      {canEdit && <DiagnosePlant plantId={data.id} plantName={data.nickname} />}
 
       <PlantSchedules plant={data} />
       <PlantCareCard plant={data} />

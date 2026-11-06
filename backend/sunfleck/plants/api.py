@@ -3,6 +3,7 @@
 Everyone in the household can see plants; Gardeners and Admins can change them.
 """
 
+import io
 from dataclasses import asdict
 from datetime import date, datetime
 
@@ -17,10 +18,12 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
+from sunfleck.ai import diagnosis
 from sunfleck.care import services as care_services
 from sunfleck.care.glance import glance
 from sunfleck.care.models import CareSchedule
 from sunfleck.care.schedules import local_today
+from sunfleck.core import images
 from sunfleck.core.errors import ApiError
 from sunfleck.places.api import (
     LightSourceOut,
@@ -677,6 +680,72 @@ def add_photo(
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return Status(201, photo_out(photo))
+
+
+class CauseOut(Schema):
+    cause: str
+    likelihood: str = Field(description="`likely` or `possible`.")
+    signs: str = Field(description="What in the photo or the plant's history points to it.")
+
+
+class DiagnosisOut(Schema):
+    summary: str
+    causes: list[CauseOut]
+    next_steps: list[str]
+    urgent: bool = Field(description="The plant could be lost within days without action.")
+    photo_clear: bool = Field(description="False if the photo didn't clearly show the problem.")
+    attribution: str = Field(description="Which AI suggested it, to show with it.")
+    photo: PhotoOut | None = Field(description="The photo, if it was kept on the plant.")
+
+
+DIAGNOSIS_ERROR_STATUS = {
+    "diagnosis_unavailable": 404,
+    "ai_quota_exceeded": 429,
+}
+
+
+@router.post("/plants/{plant_id}/diagnosis", response=DiagnosisOut)
+def diagnose_plant(
+    request: HttpRequest,
+    plant_id: int,
+    file: File[UploadedFile],
+    description: Form[str] = "",
+    keep_photo: Form[bool] = False,
+) -> DiagnosisOut:
+    """What might be wrong with the plant, from a photo of the problem (and a few words, if
+    given), with the household's AI plugin. Sends the photo (resized, without metadata), the
+    words, and the plant's species, conditions, schedules and recent care; only when asked.
+    The answer is suggestions. With `keep_photo`, the photo is added to the plant's photos."""
+    household = require_role(request, Role.GARDENER).household
+    plant = _get_plant(household, plant_id)
+    size = file.size or 0
+    if size > images.MAX_UPLOAD_BYTES:
+        limit = images.MAX_UPLOAD_BYTES // (1024 * 1024)
+        raise ApiError(
+            422, "photo_too_large", f"Photos can be up to {limit} MB.", {"field": "file"}
+        )
+    data = file.read()
+    try:
+        found = diagnosis.diagnose(plant, io.BytesIO(data), description, language(request))
+    except diagnosis.DiagnosisError as exc:
+        status = DIAGNOSIS_ERROR_STATUS.get(exc.code, 502 if exc.code.startswith("ai_") else 422)
+        raise ApiError(status, exc.code, str(exc)) from exc
+    photo = None
+    if keep_photo:
+        caption = description.strip()[: services.MAX_CAPTION_LENGTH]
+        try:
+            photo = services.add_photo(plant, io.BytesIO(data), len(data), caption)
+        except services.PlantsError as exc:
+            raise _plants_error(exc) from exc
+    return DiagnosisOut(
+        summary=found.summary,
+        causes=[CauseOut(**vars(cause)) for cause in found.causes],
+        next_steps=found.next_steps,
+        urgent=found.urgent,
+        photo_clear=found.photo_clear,
+        attribution=found.attribution,
+        photo=photo_out(photo) if photo else None,
+    )
 
 
 @router.put("/photos/{photo_id}", response=PhotoOut)
