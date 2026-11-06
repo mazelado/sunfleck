@@ -3,6 +3,10 @@
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 DEV_ENV := DEBUG=true
+# npm writes this when it installs. If package-lock.json is newer (after a `git pull` that
+# changed the frontend's dependencies), `make dev` reinstalls them first. The backend's
+# dependencies need nothing similar: `uv run` installs what's missing itself.
+FRONTEND_DEPS := frontend/node_modules/.package-lock.json
 
 .DEFAULT_GOAL := help
 .PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
@@ -17,14 +21,14 @@ setup: ## Install dependencies and the pre-commit hooks
 	$(FRONTEND) npm ci
 	uv run --project backend pre-commit install
 
-dev: migrate ## Run the app at http://localhost:5173 (Ctrl+C stops it)
+dev: migrate $(FRONTEND_DEPS) ## Run the app at http://localhost:5173 (Ctrl+C stops it)
 	@echo "Starting... open http://localhost:5173 once Vite reports it's ready."
 	@$(MAKE) --no-print-directory -j3 dev-backend dev-frontend dev-worker
 
 dev-backend: ## Run only the Django server (port 8000)
 	$(BACKEND) $(DEV_ENV) uv run python manage.py runserver
 
-dev-frontend: ## Run only the Vite dev server (port 5173)
+dev-frontend: $(FRONTEND_DEPS) ## Run only the Vite dev server (port 5173)
 	$(FRONTEND) npm run dev
 
 dev-worker: ## Run only the background worker (reminders, weather, nightly jobs)
@@ -73,6 +77,11 @@ format: ## Fix formatting and auto-fixable lint problems
 	$(BACKEND) uv run ruff check --fix . ../plugins
 	$(FRONTEND) npm run format
 	$(FRONTEND) npx eslint --fix .
+
+$(FRONTEND_DEPS): frontend/package-lock.json
+	@echo "The frontend's dependencies have changed: installing them..."
+	$(FRONTEND) npm ci
+	@touch $@
 
 api-types: ## Regenerate frontend API types after changing the backend API
 	$(BACKEND) $(DEV_ENV) uv run python manage.py export_openapi_schema \

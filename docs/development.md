@@ -307,3 +307,4 @@ To release:
 | Docker says `/data isn't writable` | You replaced the volume with a folder. Give it to the app's user: `sudo chown 1000 <folder>` |
 | `npm ci` fails with "unsupported engine" | Your Node.js is too old. Install version 22.12 or newer |
 | The pre-commit hooks don't run | Run `make setup` again |
+| Vite says `Failed to resolve import` (often after `git pull`) | A new frontend dependency isn't installed yet. `make dev` installs it; without `make`, run `npm ci` in `frontend` |
