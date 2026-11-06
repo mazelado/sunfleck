@@ -1,7 +1,5 @@
 import {
-  Box,
   Center,
-  Group,
   Paper,
   RingProgress,
   SimpleGrid,
@@ -33,7 +31,7 @@ interface Bar {
 
 /**
  * Water, fertilizer and light at a glance, as rings: with words under them on a plant's page,
- * and small, side by side, on a plant's card (`compact`). The rings are only a picture: the
+ * and small, spread across a plant's card (`compact`). The rings are only a picture: the
  * same is said in words, shown on the page, or for screen readers only on a card.
  */
 export function CareGlance({ glance, compact = false }: { glance: Glance; compact?: boolean }) {
@@ -72,9 +70,9 @@ export function CareGlance({ glance, compact = false }: { glance: Glance; compac
     );
   }
   return (
-    <Group gap={6} wrap="nowrap">
+    <SimpleGrid cols={bars.length} spacing={4}>
       {bars.map((bar) => (
-        <Box key={bar.key}>
+        <Center key={bar.key}>
           <RingProgress
             aria-hidden
             size={36}
@@ -89,9 +87,9 @@ export function CareGlance({ glance, compact = false }: { glance: Glance; compac
             }
           />
           <VisuallyHidden>{bar.text}</VisuallyHidden>
-        </Box>
+        </Center>
       ))}
-    </Group>
+    </SimpleGrid>
   );
 }
 
