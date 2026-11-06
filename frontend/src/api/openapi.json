@@ -3847,6 +3847,123 @@
         "title": "SeasonalDays",
         "type": "object"
       },
+      "SeedIn": {
+        "properties": {
+          "name": {
+            "description": "As on the packet, e.g. Tomato.",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "quantity": {
+            "default": "",
+            "description": "e.g. about 20 seeds.",
+            "maxLength": 50,
+            "title": "Quantity",
+            "type": "string"
+          },
+          "sow_by": {
+            "anyOf": [
+              {
+                "maximum": 2100,
+                "minimum": 2000,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The last year to sow them in.",
+            "title": "Sow By"
+          },
+          "taxon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its species, for when to sow and plant it out.",
+            "title": "Taxon Id"
+          },
+          "variety": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Variety",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SeedIn",
+        "type": "object"
+      },
+      "SeedOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "string"
+          },
+          "sow_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sow By"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SpeciesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "variety": {
+            "title": "Variety",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "species",
+          "variety",
+          "quantity",
+          "sow_by",
+          "notes"
+        ],
+        "title": "SeedOut",
+        "type": "object"
+      },
       "SettingsCheckOut": {
         "properties": {
           "details": {
@@ -8059,6 +8176,148 @@
         "summary": "Check Plugin",
         "tags": [
           "plugins"
+        ]
+      }
+    },
+    "/api/v1/seeds": {
+      "get": {
+        "description": "The household's seeds, by name. A household has a few dozen at most.",
+        "operationId": "sunfleck_garden_api_list_seeds",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SeedOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Seeds",
+        "tags": [
+          "garden"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_garden_api_create_seed",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SeedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Seed",
+        "tags": [
+          "garden"
+        ]
+      }
+    },
+    "/api/v1/seeds/{seed_id}": {
+      "delete": {
+        "operationId": "sunfleck_garden_api_delete_seed",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seed_id",
+            "required": true,
+            "schema": {
+              "title": "Seed Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Seed",
+        "tags": [
+          "garden"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_garden_api_update_seed",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seed_id",
+            "required": true,
+            "schema": {
+              "title": "Seed Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SeedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Seed",
+        "tags": [
+          "garden"
         ]
       }
     },

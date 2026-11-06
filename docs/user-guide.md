@@ -7,6 +7,7 @@ the weather, and they get better as you tell it how the soil was.
 - [Getting started](#getting-started)
 - [Places: sites, locations and light](#places-sites-locations-and-light)
 - [Plants](#plants)
+- [Seeds](#seeds)
 - [Care, and when it's due](#care-and-when-its-due)
 - [The Today page](#the-today-page)
 - [Notifications](#notifications)
@@ -76,6 +77,13 @@ signing out are in the account menu (your picture at the top right).
 - **Moving plants**: on a location's page, **Move plants here** moves plants from elsewhere
   (those without a location are listed first). Then choose, on each plant's page, which of
   the new location's windows and grow lights reach it; its schedules adjust.
+
+## Seeds
+
+**Seeds** (from the Plants page) lists the seeds you have: their species, variety, how many,
+and the year to sow them by. Seeds past that year are marked, since they may not come up. With
+their species, the Care guide says when to sow and plant them out, from your place's frost
+dates.
 
 ## Care, and when it's due
 

@@ -374,6 +374,28 @@
     "W": "west",
     "NW": "north-west"
   },
+  "seeds": {
+    "title": "Seeds",
+    "intro": "The seeds you have. With their species, the sowing calendar says when to sow and plant them out, from your place's frost dates.",
+    "empty": "No seeds yet.",
+    "add": "Add seeds",
+    "edit": "Edit {{name}}",
+    "editTitle": "Edit seeds",
+    "name": "Name",
+    "namePlaceholder": "e.g. Tomato",
+    "variety": "Variety",
+    "varietyPlaceholder": "e.g. Gardener's Delight",
+    "quantity": "How many",
+    "quantityPlaceholder": "e.g. about 20",
+    "sowByLabel": "Sow by (year)",
+    "sowBy": "sow by {{year}}",
+    "expired": "Past its sow-by year",
+    "notes": "Notes",
+    "delete": "Delete seeds",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteConfirm": "This only removes them from the list. Plants grown from them stay.",
+    "deleted": "Deleted {{name}}"
+  },
   "plants": {
     "title": "Plants",
     "empty": "No plants yet. Add your first one!",

@@ -14,6 +14,7 @@ from sunfleck import __version__
 from sunfleck.accounts.models import Household
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.dataio import schema
+from sunfleck.garden.models import SeedPacket
 from sunfleck.places.models import Site
 from sunfleck.plants.models import Photo, Plant
 from sunfleck.plugins import services as plugin_services
@@ -181,6 +182,17 @@ def build(household: Household) -> schema.Export:
         ],
         sites=_sites(household),
         plants=[_plant(plant) for plant in plants],
+        seeds=[
+            schema.Seed(
+                name=packet.name,
+                species=packet.taxon.scientific_name if packet.taxon else None,
+                variety=packet.variety,
+                quantity=packet.quantity,
+                sow_by=packet.sow_by,
+                notes=packet.notes,
+            )
+            for packet in SeedPacket.objects.filter(household=household).select_related("taxon")
+        ],
         plugins=[
             schema.PluginSettings(
                 id=plugin_id,

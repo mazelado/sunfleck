@@ -152,6 +152,15 @@ class PluginSettings(Model):
     settings: dict[str, object]
 
 
+class Seed(Model):
+    name: str
+    species: str | None = Field(description="Scientific name")
+    variety: str
+    quantity: str
+    sow_by: int | None
+    notes: str
+
+
 class Export(Model):
     format: Literal["sunfleck-export"]
     format_version: int
@@ -163,4 +172,6 @@ class Export(Model):
     care_types: list[CustomCareType] = Field(default_factory=list)
     sites: list[Site] = Field(default_factory=list)
     plants: list[Plant] = Field(default_factory=list)
+    # Added in 0.7.
+    seeds: list[Seed] = Field(default_factory=list)
     plugins: list[PluginSettings] = Field(default_factory=list)
