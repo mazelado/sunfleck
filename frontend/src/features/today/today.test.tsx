@@ -4,12 +4,42 @@ import { describe, expect, it } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { CareEvent, CareType } from "../../api/care";
+import type { Location, Site } from "../../api/places";
 import type { Task } from "../../api/today";
+import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, builtinCareTypes, server, signInAs } from "../../test/server";
 import { addDays, groupBy } from "./grouping";
 
 const gardener: Me = { ...ada, role: "gardener" };
+const viewer: Me = { ...ada, role: "viewer" };
+
+const home: Site = {
+  id: 1,
+  name: "Home",
+  latitude: 52.37,
+  longitude: 4.89,
+  timezone: "Europe/Amsterdam",
+  last_frost: null,
+  first_frost: null,
+  frost_source: null,
+  frost_years: null,
+  locations: [],
+};
+const kitchen: Location = {
+  id: 11,
+  site_id: 1,
+  name: "Kitchen",
+  kind: "indoor",
+  temperature_min_c: null,
+  temperature_max_c: null,
+  humidity: null,
+  exposure: null,
+  bed_type: null,
+  bed_width_cm: null,
+  bed_length_cm: null,
+  light_sources: [],
+};
 const [water, fertilize, , , mist] = builtinCareTypes;
 if (!water || !fertilize || !mist) throw new Error("care types");
 
@@ -361,13 +391,63 @@ describe("today", () => {
     );
   });
 
-  it("helps getting started when there's nothing to do yet", async () => {
+  it("shows a new household its first steps, one at a time", async () => {
     signInAs(gardener);
+    withToday([]);
+    let sites: Site[] = [];
+    server.use(http.get("*/api/v1/sites", () => HttpResponse.json(sites)));
+
+    const first = renderApp("/");
+    const steps = await screen.findByRole("region", { name: "Getting started" });
+    expect(await accessibilityProblems(steps)).toEqual([]);
+    expect(within(steps).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(steps).getByRole("link", { name: "Add a place" })).toHaveAttribute(
+      "href",
+      "/places/new",
+    );
+    // Only the next step has a button, and there's no empty list of care.
+    expect(within(steps).getAllByRole("link")).toHaveLength(1);
+    expect(screen.queryByText("All caught up. Nothing needs care today.")).not.toBeInTheDocument();
+    first.unmount();
+
+    // With a place, its first location is next.
+    sites = [{ ...home, id: 3, locations: [] }];
+    const second = renderApp("/");
+    expect(await screen.findByRole("link", { name: "Add a location" })).toHaveAttribute(
+      "href",
+      "/places/3/locations/new",
+    );
+    expect(screen.getByText(/Add a place: your home/)).toHaveTextContent("(done)");
+    second.unmount();
+
+    // Then a plant, in that location.
+    sites = [{ ...home, id: 3, locations: [{ ...kitchen, id: 30 }] }];
+    renderApp("/");
+    expect(await screen.findByRole("link", { name: "Add a plant" })).toHaveAttribute(
+      "href",
+      "/plants/new?location=30",
+    );
+  });
+
+  it("only describes the first steps to viewers", async () => {
+    signInAs(viewer);
     withToday([]);
 
     renderApp("/");
 
+    const steps = await screen.findByRole("region", { name: "Getting started" });
+    expect(within(steps).getByText(/An Admin or Gardener/)).toBeVisible();
+    expect(within(steps).queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("says all is done once the household has plants", async () => {
+    signInAs(gardener);
+    withToday([]);
+    server.use(http.get("*/api/v1/plants", () => HttpResponse.json({ items: [], count: 3 })));
+
+    renderApp("/");
+
     expect(await screen.findByText("All caught up. Nothing needs care today.")).toBeVisible();
-    expect(await screen.findByRole("link", { name: "Go to places" })).toBeVisible();
+    expect(screen.queryByRole("region", { name: "Getting started" })).not.toBeInTheDocument();
   });
 });

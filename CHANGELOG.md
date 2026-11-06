@@ -19,6 +19,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   under the care type opens the same dialog as Settings → Care types, and the new type is
   chosen, without losing what you've typed.
 
+### Changed
+
+- **Today shows a new household how to get started** (#122): until there's a plant, a
+  checklist (a place, a location in it, a first plant) replaces the empty lists of care, ticks
+  off each step that's done, and has a button for the next. It replaces the two cards that
+  linked to the Places and Plants pages.
+
 ### Fixed
 
 - **Screen readers announce the loading spinners** ("Loading…", "Loading map…").

@@ -98,14 +98,24 @@
     "invalid": "This invitation link is invalid, already used, or expired. Ask your household's Admin for a new one."
   },
   "home": {
-    "placesCta": "Start by telling Sunfleck where your plants live.",
-    "placesSummary_one": "You have {{count}} place set up.",
-    "placesSummary_other": "You have {{count}} places set up.",
-    "goToPlaces": "Go to places",
-    "plantsCta": "Add your plants, with photos, to start keeping track of them.",
-    "plantsSummary_one": "You have {{count}} plant.",
-    "plantsSummary_other": "You have {{count}} plants.",
-    "goToPlants": "Go to plants"
+    "intro": "Three steps to your first care reminder.",
+    "introViewer": "An Admin or Gardener in your household sets these up.",
+    "done": "done",
+    "steps": {
+      "place": "Add a place: your home, garden or allotment",
+      "location": "Add a location in it: a room, bed or balcony",
+      "plant": "Add your first plant"
+    },
+    "stepHelp": {
+      "place": "Where it is on a map sets the seasons, daylight and, with the weather plugin, the weather.",
+      "location": "Its light, temperature and humidity shape how often plants there need water.",
+      "plant": "With its species and pot, Sunfleck suggests when to water and fertilize it."
+    },
+    "stepAction": {
+      "place": "Add a place",
+      "location": "Add a location",
+      "plant": "Add a plant"
+    }
   },
   "profile": {
     "title": "Profile",
