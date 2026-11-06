@@ -10,6 +10,7 @@ from typing import Any
 import dj_database_url
 import django_stubs_ext
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.csp import CSP
 
 from sunfleck.config.env import env_bool, env_list, env_str, parse_email_url
 from sunfleck.plugins.discovery import plugin_apps
@@ -46,6 +47,32 @@ CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 if env_bool("SUNFLECK_BEHIND_PROXY", default=False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     USE_X_FORWARDED_HOST = True
+    # Cookies only over HTTPS, so a plain http:// address can't give the session away.
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # The person's own address is the proxy's last entry in X-Forwarded-For: limits on failed
+    # sign-ins count each person, not everyone behind the proxy together.
+    ALLAUTH_TRUSTED_PROXY_COUNT = 1
+
+# Sign-in pages Django sends people to (the admin site): the app's own.
+LOGIN_URL = "/sign-in"
+
+# What pages may load, against injected scripts: only Sunfleck's own files, plus the map tiles
+# for choosing a place. Styles may be inline, as Mantine sets them on elements.
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF],
+    "style-src": [CSP.SELF, CSP.UNSAFE_INLINE],
+    "img-src": [CSP.SELF, "data:", "blob:", "https://tile.openstreetmap.org"],
+    "font-src": [CSP.SELF, "data:"],
+    "connect-src": [CSP.SELF],
+    "worker-src": [CSP.SELF],
+    "manifest-src": [CSP.SELF],
+    "object-src": [CSP.NONE],
+    "base-uri": [CSP.SELF],
+    "form-action": [CSP.SELF],
+    "frame-ancestors": [CSP.NONE],
+}
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -76,6 +103,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",

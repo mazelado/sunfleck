@@ -35,6 +35,18 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Gentle motion**: cards rise into place as a page opens, and done buttons give a little
   when tapped. None of it shows if your device is set to reduce motion.
 
+### Security
+
+- **The Django admin site** (`/admin/`) no longer has a sign-in form of its own, which wasn't
+  covered by the limits on failed sign-ins: you sign in to Sunfleck, then open it.
+- **Behind an HTTPS proxy** (`SUNFLECK_BEHIND_PROXY=true`), cookies are only sent over HTTPS,
+  and the limits on failed sign-ins count each person rather than everyone behind the proxy
+  together.
+- **A Content-Security-Policy** on every page allows only Sunfleck's own scripts, as a
+  safeguard against injected ones.
+- **oauthlib** 4.0.1 (used by Apprise for some notification services), for CVE-2026-49272.
+- `SECURITY.md` describes how Sunfleck is protected, and what the people running it should know.
+
 ## [0.9.0] - 2026-11-06
 
 **Iris.** Help from an AI model, only when someone asks for it: Claude joins the AI plugins,

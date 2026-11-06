@@ -1,10 +1,15 @@
 """Top-level URL routes."""
 
+from allauth.account.decorators import secure_admin_login
 from django.contrib import admin
 from django.urls import include, path, re_path
 
 from sunfleck.config.api import api
 from sunfleck.core.views import frontend_index
+
+# The admin site has no sign-in form of its own: people sign in to Sunfleck (where failed
+# attempts are rate-limited), and it's open to the first account, which can use it.
+admin.site.login = secure_admin_login(admin.site.login)  # type: ignore[method-assign]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
