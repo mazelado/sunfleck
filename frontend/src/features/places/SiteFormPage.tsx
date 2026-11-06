@@ -1,20 +1,7 @@
-import {
-  Anchor,
-  Button,
-  Group,
-  Loader,
-  NumberInput,
-  Paper,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Anchor, Button, Group, Paper, Select, Stack, TextInput, Title } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconCurrentLocation } from "@tabler/icons-react";
-import { lazy, Suspense, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
 
@@ -24,10 +11,8 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useApplyFieldErrors } from "../auth/serverErrors";
+import { SitePositionFields } from "./SitePositionFields";
 import { browserTimezone, timezoneOptions } from "./timezones";
-
-// The map library is large, so it's only downloaded when a site form is opened.
-const MapPicker = lazy(() => import("./MapPicker"));
 
 /** Create a site (`/places/new`) or edit one (`/places/:siteId/edit`). */
 export function SiteFormPage() {
@@ -62,8 +47,6 @@ function SiteForm({ site }: { site?: Site }) {
   const deleteSite = useDeleteSite();
   const save = site ? updateSite : createSite;
   const timezones = useMemo(() => timezoneOptions(), []);
-  const [locating, setLocating] = useState(false);
-  const [locateFailed, setLocateFailed] = useState(false);
 
   const form = useForm<SiteFormValues>({
     initialValues: {
@@ -80,27 +63,6 @@ function SiteForm({ site }: { site?: Site }) {
     },
   });
   const { latitude, longitude } = form.getValues();
-
-  function setPosition(lat: number, lng: number) {
-    form.setFieldValue("latitude", Number(lat.toFixed(6)));
-    form.setFieldValue("longitude", Number(lng.toFixed(6)));
-  }
-
-  function locateMe() {
-    setLocating(true);
-    setLocateFailed(false);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setPosition(position.coords.latitude, position.coords.longitude);
-        setLocating(false);
-      },
-      () => {
-        setLocateFailed(true);
-        setLocating(false);
-      },
-      { timeout: 10_000 },
-    );
-  }
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
@@ -134,56 +96,16 @@ function SiteForm({ site }: { site?: Site }) {
               required
               {...form.getInputProps("name")}
             />
-            <Stack gap="xs">
-              <Text fw={500} size="sm">
-                {t("places.whereIsIt")}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {t("places.whereHelp")}
-              </Text>
-              <Suspense fallback={<Loader size="sm" aria-label={t("places.loadingMap")} />}>
-                <MapPicker
-                  latitude={latitude === "" ? null : latitude}
-                  longitude={longitude === "" ? null : longitude}
-                  onPick={setPosition}
-                  label={t("places.mapLabel")}
-                />
-              </Suspense>
-              {"geolocation" in navigator && (
-                <Button
-                  variant="light"
-                  leftSection={<IconCurrentLocation size={16} />}
-                  loading={locating}
-                  onClick={locateMe}
-                  style={{ alignSelf: "flex-start" }}
-                >
-                  {t("places.useMyLocation")}
-                </Button>
-              )}
-              {locateFailed && (
-                <Text size="sm" c="orange.9">
-                  {t("places.locationUnavailable")}
-                </Text>
-              )}
-              <Group grow>
-                <NumberInput
-                  label={t("places.latitude")}
-                  min={-90}
-                  max={90}
-                  decimalScale={6}
-                  required
-                  {...form.getInputProps("latitude")}
-                />
-                <NumberInput
-                  label={t("places.longitude")}
-                  min={-180}
-                  max={180}
-                  decimalScale={6}
-                  required
-                  {...form.getInputProps("longitude")}
-                />
-              </Group>
-            </Stack>
+            <SitePositionFields
+              latitude={latitude}
+              longitude={longitude}
+              onPick={(lat, lng) => {
+                form.setFieldValue("latitude", lat);
+                form.setFieldValue("longitude", lng);
+              }}
+              latitudeProps={form.getInputProps("latitude")}
+              longitudeProps={form.getInputProps("longitude")}
+            />
             <Select
               label={t("places.timezone")}
               description={t("places.timezoneHelp")}

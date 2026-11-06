@@ -49,6 +49,7 @@ import { type Species, useCareProfiles } from "../../api/taxonomy";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { describeLight } from "../places/describe";
 import { LightSourceForm } from "../places/LightSourceForm";
+import { NewLocationDialog } from "../places/NewLocationDialog";
 import { IdentifyPlant } from "../taxonomy/IdentifyPlant";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
@@ -169,6 +170,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
   const location = locations.find((each) => String(each.id) === values.locationId);
   const careProfiles = useCareProfiles().data ?? [];
   const [addingLight, setAddingLight] = useState(false);
+  const [addingLocation, setAddingLocation] = useState(false);
   // The species' own care profile, shown when no other is chosen.
   const [speciesProfile, setSpeciesProfile] = useState(
     plant?.care_profile && !plant.care_profile.chosen ? plant.care_profile.name : null,
@@ -317,21 +319,42 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
               />
             )}
             {locations.length > 0 ? (
-              <Select
-                label={t("plants.location")}
-                description={t("plants.locationHelp")}
-                placeholder={t("plants.noLocation")}
-                clearable
-                data={locationOptions(sites)}
-                {...form.getInputProps("locationId")}
-              />
+              <Stack gap={4}>
+                <Select
+                  label={t("plants.location")}
+                  description={t("plants.locationHelp")}
+                  placeholder={t("plants.noLocation")}
+                  clearable
+                  data={locationOptions(sites)}
+                  {...form.getInputProps("locationId")}
+                />
+                <Button
+                  variant="subtle"
+                  size="compact-sm"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={() => {
+                    setAddingLocation(true);
+                  }}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  {t("plants.addLocation")}
+                </Button>
+              </Stack>
             ) : (
-              <Text size="sm" c="dimmed">
-                {t("plants.noLocationsYet")}{" "}
-                <Anchor component={Link} to="/places/new">
-                  {t("plants.addPlaces")}
-                </Anchor>
-              </Text>
+              <Stack gap="xs" align="flex-start">
+                <Text size="sm" c="dimmed">
+                  {t("plants.noLocationsYet")}
+                </Text>
+                <Button
+                  variant="light"
+                  leftSection={<IconPlus size={16} />}
+                  onClick={() => {
+                    setAddingLocation(true);
+                  }}
+                >
+                  {t("plants.addPlaceAndLocation")}
+                </Button>
+              </Stack>
             )}
             {location && (
               <LightPicker
@@ -452,6 +475,16 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
           </Stack>
         </form>
         {/* Outside the plant's form: a form can't hold another one, even in a dialog. */}
+        <NewLocationDialog
+          sites={sites}
+          opened={addingLocation}
+          onClose={() => {
+            setAddingLocation(false);
+          }}
+          onSaved={(saved) => {
+            form.setFieldValue("locationId", String(saved.id));
+          }}
+        />
         {location && location.kind !== "outdoor" && (
           <LightSourceForm
             locationId={location.id}

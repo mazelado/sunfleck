@@ -9,12 +9,23 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Add a place and a location from the plant form** (#120): with no places yet, the plant
+  form adds your home and its first room in a dialog, instead of a link away from the form.
+  With places already, **Add a location** adds a room or bed to one of them. The new location
+  is chosen for the plant, and nothing typed is lost.
+
 ### Changed
 
 - **Today shows a new household how to get started** (#122): until there's a plant, a
   checklist (a place, a location in it, a first plant) replaces the empty lists of care, ticks
   off each step that's done, and has a button for the next. It replaces the two cards that
   linked to the Places and Plants pages.
+
+### Fixed
+
+- **Screen readers announce the loading spinners** ("Loading…", "Loading map…").
 
 ## [0.7.0] - 2026-11-06
 
