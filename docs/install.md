@@ -217,7 +217,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `ALLOWED_HOSTS` | `localhost` | The host names you reach Sunfleck at, comma-separated |
 | `CSRF_TRUSTED_ORIGINS` | *(none)* | Those addresses with `https://`, needed for signing in through them |
 | `SUNFLECK_PUBLIC_URL` | *(none)* | The address notifications, calendar entries, QR labels and NFC tags link to |
-| `SUNFLECK_BEHIND_PROXY` | `false` | `true` behind a reverse proxy with HTTPS |
+| `SUNFLECK_BEHIND_PROXY` | `false` | `true` behind a reverse proxy with HTTPS. Cookies are then only sent over HTTPS, so plain `http://` addresses can't be used to sign in |
 | `TIME_ZONE` | `UTC` | The server's time zone; each site has its own |
 | `EMAIL_URL`, `EMAIL_FROM` | *(log only)* | Sending emails ([above](#email)) |
 | `DATABASE_URL` | SQLite in the volume | PostgreSQL ([above](#postgresql-and-redis-optional)) |

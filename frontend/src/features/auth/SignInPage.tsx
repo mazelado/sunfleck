@@ -1,5 +1,6 @@
 import { Anchor, Button, Stack, Text, TextInput } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 
@@ -15,6 +16,8 @@ export function SignInPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
+  // The Django admin site sends people here to sign in; it's served by the server, not the app.
+  const serverPage = next.startsWith("/admin/");
   const me = useMe();
   const signIn = useSignIn();
   const form = useForm({
@@ -25,7 +28,11 @@ export function SignInPage() {
     },
   });
 
-  if (me.isPending) {
+  useEffect(() => {
+    if (me.data && serverPage) window.location.replace(next);
+  }, [me.data, serverPage, next]);
+
+  if (me.isPending || (me.data && serverPage)) {
     return <FullPageLoader />;
   }
   if (me.data && !signIn.isPending) {
@@ -35,7 +42,11 @@ export function SignInPage() {
   const handleSubmit = form.onSubmit(async (values) => {
     try {
       await signIn.mutateAsync(values);
-      await navigate(next, { replace: true });
+      if (serverPage) {
+        window.location.replace(next);
+      } else {
+        await navigate(next, { replace: true });
+      }
     } catch {
       // The error is shown by ErrorAlert.
     }
