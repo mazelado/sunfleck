@@ -1,5 +1,5 @@
 import { ActionIcon, Anchor, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { IconBulb, IconPencil, IconTrash, IconWindow } from "@tabler/icons-react";
+import { IconBulb, IconPencil, IconWindow } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
@@ -12,6 +12,7 @@ import {
   useLocation,
   useLocationLight,
 } from "../../api/places";
+import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -137,16 +138,15 @@ export function LocationPage() {
                       >
                         <IconPencil size={18} />
                       </ActionIcon>
-                      <ActionIcon
-                        variant="subtle"
-                        color="red"
-                        aria-label={t("places.deleteLight", { name })}
-                        onClick={() => {
-                          deleteLight.mutate(light.id);
+                      <ConfirmDeleteButton
+                        iconLabel={t("places.deleteLight", { name })}
+                        label={t("common.delete")}
+                        title={t("places.deleteLightTitle", { name })}
+                        message={t("places.deleteLightConfirm")}
+                        onConfirm={async () => {
+                          await deleteLight.mutateAsync(light.id);
                         }}
-                      >
-                        <IconTrash size={18} />
-                      </ActionIcon>
+                      />
                     </Group>
                   )}
                 </Group>

@@ -450,6 +450,42 @@ describe("light sources", () => {
     expect(screen.queryByRole("button", { name: "Add a window" })).not.toBeInTheDocument();
   });
 
+  it("asks before deleting a window, which plants lose", async () => {
+    signInAs(gardener);
+    const bay: LightSource = {
+      id: 1,
+      kind: "window",
+      name: "Bay window",
+      direction: "SW",
+      ppfd: null,
+      ppfd_distance_cm: 30,
+      on_time: null,
+      off_time: null,
+      enabled: true,
+      hours_per_day: null,
+      dli: null,
+    };
+    withSites([site({ locations: [location({ light_sources: [bay] })] })]);
+    let deleted = false;
+    server.use(
+      http.delete("*/api/v1/light-sources/1", () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderApp("/places/1/locations/10");
+
+    await user.click(await screen.findByRole("button", { name: "Delete Bay window" }));
+    const dialog = await screen.findByRole("dialog", { name: "Delete Bay window?" });
+    expect(within(dialog).getByText(/lose it, with their distance from it/)).toBeVisible();
+    expect(deleted).toBe(false);
+    await user.click(within(dialog).getByRole("button", { name: "Delete" }));
+
+    await waitFor(() => {
+      expect(deleted).toBe(true);
+    });
+  });
+
   it("shows today's humidity estimated from the weather", async () => {
     signInAs(viewer);
     withSites([site({ locations: [location({ humidity: null })] })]);

@@ -67,8 +67,11 @@ body,
   letter-spacing: -0.02em;
 }
 
-/* Card and section headings: small capitals, a step back from the content. */
-.sunfleck-title[data-order="2"] {
+/*
+ * Card and section headings: small capitals, a step back from the content. Not for headings
+ * that are a name (a plugin, a care profile: `data-name`), which read worse in capitals.
+ */
+.sunfleck-title[data-order="2"]:not([data-name]) {
   font-size: 0.8125rem;
   line-height: 1.4;
   font-weight: 750;

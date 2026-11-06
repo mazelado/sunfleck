@@ -178,7 +178,7 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
               </ActionIcon>
               <Stack gap={4}>
                 <Group gap="xs">
-                  <Title order={2} fz="h4">
+                  <Title order={2} fz="h4" data-name>
                     {plugin.name}
                   </Title>
                   <Badge variant="light" color="gray" tt="none">
