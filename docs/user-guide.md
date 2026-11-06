@@ -81,9 +81,15 @@ signing out are in the account menu (your picture at the top right).
 ## Seeds
 
 **Seeds** (from the Plants page) lists the seeds you have: their species, variety, how many,
-and the year to sow them by. Seeds past that year are marked, since they may not come up. With
-their species, the Care guide says when to sow and plant them out, from your place's frost
-dates.
+and the year to sow them by. Seeds past that year are marked, since they may not come up.
+
+The **sowing calendar** on the same page turns them into dates: when to sow (indoors or
+outdoors), plant out and harvest each one, from the place's frost dates and the species'
+timing in the Care guide. It lists what to do now, in the next four weeks, and later; Today
+mentions what to sow or plant out now. When you've sown some, tap **Sown**: the seedlings are
+added as a plant, of their species, so you can care for them and see when to plant them out.
+Seeds need their species for the calendar, and the place needs its frost dates (see
+[Places](#places-sites-locations-and-light)).
 
 ## Care, and when it's due
 

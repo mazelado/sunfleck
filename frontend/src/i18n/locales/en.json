@@ -374,6 +374,35 @@
     "W": "west",
     "NW": "north-west"
   },
+  "calendar": {
+    "title": "Sowing calendar",
+    "site": "Place",
+    "groups": {
+      "now": "Now",
+      "soon": "In the next 4 weeks",
+      "later": "Later"
+    },
+    "actions": {
+      "sow_indoors": "Sow {{name}} indoors",
+      "sow_outdoors": "Sow {{name}} outdoors",
+      "plant_out": "Plant out {{name}}",
+      "harvest": "Harvest {{name}}"
+    },
+    "inDays_one": "in {{count}} day",
+    "inDays_other": "in {{count}} days",
+    "frostUnknown": "The frost dates at {{site}} aren't known yet, so the calendar can't be worked out.",
+    "enterFrostDates": "Enter them on its page",
+    "noFrost": "It doesn't usually freeze at {{site}}, so nothing is timed by frost: sow when the packet says.",
+    "empty": "None of these seeds has a species with sowing times yet: add their species to see when to sow.",
+    "help": "From the place's frost dates. Harvest dates are a rough guide: weather and varieties differ.",
+    "sown": "Sown",
+    "sownLabel": "Sown: {{name}}",
+    "sownTitle": "Sown {{name}}",
+    "sownHelp": "The seedlings are added as a plant, of the seeds' species, so you can care for them and log the harvest.",
+    "addSeedlings": "Add the seedlings",
+    "todayNote": "In the garden now: {{tasks, list}}.",
+    "seeCalendar": "See the sowing calendar"
+  },
   "seeds": {
     "title": "Seeds",
     "intro": "The seeds you have. With their species, the sowing calendar says when to sow and plant them out, from your place's frost dates.",

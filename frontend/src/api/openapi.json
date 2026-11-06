@@ -4356,6 +4356,123 @@
         "title": "SourceLightOut",
         "type": "object"
       },
+      "SowingCalendarOut": {
+        "properties": {
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/SowingEntryOut"
+            },
+            "title": "Entries",
+            "type": "array"
+          },
+          "frost": {
+            "description": "`known`: timed from the site's frost dates. `none`: it doesn't freeze there, so nothing is timed. `unknown`: the frost dates aren't known yet.",
+            "enum": [
+              "known",
+              "none",
+              "unknown"
+            ],
+            "title": "Frost",
+            "type": "string"
+          },
+          "site_id": {
+            "title": "Site Id",
+            "type": "integer"
+          },
+          "site_name": {
+            "title": "Site Name",
+            "type": "string"
+          },
+          "today": {
+            "description": "Today at the site.",
+            "format": "date",
+            "title": "Today",
+            "type": "string"
+          }
+        },
+        "required": [
+          "site_id",
+          "site_name",
+          "frost",
+          "today",
+          "entries"
+        ],
+        "title": "SowingCalendarOut",
+        "type": "object"
+      },
+      "SowingEntryOut": {
+        "properties": {
+          "action": {
+            "enum": [
+              "sow_indoors",
+              "sow_outdoors",
+              "plant_out",
+              "harvest"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "name": {
+            "description": "The seeds' name, with their variety.",
+            "title": "Name",
+            "type": "string"
+          },
+          "seed_id": {
+            "title": "Seed Id",
+            "type": "integer"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "seed_id",
+          "name",
+          "action",
+          "starts_on",
+          "ends_on"
+        ],
+        "title": "SowingEntryOut",
+        "type": "object"
+      },
+      "SownIn": {
+        "properties": {
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where the seedlings are.",
+            "title": "Location Id"
+          }
+        },
+        "title": "SownIn",
+        "type": "object"
+      },
+      "SownOut": {
+        "properties": {
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "plant_id"
+        ],
+        "title": "SownOut",
+        "type": "object"
+      },
       "SpeciesHitOut": {
         "properties": {
           "care_profile": {
@@ -5052,6 +5169,51 @@
         "summary": "About",
         "tags": [
           "core"
+        ]
+      }
+    },
+    "/api/v1/calendar": {
+      "get": {
+        "description": "When to sow, plant out and harvest the household's seeds, from today to a year ahead,\nat a site (by default the first with frost dates, or the first).",
+        "operationId": "sunfleck_garden_api_sowing_calendar",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "site_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Site Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SowingCalendarOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Sowing Calendar",
+        "tags": [
+          "garden"
         ]
       }
     },
@@ -8316,6 +8478,54 @@
           }
         ],
         "summary": "Update Seed",
+        "tags": [
+          "garden"
+        ]
+      }
+    },
+    "/api/v1/seeds/{seed_id}/sown": {
+      "post": {
+        "description": "The seeds were sown today: add the seedlings as a plant, of the seeds' species.",
+        "operationId": "sunfleck_garden_api_seeds_sown",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seed_id",
+            "required": true,
+            "schema": {
+              "title": "Seed Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SownIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SownOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Seeds Sown",
         "tags": [
           "garden"
         ]
