@@ -1280,18 +1280,21 @@ genera:
   common_names:
     en:
     - guzmania
+    - bromeliad
 - genus: Vriesea
   family: Bromeliaceae
   archetype: bromeliad
   common_names:
     en:
     - flaming sword
+    - bromeliad
 - genus: Aechmea
   family: Bromeliaceae
   archetype: bromeliad
   common_names:
     en:
     - urn plant
+    - bromeliad
   species:
   - name: Aechmea fasciata
     common_names:
@@ -1304,24 +1307,28 @@ genera:
   common_names:
     en:
     - neoregelia
+    - bromeliad
 - genus: Billbergia
   family: Bromeliaceae
   archetype: bromeliad
   common_names:
     en:
     - queen's tears
+    - bromeliad
 - genus: Cryptanthus
   family: Bromeliaceae
   archetype: bromeliad
   common_names:
     en:
     - earth star
+    - bromeliad
 - genus: Ananas
   family: Bromeliaceae
   archetype: bromeliad
   common_names:
     en:
     - pineapple
+    - bromeliad
   species:
   - name: Ananas comosus
     common_names:

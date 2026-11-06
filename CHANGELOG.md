@@ -48,6 +48,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   just after midnight.
 - The message when your browser can't tell where you are (choosing a place) had too little
   contrast.
+- **Searching for "bromeliad" found nothing** when adding a plant: each bromeliad genus
+  (*Guzmania*, *Vriesea*, *Aechmea* and others) now has "bromeliad" as a common name, so it's
+  found and gets the Bromeliad care profile.
 
 ### Security
 

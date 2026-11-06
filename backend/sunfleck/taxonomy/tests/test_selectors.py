@@ -56,3 +56,12 @@ def test_short_or_unknown_searches_find_nothing(query: str) -> None:
 def test_results_are_limited() -> None:
     assert len(search_taxa("a", limit=5)) == 0  # too short
     assert len(search_taxa("ia", limit=5)) == 5
+
+
+@pytest.mark.django_db
+def test_a_group_name_finds_the_genera_in_it() -> None:
+    # "Bromeliad" is what most labels say; any of the genera gives the Bromeliad profile.
+    hits = search_taxa("bromeliad")
+
+    assert {hit.taxon.scientific_name for hit in hits} >= {"Guzmania", "Vriesea", "Aechmea"}
+    assert {hit.taxon.archetype.key for hit in hits if hit.taxon.archetype} == {"bromeliad"}
