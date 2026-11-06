@@ -212,7 +212,14 @@ Making what Sunfleck already does solid and beautiful, rather than adding more.
   the System Usability Scale, and a heuristic review rates the problems, to compare with 0.7's
   click counts (#97). The test script, forms and heuristic review come with the release; the
   sessions are run by the maintainer, and what they find is fixed before 1.0.
-- **A security review**, and its findings fixed.
+- **A security review and a deep code quality review**, together, once the features for 1.0
+  are in, so they look at the code that ships. Their findings are rated and fixed before the
+  release:
+  - security: access between households and roles, authentication and sessions, uploads,
+    secrets, what plugins can reach, and dependencies;
+  - code quality: correctness, dead and duplicated code, complexity, consistency with the
+    style guide, error handling, and gaps in the tests, across the backend, the frontend and
+    the built-in plugins.
 - **Stability:** the API and the plugin interface are declared stable, with how they may
   change from 1.0 on, and upgrades are guaranteed from any 0.x release with a backup.
 
