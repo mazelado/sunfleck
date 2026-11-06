@@ -426,3 +426,113 @@ def test_the_care_bars_move_as_soon_as_care_is_logged(client_as: ClientAs, plant
     # In the list too.
     [listed] = client.get("/api/v1/plants").json()["items"]
     assert listed["glance"]["water"]["level"] == 1.0
+
+
+# --- Propagation ------------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_cuttings_are_new_plants_grown_from_the_parent(
+    client_as: ClientAs, household: Household, location: Location
+) -> None:
+    window = WindowFactory.create(location=location)
+    aroid = CareArchetype.objects.get(key="tropical_aroid")
+    parent = PlantFactory.create(
+        household=household, nickname="Monty", location=location, care_profile=aroid
+    )
+    PlantLight.objects.create(plant=parent, light_source=window, distance_cm=50)
+    client = client_as(Role.GARDENER)
+
+    response = send(
+        client, "POST", f"/api/v1/plants/{parent.pk}/propagate", {"method": "cutting", "count": 2}
+    )
+
+    assert response.status_code == 201
+    added = response.json()
+    assert [p["nickname"] for p in added] == ["Monty (cutting 1)", "Monty (cutting 2)"]
+    assert {p["status"] for p in added} == {"propagating"}
+    # Its care profile, location and lights; a routine to accept, as for any new plant.
+    cutting = client.get(f"/api/v1/plants/{added[0]['id']}").json()
+    assert cutting["care_profile"]["key"] == "tropical_aroid"
+    assert cutting["location"]["id"] == location.pk
+    assert [light["light_source"]["id"] for light in cutting["light_sources"]] == [window.pk]
+    assert cutting["acquired_on"] == str(timezone.localdate())
+    assert cutting["lineage"] == {
+        "parent": {"id": parent.pk, "nickname": "Monty"},
+        "propagation_method": "cutting",
+        "offspring": [],
+    }
+    assert added[0]["needs_routine"] is True
+    # The parent lists them, newest first.
+    lineage = client.get(f"/api/v1/plants/{parent.pk}").json()["lineage"]
+    assert lineage["parent"] is None
+    assert [child["nickname"] for child in lineage["offspring"]] == [
+        "Monty (cutting 2)",
+        "Monty (cutting 1)",
+    ]
+
+
+@pytest.mark.django_db
+def test_a_division_can_go_elsewhere_with_its_own_name(
+    client_as: ClientAs, household: Household, location: Location
+) -> None:
+    parent = PlantFactory.create(household=household, nickname="Sansevieria", location=location)
+    WindowFactory.create(location=location)
+    elsewhere = LocationFactory.create(site=location.site)
+    client = client_as(Role.GARDENER)
+
+    response = send(
+        client,
+        "POST",
+        f"/api/v1/plants/{parent.pk}/propagate",
+        {
+            "method": "division",
+            "nickname": "Snake plant for Bea",
+            "location_id": elsewhere.pk,
+            "started_on": "2026-03-01",
+        },
+    )
+
+    [division] = response.json()
+    assert division["nickname"] == "Snake plant for Bea"
+    plant = Plant.objects.get(pk=division["id"])
+    # Another location: the parent's lights don't reach it.
+    assert (plant.location, plant.light_links.count()) == (elsewhere, 0)
+    assert (plant.propagation_method, str(plant.acquired_on)) == ("division", "2026-03-01")
+
+
+@pytest.mark.django_db
+def test_propagating_checks_where_and_how_many(
+    client_as: ClientAs, household: Household, location: Location
+) -> None:
+    parent = PlantFactory.create(household=household, location=location)
+    theirs = LocationFactory.create(site__household=HouseholdFactory.create())
+    client = client_as(Role.GARDENER)
+    url = f"/api/v1/plants/{parent.pk}/propagate"
+
+    response = send(client, "POST", url, {"method": "cutting", "location_id": theirs.pk})
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "location_not_found"
+    assert send(client, "POST", url, {"method": "cutting", "count": 51}).status_code == 422
+    assert send(client, "POST", url, {"method": "grafting"}).status_code == 422
+    assert send(client_as(Role.VIEWER), "POST", url, {"method": "cutting"}).status_code == 403
+    other = PlantFactory.create(household=HouseholdFactory.create())
+    assert (
+        send(client, "POST", f"/api/v1/plants/{other.pk}/propagate", {"method": "seed"}).status_code
+        == 404
+    )
+    assert parent.offspring.count() == 0
+
+
+@pytest.mark.django_db
+def test_deleting_the_parent_keeps_how_a_plant_was_grown(
+    client_as: ClientAs, household: Household
+) -> None:
+    parent = PlantFactory.create(household=household)
+    child = PlantFactory.create(household=household, parent=parent, propagation_method="offset")
+    client = client_as(Role.GARDENER)
+
+    send(client, "DELETE", f"/api/v1/plants/{parent.pk}")
+
+    lineage = client.get(f"/api/v1/plants/{child.pk}").json()["lineage"]
+    assert (lineage["parent"], lineage["propagation_method"]) == (None, "offset")

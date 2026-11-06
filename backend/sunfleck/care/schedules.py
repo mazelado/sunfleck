@@ -79,6 +79,7 @@ def conditions_for(plant: Plant) -> Conditions:
         pot_height_cm=plant.container_height_cm,
         pot_material=plant.container_material or None,
         dormant=plant.status == PlantStatus.DORMANT,
+        propagating=plant.status == PlantStatus.PROPAGATING,
     )
     location = plant.location
     if location is None:

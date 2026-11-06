@@ -158,6 +158,8 @@ class Conditions:
     pot_height_cm: int | None = None
     pot_material: str | None = None
     dormant: bool = False
+    # A cutting, division or seedling that hasn't taken yet: no fertilizer until it has.
+    propagating: bool = False
     # Outdoors, in a garden bed: whether it's raised, and its area if its size is known.
     raised_bed: bool = False
     bed_area_m2: float | None = None
@@ -492,11 +494,14 @@ def predict_fertilizing(
     profile: Profile, conditions: Conditions, history: History, today: date
 ) -> Prediction:
     """When a plant next needs fertilizing: at the profile's interval, except in its pause
-    months (shifted for the southern hemisphere) and while it's dormant."""
+    months (shifted for the southern hemisphere), while it's dormant, and until it has taken
+    when it's grown from another plant."""
     if profile.fertilize_days is None:
         return Prediction(None, None, (Factor("never_fertilize"),))
     if conditions.dormant:
         return Prediction(None, None, (Factor("dormant_no_fertilizer"),))
+    if conditions.propagating:
+        return Prediction(None, None, (Factor("propagating_no_fertilizer"),))
     interval = profile.fertilize_days
     paused = local_months(profile.fertilize_pause_north, conditions.latitude)
 

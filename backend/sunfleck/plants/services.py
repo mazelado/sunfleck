@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from sunfleck.accounts.models import Household
 from sunfleck.core import images
@@ -23,6 +24,7 @@ from sunfleck.plants.models import (
     Plant,
     PlantLight,
     PlantStatus,
+    PropagationMethod,
     SoilType,
 )
 from sunfleck.plugins.registry import registry
@@ -170,6 +172,78 @@ def update_plant(plant: Plant, data: PlantData) -> Plant:
     """
     _apply_plant(plant, data)
     return plant
+
+
+# How many plants one propagation can add at once (a tray of cuttings, not a nursery).
+MAX_PROPAGATED = 50
+
+
+@dataclass(frozen=True)
+class PropagationData:
+    method: PropagationMethod
+    count: int = 1
+    # Their name; by default, the parent's with how they were grown, e.g. "Monty (cutting)".
+    nickname: str = ""
+    # Where they are; by default, where the parent is.
+    location_id: int | None = None
+    started_on: date | None = None
+
+
+def _offspring_name(parent: Plant, data: PropagationData, number: int) -> str:
+    """The name given, numbered when there are several; by default the parent's, with how it
+    was grown: "Monty (cutting)", or "Monty (cutting 2)"."""
+    given = data.nickname.strip()
+    if given:
+        return given if data.count == 1 else f"{given} {number}"
+    method = data.method.label.lower()  # for the middle of a name
+    if data.count == 1:
+        return _("%(name)s (%(method)s)") % {"name": parent.nickname, "method": method}
+    return _("%(name)s (%(method)s %(number)d)") % {
+        "name": parent.nickname,
+        "method": method,
+        "number": number,
+    }
+
+
+@transaction.atomic
+def propagate(parent: Plant, data: PropagationData) -> list[Plant]:
+    """Add the plants grown from `parent`: its species and care profile, in its location
+    unless another is given (with the same lights when they're in the parent's location),
+    marked as propagating until they've taken. Several are numbered: "Monty (cutting 2)".
+
+    Raises:
+        PlantsError: If the location isn't the household's, or the count is out of range.
+    """
+    if not 1 <= data.count <= MAX_PROPAGATED:
+        raise PlantsError("invalid_count", f"Add between 1 and {MAX_PROPAGATED} at once.", "count")
+    household = parent.household
+    location = (
+        parent.location if data.location_id is None else _location(household, data.location_id)
+    )
+    same_spot = location is not None and location == parent.location
+    parent_lights = list(parent.light_links.all()) if same_spot else []
+    plants = []
+    for number in range(1, data.count + 1):
+        plant = Plant.objects.create(
+            household=household,
+            location=location,
+            nickname=_offspring_name(parent, data, number)[:100],
+            taxon=parent.taxon,
+            care_profile=parent.care_profile,
+            status=PlantStatus.PROPAGATING,
+            acquired_on=data.started_on or timezone.localdate(),
+            parent=parent,
+            propagation_method=data.method,
+        )
+        PlantLight.objects.bulk_create(
+            PlantLight(
+                plant=plant, light_source_id=link.light_source_id, distance_cm=link.distance_cm
+            )
+            for link in parent_lights
+        )
+        registry.call("on_plant_created", household, plant=plant)
+        plants.append(plant)
+    return plants
 
 
 @transaction.atomic

@@ -494,8 +494,35 @@
     "statuses": {
       "active": "Active",
       "dormant": "Dormant",
+      "propagating": "Propagating",
       "gifted": "Given away",
       "deceased": "Died"
+    },
+    "lineage": {
+      "title": "Propagation",
+      "grownFrom": "Grown from",
+      "grownBy": "Grown by {{method}}; the plant it came from was deleted.",
+      "offspring": "Grown from it",
+      "none": "Take cuttings, divide it or sow its seeds, and they're added as plants of their own.",
+      "propagate": "Propagate",
+      "dialogTitle": "Propagate {{name}}",
+      "method": "How",
+      "count": "How many",
+      "name": "Name",
+      "nameHelp": "Several are numbered: {{example}}",
+      "defaultName": "{{name}} ({{method}})",
+      "location": "Where they are",
+      "help": "They get its species and care profile, and are marked Propagating: watered, not fertilized. Mark each one Active once it has taken.",
+      "addedOne": "Added {{name}}.",
+      "addedMany": "Added {{count}} plants grown from {{parent}}.",
+      "methodNames": {
+        "cutting": "Cutting",
+        "division": "Division",
+        "offset": "Offset or pup",
+        "seed": "Seed",
+        "layering": "Layering",
+        "other": "Other"
+      }
     },
     "pot": "Pot",
     "potDiameter": "Pot diameter",
@@ -527,6 +554,7 @@
       "other": "Other"
     },
     "acquiredOn": "Got it on",
+    "startedOn": "Started on",
     "notes": "Notes",
     "light": "Light",
     "whichLights": "Which lights reach this plant?",
@@ -853,6 +881,7 @@
       "fertilizePause": "No fertilizing in {{months}}. It starts again on {{date}}",
       "neverFertilize": "Its care profile doesn't need fertilizing",
       "dormantNoFertilizer": "Dormant: no fertilizing until it grows again",
+      "propagatingNoFertilizer": "Propagating: no fertilizing until it has taken (then mark it Active)",
       "fixed_one": "Every day, as you chose",
       "fixed_other": "Every {{count}} days, as you chose",
       "notInUse": "Paused",

@@ -37,6 +37,7 @@ import { PhotoViewer } from "./PhotoViewer";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
 import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
+import { PlantLineage } from "./PlantLineage";
 import { LightCheck } from "./LightCheck";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 
@@ -133,6 +134,7 @@ export function PlantPage() {
       <PlantSchedules plant={data} />
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
+      <PlantLineage plant={data} canEdit={canEdit} />
       <LightCheck plant={data} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantHarvests plant={data} />
@@ -173,7 +175,9 @@ function PlantDetails({ plant, units }: { plant: Plant; units: UnitSystem }) {
   if (pot.length > 0) rows.push([t("plants.pot"), pot.join(", ")]);
   if (plant.soil_type) rows.push([t("plants.soil"), t(`plants.soils.${plant.soil_type}`)]);
   if (plant.acquired_on) {
-    rows.push([t("plants.acquiredOn"), formatDate(plant.acquired_on, i18n.language)]);
+    // A plant grown from another one was started, not bought.
+    const label = plant.lineage.propagation_method ? t("plants.startedOn") : t("plants.acquiredOn");
+    rows.push([label, formatDate(plant.acquired_on, i18n.language)]);
   }
   if (rows.length === 0 && !plant.notes) {
     return null;

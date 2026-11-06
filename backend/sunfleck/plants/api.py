@@ -39,6 +39,7 @@ from sunfleck.plants.models import (
     Plant,
     PlantLight,
     PlantStatus,
+    PropagationMethod,
     SoilType,
 )
 from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
@@ -163,6 +164,25 @@ class GlanceOut(Schema):
     light: LightLevelOut | None
 
 
+class PlantRefOut(Schema):
+    id: int
+    nickname: str
+
+
+class OffspringOut(Schema):
+    id: int
+    nickname: str
+    status: PlantStatus
+    propagation_method: PropagationMethod | None
+    acquired_on: date | None
+
+
+class LineageOut(Schema):
+    parent: PlantRefOut | None = Field(description="The plant it was grown from, if it's kept.")
+    propagation_method: PropagationMethod | None = Field(description="How it was grown.")
+    offspring: list[OffspringOut] = Field(description="The plants grown from it, newest first.")
+
+
 class PlantSummaryOut(Schema):
     id: int
     nickname: str
@@ -172,7 +192,7 @@ class PlantSummaryOut(Schema):
     last_watered_at: datetime | None
     species: PlantSpeciesOut | None
     needs_routine: bool = Field(
-        description="Looked after (active or dormant) but has no care schedule yet."
+        description="Looked after (active, dormant or propagating) but has no care schedule yet."
     )
     glance: GlanceOut
 
@@ -197,6 +217,19 @@ class PlantOut(Schema):
     )
     created_at: datetime
     glance: GlanceOut
+    lineage: LineageOut
+
+
+class PropagateIn(Schema):
+    method: PropagationMethod
+    count: int = Field(default=1, ge=1, le=services.MAX_PROPAGATED)
+    nickname: str = Field(
+        default="",
+        max_length=90,
+        description="Their name; by default the parent's with the method: 'Monty (cutting)'.",
+    )
+    location_id: int | None = Field(default=None, description="By default, the parent's.")
+    started_on: date | None = Field(default=None, description="By default, today.")
 
 
 class MovePlantsIn(Schema):
@@ -344,6 +377,35 @@ def _plant_out(plant: Plant, lang: str) -> PlantOut:
         care_profile=_care_profile_out(plant, lang),
         created_at=plant.created_at,
         glance=_glance_out(plant),
+        lineage=_lineage_out(plant),
+    )
+
+
+def _lineage_out(plant: Plant) -> LineageOut:
+    offspring = plant.offspring.order_by("-acquired_on", "-id")
+    return LineageOut(
+        parent=(
+            PlantRefOut(id=plant.parent.pk, nickname=plant.parent.nickname)
+            if plant.parent
+            else None
+        ),
+        propagation_method=(
+            PropagationMethod(plant.propagation_method) if plant.propagation_method else None
+        ),
+        offspring=[
+            OffspringOut(
+                id=child.pk,
+                nickname=child.nickname,
+                status=PlantStatus(child.status),
+                propagation_method=(
+                    PropagationMethod(child.propagation_method)
+                    if child.propagation_method
+                    else None
+                ),
+                acquired_on=child.acquired_on,
+            )
+            for child in offspring
+        ],
     )
 
 
@@ -387,7 +449,7 @@ def _plants(household: Household) -> QuerySet[Plant]:
 
 
 def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = _plants(household).select_related("cover_photo").filter(pk=plant_id).first()
+    plant = _plants(household).select_related("cover_photo", "parent").filter(pk=plant_id).first()
     if plant is None:
         raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
     return plant
@@ -504,6 +566,24 @@ def update_plant(request: HttpRequest, plant_id: int, data: PlantIn) -> PlantOut
     except services.PlantsError as exc:
         raise _plants_error(exc) from exc
     return _plant_out(_get_plant(household, plant_id), language(request))
+
+
+@router.post("/plants/{plant_id}/propagate", response={201: list[PlantSummaryOut]})
+def propagate_plant(
+    request: HttpRequest, plant_id: int, data: PropagateIn
+) -> Status[list[PlantSummaryOut]]:
+    """Add plants grown from this one (cuttings, divisions, offsets, seedlings), marked as
+    propagating. They get its species, care profile and, by default, its location and
+    lights."""
+    household = require_role(request, Role.GARDENER).household
+    parent = _get_plant(household, plant_id)
+    try:
+        added = services.propagate(parent, services.PropagationData(**data.model_dump()))
+    except services.PlantsError as exc:
+        raise _plants_error(exc) from exc
+    plants = _plants(household).filter(pk__in=[plant.pk for plant in added]).order_by("id")
+    lang = language(request)
+    return Status(201, [_summary_out(plant, lang) for plant in plants])
 
 
 @router.delete("/plants/{plant_id}", response={204: None})
