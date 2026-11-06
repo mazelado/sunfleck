@@ -136,6 +136,21 @@ export function useCreateLocation(siteId: number) {
   });
 }
 
+/** Add a location to a site chosen when it's added (`useCreateLocation` is for a known site). */
+export function useAddLocation() {
+  const invalidate = useInvalidateSites();
+  return useMutation({
+    mutationFn: async ({ siteId, body }: { siteId: number; body: LocationInput }) =>
+      unwrap(
+        await api.POST("/api/v1/sites/{site_id}/locations", {
+          params: { path: { site_id: siteId } },
+          body,
+        }),
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function useUpdateLocation(locationId: number) {
   const invalidate = useInvalidateSites();
   return useMutation({

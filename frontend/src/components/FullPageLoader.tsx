@@ -5,7 +5,7 @@ export function FullPageLoader() {
   const { t } = useTranslation();
   return (
     <Center mih="100dvh">
-      <Loader aria-label={t("common.loading")} />
+      <Loader role="status" aria-label={t("common.loading")} />
     </Center>
   );
 }

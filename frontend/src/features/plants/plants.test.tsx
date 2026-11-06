@@ -359,6 +359,101 @@ describe("plant form", () => {
     });
   });
 
+  it("adds a place and its first location from the form when there are none yet", async () => {
+    signInAs(gardener);
+    const newHome: Site = { ...home, id: 5, locations: [] };
+    const hallway: Location = {
+      ...livingRoom,
+      id: 50,
+      site_id: 5,
+      name: "Hallway",
+      light_sources: [],
+    };
+    let sites: Site[] = [];
+    let siteSent: unknown;
+    let locationSent: unknown;
+    let sent: unknown;
+    server.use(
+      http.get("*/api/v1/sites", () => HttpResponse.json(sites)),
+      http.post("*/api/v1/sites", async ({ request }) => {
+        siteSent = await request.json();
+        sites = [newHome];
+        return HttpResponse.json(newHome, { status: 201 });
+      }),
+      http.post("*/api/v1/sites/5/locations", async ({ request }) => {
+        locationSent = await request.json();
+        sites = [{ ...newHome, locations: [hallway] }];
+        return HttpResponse.json(hallway, { status: 201 });
+      }),
+      http.post("*/api/v1/plants", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(plant(), { status: 201 });
+      }),
+    );
+    withPlant(plant());
+    const { user } = renderApp("/plants/new");
+
+    await user.type(await screen.findByLabelText(/^Name/), "Monty");
+    expect(screen.getByText("You haven't added any places yet.")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Add a place and a location" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a place" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    const [placeName, locationName] = within(dialog).getAllByRole("textbox", { name: /^Name/ });
+    if (!placeName || !locationName) throw new Error("The dialog has no name fields");
+    await user.type(placeName, "Home");
+    await user.type(within(dialog).getByRole("textbox", { name: /^Latitude/ }), "52.37");
+    await user.type(within(dialog).getByRole("textbox", { name: /^Longitude/ }), "4.89");
+    await user.type(locationName, "Hallway");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    // The new location is chosen, and nothing typed in the plant form is lost.
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+    expect(screen.getByRole("combobox", { name: /^Location/ })).toHaveValue("Hallway");
+    expect(screen.getByLabelText(/^Name/)).toHaveValue("Monty");
+    expect(siteSent).toMatchObject({ name: "Home", latitude: 52.37, longitude: 4.89 });
+    expect(locationSent).toEqual({ name: "Hallway", kind: "indoor" });
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(sent).toMatchObject({ location_id: 50 });
+  });
+
+  it("adds a location to a place from the form", async () => {
+    signInAs(gardener);
+    const allotment: Site = { ...home, id: 2, name: "Allotment", locations: [] };
+    const bed: Location = { ...livingRoom, id: 60, site_id: 2, name: "Bed 3", kind: "outdoor" };
+    let sites: Site[] = [home, allotment];
+    let locationSent: unknown;
+    server.use(
+      http.get("*/api/v1/sites", () => HttpResponse.json(sites)),
+      http.post("*/api/v1/sites/2/locations", async ({ request }) => {
+        locationSent = await request.json();
+        sites = [home, { ...allotment, locations: [bed] }];
+        return HttpResponse.json(bed, { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/plants/new");
+
+    await user.click(await screen.findByRole("button", { name: "Add a location" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a location" });
+    // With several places, it asks which one.
+    const place = within(dialog).getByRole("combobox", { name: /^Place/ });
+    await user.click(place);
+    const listbox = document.getElementById(place.getAttribute("aria-controls") ?? "");
+    if (!listbox) throw new Error("The place dropdown didn't open");
+    await user.click(within(listbox).getByRole("option", { name: "Allotment", hidden: true }));
+    await user.type(within(dialog).getByRole("textbox", { name: /^Name/ }), "Bed 3");
+    await user.click(within(dialog).getByRole("radio", { name: "Outdoor" }));
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("combobox", { name: /^Location/ })).toHaveValue("Bed 3");
+    });
+    expect(locationSent).toEqual({ name: "Bed 3", kind: "outdoor" });
+  });
+
   it("suggests a care profile with AI, to use or not", async () => {
     signInAs(gardener);
     withSites([home]);
