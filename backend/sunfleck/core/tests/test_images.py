@@ -136,3 +136,55 @@ def test_implausible_dates_taken_are_ignored(raw: str) -> None:
 
 def test_photo_without_a_date_has_none() -> None:
     assert images.process_photo(io.BytesIO(image_bytes())).taken_at is None
+
+
+def halves(width: int = 800, height: int = 600) -> bytes:
+    """A photo that's red on the left and blue on the right."""
+    image = Image.new("RGB", (width, height), (220, 0, 0))
+    image.paste((0, 0, 220), (width // 2, 0, width, height))
+    buffer = io.BytesIO()
+    image.save(buffer, "PNG")
+    return buffer.getvalue()
+
+
+def test_a_thumbnail_shows_only_the_crop() -> None:
+    right_half = images.Crop(0.5, 0, 0.5, 1)
+
+    thumbnail = _open(images.thumbnail(io.BytesIO(halves()), right_half)).convert("RGB")
+
+    assert thumbnail.size == (341, 512)  # The crop (400 x 600 px), at most 512 px high.
+    red, _, blue = thumbnail.getpixel((10, 10))  # type: ignore[misc]
+    assert blue > 150 > red
+
+
+def test_without_a_crop_the_thumbnail_shows_it_all() -> None:
+    thumbnail = _open(images.thumbnail(io.BytesIO(halves(1600, 1200)), None))
+
+    assert thumbnail.size == (512, 384)
+
+
+@pytest.mark.parametrize(
+    "crop",
+    [
+        images.Crop(0.6, 0, 0.5, 1),  # past the right edge
+        images.Crop(-0.1, 0, 0.5, 1),
+        images.Crop(0, 0, 0, 1),
+        images.Crop(0, 0, 0.01, 0.01),  # 8 by 6 px: too small
+    ],
+)
+def test_crops_outside_the_photo_or_too_small_are_refused(crop: images.Crop) -> None:
+    with pytest.raises(images.ImageError) as raised:
+        images.thumbnail(io.BytesIO(halves()), crop)
+
+    assert raised.value.code == "invalid_crop"
+
+
+def test_a_profile_picture_is_the_square_chosen() -> None:
+    # A square on the left half (300 x 300 px of an 800 x 600 photo).
+    left_square = images.Crop(0, 0.25, 0.375, 0.5)
+
+    avatar = _open(images.process_avatar(io.BytesIO(halves()), left_square)).convert("RGB")
+
+    assert avatar.size == (images.AVATAR_SIZE, images.AVATAR_SIZE)
+    red, _, blue = avatar.getpixel((200, 200))  # type: ignore[misc]
+    assert red > 150 > blue

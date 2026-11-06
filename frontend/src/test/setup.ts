@@ -67,3 +67,7 @@ Element.prototype.scrollIntoView = () => undefined;
 Object.defineProperty(document, "fonts", {
   value: { addEventListener: () => undefined, removeEventListener: () => undefined },
 });
+
+// jsdom can't make URLs for files, which the photo cropper shows.
+URL.createObjectURL = () => "blob:test";
+URL.revokeObjectURL = () => undefined;

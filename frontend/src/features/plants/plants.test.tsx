@@ -103,6 +103,7 @@ const photo: Photo = {
   id: 5,
   plant_id: 7,
   caption: "New leaf",
+  crop: null,
   taken_at: "2026-05-01T10:00:00Z",
   width: 2048,
   height: 1536,
@@ -1082,6 +1083,31 @@ describe("plant page", () => {
     await waitFor(() => {
       expect(cover).toEqual({ photo_id: 6 });
     });
+  });
+
+  it("crops the cover, and can show the whole photo again", async () => {
+    signInAs(gardener);
+    const cropped = { ...photo, crop: { x: 0.2, y: 0.1, width: 0.5, height: 0.5 } };
+    withPlant(plant({ cover_photo: cropped }), [cropped]);
+    let sent: unknown;
+    server.use(
+      http.put("*/api/v1/photos/5/crop", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json({ ...photo, crop: null });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "New leaf" }));
+    const dialog = await screen.findByRole("dialog");
+    await user.click(within(dialog).getByRole("button", { name: "Crop" }));
+    expect(within(dialog).getByText(/The whole photo is kept/)).toBeVisible();
+    expect(within(dialog).getByRole("slider", { name: "Zoom" })).toBeVisible();
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    await user.click(within(dialog).getByRole("button", { name: "Show the whole photo" }));
+
+    expect(await screen.findByText("Thumbnail updated.")).toBeVisible();
+    expect(sent).toEqual({ crop: null });
   });
 
   it("deletes a plant after confirmation", async () => {

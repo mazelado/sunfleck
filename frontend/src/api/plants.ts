@@ -266,6 +266,23 @@ export function useUpdatePhoto() {
   });
 }
 
+export type PhotoCrop = components["schemas"]["PhotoCropAreaIn"];
+
+/** Choose the part of a photo its thumbnail and the plant's cover show (null: all of it). */
+export function useCropPhoto() {
+  const invalidate = useInvalidatePlants();
+  return useMutation({
+    mutationFn: async ({ photoId, crop }: { photoId: number; crop: PhotoCrop | null }) =>
+      unwrap(
+        await api.PUT("/api/v1/photos/{photo_id}/crop", {
+          params: { path: { photo_id: photoId } },
+          body: { crop },
+        }),
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function useDeletePhoto() {
   const invalidate = useInvalidatePlants();
   return useMutation({

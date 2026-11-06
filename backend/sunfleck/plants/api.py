@@ -6,6 +6,7 @@ Everyone in the household can see plants; Gardeners and Admins can change them.
 import io
 from dataclasses import asdict
 from datetime import date, datetime
+from pathlib import PurePosixPath
 
 from django.db import transaction
 from django.db.models import Count, Max, Prefetch, Q, QuerySet
@@ -114,6 +115,19 @@ class PlantLocationOut(Schema):
     site_name: str
 
 
+class PhotoCropAreaIn(Schema):
+    """A part of a photo, as fractions (0 to 1) of its width and height from the top left."""
+
+    x: float = Field(ge=0, le=1)
+    y: float = Field(ge=0, le=1)
+    width: float = Field(gt=0, le=1)
+    height: float = Field(gt=0, le=1)
+
+
+class PhotoCropOut(PhotoCropAreaIn):
+    pass
+
+
 class PhotoOut(Schema):
     id: int
     plant_id: int
@@ -122,11 +136,18 @@ class PhotoOut(Schema):
     width: int
     height: int
     image_url: str
-    thumbnail_url: str
+    thumbnail_url: str = Field(description="Shows the crop, when the photo has one.")
+    crop: PhotoCropOut | None = Field(
+        description="The part of the photo its thumbnail and the plant's cover show."
+    )
 
 
 class PhotoIn(Schema):
     caption: str = Field(default="", max_length=200)
+
+
+class PhotoCropIn(Schema):
+    crop: PhotoCropAreaIn | None = Field(description="None shows the whole photo.")
 
 
 class CoverIn(Schema):
@@ -299,8 +320,16 @@ def _photo_url(photo_id: int, variant: str) -> str:
     return reverse(f"api-v1:photo_{variant}", kwargs={"photo_id": photo_id})
 
 
+def thumbnail_url(photo: Photo) -> str:
+    """The photo's thumbnail. It changes with the crop, and browsers keep thumbnails for good,
+    so its URL names the current file."""
+    version = PurePosixPath(photo.thumbnail.name or "").stem
+    return f"{_photo_url(photo.pk, 'thumbnail')}?v={version}"
+
+
 def photo_out(photo: Photo) -> PhotoOut:
     """Convert a photo for the API. Also used by the care timeline."""
+    crop = photo.crop
     return PhotoOut(
         id=photo.pk,
         plant_id=photo.plant_id,
@@ -309,7 +338,10 @@ def photo_out(photo: Photo) -> PhotoOut:
         width=photo.width,
         height=photo.height,
         image_url=_photo_url(photo.pk, "image"),
-        thumbnail_url=_photo_url(photo.pk, "thumbnail"),
+        thumbnail_url=thumbnail_url(photo),
+        crop=PhotoCropOut(x=crop.x, y=crop.y, width=crop.width, height=crop.height)
+        if crop
+        else None,
     )
 
 
@@ -361,9 +393,7 @@ def _summary_out(plant: Plant, lang: str) -> PlantSummaryOut:
         nickname=plant.nickname,
         status=PlantStatus(plant.status),
         location=location_out(plant),
-        cover_thumbnail_url=(
-            _photo_url(plant.cover_photo_id, "thumbnail") if plant.cover_photo_id else None
-        ),
+        cover_thumbnail_url=thumbnail_url(plant.cover_photo) if plant.cover_photo else None,
         last_watered_at=_last_watered_at(plant),
         species=_species_out(plant, lang),
         needs_routine=_needs_routine(plant),
@@ -473,7 +503,9 @@ def _plants(household: Household) -> QuerySet[Plant]:
     # The aggregates drop the model's default ordering, so it's repeated here. Schedules are
     # counted distinct: the join with care events repeats them.
     return (
-        household.plants.select_related("location__site", "taxon__archetype", "care_profile")
+        household.plants.select_related(
+            "location__site", "taxon__archetype", "care_profile", "cover_photo"
+        )
         .annotate(
             last_watered_at=last_watered_at,
             schedule_count=Count("schedules", distinct=True),
@@ -752,6 +784,19 @@ def diagnose_plant(
 def update_photo(request: HttpRequest, photo_id: int, data: PhotoIn) -> PhotoOut:
     household = require_role(request, Role.GARDENER).household
     photo = services.update_photo(_get_photo(household, photo_id), data.caption)
+    return photo_out(photo)
+
+
+@router.put("/photos/{photo_id}/crop", response=PhotoOut)
+def crop_photo(request: HttpRequest, photo_id: int, data: PhotoCropIn) -> PhotoOut:
+    """Choose the part of the photo its thumbnail and the plant's cover show, or show all of
+    it again (`crop` null). The photo itself is kept whole."""
+    household = require_role(request, Role.GARDENER).household
+    crop = images.Crop(**data.crop.model_dump()) if data.crop else None
+    try:
+        photo = services.crop_photo(_get_photo(household, photo_id), crop)
+    except services.PlantsError as exc:
+        raise _plants_error(exc) from exc
     return photo_out(photo)
 
 

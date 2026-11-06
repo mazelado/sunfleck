@@ -673,7 +673,8 @@ export interface paths {
         put?: never;
         /**
          * Set Avatar
-         * @description Set your profile picture: the middle of the photo, as a square.
+         * @description Set your profile picture: the square you chose (`crop_*`, as fractions of the photo's
+         *     width and height from its top left), or else the middle of the photo.
          */
         post: operations["sunfleck_accounts_api_set_avatar"];
         /** Remove Avatar */
@@ -899,6 +900,27 @@ export interface paths {
         post?: never;
         /** Delete Photo */
         delete: operations["sunfleck_plants_api_delete_photo"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/photos/{photo_id}/crop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Crop Photo
+         * @description Choose the part of the photo its thumbnail and the plant's cover show, or show all of
+         *     it again (`crop` null). The photo itself is kept whole.
+         */
+        put: operations["sunfleck_plants_api_crop_photo"];
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2681,6 +2703,36 @@ export interface components {
             /** Id */
             id: number;
         };
+        /**
+         * PhotoCropAreaIn
+         * @description A part of a photo, as fractions (0 to 1) of its width and height from the top left.
+         */
+        PhotoCropAreaIn: {
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
+        /** PhotoCropIn */
+        PhotoCropIn: {
+            /** @description None shows the whole photo. */
+            crop: components["schemas"]["PhotoCropAreaIn"] | null;
+        };
+        /** PhotoCropOut */
+        PhotoCropOut: {
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /** PhotoIn */
         PhotoIn: {
             /**
@@ -2693,6 +2745,8 @@ export interface components {
         PhotoOut: {
             /** Caption */
             caption: string;
+            /** @description The part of the photo its thumbnail and the plant's cover show. */
+            crop: components["schemas"]["PhotoCropOut"] | null;
             /** Height */
             height: number;
             /** Id */
@@ -2706,7 +2760,10 @@ export interface components {
              * Format: date-time
              */
             taken_at: string;
-            /** Thumbnail Url */
+            /**
+             * Thumbnail Url
+             * @description Shows the crop, when the photo has one.
+             */
             thumbnail_url: string;
             /** Width */
             width: number;
@@ -4946,6 +5003,14 @@ export interface operations {
         requestBody: {
             content: {
                 "multipart/form-data": {
+                    /** Crop Height */
+                    crop_height?: number | null;
+                    /** Crop Width */
+                    crop_width?: number | null;
+                    /** Crop X */
+                    crop_x?: number | null;
+                    /** Crop Y */
+                    crop_y?: number | null;
                     /**
                      * File
                      * Format: binary
@@ -5307,6 +5372,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_plants_api_crop_photo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoCropIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoOut"];
+                };
             };
         };
     };

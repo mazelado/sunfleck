@@ -100,6 +100,11 @@ class Photo(Model):
     height: int
     taken_at: datetime
     caption: str
+    # Added in 1.0: the part its thumbnail shows (fractions of its width and height).
+    crop_x: float | None = None
+    crop_y: float | None = None
+    crop_width: float | None = None
+    crop_height: float | None = None
 
 
 class CareEvent(Model):

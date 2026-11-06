@@ -130,12 +130,13 @@
     "metricHint": "Centimeters, °C, liters",
     "imperialHint": "Inches, °F, gallons",
     "picture": "Profile picture",
-    "pictureHelp": "The middle of the photo is used, as a square. Only your household sees it.",
+    "pictureHelp": "Choose a photo, then move and zoom it to frame your face. Only your household sees it.",
     "pictureAlt": "Your profile picture",
     "pictureChoose": "Choose a picture",
     "pictureChange": "Change",
     "pictureRemove": "Remove",
-    "pictureSaved": "Profile picture saved"
+    "pictureSaved": "Profile picture saved",
+    "pictureFrame": "Frame your picture"
   },
   "household": {
     "title": "Household",
@@ -1253,6 +1254,15 @@
     "check": "Check it against the plant before using it:",
     "inGuide": "see the profile",
     "use": "Use {{name}}"
+  },
+  "photoCrop": {
+    "button": "Crop",
+    "area": "The photo, under the frame",
+    "zoom": "Zoom",
+    "help": "Drag the photo, or use the arrow keys, to move it under the frame. Pinch, scroll or use the slider to zoom.",
+    "photoIntro": "Choose the part of the photo the plant's thumbnails and cover show. The whole photo is kept, so you can change this later.",
+    "whole": "Show the whole photo",
+    "saved": "Thumbnail updated."
   },
   "diagnosis": {
     "button": "What's wrong?",
