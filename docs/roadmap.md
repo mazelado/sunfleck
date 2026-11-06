@@ -51,8 +51,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
-| **0.9 Iris** | [AI assistant](#iris-ai-assistant) | In progress |
-| **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
+| **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
+| **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Next |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
 [more gardening](#more-gardening), split from Gardenia, and
@@ -185,7 +185,7 @@ Split from Hibiscus (0.8), not yet scheduled.
 - Statistics and charts.
 - A growth time-lapse from photos.
 
-### Iris: AI assistant
+### Iris: AI assistant (released)
 
 Help from an AI model, only when it's asked for and only with an AI plugin an Admin turns on.
 
@@ -193,8 +193,8 @@ Help from an AI model, only when it's asked for and only with an AI plugin an Ad
   the rest can be tried against it. Claude Sonnet by default; the model is a setting.
 - **Photo diagnosis:** "what's wrong with my plant?" from a photo taken or picked for it (a
   close-up of the problem), with a few words if you like. Only that photo and the plant's
-  details are sent, and only when asked. The answer gives likely causes and next steps, clearly labelled as suggestions,
-  and the photo can be kept on the plant.
+  details are sent, and only when asked. The answer gives likely causes and next steps,
+  clearly labelled as suggestions, and the photo can be kept on the plant.
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
   Conversations are kept on the plant, for the household to read and continue.
 

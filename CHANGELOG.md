@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-06
+
+**Iris.** Help from an AI model, only when someone asks for it: Claude joins the AI plugins,
+a photo of a struggling plant gets likely causes and what to do, and questions about a plant
+are answered from its care and history, in conversations the household can read.
+
 ### Added
 
 - **AI (Claude)**: a plugin for Anthropic's Claude models, with your own API key, next to the
@@ -351,7 +357,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/mazelado/sunfleck/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mazelado/sunfleck/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/mazelado/sunfleck/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/mazelado/sunfleck/compare/v0.6.0...v0.6.1
