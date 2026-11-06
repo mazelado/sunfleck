@@ -274,6 +274,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/conversations/{conversation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Conversation */
+        get: operations["sunfleck_ai_api_get_conversation"];
+        put?: never;
+        post?: never;
+        /** Delete Conversation */
+        delete: operations["sunfleck_ai_api_delete_conversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations/{conversation_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ask Again
+         * @description Ask a further question in the conversation. Sends the latest part of the conversation
+         *     too, so the AI can follow on. Nothing is saved if the AI can't answer.
+         */
+        post: operations["sunfleck_ai_api_ask_again"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/export": {
         parameters: {
             query?: never;
@@ -987,6 +1026,32 @@ export interface paths {
          * @description Log care given to a plant: by default just now, by the signed-in person.
          */
         post: operations["sunfleck_care_api_log_care"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Conversations
+         * @description The plant's conversations, the latest first.
+         */
+        get: operations["sunfleck_ai_api_list_conversations"];
+        put?: never;
+        /**
+         * Start Conversation
+         * @description Ask the household's AI plugin about the plant, in a new conversation. Sends the
+         *     question and the plant's species, conditions, schedules and recent care. Nothing is saved
+         *     if the AI can't answer.
+         */
+        post: operations["sunfleck_ai_api_start_conversation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1924,12 +1989,94 @@ export interface components {
              */
             url?: string | null;
         };
+        /** ChatMessageOut */
+        ChatMessageOut: {
+            /**
+             * Asked By
+             * @description Who asked (questions only).
+             */
+            asked_by: string | null;
+            /**
+             * Attribution
+             * @description Which AI answered (answers only), to show with it.
+             */
+            attribution: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            role: components["schemas"]["MessageRole"];
+            /** Text */
+            text: string;
+        };
         /**
          * ContainerMaterial
          * @description What the plant grows in. Porous pots (terracotta, fabric) dry out faster.
          * @enum {string}
          */
         ContainerMaterial: "plastic" | "terracotta" | "glazed_ceramic" | "fabric" | "metal" | "wood" | "other" | "in_ground";
+        /** ConversationOut */
+        ConversationOut: {
+            /**
+             * Can Continue
+             * @description False once it's as long as a conversation can get.
+             */
+            can_continue: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /**
+             * Messages
+             * @description Oldest first: each question, then its answer.
+             */
+            messages: components["schemas"]["ChatMessageOut"][];
+            /** Plant Id */
+            plant_id: number;
+            /** Started By */
+            started_by: string | null;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ConversationSummaryOut */
+        ConversationSummaryOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /**
+             * Questions
+             * @description How many questions were asked in it.
+             */
+            questions: number;
+            /** Started By */
+            started_by: string | null;
+            /**
+             * Title
+             * @description The first question, shortened.
+             */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description When the latest question was answered.
+             */
+            updated_at: string;
+        };
         /** CoverIn */
         CoverIn: {
             /** Photo Id */
@@ -2483,6 +2630,11 @@ export interface components {
             /** Title */
             title: string;
         };
+        /**
+         * MessageRole
+         * @enum {string}
+         */
+        MessageRole: "question" | "answer";
         /** MovePlantsIn */
         MovePlantsIn: {
             /** Location Id */
@@ -2966,6 +3118,11 @@ export interface components {
              * @description The server's VAPID key, as `applicationServerKey`.
              */
             public_key: string;
+        };
+        /** QuestionIn */
+        QuestionIn: {
+            /** Question */
+            question: string;
         };
         /**
          * Role
@@ -4094,6 +4251,74 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_ai_api_get_conversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
+            };
+        };
+    };
+    sunfleck_ai_api_delete_conversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_ai_api_ask_again: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
             };
         };
     };
@@ -5292,6 +5517,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CareEventOut"];
+                };
+            };
+        };
+    };
+    sunfleck_ai_api_list_conversations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationSummaryOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_ai_api_start_conversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
                 };
             };
         };

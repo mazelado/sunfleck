@@ -19,6 +19,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   from the photo together with the plant's care, place and recent history. It says when to
   act soon, and when the photo isn't clear enough. The photo can be kept on the plant. With
   the OpenAI-compatible plugin, it needs a model that can look at photos.
+- **Ask about this plant**: a conversation with the household's AI plugin about one plant,
+  which knows its species, place, pot, schedules and recent care. Follow-up questions continue
+  it. Conversations are kept under **Questions** on the plant's page for the whole household
+  to read (Gardeners and Admins can ask and delete), and are included in exports.
 
 ## [0.8.0] - 2026-11-06
 

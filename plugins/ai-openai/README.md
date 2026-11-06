@@ -6,7 +6,8 @@ yourself with [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), 
 nothing leaves your network.
 
 AI is always optional in Sunfleck: everything works without it, and it's only asked when you
-ask: for a care profile for an unusual plant, or what's wrong with a plant from a photo of it.
+ask: for a care profile for an unusual plant, what's wrong with a plant from a photo of it,
+or a question about a plant.
 Its answers are suggestions, which you review before acting on them.
 
 ## Setting it up
@@ -43,8 +44,11 @@ to the server you set: Sunfleck's question, the instructions for the answer, and
   outdoors.
 - For **What's wrong?**: the photo taken for it (made smaller, without its location data),
   what the person wrote, and the plant's details: its name, species, care profile, place
-  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes. The service's own terms apply to what it does
-with them.
+  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes.
+- For **Ask about this plant**: the question, the latest part of the conversation (up to 20
+  questions and answers), and the same details of the plant, without a photo.
+
+The service's own terms apply to what it does with them.
 
 ## How it works
 

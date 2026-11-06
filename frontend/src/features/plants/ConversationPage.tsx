@@ -1,0 +1,332 @@
+import {
+  Alert,
+  Anchor,
+  Button,
+  Group,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  Textarea,
+  Title,
+} from "@mantine/core";
+import { IconSend } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate, useParams } from "react-router";
+
+import {
+  type ChatMessage,
+  type Conversation,
+  useAskAgain,
+  useConversation,
+  useDeleteConversation,
+  useStartConversation,
+} from "../../api/conversations";
+import { usePlant } from "../../api/plants";
+import { useSuggestAvailable } from "../../api/taxonomy";
+import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
+import { ErrorAlert } from "../../components/ErrorAlert";
+import { FullPageLoader } from "../../components/FullPageLoader";
+import { useCanEdit } from "../../lib/useCanEdit";
+import { formatDateTime } from "./dates";
+
+/** Questions to start from, for a new conversation. */
+const STARTERS = ["water", "light", "repot", "grow"] as const;
+
+/**
+ * A conversation with the household's AI plugin about one plant, kept on the plant: everyone
+ * can read it, and Gardeners and Admins can ask further questions. `new` starts one.
+ */
+export function ConversationPage() {
+  const params = useParams();
+  const plantId = Number(params.plantId);
+  const conversationId = params.conversationId === "new" ? null : Number(params.conversationId);
+  const plant = usePlant(plantId);
+  const conversation = useConversation(conversationId);
+
+  if (plant.isPending || (conversationId !== null && conversation.isPending)) {
+    return <FullPageLoader />;
+  }
+  if (!plant.data) {
+    return <ErrorAlert error={plant.error} />;
+  }
+  if (conversationId !== null && !conversation.data) {
+    return <ErrorAlert error={conversation.error} />;
+  }
+  const name = plant.data.nickname;
+  return (
+    <Stack gap="lg">
+      <Anchor component={Link} to={`/plants/${String(plantId)}`} size="sm">
+        ← {name}
+      </Anchor>
+      {conversation.data ? (
+        <Thread key={conversation.data.id} conversation={conversation.data} plantName={name} />
+      ) : (
+        <NewConversation plantId={plantId} plantName={name} />
+      )}
+    </Stack>
+  );
+}
+
+function NewConversation({ plantId, plantName }: { plantId: number; plantName: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const start = useStartConversation(plantId);
+  const canAsk = useCanAsk();
+  return (
+    <>
+      <Title order={1} fz="h2">
+        {t("conversations.ask", { name: plantName })}
+      </Title>
+      {canAsk ? (
+        <Composer
+          label={t("conversations.question")}
+          pending={start.isPending}
+          error={start.error}
+          starters
+          onAsk={async (question) => {
+            const conversation = await start.mutateAsync(question);
+            await navigate(`/plants/${String(plantId)}/conversations/${String(conversation.id)}`, {
+              replace: true,
+            });
+          }}
+        />
+      ) : (
+        <CantAsk />
+      )}
+    </>
+  );
+}
+
+function Thread({ conversation, plantName }: { conversation: Conversation; plantName: string }) {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const ask = useAskAgain(conversation.id);
+  const remove = useDeleteConversation(conversation.plant_id);
+  const canEdit = useCanEdit();
+  const canAsk = useCanAsk();
+  const latest = useRef<HTMLDivElement>(null);
+  const count = conversation.messages.length;
+
+  // After a further answer, show it from its question.
+  const shown = useRef(count);
+  useEffect(() => {
+    if (count > shown.current) {
+      latest.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    shown.current = count;
+  }, [count]);
+
+  return (
+    <>
+      <Stack gap={4}>
+        <Title order={1} fz="h3">
+          {conversation.title}
+        </Title>
+        <Text size="sm" c="dimmed">
+          {conversation.started_by
+            ? t("conversations.startedBy", {
+                name: conversation.started_by,
+                date: formatDateTime(conversation.created_at, i18n.language),
+              })
+            : formatDateTime(conversation.created_at, i18n.language)}
+        </Text>
+      </Stack>
+      <Stack gap="sm">
+        {conversation.messages.map((message, index) => (
+          <div key={message.id} ref={index === count - 2 ? latest : undefined}>
+            <MessageBubble message={message} />
+          </div>
+        ))}
+      </Stack>
+      {conversation.can_continue ? (
+        canAsk ? (
+          <Composer
+            label={t("conversations.followUp")}
+            pending={ask.isPending}
+            error={ask.error}
+            onAsk={async (question) => {
+              await ask.mutateAsync(question);
+            }}
+          />
+        ) : (
+          canEdit && <CantAsk />
+        )
+      ) : (
+        <Alert color="gray">
+          <Stack gap="xs" align="flex-start">
+            <Text size="sm">{t("conversations.tooLong")}</Text>
+            {canAsk && (
+              <Button
+                component={Link}
+                to={`/plants/${String(conversation.plant_id)}/conversations/new`}
+                size="xs"
+                variant="light"
+              >
+                {t("conversations.ask", { name: plantName })}
+              </Button>
+            )}
+          </Stack>
+        </Alert>
+      )}
+      {canEdit && (
+        <Group>
+          <ConfirmDeleteButton
+            label={t("conversations.delete")}
+            title={t("conversations.deleteTitle")}
+            message={t("conversations.deleteMessage", { name: plantName })}
+            onConfirm={async () => {
+              await remove.mutateAsync(conversation.id);
+              await navigate(`/plants/${String(conversation.plant_id)}`, { replace: true });
+            }}
+          />
+        </Group>
+      )}
+    </>
+  );
+}
+
+function MessageBubble({ message }: { message: ChatMessage }) {
+  if (message.role === "question") {
+    return (
+      <Paper radius="lg" p="sm" ml="xl" bg="var(--mantine-color-default-hover)">
+        {message.asked_by && (
+          <Text size="xs" fw={600} c="dimmed">
+            {message.asked_by}
+          </Text>
+        )}
+        <Text style={{ whiteSpace: "pre-wrap" }}>{message.text}</Text>
+      </Paper>
+    );
+  }
+  return (
+    <Paper withBorder radius="lg" p="sm" mr="xl">
+      <Text style={{ whiteSpace: "pre-wrap" }}>{message.text}</Text>
+      <Text size="xs" c="dimmed" mt={6}>
+        {message.attribution}
+      </Text>
+    </Paper>
+  );
+}
+
+interface ComposerProps {
+  label: string;
+  pending: boolean;
+  error: unknown;
+  starters?: boolean;
+  /** Ask; the question is cleared once it's answered, and kept if it fails. */
+  onAsk: (question: string) => Promise<void>;
+}
+
+function Composer({ label, pending, error, starters = false, onAsk }: ComposerProps) {
+  const { t } = useTranslation();
+  const [question, setQuestion] = useState("");
+  const [asking, setAsking] = useState<string | null>(null);
+
+  async function submit() {
+    const text = question.trim();
+    if (!text || pending) return;
+    setAsking(text);
+    try {
+      await onAsk(text);
+      setQuestion("");
+    } catch {
+      // Shown from `error`; the question stays to try again.
+    } finally {
+      setAsking(null);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        void submit();
+      }}
+    >
+      <Stack gap="sm">
+        {pending && asking && (
+          <>
+            <Paper radius="lg" p="sm" ml="xl" bg="var(--mantine-color-default-hover)">
+              <Text style={{ whiteSpace: "pre-wrap" }}>{asking}</Text>
+            </Paper>
+            <Group gap="xs" role="status">
+              <Loader size="xs" type="dots" />
+              <Text size="sm" c="dimmed">
+                {t("conversations.thinking")}
+              </Text>
+            </Group>
+          </>
+        )}
+        {starters && !pending && (
+          <Group gap="xs">
+            {STARTERS.map((key) => (
+              <Button
+                key={key}
+                size="compact-sm"
+                radius="xl"
+                variant="default"
+                fw={400}
+                onClick={() => {
+                  setQuestion(t(`conversations.starters.${key}`));
+                }}
+              >
+                {t(`conversations.starters.${key}`)}
+              </Button>
+            ))}
+          </Group>
+        )}
+        <Textarea
+          label={label}
+          value={question}
+          onChange={(event) => {
+            setQuestion(event.currentTarget.value);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+              event.preventDefault();
+              void submit();
+            }
+          }}
+          maxLength={2000}
+          autosize
+          minRows={2}
+          maxRows={8}
+          disabled={pending}
+        />
+        <ErrorAlert error={error} />
+        <Group justify="space-between" align="flex-start" wrap="nowrap">
+          <Text size="xs" c="dimmed">
+            {t("conversations.privacy")}
+          </Text>
+          <Button
+            type="submit"
+            loading={pending}
+            disabled={!question.trim()}
+            leftSection={<IconSend size={16} />}
+            style={{ flexShrink: 0 }}
+          >
+            {t("conversations.send")}
+          </Button>
+        </Group>
+      </Stack>
+    </form>
+  );
+}
+
+function CantAsk() {
+  const { t } = useTranslation();
+  return (
+    <Text size="sm" c="dimmed">
+      {t("conversations.noAi")}
+    </Text>
+  );
+}
+
+/** Gardeners and Admins can ask, when an AI plugin is on. */
+function useCanAsk(): boolean {
+  const canEdit = useCanEdit();
+  const available = useSuggestAvailable().data?.available ?? false;
+  return canEdit && available;
+}

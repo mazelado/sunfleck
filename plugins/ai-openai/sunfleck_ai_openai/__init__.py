@@ -44,7 +44,8 @@ plugin = PluginInfo(
     sends_data_to=(
         "The server you set (OpenAI by default): what Sunfleck asks, such as a plant's "
         "species and where it grows when suggesting a care profile, or a photo of a plant "
-        "with its care and recent history when asking what's wrong with it, and the API key; "
+        "with its care and recent history when asking what's wrong with it or asking a "
+        "question about it, and the API key; "
         "only when you ask, or test the plugin",
     ),
 )
