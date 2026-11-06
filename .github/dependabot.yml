@@ -22,6 +22,11 @@ updates:
     groups:
       npm-dependencies:
         patterns: ["*"]
+    ignore:
+      # TypeScript 7 (a new, native compiler) isn't supported by typescript-eslint yet, so
+      # the group can't install with it. Upgrade on its own once it is (see #116).
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: docker
     directory: /docker
     schedule:
