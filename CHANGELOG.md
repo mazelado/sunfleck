@@ -46,6 +46,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 - **Screen readers name the close button of dialogs and notifications** ("Close"), instead of
   only "button".
+- **The water and fertilizer bars update as soon as care is logged** (#136): on a plant's page
+  and in the list, they kept the old due date until the page was opened again. The same went
+  for moving a plant, or changing its pot or light.
 
 ## [0.6.1] - 2026-11-01
 

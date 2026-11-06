@@ -1,7 +1,7 @@
 import io
 import json
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import pytest
@@ -13,7 +13,7 @@ from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory
 from sunfleck.care import schedules
 from sunfleck.care.models import CareType, ScheduleMode
-from sunfleck.care.tests.factories import builtin
+from sunfleck.care.tests.factories import CareEventFactory, builtin
 from sunfleck.places.models import Location
 from sunfleck.places.tests.factories import LocationFactory, WindowFactory
 from sunfleck.plants import services
@@ -396,3 +396,33 @@ def test_cover_must_be_one_of_the_plants_photos(
     )
 
     assert response.json()["error"]["code"] == "photo_not_found"
+
+
+@pytest.mark.django_db
+def test_the_care_bars_move_as_soon_as_care_is_logged(client_as: ClientAs, plant: Plant) -> None:
+    # Issue #136: logging care marks the schedules out of date, and the plant's page asks for
+    # the plant again straight away. Its bars mustn't show the old due dates.
+    long_ago = timezone.now() - timedelta(days=40)
+    for key, days in [("water", 7), ("fertilize", 30)]:
+        CareEventFactory.create(plant=plant, care_type=builtin(key), performed_at=long_ago)
+        schedules.create_schedule(
+            plant, schedules.ScheduleData(builtin(key).pk, ScheduleMode.FIXED, days)
+        )
+    client = client_as(Role.GARDENER)
+    before = client.get(f"/api/v1/plants/{plant.pk}").json()["glance"]
+    assert (before["water"]["level"], before["fertilizer"]["level"]) == (0.0, 0.0)
+
+    for key in ["water", "fertilize"]:
+        send(
+            client,
+            "POST",
+            f"/api/v1/plants/{plant.pk}/care-events",
+            {"care_type_id": builtin(key).pk},
+        )
+    after = client.get(f"/api/v1/plants/{plant.pk}").json()["glance"]
+
+    assert (after["water"]["level"], after["water"]["due_in_days"]) == (1.0, 7)
+    assert (after["fertilizer"]["level"], after["fertilizer"]["due_in_days"]) == (1.0, 30)
+    # In the list too.
+    [listed] = client.get("/api/v1/plants").json()["items"]
+    assert listed["glance"]["water"]["level"] == 1.0
