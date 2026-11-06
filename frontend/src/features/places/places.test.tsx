@@ -130,6 +130,36 @@ describe("site form", () => {
     expect(typeof (sent as { timezone: unknown }).timezone).toBe("string");
   });
 
+  it("fills in the coordinates from the device's location, or says it couldn't", async () => {
+    signInAs(gardener);
+    let succeed = true;
+    const getCurrentPosition = vi.fn((done: PositionCallback, failed?: PositionErrorCallback) => {
+      if (succeed) {
+        done({ coords: { latitude: 51.5072178, longitude: -0.1275862 } } as GeolocationPosition);
+      } else {
+        failed?.({ code: 1 } as GeolocationPositionError);
+      }
+    });
+    Object.defineProperty(navigator, "geolocation", {
+      value: { getCurrentPosition },
+      configurable: true,
+    });
+    try {
+      const { user } = renderApp("/places/new");
+
+      await user.click(await screen.findByRole("button", { name: "Use my current location" }));
+      // Six decimals are plenty: about 10 cm.
+      expect(screen.getByRole("textbox", { name: /^Latitude/ })).toHaveValue("51.507218");
+      expect(screen.getByRole("textbox", { name: /^Longitude/ })).toHaveValue("-0.127586");
+
+      succeed = false;
+      await user.click(screen.getByRole("button", { name: "Use my current location" }));
+      expect(await screen.findByText(/couldn.t tell us where you are/)).toBeVisible();
+    } finally {
+      Reflect.deleteProperty(navigator, "geolocation");
+    }
+  });
+
   it("shows the server's message next to the field it's about", async () => {
     signInAs(gardener);
     server.use(

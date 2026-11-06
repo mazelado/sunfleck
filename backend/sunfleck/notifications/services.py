@@ -2,7 +2,7 @@
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo, available_timezones
 
@@ -30,6 +30,8 @@ logger = logging.getLogger(__name__)
 # A digest or reminder is sent at its time or, if the worker was down then, up to this much
 # later the same day. After that, it's left out rather than arriving at an odd hour.
 SEND_WINDOW = timedelta(hours=3)
+# How often the worker looks for digests and reminders to send (notifications/tasks.py).
+RUN_INTERVAL = timedelta(minutes=15)
 
 
 class NotificationError(Exception):
@@ -215,17 +217,28 @@ def send_due(now: datetime | None = None) -> int:
             (NotificationKind.DIGEST, prefs.digest_time),
             (NotificationKind.REMINDER, prefs.reminder_time),
         ]:
-            if at is not None and _in_window(local, at):
-                sent += _send_once(person, kind, local)
+            day = _due_day(local, at) if at is not None else None
+            if day is not None:
+                sent += _send_once(person, kind, day)
     return sent
 
 
-def _in_window(local: datetime, at: time) -> bool:
-    start = local.replace(hour=at.hour, minute=at.minute, second=0, microsecond=0)
-    return start <= local < start + SEND_WINDOW
+def _due_day(local: datetime, at: time) -> date | None:
+    """The day whose digest or reminder (set for `at`) is due at `local`, if any.
+
+    Usually today's, within its window. One set for after the worker's last run of the day
+    (e.g. 23:50, with runs every 15 minutes) comes from the first run after midnight instead,
+    rather than never.
+    """
+    today = local.date()
+    for day, window in ((today, SEND_WINDOW), (today - timedelta(days=1), RUN_INTERVAL)):
+        start = datetime.combine(day, at, tzinfo=local.tzinfo)
+        if start <= local < start + window:
+            return day
+    return None
 
 
-def _send_once(user: User, kind: NotificationKind, local: datetime) -> int:
+def _send_once(user: User, kind: NotificationKind, day: date) -> int:
     """Send the day's digest or reminder unless it was sent (or wasn't needed) already.
 
     A failed one (every channel failed, or something broke) is tried again on the next run,
@@ -240,7 +253,7 @@ def _send_once(user: User, kind: NotificationKind, local: datetime) -> int:
             log, created = NotificationLog.objects.get_or_create(
                 user=user,
                 kind=kind,
-                local_date=local.date(),
+                local_date=day,
                 defaults={"status": NotificationStatus.SENT},
             )
     except IntegrityError:

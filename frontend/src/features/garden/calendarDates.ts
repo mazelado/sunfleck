@@ -1,7 +1,7 @@
 import type { CalendarEntry } from "../../api/garden";
 
 /** Coming up: starting within this many days. */
-export const SOON_DAYS = 28;
+const SOON_DAYS = 28;
 
 /** Days from one ISO date to another. */
 export function daysBetween(from: string, to: string): number {

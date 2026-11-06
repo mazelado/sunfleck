@@ -33,12 +33,12 @@ import {
   type PlantStatus,
   SOIL_TYPES,
   type SoilType,
-  uploadPhoto,
   useCreatePlant,
   useDeletePlant,
   usePlant,
   useUpdatePlant,
 } from "../../api/plants";
+import { uploadPhoto } from "../../api/photoUpload";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";

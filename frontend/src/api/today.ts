@@ -8,7 +8,7 @@ export type BulkCareInput = components["schemas"]["BulkCareIn"];
 export type SiteConditions = components["schemas"]["SiteConditionsOut"];
 
 // Under "plants", so logging care anywhere (which refreshes "plants") refreshes the list.
-export const TODAY = ["plants", "today"] as const;
+const TODAY = ["plants", "today"] as const;
 
 function useInvalidatePlants() {
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "./errors";
-import { uploadPhoto } from "./plants";
+import { uploadPhoto } from "./photoUpload";
 
 // Called directly rather than through the fake server: in tests, jsdom's FormData doesn't
 // survive Node's fetch, so this checks exactly what the browser would send.

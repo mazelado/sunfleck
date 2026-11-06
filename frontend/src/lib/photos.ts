@@ -5,7 +5,7 @@
  */
 
 /** Photos are stored at most this many pixels on their long edge (matches the server). */
-export const MAX_EDGE = 2048;
+const MAX_EDGE = 2048;
 const JPEG_QUALITY = 0.9;
 
 export interface PreparedPhoto {

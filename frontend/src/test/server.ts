@@ -79,7 +79,7 @@ export const server = setupServer(
   ),
 );
 
-export function notSignedIn() {
+function notSignedIn() {
   return HttpResponse.json(
     { error: { code: "not_authenticated", message: "Please sign in.", details: {} } },
     { status: 401 },

@@ -76,7 +76,7 @@ export function SitePositionFields({
         </Button>
       )}
       {locateFailed && (
-        <Text size="sm" c="orange.9">
+        <Text size="sm" c="var(--mantine-color-orange-light-color)">
           {t("places.locationUnavailable")}
         </Text>
       )}

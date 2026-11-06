@@ -14,15 +14,15 @@ import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, apiError, server, signInAs } from "../../test/server";
 
-// Uploads are checked in api/plants.test.ts and api/identify.test.ts: jsdom's FormData doesn't
+// Uploads are checked in api/photoUpload.test.ts and api/identify.test.ts: jsdom's FormData doesn't
 // survive Node's fetch.
 const { uploadPhoto, identifyPlant, diagnosePlant } = vi.hoisted(() => ({
   uploadPhoto: vi.fn(),
   identifyPlant: vi.fn(),
   diagnosePlant: vi.fn(),
 }));
-vi.mock("../../api/plants", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../../api/plants")>()),
+vi.mock("../../api/photoUpload", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../api/photoUpload")>()),
   uploadPhoto,
 }));
 vi.mock("../../api/identify", async (importOriginal) => ({
@@ -1061,6 +1061,31 @@ describe("plant page", () => {
     expect(await screen.findByRole("button", { name: "New leaf" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Edit" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Add a photo" })).not.toBeInTheDocument();
+  });
+
+  it("adds several photos at once, and says which didn't upload", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    uploadPhoto
+      .mockResolvedValueOnce(photo)
+      .mockRejectedValueOnce(new ApiError(422, "invalid_image", "Not a photo", {}));
+    const { user } = renderApp("/plants/7");
+
+    await screen.findByRole("button", { name: "Add a photo" });
+    const fileInput = document.querySelector<HTMLInputElement>('input[type="file"][multiple]');
+    if (!fileInput) throw new Error("No file input");
+    const leaf = new File(["jpeg"], "leaf.jpg", { type: "image/jpeg" });
+    const notes = new File(["text"], "notes.jpg", { type: "image/jpeg" });
+    await user.upload(fileInput, [leaf, notes]);
+
+    expect(await screen.findByText("Photo added.")).toBeVisible();
+    expect(await screen.findByText(/^notes\.jpg: /)).toBeVisible();
+    expect(uploadPhoto).toHaveBeenCalledTimes(2);
+    expect(uploadPhoto).toHaveBeenNthCalledWith(1, 7, {
+      file: leaf,
+      filename: "leaf.jpg",
+      takenAt: null,
+    });
   });
 
   it("lets gardeners choose the cover photo", async () => {
