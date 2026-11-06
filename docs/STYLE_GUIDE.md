@@ -72,8 +72,9 @@ Examples:
 - PRs are **squash-merged**, so the PR title must itself be a valid Conventional Commit message.
 
 ### Versioning and releases
-- [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`. Before 1.0, minor
-  versions may contain breaking changes, and these must be noted in the changelog.
+- [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`. From 1.0, what's stable
+  and how it may change is in [stability.md](stability.md): nothing listed there is removed
+  or changed before a major version, and only after a deprecation in a minor release.
 - User-facing changes are recorded in `CHANGELOG.md` following
   [Keep a Changelog](https://keepachangelog.com/).
 
@@ -174,7 +175,9 @@ Project conventions (on top of PEP 8):
 
 ## 4. API design
 
-- The API lives under `/api/v1/`. Breaking changes require a new version.
+- The API lives under `/api/v1/`. Breaking changes require a new version
+  ([stability.md](stability.md#the-http-api-apiv1)). `test_stability.py` catches them; after
+  adding to the API, run `make stability-baseline`.
 - Built with Django Ninja. Every endpoint has typed request and response schemas, which
   generates the OpenAPI docs automatically.
 - Resource URLs are plural nouns: `GET /api/v1/plants`, `POST /api/v1/plants/{id}/care-events`.
@@ -295,7 +298,8 @@ Project conventions (on top of PEP 8):
 - Core code and built-in plugins use the **same public plugin API**. If a built-in plugin
   needs a private shortcut, the plugin API is missing something. Fix the API instead.
 - The plugin API is versioned separately and documented. Breaking it requires a major
-  version bump and a deprecation period of at least one minor release.
+  version bump and a deprecation period of at least one minor release
+  ([stability.md](stability.md#the-plugin-interface-plugin-api-version-1)).
 - Plugins must:
   - declare their name, version, compatible app versions, and required settings;
   - fail gracefully: a broken or unreachable plugin must never crash the app, only disable

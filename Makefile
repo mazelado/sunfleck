@@ -6,7 +6,8 @@ DEV_ENV := DEBUG=true
 
 .DEFAULT_GOAL := help
 .PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
-	test-frontend e2e screenshots lint lint-backend lint-frontend format api-types messages docker
+	test-frontend e2e screenshots lint lint-backend lint-frontend format api-types stability-baseline \
+	messages docker
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
@@ -77,6 +78,9 @@ api-types: ## Regenerate frontend API types after changing the backend API
 	$(BACKEND) $(DEV_ENV) uv run python manage.py export_openapi_schema \
 		--api sunfleck.config.api.api --indent 2 --sorted --output ../frontend/src/api/openapi.json
 	$(FRONTEND) npm run api-types
+
+stability-baseline: ## Record the API and plugin interface after adding to them; see docs/stability.md
+	$(BACKEND) $(DEV_ENV) uv run python manage.py stability_baseline
 
 messages: ## Update the server's translation files (add a language with LOCALE=de); see docs/translating.md
 	$(BACKEND) uv run python manage.py makemessages $(if $(LOCALE),--locale $(LOCALE),--all) \

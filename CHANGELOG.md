@@ -16,6 +16,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   show. The whole photo is kept, so the crop can be changed later. Exports include crops,
   and older exports still import.
 
+- **Stability guarantees** ([docs/stability.md](docs/stability.md)): from 1.0, the API under
+  `/api/v1/`, the plugin interface, settings, the Docker image and your data stay compatible
+  within a major version, and anything removed is deprecated first. Upgrades work from any
+  earlier release in one step. Tests check that the API and the plugin interface keep
+  everything they had.
+
 ### Changed
 
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
