@@ -56,6 +56,19 @@ class Alert:
 
 
 @dataclass(frozen=True)
+class FrostDates:
+    """A site's typical frost dates, for sowing and planting out (see the `frost_dates` hook).
+
+    Only the day and month of each date count. None for a date means it typically doesn't
+    freeze then (e.g. no spring frosts at all); `years` is how many years they're from.
+    """
+
+    last_frost: date | None
+    first_frost: date | None
+    years: int
+
+
+@dataclass(frozen=True)
 class SiteConditions:
     """Current conditions and today's forecast at a site, for the Today page and for
     estimating indoor humidity.

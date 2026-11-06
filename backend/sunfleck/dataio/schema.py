@@ -75,6 +75,11 @@ class Site(Model):
     latitude: float
     longitude: float
     timezone: str
+    # Added in 0.7.
+    last_frost: date | None = None
+    first_frost: date | None = None
+    frost_source: str = ""
+    frost_years: int | None = None
     locations: list[Location] = Field(default_factory=list)
 
 

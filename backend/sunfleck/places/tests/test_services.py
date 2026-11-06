@@ -1,10 +1,10 @@
-from datetime import time
+from datetime import date, time
 
 import pytest
 
 from sunfleck.accounts.models import Household
 from sunfleck.places import services
-from sunfleck.places.models import LightSourceKind, LocationKind
+from sunfleck.places.models import FrostSource, LightSourceKind, LocationKind, Site
 from sunfleck.places.tests.factories import LocationFactory, SiteFactory, WindowFactory
 
 
@@ -43,6 +43,27 @@ def test_create_site_rejects_invalid_values(
         services.create_site(household, _site_data(**overrides))
 
     assert exc_info.value.code == code
+
+
+@pytest.mark.django_db
+def test_moving_a_site_estimates_its_frost_dates_again() -> None:
+    def moved(site: Site, latitude: float) -> Site:
+        data = services.SiteData(site.name, latitude, site.longitude, site.timezone)
+        return services.update_site(site, data)
+
+    estimated = SiteFactory.create(
+        last_frost=date(2000, 4, 9), frost_source=FrostSource.ESTIMATED, frost_years=20
+    )
+    entered = SiteFactory.create(last_frost=date(2000, 5, 1), frost_source=FrostSource.ENTERED)
+
+    renamed = services.update_site(
+        estimated,
+        services.SiteData("Allotment", estimated.latitude, estimated.longitude, "Europe/Amsterdam"),
+    )
+    assert renamed.frost_source == FrostSource.ESTIMATED  # same place
+    assert (moved(estimated, 48.85).last_frost, estimated.frost_source) == (None, "")
+    # Dates someone entered stay: they know their garden.
+    assert moved(entered, 48.85).last_frost == date(2000, 5, 1)
 
 
 @pytest.mark.django_db

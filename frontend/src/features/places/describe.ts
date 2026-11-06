@@ -66,6 +66,14 @@ export function describeLight(light: LightSource, t: TFunction): string[] {
   return parts;
 }
 
+/** "MM-DD" as "9 April", in the person's language. */
+export function formatFrostDate(monthDay: string, locale: string): string {
+  const [month, day] = monthDay.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", timeZone: "UTC" }).format(
+    new Date(Date.UTC(2000, (month ?? 1) - 1, day ?? 1)),
+  );
+}
+
 function pascal(value: string): string {
   return value
     .split("_")

@@ -11,6 +11,16 @@ from django.utils.translation import gettext_lazy as _
 from sunfleck.accounts.models import Household
 
 
+class FrostSource(models.TextChoices):
+    ESTIMATED = "estimated", _("Estimated from past weather")
+    ENTERED = "entered", _("Entered")
+
+
+# Frost dates are days of the year: stored as dates in this (leap) year, whose year means
+# nothing.
+FROST_YEAR = 2000
+
+
 class Site(models.Model):
     """A physical place with plants, such as a home or an allotment.
 
@@ -26,6 +36,16 @@ class Site(models.Model):
         _("longitude"), validators=[MinValueValidator(-180), MaxValueValidator(180)]
     )
     timezone = models.CharField(_("time zone"), max_length=64)
+    # The typical last frost in spring and first in autumn (only the day and month count; see
+    # FROST_YEAR). With a source but no dates, it typically doesn't freeze there. No source:
+    # not known yet, so a plugin may estimate them.
+    last_frost = models.DateField(_("last spring frost"), null=True, blank=True)
+    first_frost = models.DateField(_("first autumn frost"), null=True, blank=True)
+    frost_source = models.CharField(
+        _("frost dates from"), max_length=16, choices=FrostSource.choices, blank=True
+    )
+    # For an estimate: how many years of weather it's from.
+    frost_years = models.PositiveSmallIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

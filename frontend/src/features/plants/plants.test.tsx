@@ -81,6 +81,10 @@ const home: Site = {
   latitude: 52.37,
   longitude: 4.89,
   timezone: "Europe/Amsterdam",
+  last_frost: null,
+  first_frost: null,
+  frost_source: null,
+  frost_years: null,
   locations: [livingRoom],
 };
 

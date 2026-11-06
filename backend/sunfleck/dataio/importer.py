@@ -138,6 +138,10 @@ class _Importer:
                 latitude=item.latitude,
                 longitude=item.longitude,
                 timezone=item.timezone,
+                last_frost=item.last_frost,
+                first_frost=item.first_frost,
+                frost_source=item.frost_source,
+                frost_years=item.frost_years,
             )
             _check(site, f"site {item.name!r}")
             site.save()

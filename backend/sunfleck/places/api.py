@@ -3,7 +3,7 @@
 Everyone in the household can see places; Gardeners and Admins can change them.
 """
 
-from datetime import time
+from datetime import date, time
 
 from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest
@@ -14,13 +14,14 @@ from pydantic import Field
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
-from sunfleck.places import light_report, services
+from sunfleck.places import frost, light_report, services
 from sunfleck.places.humidity import estimated_humidity
 from sunfleck.places.light import grow_light_dli, hours_on
 from sunfleck.places.models import (
     BedType,
     Direction,
     Exposure,
+    FrostSource,
     Humidity,
     LightSource,
     LightSourceKind,
@@ -129,12 +130,30 @@ class SiteIn(Schema):
     timezone: str = Field(max_length=64)
 
 
+# A frost date's day and month, e.g. "04-20" for 20 April.
+MONTH_DAY = r"^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$"
+
+
+class FrostDatesIn(Schema):
+    last_frost: str | None = Field(default=None, pattern=MONTH_DAY, examples=["04-20"])
+    first_frost: str | None = Field(default=None, pattern=MONTH_DAY, examples=["10-25"])
+
+
 class SiteOut(Schema):
     id: int
     name: str
     latitude: float
     longitude: float
     timezone: str
+    last_frost: str | None = Field(
+        description="The typical last spring frost, as MM-DD. With `frost_source` but none, "
+        "it typically doesn't freeze in spring there."
+    )
+    first_frost: str | None = Field(description="The typical first autumn frost, as MM-DD.")
+    frost_source: FrostSource | None = Field(
+        description="Where the frost dates come from; none while they're not known."
+    )
+    frost_years: int | None = Field(description="For an estimate: the years of weather it's from.")
     locations: list[LocationOut]
 
 
@@ -204,6 +223,10 @@ def _site_out(site: Site) -> SiteOut:
         latitude=site.latitude,
         longitude=site.longitude,
         timezone=site.timezone,
+        last_frost=site.last_frost.strftime("%m-%d") if site.last_frost else None,
+        first_frost=site.first_frost.strftime("%m-%d") if site.first_frost else None,
+        frost_source=FrostSource(site.frost_source) if site.frost_source else None,
+        frost_years=site.frost_years,
         locations=[_location_out(location) for location in site.locations.all()],
     )
 
@@ -279,6 +302,28 @@ def update_site(request: HttpRequest, site_id: int, data: SiteIn) -> SiteOut:
         services.update_site(site, services.SiteData(**data.model_dump()))
     except services.PlacesError as exc:
         raise _places_error(exc) from exc
+    return _site_out(_get_site(household, site_id))
+
+
+@router.put("/sites/{site_id}/frost-dates", response=SiteOut)
+def set_frost_dates(request: HttpRequest, site_id: int, data: FrostDatesIn) -> SiteOut:
+    """Enter the site's typical frost dates. Leaving both out goes back to an estimate, from a
+    plugin that can make one (within the hour)."""
+    household = require_role(request, Role.GARDENER).household
+    site = _get_site(household, site_id)
+
+    def day(value: str | None, field: str) -> date | None:
+        if value is None:
+            return None
+        month, day_of_month = (int(part) for part in value.split("-"))
+        try:
+            return frost.frost_day(month, day_of_month)
+        except ValueError as exc:
+            raise ApiError(422, "invalid_date", "There's no such day.", {"field": field}) from exc
+
+    frost.set_frost_dates(
+        site, day(data.last_frost, "last_frost"), day(data.first_frost, "first_frost")
+    )
     return _site_out(_get_site(household, site_id))
 
 

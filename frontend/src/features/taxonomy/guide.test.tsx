@@ -218,6 +218,10 @@ describe("species and care profile of a plant", () => {
       latitude: -33.87,
       longitude: 151.21,
       timezone: "Australia/Sydney",
+      last_frost: null,
+      first_frost: null,
+      frost_source: null,
+      frost_years: null,
       locations: [],
     };
     const plant: Plant = {

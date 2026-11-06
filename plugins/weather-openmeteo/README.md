@@ -6,6 +6,9 @@ A built-in [Sunfleck](../../README.md) plugin that brings in the weather from
 - **Today page:** each site's weather now, today's low and high, and rain.
 - **Frost warnings:** when tonight's or the next two nights' low is at or below a temperature
   you choose (2 °C by default), for sites with outdoor locations.
+- **Frost dates:** each site's typical last spring frost and first autumn frost, for sowing
+  and planting out, estimated once from 20 years of past weather (see
+  [frost dates](#frost-dates)). You can change them on the site's page.
 - **Outdoor watering** (plants in outdoor locations with a predicted watering schedule): a
   soil water balance from the evapotranspiration and rain since the plant was last watered,
   and in the forecast (see [the formula](#the-water-balance)). Without evapotranspiration data
@@ -22,7 +25,8 @@ Admins turn it on for their household in **Settings → Plugins**. It's off unti
 ## What it sends
 
 To `api.open-meteo.com`, for each of the household's sites: **the site's latitude and longitude,
-rounded to 2 decimals (about 1 km)**. Nothing else, and no account or key. The worker refreshes
+rounded to 2 decimals (about 1 km)**. Nothing else, and no account or key. For frost dates, the
+same rounded location goes once to `archive-api.open-meteo.com`. The worker refreshes
 each site's forecast once it's 3 hours old (it checks hourly); the Today page and plants'
 schedules also fetch one if needed. See Open-Meteo's
 [terms](https://open-meteo.com/en/terms): its free API is for non-commercial use.
@@ -60,6 +64,21 @@ A simplified version of the FAO-56 method
 **Why?** on the plant's page shows the numbers: the water taken since watering, the rain, what
 the soil holds, and the day it's dry. These are rough, like the rest of Sunfleck's estimates:
 log how the soil felt when you water, and the schedule adapts.
+
+## Frost dates
+
+Once per site (and again if it moves), the worker asks Open-Meteo's archive for the daily low
+at 2 m over the last 20 full years. For each year with nearly every day measured:
+
+1. **Last spring frost:** the last day at or below 0 °C before 1 July (after it, in the
+   southern hemisphere).
+2. **First autumn frost:** the first day at or below 0 °C from 1 July (before it, in the
+   south).
+
+The typical date is the median over the years. When most years have no spring (or autumn)
+frost at all, there's none. It needs at least 10 years. Frost on the ground can come on nights
+a little above 0 °C at 2 m, so these are a guide, like the dates in seed catalogues: the
+site's page lets you change them.
 
 ## License
 

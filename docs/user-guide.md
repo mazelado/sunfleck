@@ -37,6 +37,9 @@ signing out are in the account menu (your picture at the top right).
   coordinates instead.)
 - A **location** is a room or a bed in a site: **indoor** or **outdoor**. Indoors, give its
   temperature range and humidity if you know them; outdoors, how much sun it gets.
+- **Frost dates**: a site's typical last frost in spring and first in autumn, for sowing and
+  planting out. With the weather plugin, Sunfleck estimates them from 20 years of past
+  weather; or enter them on the site's page (only the day and month count).
 - A **garden bed** is an outdoor location marked as a raised bed or a bed in the ground. A
   raised bed dries out sooner, so its plants are watered a little more often. With its width
   and length, the watering amount also says how much water the whole bed needs.
@@ -158,8 +161,8 @@ outside services: each one says exactly what it sends. **Test** checks a plugin'
 before you save them, for example that an API key is accepted. Plugins that are off are folded
 away: open one with the arrow next to its name, or just turn it on.
 
-- **Weather (Open-Meteo)**: weather on Today, frost warnings, and outdoor watering that follows
-  how much water the weather took from the soil since watering, and the rain. It sends each site's location, rounded to about
+- **Weather (Open-Meteo)**: weather on Today, frost warnings, frost dates, and outdoor watering
+  that follows how much water the weather took from the soil since watering, and the rain. It sends each site's location, rounded to about
   1 km.
 - **Plant identification (Pl@ntNet)**: identifying plants from photos. It needs a free API key
   from [my.plantnet.org](https://my.plantnet.org), and sends only the photos you identify.

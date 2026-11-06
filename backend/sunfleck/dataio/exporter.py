@@ -40,6 +40,10 @@ def _sites(household: Household) -> list[schema.Site]:
             latitude=site.latitude,
             longitude=site.longitude,
             timezone=site.timezone,
+            last_frost=site.last_frost,
+            first_frost=site.first_frost,
+            frost_source=site.frost_source,
+            frost_years=site.frost_years,
             locations=[
                 schema.Location(
                     ref=location.pk,

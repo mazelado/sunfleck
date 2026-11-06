@@ -38,8 +38,40 @@ def test_gardener_creates_a_site(client_as: ClientAs) -> None:
     response = send(client_as(Role.GARDENER), "POST", "/api/v1/sites", SITE)
 
     assert response.status_code == 201
-    assert response.json() | {"id": 0} == {**SITE, "id": 0, "locations": []}
+    no_frost_dates = {"last_frost": None, "first_frost": None, "frost_source": None}
+    assert response.json() | {"id": 0} == {
+        **SITE,
+        **no_frost_dates,
+        "frost_years": None,
+        "id": 0,
+        "locations": [],
+    }
     assert Site.objects.get().household == Household.objects.get()
+
+
+@pytest.mark.django_db
+def test_frost_dates_can_be_entered_and_cleared(client_as: ClientAs, location: Location) -> None:
+    client = client_as(Role.GARDENER)
+    url = f"/api/v1/sites/{location.site_id}/frost-dates"
+
+    entered = send(client, "PUT", url, {"last_frost": "04-20", "first_frost": "10-25"})
+    no_such_day = send(client, "PUT", url, {"last_frost": "02-30"})
+    not_a_day = send(client, "PUT", url, {"first_frost": "October"})
+    cleared = send(client, "PUT", url, {})
+
+    assert entered.status_code == 200
+    assert (entered.json()["last_frost"], entered.json()["first_frost"]) == ("04-20", "10-25")
+    assert entered.json()["frost_source"] == "entered"
+    assert no_such_day.json()["error"] == {
+        "code": "invalid_date",
+        "message": "There's no such day.",
+        "details": {"field": "last_frost"},
+    }
+    assert not_a_day.json()["error"]["code"] == "validation_error"
+    # Cleared: a plugin may estimate them again.
+    assert (cleared.json()["last_frost"], cleared.json()["frost_source"]) == (None, None)
+    viewer = client_as(Role.VIEWER)
+    assert send(viewer, "PUT", url, {"last_frost": "04-20"}).status_code == 403
 
 
 @pytest.mark.django_db

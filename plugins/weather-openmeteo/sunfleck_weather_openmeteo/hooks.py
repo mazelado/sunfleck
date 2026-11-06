@@ -1,5 +1,7 @@
-"""The weather plugin's hooks: conditions for the Today page, and outdoor watering factors."""
+"""The weather plugin's hooks: conditions for the Today page, outdoor watering factors, and
+frost dates."""
 
+import logging
 from datetime import date, timedelta
 from zoneinfo import ZoneInfo
 
@@ -10,6 +12,7 @@ from sunfleck.plugins import (
     Alert,
     CareContext,
     Factor,
+    FrostDates,
     PeriodicJob,
     SettingsCheck,
     SiteConditions,
@@ -19,8 +22,10 @@ from sunfleck.plugins import (
     water_use,
 )
 
-from sunfleck_weather_openmeteo import Settings, plugin, weather
+from sunfleck_weather_openmeteo import Settings, frost, plugin, weather
 from sunfleck_weather_openmeteo.weather import Forecast, WeatherError, forecast_for
+
+logger = logging.getLogger(__name__)
 
 ATTRIBUTION = "Weather data by Open-Meteo.com"
 # Frost warnings look at tonight and the next two nights.
@@ -210,6 +215,17 @@ def _rules_of_thumb(
             )
         )
     return adjustments
+
+
+@hookimpl
+def frost_dates(site: Site, settings: Settings) -> FrostDates | None:
+    """The site's typical frost dates, from 20 years of past weather. None when Open-Meteo
+    can't be reached: Sunfleck asks again within the hour."""
+    try:
+        return frost.frost_dates_for(site, site_today(site))
+    except WeatherError as exc:
+        logger.warning("No frost dates for site %s: %s", site.pk, exc)
+        return None
 
 
 @hookimpl

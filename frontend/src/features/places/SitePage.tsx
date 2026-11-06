@@ -10,6 +10,7 @@ import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
 import { LocationKindBadge } from "./LocationKindBadge";
 import { describeConditions } from "./describe";
+import { FrostDates } from "./FrostDates";
 
 export function SitePage() {
   const { t } = useTranslation();
@@ -91,6 +92,8 @@ export function SitePage() {
           ))}
         </Stack>
       </Paper>
+
+      <FrostDates site={data} canEdit={canEdit} />
     </Stack>
   );
 }

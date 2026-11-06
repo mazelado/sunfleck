@@ -1236,6 +1236,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{site_id}/frost-dates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Frost Dates
+         * @description Enter the site's typical frost dates. Leaving both out goes back to an estimate, from a
+         *     plugin that can make one (within the hour).
+         */
+        put: operations["sunfleck_places_api_set_frost_dates"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/{site_id}/locations": {
         parameters: {
             query?: never;
@@ -1732,6 +1753,24 @@ export interface components {
             /** Pause Months North */
             pause_months_north: number[];
         };
+        /** FrostDatesIn */
+        FrostDatesIn: {
+            /**
+             * First Frost
+             * @example 10-25
+             */
+            first_frost?: string | null;
+            /**
+             * Last Frost
+             * @example 04-20
+             */
+            last_frost?: string | null;
+        };
+        /**
+         * FrostSource
+         * @enum {string}
+         */
+        FrostSource: "estimated" | "entered";
         /**
          * GlanceOut
          * @description For the slim water, fertilizer and light bars. Each is None when it isn't known.
@@ -2758,8 +2797,25 @@ export interface components {
         };
         /** SiteOut */
         SiteOut: {
+            /**
+             * First Frost
+             * @description The typical first autumn frost, as MM-DD.
+             */
+            first_frost: string | null;
+            /** @description Where the frost dates come from; none while they're not known. */
+            frost_source: components["schemas"]["FrostSource"] | null;
+            /**
+             * Frost Years
+             * @description For an estimate: the years of weather it's from.
+             */
+            frost_years: number | null;
             /** Id */
             id: number;
+            /**
+             * Last Frost
+             * @description The typical last spring frost, as MM-DD. With `frost_source` but none, it typically doesn't freeze in spring there.
+             */
+            last_frost: string | null;
             /** Latitude */
             latitude: number;
             /** Locations */
@@ -5085,6 +5141,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_places_api_set_frost_dates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                site_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FrostDatesIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteOut"];
+                };
             };
         };
     };
