@@ -53,7 +53,9 @@ class ConversationOut(Schema):
     started_by: str | None
     created_at: datetime
     updated_at: datetime
-    messages: list[ChatMessageOut] = Field(description="Oldest first: each question, then its answer.")
+    messages: list[ChatMessageOut] = Field(
+        description="Oldest first: each question, then its answer."
+    )
     can_continue: bool = Field(description="False once it's as long as a conversation can get.")
 
 
