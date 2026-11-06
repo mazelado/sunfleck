@@ -21,6 +21,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { locationOptions } from "../plants/locationOptions";
 import { daysBetween, groupEntries } from "./calendarDates";
+import { localDate } from "./dates";
 
 /** When to sow, plant out and harvest the household's seeds, at one of its places. */
 export function SowingCalendar() {
@@ -37,7 +38,7 @@ export function SowingCalendar() {
   const data = calendar.data;
   const format = new Intl.DateTimeFormat(i18n.language, { day: "numeric", month: "short" });
   const range = (entry: CalendarEntry) =>
-    `${format.format(new Date(entry.starts_on))} – ${format.format(new Date(entry.ends_on))}`;
+    `${format.format(localDate(entry.starts_on))} – ${format.format(localDate(entry.ends_on))}`;
   const groups = data ? groupEntries(data.entries, data.today) : null;
 
   return (

@@ -14,7 +14,7 @@ from sunfleck import __version__
 from sunfleck.accounts.models import Household
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.dataio import schema
-from sunfleck.garden.models import SeedPacket
+from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import Site
 from sunfleck.plants.models import Photo, Plant
 from sunfleck.plugins import services as plugin_services
@@ -123,6 +123,16 @@ def _plant(plant: Plant) -> schema.Plant:
             for event in CareEvent.objects.filter(plant=plant)
             .select_related("care_type")
             .order_by("performed_at", "pk")
+        ],
+        harvests=[
+            schema.Harvest(
+                harvested_on=harvest.harvested_on,
+                amount=harvest.amount,
+                unit=harvest.unit,
+                notes=harvest.notes,
+                logged_by=harvest.logged_by_id,
+            )
+            for harvest in Harvest.objects.filter(plant=plant).order_by("harvested_on", "pk")
         ],
         schedules=[
             schema.Schedule(

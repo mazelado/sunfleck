@@ -26,6 +26,7 @@ import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
 import { PlantSchedules } from "../care/PlantSchedules";
 import { PlantTimeline } from "../care/PlantTimeline";
+import { PlantHarvests } from "../garden/PlantHarvests";
 import { QuickCare } from "../care/QuickCare";
 import { PlantCareCard } from "../taxonomy/PlantCareCard";
 import { describeLight } from "../places/describe";
@@ -134,6 +135,7 @@ export function PlantPage() {
       <PlantDetails plant={data} units={units} />
       <LightCheck plant={data} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
+      <PlantHarvests plant={data} />
       <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
       <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />
       {openPhoto && (

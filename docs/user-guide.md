@@ -8,6 +8,7 @@ the weather, and they get better as you tell it how the soil was.
 - [Places: sites, locations and light](#places-sites-locations-and-light)
 - [Plants](#plants)
 - [Seeds](#seeds)
+- [Harvests](#harvests)
 - [Care, and when it's due](#care-and-when-its-due)
 - [The Today page](#the-today-page)
 - [Notifications](#notifications)
@@ -90,6 +91,13 @@ mentions what to sow or plant out now. When you've sown some, tap **Sown**: the 
 added as a plant, of their species, so you can care for them and see when to plant them out.
 Seeds need their species for the calendar, and the place needs its frost dates (see
 [Places](#places-sites-locations-and-light)).
+
+## Harvests
+
+Vegetables, herbs and fruit have a **Harvests** card on their page: **Log a harvest** with the
+day and, if you counted or weighed it, how much (grams, kilograms, ounces, pounds, pieces or
+bunches). The card adds up the year so far in your units ("In 2026: 3.6 lb · 12 pieces") and
+lists the latest harvests. Exports include them.
 
 ## Care, and when it's due
 

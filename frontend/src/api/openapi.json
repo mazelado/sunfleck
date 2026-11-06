@@ -1175,6 +1175,195 @@
         "title": "GlanceOut",
         "type": "object"
       },
+      "HarvestIn": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "harvested_on": {
+            "format": "date",
+            "title": "Harvested On",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HarvestUnit"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Needed with an amount."
+          }
+        },
+        "required": [
+          "harvested_on"
+        ],
+        "title": "HarvestIn",
+        "type": "object"
+      },
+      "HarvestOut": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "harvested_on": {
+            "format": "date",
+            "title": "Harvested On",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "logged_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The name of who logged it.",
+            "title": "Logged By"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HarvestUnit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "harvested_on",
+          "amount",
+          "unit",
+          "notes",
+          "logged_by"
+        ],
+        "title": "HarvestOut",
+        "type": "object"
+      },
+      "HarvestTotalsOut": {
+        "properties": {
+          "bunches": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bunches"
+          },
+          "grams": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The weighed harvests, in grams.",
+            "title": "Grams"
+          },
+          "pieces": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pieces"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "grams",
+          "pieces",
+          "bunches"
+        ],
+        "title": "HarvestTotalsOut",
+        "type": "object"
+      },
+      "HarvestUnit": {
+        "enum": [
+          "g",
+          "kg",
+          "oz",
+          "lb",
+          "pieces",
+          "bunches"
+        ],
+        "title": "HarvestUnit",
+        "type": "string"
+      },
+      "HarvestsOut": {
+        "properties": {
+          "items": {
+            "description": "The latest first.",
+            "items": {
+              "$ref": "#/components/schemas/HarvestOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "this_year": {
+            "$ref": "#/components/schemas/HarvestTotalsOut"
+          }
+        },
+        "required": [
+          "items",
+          "this_year"
+        ],
+        "title": "HarvestsOut",
+        "type": "object"
+      },
       "HealthOut": {
         "properties": {
           "database": {
@@ -5867,6 +6056,36 @@
         ]
       }
     },
+    "/api/v1/harvests/{harvest_id}": {
+      "delete": {
+        "operationId": "sunfleck_garden_api_delete_harvest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "harvest_id",
+            "required": true,
+            "schema": {
+              "title": "Harvest Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Harvest",
+        "tags": [
+          "garden"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "description": "Report whether the app is running and can reach its database.\n\nUsed by Docker health checks and uptime monitors, so it needs no sign-in.",
@@ -7787,6 +8006,89 @@
         "summary": "Set Cover Photo",
         "tags": [
           "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/harvests": {
+      "get": {
+        "description": "A plant's harvests, the latest first (a few hundred at most), and this year's total.",
+        "operationId": "sunfleck_garden_api_list_harvests",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HarvestsOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Harvests",
+        "tags": [
+          "garden"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_garden_api_log_harvest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HarvestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HarvestOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Log Harvest",
+        "tags": [
+          "garden"
         ]
       }
     },

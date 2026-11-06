@@ -88,5 +88,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     restoreMocks: true,
+    // West of UTC, so dates read as midnight UTC (a day early there) show up in tests.
+    env: { TZ: "America/Los_Angeles" },
   },
 });

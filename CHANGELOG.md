@@ -22,6 +22,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   whole bed"). Exports include beds, and older exports still import.
 - **Seeds**: a list of the seeds you have (from the Plants page), with their species, variety,
   how many, and the year to sow them by. Exports include them.
+- **A harvest log**: log what you pick from vegetables, herbs and fruit, weighed or counted, and
+  see the year's total on the plant's page. Exports include harvests.
 - **A sowing calendar** for your seeds: when to sow, plant out and harvest each, from the
   place's frost dates, sorted into now, the next four weeks and later. Today mentions what to
   sow or plant out now, and **Sown** adds the seedlings as a plant.

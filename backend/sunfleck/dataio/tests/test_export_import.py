@@ -3,6 +3,7 @@ import json
 import zipfile
 from collections.abc import Callable, Iterator
 from datetime import UTC, date, datetime, time
+from decimal import Decimal
 from typing import Any
 
 import pytest
@@ -18,7 +19,7 @@ from sunfleck.care import services as care_services
 from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
 from sunfleck.care.tests.factories import builtin
 from sunfleck.dataio import exporter, importer, schema
-from sunfleck.garden.models import SeedPacket
+from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.notifications import services as notification_services
 from sunfleck.places.models import LightSource, Location, LocationKind, Site
 from sunfleck.plants import services as plant_services
@@ -134,6 +135,14 @@ def filled(household: Household, ada: Membership) -> Household:
     plugin_services.update(household, "weather_openmeteo", True, {"frost_c": 3})
     plugin_services.update(household, "identify_plantnet", True, {"api_key": "secret-key"})
     notification_services.add_channel(ada.user, "Phone", "ntfy://ntfy.sh/secret-topic")
+    Harvest.objects.create(
+        plant=monty,
+        harvested_on=date(2026, 8, 1),
+        amount=Decimal("1.25"),
+        unit="kg",
+        notes="First ones",
+        logged_by=ada.user,
+    )
     SeedPacket.objects.create(
         household=household,
         taxon=Taxon.objects.get(scientific_name="Solanum lycopersicum"),
@@ -256,6 +265,15 @@ def test_exports_from_before_garden_beds_import(filled: Household) -> None:
 
     garden = Location.objects.get(site__household=target, name="Garden")
     assert (garden.bed_type, garden.bed_width_cm, garden.bed_length_cm) == ("", None, None)
+
+
+def test_exports_from_before_harvests_import(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda exported: first_plant(exported).pop("harvests"))
+
+    importer.import_into(target, io.BytesIO(data))
+
+    assert not Harvest.objects.filter(plant__household=target).exists()
 
 
 def test_exports_from_before_seeds_import(filled: Household) -> None:

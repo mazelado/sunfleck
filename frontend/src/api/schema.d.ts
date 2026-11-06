@@ -295,6 +295,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/harvests/{harvest_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Harvest */
+        delete: operations["sunfleck_garden_api_delete_harvest"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -990,6 +1007,27 @@ export interface paths {
          */
         put: operations["sunfleck_plants_api_set_cover_photo"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/harvests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Harvests
+         * @description A plant's harvests, the latest first (a few hundred at most), and this year's total.
+         */
+        get: operations["sunfleck_garden_api_list_harvests"];
+        put?: never;
+        /** Log Harvest */
+        post: operations["sunfleck_garden_api_log_harvest"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1893,6 +1931,71 @@ export interface components {
             fertilizer: components["schemas"]["CareLevelOut"] | null;
             light: components["schemas"]["LightLevelOut"] | null;
             water: components["schemas"]["CareLevelOut"] | null;
+        };
+        /** HarvestIn */
+        HarvestIn: {
+            /** Amount */
+            amount?: number | string | null;
+            /**
+             * Harvested On
+             * Format: date
+             */
+            harvested_on: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /** @description Needed with an amount. */
+            unit?: components["schemas"]["HarvestUnit"] | null;
+        };
+        /** HarvestOut */
+        HarvestOut: {
+            /** Amount */
+            amount: number | null;
+            /**
+             * Harvested On
+             * Format: date
+             */
+            harvested_on: string;
+            /** Id */
+            id: number;
+            /**
+             * Logged By
+             * @description The name of who logged it.
+             */
+            logged_by: string | null;
+            /** Notes */
+            notes: string;
+            unit: components["schemas"]["HarvestUnit"] | null;
+        };
+        /** HarvestTotalsOut */
+        HarvestTotalsOut: {
+            /** Bunches */
+            bunches: number | null;
+            /**
+             * Grams
+             * @description The weighed harvests, in grams.
+             */
+            grams: number | null;
+            /** Pieces */
+            pieces: number | null;
+            /** Year */
+            year: number;
+        };
+        /**
+         * HarvestUnit
+         * @enum {string}
+         */
+        HarvestUnit: "g" | "kg" | "oz" | "lb" | "pieces" | "bunches";
+        /** HarvestsOut */
+        HarvestsOut: {
+            /**
+             * Items
+             * @description The latest first.
+             */
+            items: components["schemas"]["HarvestOut"][];
+            this_year: components["schemas"]["HarvestTotalsOut"];
         };
         /** HealthOut */
         HealthOut: {
@@ -3769,6 +3872,26 @@ export interface operations {
             };
         };
     };
+    sunfleck_garden_api_delete_harvest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                harvest_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     sunfleck_core_api_health: {
         parameters: {
             query?: never;
@@ -4952,6 +5075,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlantOut"];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_list_harvests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HarvestsOut"];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_log_harvest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HarvestIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HarvestOut"];
                 };
             };
         };

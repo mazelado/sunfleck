@@ -1,9 +1,10 @@
-"""Garden API: the seeds the household has.
+"""Garden API: the seeds the household has, the sowing calendar, and harvests.
 
 Everyone in the household can see them; Gardeners and Admins can change them.
 """
 
 from datetime import date
+from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
@@ -16,9 +17,10 @@ from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
 from sunfleck.garden import calendar, services
-from sunfleck.garden.models import SeedPacket
+from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
 from sunfleck.plants import services as plant_services
+from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.api import SpeciesOut, language, species_out
 
 router = Router(tags=["garden"], auth=django_auth)
@@ -185,3 +187,101 @@ def seeds_sown(request: HttpRequest, seed_id: int, data: SownIn) -> Status[SownO
     except plant_services.PlantsError as exc:
         raise ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {}) from exc
     return Status(201, SownOut(plant_id=plant.pk))
+
+
+# --- Harvests ---------------------------------------------------------------------------------
+
+
+class HarvestIn(Schema):
+    harvested_on: date
+    amount: Decimal | None = Field(default=None, ge=0, max_digits=8, decimal_places=2)
+    unit: HarvestUnit | None = Field(default=None, description="Needed with an amount.")
+    notes: str = Field(default="", max_length=2000)
+
+
+class HarvestOut(Schema):
+    id: int
+    harvested_on: date
+    amount: float | None
+    unit: HarvestUnit | None
+    notes: str
+    logged_by: str | None = Field(description="The name of who logged it.")
+
+
+class HarvestTotalsOut(Schema):
+    year: int
+    grams: float | None = Field(description="The weighed harvests, in grams.")
+    pieces: float | None
+    bunches: float | None
+
+
+class HarvestsOut(Schema):
+    items: list[HarvestOut] = Field(description="The latest first.")
+    this_year: HarvestTotalsOut
+
+
+def _harvest_out(harvest: Harvest) -> HarvestOut:
+    return HarvestOut(
+        id=harvest.pk,
+        harvested_on=harvest.harvested_on,
+        amount=float(harvest.amount) if harvest.amount is not None else None,
+        unit=HarvestUnit(harvest.unit) if harvest.unit else None,
+        notes=harvest.notes,
+        logged_by=harvest.logged_by.get_full_name() if harvest.logged_by else None,
+    )
+
+
+def _get_plant(household: Household, plant_id: int) -> Plant:
+    plant = Plant.objects.filter(pk=plant_id, household=household).first()
+    if plant is None:
+        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
+    return plant
+
+
+def _plant_today(plant: Plant) -> date:
+    zone = ZoneInfo(plant.location.site.timezone) if plant.location else None
+    return timezone.now().astimezone(zone).date() if zone else timezone.localdate()
+
+
+@router.get("/plants/{plant_id}/harvests", response=HarvestsOut)
+def list_harvests(request: HttpRequest, plant_id: int) -> HarvestsOut:
+    """A plant's harvests, the latest first (a few hundred at most), and this year's total."""
+    household = require_role(request, Role.VIEWER).household
+    plant = _get_plant(household, plant_id)
+    totals = services.harvest_totals(plant, _plant_today(plant).year)
+    return HarvestsOut(
+        items=[_harvest_out(harvest) for harvest in plant.harvests.select_related("logged_by")],
+        this_year=HarvestTotalsOut(
+            year=totals.year,
+            grams=totals.grams,
+            pieces=float(totals.pieces) if totals.pieces is not None else None,
+            bunches=float(totals.bunches) if totals.bunches is not None else None,
+        ),
+    )
+
+
+@router.post("/plants/{plant_id}/harvests", response={201: HarvestOut})
+def log_harvest(request: HttpRequest, plant_id: int, data: HarvestIn) -> Status[HarvestOut]:
+    membership = require_role(request, Role.GARDENER)
+    plant = _get_plant(membership.household, plant_id)
+    if data.harvested_on > _plant_today(plant):
+        raise ApiError(
+            422, "harvest_in_future", "A harvest can't be in the future.", {"field": "harvested_on"}
+        )
+    try:
+        harvest = services.log_harvest(
+            plant, services.HarvestData(**data.model_dump()), membership.user
+        )
+    except services.GardenError as exc:
+        raise _garden_error(exc) from exc
+    return Status(201, _harvest_out(harvest))
+
+
+@router.delete("/harvests/{harvest_id}", response={204: None})
+def delete_harvest(request: HttpRequest, harvest_id: int) -> Status[None]:
+    household = require_role(request, Role.GARDENER).household
+    harvest = Harvest.objects.filter(pk=harvest_id, plant__household=household).first()
+    if harvest is None:
+        raise ApiError(404, "harvest_not_found", "This harvest doesn't exist.")
+    harvest.delete()
+    return Status(204, None)
