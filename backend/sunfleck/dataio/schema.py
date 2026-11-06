@@ -7,6 +7,7 @@ profiles by key, since those come from the care dataset rather than the househol
 """
 
 from datetime import date, datetime, time
+from decimal import Decimal
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -111,6 +112,15 @@ class CareEvent(Model):
     estimated: bool = False
 
 
+class Harvest(Model):
+    harvested_on: date
+    amount: Decimal | None
+    unit: str
+    notes: str
+    # A member's `ref`, if known.
+    logged_by: int | None
+
+
 class Schedule(Model):
     care_type: CareTypeRef
     mode: str
@@ -143,6 +153,8 @@ class Plant(Model):
     photos: list[Photo] = Field(default_factory=list)
     care_events: list[CareEvent] = Field(default_factory=list)
     schedules: list[Schedule] = Field(default_factory=list)
+    # Added in 0.7.
+    harvests: list[Harvest] = Field(default_factory=list)
 
 
 class PluginSettings(Model):

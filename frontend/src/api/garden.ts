@@ -6,6 +6,9 @@ import type { components } from "./schema";
 export type Seed = components["schemas"]["SeedOut"];
 export type SeedInput = components["schemas"]["SeedIn"];
 export type Calendar = components["schemas"]["SowingCalendarOut"];
+export type Harvest = components["schemas"]["HarvestOut"];
+export type HarvestInput = components["schemas"]["HarvestIn"];
+export type HarvestUnit = NonNullable<HarvestInput["unit"]>;
 export type CalendarEntry = components["schemas"]["SowingEntryOut"];
 
 const SEEDS = ["seeds"] as const;
@@ -76,5 +79,46 @@ export function useDeleteSeed() {
       );
     },
     onSuccess: invalidate,
+  });
+}
+
+export function useHarvests(plantId: number, enabled = true) {
+  return useQuery({
+    queryKey: ["harvests", plantId],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/plants/{plant_id}/harvests", {
+          params: { path: { plant_id: plantId } },
+        }),
+      ),
+    enabled,
+  });
+}
+
+export function useLogHarvest(plantId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: HarvestInput) =>
+      unwrap(
+        await api.POST("/api/v1/plants/{plant_id}/harvests", {
+          params: { path: { plant_id: plantId } },
+          body,
+        }),
+      ),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["harvests", plantId] }),
+  });
+}
+
+export function useDeleteHarvest(plantId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (harvestId: number) => {
+      unwrap(
+        await api.DELETE("/api/v1/harvests/{harvest_id}", {
+          params: { path: { harvest_id: harvestId } },
+        }),
+      );
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["harvests", plantId] }),
   });
 }

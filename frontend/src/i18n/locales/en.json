@@ -403,6 +403,30 @@
     "todayNote": "In the garden now: {{tasks, list}}.",
     "seeCalendar": "See the sowing calendar"
   },
+  "harvests": {
+    "title": "Harvests",
+    "log": "Log a harvest",
+    "logTitle": "Harvest from {{name}}",
+    "none": "Nothing harvested yet.",
+    "thisYear": "In {{year}}: {{total}}",
+    "pieces_one": "{{count}} piece",
+    "pieces_other": "{{count}} pieces",
+    "bunches_one": "{{count}} bunch",
+    "bunches_other": "{{count}} bunches",
+    "delete": "Delete the harvest of {{date}}",
+    "date": "Harvested on",
+    "amount": "How much",
+    "unit": "Unit",
+    "notes": "Notes",
+    "units": {
+      "g": "grams",
+      "kg": "kilograms",
+      "oz": "ounces",
+      "lb": "pounds",
+      "pieces": "pieces",
+      "bunches": "bunches"
+    }
+  },
   "seeds": {
     "title": "Seeds",
     "intro": "The seeds you have. With their species, the sowing calendar says when to sow and plant them out, from your place's frost dates.",

@@ -24,7 +24,7 @@ from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.core.images import MAX_UPLOAD_BYTES
 from sunfleck.dataio import schema
-from sunfleck.garden.models import SeedPacket
+from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import LightSource, Location, Site
 from sunfleck.plants.models import Photo, Plant, PlantLight
 from sunfleck.plugins import services as plugin_services
@@ -286,6 +286,20 @@ class _Importer:
         # In bulk: plugins aren't told about care logged long ago.
         CareEvent.objects.bulk_create(events)
         self.summary.care_events += len(events)
+
+        for harvest_item in item.harvests:
+            harvest = Harvest(
+                plant=plant,
+                harvested_on=harvest_item.harvested_on,
+                amount=harvest_item.amount,
+                unit=harvest_item.unit,
+                notes=harvest_item.notes,
+                logged_by=self.members.get(harvest_item.logged_by)
+                if harvest_item.logged_by is not None
+                else None,
+            )
+            _check(harvest, f"harvest of {item.nickname!r}")
+            harvest.save()
 
         for schedule_item in item.schedules:
             schedule = CareSchedule(

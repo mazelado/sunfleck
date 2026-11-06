@@ -90,3 +90,14 @@ function toMinutes(time: string): number | null {
   }
   return Number(match[1]) * 60 + Number(match[2]);
 }
+
+/** A weight in grams, in the person's units: "450 g" or "1.65 kg"; "15.9 oz" or "3.6 lb". */
+export function formatWeight(grams: number, units: UnitSystem, locale: string): string {
+  const format = (value: number, digits: number) =>
+    new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(value);
+  if (units === "imperial") {
+    const ounces = grams / 28.349523125;
+    return ounces < 16 ? `${format(ounces, 1)} oz` : `${format(ounces / 16, 2)} lb`;
+  }
+  return grams < 1000 ? `${format(grams, 0)} g` : `${format(grams / 1000, 2)} kg`;
+}

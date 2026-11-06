@@ -801,3 +801,79 @@ describe("location page", () => {
     );
   });
 });
+
+describe("harvests", () => {
+  const tomato = plant({
+    nickname: "Tomato",
+    care_profile: { key: "fruiting_vegetable", name: "Fruiting vegetable", chosen: false },
+  });
+
+  it("shows this year's harvests in the person's units, and logs one", async () => {
+    signInAs({ ...gardener, unit_system: "imperial" });
+    withPlant(tomato);
+    let sent: unknown;
+    server.use(
+      http.get("*/api/v1/plants/7/harvests", () =>
+        HttpResponse.json({
+          items: [
+            {
+              id: 2,
+              harvested_on: "2026-08-19",
+              amount: 12,
+              unit: "pieces",
+              notes: "The first ripe ones",
+              logged_by: "Ada",
+            },
+            {
+              id: 1,
+              harvested_on: "2026-08-18",
+              amount: 450,
+              unit: "g",
+              notes: "",
+              logged_by: "Ada",
+            },
+          ],
+          this_year: { year: 2026, grams: 1650, pieces: 12, bunches: null },
+        }),
+      ),
+      // The plant's care card, not tested here.
+      http.get("*/api/v1/care-profiles/fruiting_vegetable", () => apiError(404, "not_found")),
+      http.post("*/api/v1/plants/7/harvests", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json({}, { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    expect(await screen.findByRole("heading", { name: "Harvests" })).toBeVisible();
+    // 1,650 g is about 3.64 lb.
+    expect(screen.getByText("In 2026: 3.64 lb · 12 pieces")).toBeVisible();
+    expect(screen.getByText("Aug 19, 2026 · 12 pieces · The first ripe ones")).toBeVisible();
+    expect(screen.getByText("Aug 18, 2026 · 450 g")).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Log a harvest" }));
+    const dialog = await screen.findByRole("dialog", { name: "Harvest from Tomato" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    const date = within(dialog).getByLabelText(/Harvested on/);
+    await user.clear(date);
+    await user.type(date, "2026-08-20");
+    await user.type(within(dialog).getByLabelText(/How much/), "6");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      // Ounces, the imperial default.
+      expect(sent).toEqual({ harvested_on: "2026-08-20", amount: 6, unit: "oz", notes: "" });
+    });
+  });
+
+  it("isn't offered for houseplants that have never been harvested", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    renderApp("/plants/7");
+
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.queryByRole("heading", { name: "Harvests" })).not.toBeInTheDocument();
+    });
+  });
+});

@@ -30,6 +30,12 @@ export const server = setupServer(
   http.get("*/api/v1/me", () => notSignedIn()),
   http.get("*/api/v1/sites", () => HttpResponse.json([])),
   http.get("*/api/v1/seeds", () => HttpResponse.json([])),
+  http.get("*/api/v1/plants/:plantId/harvests", () =>
+    HttpResponse.json({
+      items: [],
+      this_year: { year: 2026, grams: null, pieces: null, bunches: null },
+    }),
+  ),
   // Only its humidity estimate is read from here; the rest comes with the sites.
   http.get("*/api/v1/locations/:id", () => HttpResponse.json({ humidity_estimate: null })),
   // Nothing known about the light, unless a test says otherwise.
