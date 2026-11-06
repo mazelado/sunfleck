@@ -34,6 +34,7 @@ import { describeLight } from "../places/describe";
 import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
 import { DiagnosePlant } from "./DiagnosePlant";
+import { PlantConversations } from "./PlantConversations";
 import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
@@ -142,6 +143,7 @@ export function PlantPage() {
       <LightCheck plant={data} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantHarvests plant={data} />
+      <PlantConversations plantId={data.id} plantName={data.nickname} canEdit={canEdit} />
       <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
       <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />
       {openPhoto && (

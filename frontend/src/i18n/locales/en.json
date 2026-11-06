@@ -250,7 +250,11 @@
     "ai_unavailable": "The AI service can't be reached. Try again later.",
     "ai_invalid_answer": "The AI didn't give a usable answer. Try again.",
     "ai_unsupported": "The AI model can't look at photos. An Admin can choose one that can under Plugins.",
-    "diagnosis_unavailable": "No AI plugin is turned on."
+    "diagnosis_unavailable": "No AI plugin is turned on.",
+    "chat_unavailable": "No AI plugin is turned on.",
+    "question_empty": "Write a question first.",
+    "conversation_too_long": "This conversation is as long as it can get. Start a new one.",
+    "conversation_not_found": "This conversation doesn't exist. It may have been deleted."
   },
   "places": {
     "title": "Places",
@@ -1272,6 +1276,30 @@
     "nextSteps": "What to do",
     "photoKept": "The photo was added to the plant's photos.",
     "check": "These are suggestions: check them against the plant before acting."
+  },
+  "conversations": {
+    "title": "Questions",
+    "ask": "Ask about {{name}}",
+    "empty": "Ask the AI anything about {{name}}: it knows its species, where it grows, its pot and its care so far. The household can read the answers here.",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions",
+    "startedBy": "Started by {{name}}, {{date}}",
+    "question": "Your question",
+    "followUp": "Ask a follow-up question",
+    "send": "Ask",
+    "thinking": "Thinking… This can take a minute.",
+    "privacy": "Your question, the conversation so far and this plant's details and care are sent to the household's AI service. Answers are suggestions.",
+    "noAi": "An Admin can turn on an AI plugin under Plugins to ask questions.",
+    "tooLong": "This conversation is as long as it can get. Start a new one to ask more.",
+    "delete": "Delete conversation",
+    "deleteTitle": "Delete this conversation?",
+    "deleteMessage": "It's deleted for the whole household. {{name}} and its care aren't changed.",
+    "starters": {
+      "water": "How often should I water it?",
+      "light": "Is it getting enough light?",
+      "repot": "When should I repot it?",
+      "grow": "How can I help it grow?"
+    }
   },
   "toxicity": {
     "title": "Known to be toxic to {{animals}}",

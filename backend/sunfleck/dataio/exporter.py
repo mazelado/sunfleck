@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from sunfleck import __version__
 from sunfleck.accounts.models import Household
+from sunfleck.ai.models import Conversation
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.dataio import schema
 from sunfleck.garden.models import Harvest, SeedPacket
@@ -136,6 +137,27 @@ def _plant(plant: Plant) -> schema.Plant:
                 logged_by=harvest.logged_by_id,
             )
             for harvest in Harvest.objects.filter(plant=plant).order_by("harvested_on", "pk")
+        ],
+        conversations=[
+            schema.Conversation(
+                title=conversation.title,
+                started_by=conversation.started_by_id,
+                created_at=conversation.created_at,
+                updated_at=conversation.updated_at,
+                messages=[
+                    schema.Message(
+                        role=message.role,
+                        text=message.text,
+                        asked_by=message.asked_by_id,
+                        attribution=message.attribution,
+                        created_at=message.created_at,
+                    )
+                    for message in conversation.messages.all()
+                ],
+            )
+            for conversation in Conversation.objects.filter(plant=plant).order_by(
+                "created_at", "pk"
+            )
         ],
         schedules=[
             schema.Schedule(

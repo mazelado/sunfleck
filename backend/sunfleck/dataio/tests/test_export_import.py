@@ -14,6 +14,7 @@ from django.test import Client
 
 from sunfleck.accounts.models import Household, Membership, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory, MembershipFactory, UserFactory
+from sunfleck.ai.models import Conversation, Message
 from sunfleck.care import schedules
 from sunfleck.care import services as care_services
 from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
@@ -144,6 +145,26 @@ def filled(household: Household, ada: Membership) -> Household:
         unit="kg",
         notes="First ones",
         logged_by=ada.user,
+    )
+    talk = Conversation.objects.create(
+        plant=monty,
+        title="Why are the leaves yellow?",
+        started_by=ada.user,
+        updated_at=datetime(2026, 8, 2, 10, tzinfo=UTC),
+    )
+    Message.objects.create(
+        conversation=talk,
+        role="question",
+        text="Why are the leaves yellow?",
+        asked_by=ada.user,
+        created_at=datetime(2026, 8, 2, 10, tzinfo=UTC),
+    )
+    Message.objects.create(
+        conversation=talk,
+        role="answer",
+        text="Probably too much water.",
+        attribution="Suggested by AI (test)",
+        created_at=datetime(2026, 8, 2, 10, tzinfo=UTC),
     )
     SeedPacket.objects.create(
         household=household,
@@ -284,6 +305,15 @@ def test_exports_from_before_harvests_import(filled: Household) -> None:
     importer.import_into(target, io.BytesIO(data))
 
     assert not Harvest.objects.filter(plant__household=target).exists()
+
+
+def test_exports_from_before_conversations_import(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda e: first_plant(e).pop("conversations"))
+
+    importer.import_into(target, io.BytesIO(data))
+
+    assert not Conversation.objects.filter(plant__household=target).exists()
 
 
 def test_exports_from_before_grow_light_distances_import(filled: Household) -> None:

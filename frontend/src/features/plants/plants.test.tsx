@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Me } from "../../api/accounts";
+import type { ChatMessage, Conversation, ConversationSummary } from "../../api/conversations";
 import type { Diagnosis } from "../../api/diagnosis";
 import { ApiError } from "../../api/errors";
 import type { Identification } from "../../api/identify";
@@ -1244,5 +1245,194 @@ describe("harvests", () => {
     await waitFor(() => {
       expect(screen.queryByRole("heading", { name: "Harvests" })).not.toBeInTheDocument();
     });
+  });
+});
+
+describe("questions about a plant", () => {
+  const withAi = () => {
+    server.use(
+      http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: true })),
+    );
+  };
+
+  const question: ChatMessage = {
+    id: 1,
+    role: "question",
+    text: "How often should I water it?",
+    asked_by: "Ada",
+    attribution: "",
+    created_at: "2026-11-01T10:00:00Z",
+  };
+  const answer: ChatMessage = {
+    id: 2,
+    role: "answer",
+    text: "About once a week in summer,\nwhen the top few cm are dry.",
+    asked_by: null,
+    attribution: "Suggested by AI (claude-sonnet-5-5)",
+    created_at: "2026-11-01T10:00:00Z",
+  };
+
+  const answered: Conversation = {
+    id: 3,
+    plant_id: 7,
+    title: "How often should I water it?",
+    started_by: "Ada",
+    created_at: "2026-11-01T10:00:00Z",
+    updated_at: "2026-11-01T10:00:00Z",
+    can_continue: true,
+    messages: [question, answer],
+  };
+
+  it("asks a first question, from a suggestion, and opens the conversation", async () => {
+    signInAs(gardener);
+    withAi();
+    withPlant(plant());
+    let sent: unknown;
+    server.use(
+      http.post("*/api/v1/plants/7/conversations", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(answered, { status: 201 });
+      }),
+      http.get("*/api/v1/conversations/3", () => HttpResponse.json(answered)),
+    );
+    const { user, router } = renderApp("/plants/7");
+
+    expect(await screen.findByText(/Ask the AI anything about Monty/)).toBeVisible();
+    await user.click(screen.getByRole("link", { name: "Ask about Monty" }));
+    expect(await screen.findByRole("heading", { name: "Ask about Monty" })).toBeVisible();
+    expect(await accessibilityProblems(document.body)).toEqual([]);
+    await user.click(screen.getByRole("button", { name: "How often should I water it?" }));
+    expect(screen.getByRole("textbox", { name: "Your question" })).toHaveValue(
+      "How often should I water it?",
+    );
+    await user.click(screen.getByRole("button", { name: "Ask" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "How often should I water it?" }),
+    ).toBeVisible();
+    expect(sent).toEqual({ question: "How often should I water it?" });
+    expect(router.state.location.pathname).toBe("/plants/7/conversations/3");
+    expect(screen.getByText(/About once a week in summer/)).toBeVisible();
+    expect(screen.getByText("Suggested by AI (claude-sonnet-5-5)")).toBeVisible();
+    expect(screen.getByText(/Started by Ada/)).toBeVisible();
+    expect(screen.getByRole("textbox", { name: "Ask a follow-up question" })).toBeVisible();
+    expect(await accessibilityProblems(document.body)).toEqual([]);
+  });
+
+  it("asks follow-up questions, and keeps the question if the AI can't answer", async () => {
+    signInAs(gardener);
+    withAi();
+    withPlant(plant());
+    let fail = true;
+    server.use(
+      http.get("*/api/v1/conversations/3", () => HttpResponse.json(answered)),
+      http.post("*/api/v1/conversations/3/messages", () => {
+        if (fail) {
+          fail = false;
+          return apiError(429, "ai_quota_exceeded");
+        }
+        return HttpResponse.json({
+          ...answered,
+          messages: [
+            ...answered.messages,
+            { ...question, id: 4, text: "Even in winter?" },
+            { ...answer, id: 5, text: "Less often in winter." },
+          ],
+        } satisfies Conversation);
+      }),
+    );
+    const { user } = renderApp("/plants/7/conversations/3");
+
+    const box = await screen.findByRole("textbox", { name: "Ask a follow-up question" });
+    await user.type(box, "Even in winter?");
+    await user.click(screen.getByRole("button", { name: "Ask" }));
+
+    expect(await screen.findByText(/limit has been reached/)).toBeVisible();
+    expect(box).toHaveValue("Even in winter?");
+    await user.click(screen.getByRole("button", { name: "Ask" }));
+
+    expect(await screen.findByText("Less often in winter.")).toBeVisible();
+    expect(box).toHaveValue("");
+  });
+
+  it("lists the plant's conversations for everyone, and viewers only read them", async () => {
+    signInAs(viewer);
+    withAi();
+    withPlant(plant());
+    server.use(
+      http.get("*/api/v1/plants/7/conversations", () =>
+        HttpResponse.json([
+          {
+            id: 3,
+            title: "How often should I water it?",
+            started_by: "Ada",
+            questions: 2,
+            created_at: "2026-11-01T10:00:00Z",
+            updated_at: "2026-11-01T10:00:00Z",
+          },
+        ] satisfies ConversationSummary[]),
+      ),
+      http.get("*/api/v1/conversations/3", () => HttpResponse.json(answered)),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("link", { name: "How often should I water it?" }));
+    expect(screen.queryByRole("link", { name: "Ask about Monty" })).not.toBeInTheDocument();
+
+    expect(await screen.findByText(/About once a week in summer/)).toBeVisible();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Delete conversation" })).not.toBeInTheDocument();
+  });
+
+  it("has no questions without an AI plugin or conversations", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    renderApp("/plants/7");
+
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Questions" })).not.toBeInTheDocument();
+  });
+
+  it("deletes a conversation", async () => {
+    signInAs(gardener);
+    withAi();
+    withPlant(plant());
+    let deleted = false;
+    server.use(
+      http.get("*/api/v1/conversations/3", () => HttpResponse.json(answered)),
+      http.delete("*/api/v1/conversations/3", () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user, router } = renderApp("/plants/7/conversations/3");
+
+    await user.click(await screen.findByRole("button", { name: "Delete conversation" }));
+    const dialog = await screen.findByRole("dialog", { name: "Delete this conversation?" });
+    await user.click(within(dialog).getByRole("button", { name: /Delete/ }));
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe("/plants/7");
+    });
+    expect(deleted).toBe(true);
+  });
+
+  it("asks to start again when a conversation is as long as it can get", async () => {
+    signInAs(gardener);
+    withAi();
+    withPlant(plant());
+    server.use(
+      http.get("*/api/v1/conversations/3", () =>
+        HttpResponse.json({ ...answered, can_continue: false }),
+      ),
+    );
+    renderApp("/plants/7/conversations/3");
+
+    expect(await screen.findByText(/as long as it can get/)).toBeVisible();
+    expect(await screen.findByRole("link", { name: "Ask about Monty" })).toHaveAttribute(
+      "href",
+      "/plants/7/conversations/new",
+    );
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
   });
 });

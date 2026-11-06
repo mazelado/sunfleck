@@ -77,6 +77,12 @@ signing out are in the account menu (your picture at the top right).
   history, and suggests likely causes and what to do, and says when to act soon. They're
   suggestions: check them against the plant. The photo can be kept on the plant, with your
   words as its caption, to compare later.
+- **Ask about this plant**: on a plant's page, if an Admin turned on an AI plugin, **Ask
+  about** a plant starts a conversation with the AI, which knows the plant's species, place,
+  pot, schedules and recent care. Ask follow-up questions in the same conversation. Each one
+  is kept under **Questions** on the plant's page, for everyone in the household to read; the
+  newest are sent with each question, so start a new one for a different topic. Answers are
+  suggestions.
 - **Identify it from a photo** when adding it, if an Admin turned on the Pl@ntNet plugin:
   pick one of the suggestions to set its species.
 - Add its **pot** (width, and height if you like; material) and **soil**: plants in small or
@@ -240,4 +246,5 @@ away: open one with the arrow next to its name, or just turn it on.
 Admins can download everything in the household as a ZIP file under **Export and import**: a
 backup, or a way to move to another server. Import it into a new household there. Passwords,
 profile pictures, notification addresses and API keys aren't included, so people set those up again; the page
-lists anything else that needs doing after an import.
+lists anything else that needs doing after an import. Questions to the AI are included with
+their plants.

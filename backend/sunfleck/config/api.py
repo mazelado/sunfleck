@@ -4,6 +4,7 @@ from ninja import NinjaAPI, Router
 
 from sunfleck import __version__
 from sunfleck.accounts.api import router as accounts_router
+from sunfleck.ai.api import router as ai_router
 from sunfleck.care.api import router as care_router
 from sunfleck.core.api import router as core_router
 from sunfleck.core.errors import register_error_handlers
@@ -28,6 +29,7 @@ api.add_router("/", plugins_router)
 api.add_router("/", notifications_router)
 api.add_router("/", dataio_router)
 api.add_router("/", garden_router)
+api.add_router("/", ai_router)
 
 # Each plugin's own endpoints, under /api/v1/plugins/<plugin id>/.
 for plugin_id in registry.implementers("register_api"):

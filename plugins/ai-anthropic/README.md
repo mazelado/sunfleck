@@ -4,7 +4,8 @@ A built-in [Sunfleck](../../README.md) plugin: suggestions from Anthropic's Clau
 through the [Claude API](https://platform.claude.com/docs), with your own API key.
 
 AI is always optional in Sunfleck: everything works without it, and it's only asked when you
-ask: for a care profile for an unusual plant, or what's wrong with a plant from a photo of it.
+ask: for a care profile for an unusual plant, what's wrong with a plant from a photo of it,
+or a question about a plant.
 Its answers are suggestions, which you review before acting on them.
 
 ## Setting it up
@@ -33,7 +34,11 @@ to `api.anthropic.com`: Sunfleck's question, the instructions for the answer, an
   outdoors.
 - For **What's wrong?**: the photo taken for it (made smaller, without its location data),
   what the person wrote, and the plant's details: its name, species, care profile, place
-  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes. Anthropic's terms for the API apply to what it does with them.
+  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes.
+- For **Ask about this plant**: the question, the latest part of the conversation (up to 20
+  questions and answers), and the same details of the plant, without a photo.
+
+Anthropic's terms for the API apply to what it does with them.
 
 ## How it works
 

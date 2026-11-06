@@ -21,6 +21,7 @@ from PIL import Image, UnidentifiedImageError
 from pydantic import ValidationError as SchemaError
 
 from sunfleck.accounts.models import Household, User
+from sunfleck.ai.models import Conversation, Message
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.core.images import MAX_UPLOAD_BYTES
 from sunfleck.dataio import schema
@@ -316,6 +317,9 @@ class _Importer:
             _check(harvest, f"harvest of {item.nickname!r}")
             harvest.save()
 
+        for conversation_item in item.conversations:
+            self.import_conversation(plant, conversation_item)
+
         for schedule_item in item.schedules:
             schedule = CareSchedule(
                 plant=plant,
@@ -333,6 +337,34 @@ class _Importer:
             )
             _check(schedule, f"schedule of {item.nickname!r}")
             schedule.save()
+
+    def import_conversation(self, plant: Plant, item: schema.Conversation) -> None:
+        where = f"conversation about {plant.nickname!r}"
+        conversation = Conversation(
+            plant=plant,
+            title=item.title,
+            started_by=self.member(item.started_by),
+            updated_at=item.updated_at,
+        )
+        _check(conversation, where)
+        conversation.save()
+        Conversation.objects.filter(pk=conversation.pk).update(created_at=item.created_at)
+        messages = []
+        for message_item in item.messages:
+            message = Message(
+                conversation=conversation,
+                role=message_item.role,
+                text=message_item.text,
+                asked_by=self.member(message_item.asked_by),
+                attribution=message_item.attribution,
+                created_at=message_item.created_at,
+            )
+            _check(message, where)
+            messages.append(message)
+        Message.objects.bulk_create(messages)
+
+    def member(self, ref: int | None) -> User | None:
+        return self.members.get(ref) if ref is not None else None
 
     def import_plugins(self, plugins: list[schema.PluginSettings]) -> None:
         for item in plugins:

@@ -123,6 +123,24 @@ class Harvest(Model):
     logged_by: int | None
 
 
+class Message(Model):
+    role: str
+    text: str
+    # A member's `ref`, if known (questions only).
+    asked_by: int | None
+    attribution: str
+    created_at: datetime
+
+
+class Conversation(Model):
+    title: str
+    # A member's `ref`, if known.
+    started_by: int | None
+    created_at: datetime
+    updated_at: datetime
+    messages: list[Message]
+
+
 class Schedule(Model):
     care_type: CareTypeRef
     mode: str
@@ -160,6 +178,8 @@ class Plant(Model):
     # Added in 0.8: the plant it was grown from (its ref), and how.
     parent: int | None = None
     propagation_method: str = ""
+    # Added in 0.9: conversations with the AI about it.
+    conversations: list[Conversation] = Field(default_factory=list)
 
 
 class PluginSettings(Model):

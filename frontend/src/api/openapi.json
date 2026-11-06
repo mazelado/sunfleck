@@ -935,6 +935,53 @@
         "title": "ChannelUpdateIn",
         "type": "object"
       },
+      "ChatMessageOut": {
+        "properties": {
+          "asked_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who asked (questions only).",
+            "title": "Asked By"
+          },
+          "attribution": {
+            "description": "Which AI answered (answers only), to show with it.",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/MessageRole"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "text",
+          "asked_by",
+          "attribution",
+          "created_at"
+        ],
+        "title": "ChatMessageOut",
+        "type": "object"
+      },
       "ContainerMaterial": {
         "description": "What the plant grows in. Porous pots (terracotta, fabric) dry out faster.",
         "enum": [
@@ -949,6 +996,118 @@
         ],
         "title": "ContainerMaterial",
         "type": "string"
+      },
+      "ConversationOut": {
+        "properties": {
+          "can_continue": {
+            "description": "False once it's as long as a conversation can get.",
+            "title": "Can Continue",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "messages": {
+            "description": "Oldest first: each question, then its answer.",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageOut"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "plant_id": {
+            "title": "Plant Id",
+            "type": "integer"
+          },
+          "started_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started By"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "plant_id",
+          "title",
+          "started_by",
+          "created_at",
+          "updated_at",
+          "messages",
+          "can_continue"
+        ],
+        "title": "ConversationOut",
+        "type": "object"
+      },
+      "ConversationSummaryOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "questions": {
+            "description": "How many questions were asked in it.",
+            "title": "Questions",
+            "type": "integer"
+          },
+          "started_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started By"
+          },
+          "title": {
+            "description": "The first question, shortened.",
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "When the latest question was answered.",
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "started_by",
+          "questions",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ConversationSummaryOut",
+        "type": "object"
       },
       "CoverIn": {
         "properties": {
@@ -2539,6 +2698,14 @@
         "title": "MessageOut",
         "type": "object"
       },
+      "MessageRole": {
+        "enum": [
+          "question",
+          "answer"
+        ],
+        "title": "MessageRole",
+        "type": "string"
+      },
       "MovePlantsIn": {
         "properties": {
           "location_id": {
@@ -3922,6 +4089,21 @@
           "public_key"
         ],
         "title": "PushKeyOut",
+        "type": "object"
+      },
+      "QuestionIn": {
+        "properties": {
+          "question": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "QuestionIn",
         "type": "object"
       },
       "Role": {
@@ -6417,6 +6599,119 @@
         ]
       }
     },
+    "/api/v1/conversations/{conversation_id}": {
+      "delete": {
+        "operationId": "sunfleck_ai_api_delete_conversation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "title": "Conversation Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Conversation",
+        "tags": [
+          "ai"
+        ]
+      },
+      "get": {
+        "operationId": "sunfleck_ai_api_get_conversation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "title": "Conversation Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Conversation",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/conversations/{conversation_id}/messages": {
+      "post": {
+        "description": "Ask a further question in the conversation. Sends the latest part of the conversation\ntoo, so the AI can follow on. Nothing is saved if the AI can't answer.",
+        "operationId": "sunfleck_ai_api_ask_again",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "title": "Conversation Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Ask Again",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/export": {
       "get": {
         "description": "Download the household's data as a ZIP file: places, plants, photos, care history and\nsettings. Passwords and secrets (notification addresses, API keys) aren't included.",
@@ -8340,6 +8635,94 @@
         "summary": "Log Care",
         "tags": [
           "care"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/conversations": {
+      "get": {
+        "description": "The plant's conversations, the latest first.",
+        "operationId": "sunfleck_ai_api_list_conversations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationSummaryOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Conversations",
+        "tags": [
+          "ai"
+        ]
+      },
+      "post": {
+        "description": "Ask the household's AI plugin about the plant, in a new conversation. Sends the\nquestion and the plant's species, conditions, schedules and recent care. Nothing is saved\nif the AI can't answer.",
+        "operationId": "sunfleck_ai_api_start_conversation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Start Conversation",
+        "tags": [
+          "ai"
         ]
       }
     },
