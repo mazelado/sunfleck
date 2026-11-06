@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-06
+
+**Hibiscus.** For collectors: grow new plants from the ones you have and keep track of where
+each came from, print QR labels or write NFC tags that open a plant's page, and keep a
+wishlist. Grow lights now take each plant's distance into account, and three dead ends found
+by the click counts are gone.
+
 ### Added
 
 - **Add a place and a location from the plant form** (#120): with no places yet, the plant
@@ -329,7 +336,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/mazelado/sunfleck/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/mazelado/sunfleck/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/mazelado/sunfleck/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/mazelado/sunfleck/compare/v0.5.1...v0.6.0
