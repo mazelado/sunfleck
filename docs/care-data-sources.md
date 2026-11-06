@@ -116,6 +116,15 @@ predicted interval = archetype baseline
                                             e.g. "soil was still wet" / "too dry")
 ```
 
+**Grow lights and distance.** A grow light's brightness (PPFD) is given at some distance below
+it. At a plant `d` cm below it, Sunfleck takes PPFD × (measured distance ÷ d)^1.3, within 5 to
+300 cm and at most 3× the measured brightness. A small bulb far away falls off with the square
+of the distance (an exponent of 2). An LED panel spreads its light, so close up it falls off
+more slowly: Spider Farmer's table for its SF1000 panel gives 928, 756 and 557 µmol/m²/s at
+the centre, 30, 36 and 46 cm below it, which fits an exponent of 1.26 to 1.33 (the square
+would give 412 at 46 cm). It's one maker's figures, so the exponent is an estimate that more
+published charts can refine.
+
 Every prediction can show *why* ("watering moved 2 days later: cooler weather and lower
 light"), which builds trust and makes the logic easy to test. Machine learning models can be
 added later as plugins, once real usage data exists.

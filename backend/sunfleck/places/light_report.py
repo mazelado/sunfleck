@@ -7,7 +7,7 @@ season, which is as fine as those estimates go.
 from dataclasses import dataclass
 from datetime import date
 
-from sunfleck.places.light import grow_light_dli
+from sunfleck.places.light import grow_light_dli, ppfd_at
 from sunfleck.places.models import LightSource, LightSourceKind, Location, LocationKind
 from sunfleck.plants.models import Plant
 from sunfleck.prediction.engine import Profile
@@ -51,8 +51,9 @@ def source_light(
     light: LightSource, latitude: float | None, distance_cm: int | None = None
 ) -> SourceLight | None:
     """A window's light at `distance_cm` from it (a typical distance if None), or a grow
-    light's; None if it isn't known (a window without a direction, a grow light without its
-    brightness or hours)."""
+    light's at `distance_cm` below it (where its brightness was measured if None); None if it
+    isn't known (a window without a direction, a grow light without its brightness or
+    hours)."""
     if light.kind == LightSourceKind.WINDOW:
         if not light.direction:
             return None
@@ -63,8 +64,9 @@ def source_light(
             {season: round(window_dli(window, season, latitude), 1) for season in Season},
         )
     if light.ppfd and light.on_time and light.off_time:
-        dli = round(grow_light_dli(light.ppfd, light.on_time, light.off_time), 1)
-        return SourceLight(light, None, dict.fromkeys(Season, dli))
+        ppfd = ppfd_at(light.ppfd, light.ppfd_distance_cm, distance_cm)
+        dli = round(grow_light_dli(ppfd, light.on_time, light.off_time), 1)
+        return SourceLight(light, distance_cm, dict.fromkeys(Season, dli))
     return None
 
 

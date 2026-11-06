@@ -346,7 +346,7 @@ describe("light sources", () => {
     );
     expect(within(dialog).queryByLabelText(/PPFD/)).not.toBeInTheDocument();
     expect(within(dialog).getByRole("status")).toHaveTextContent(
-      "About 8.6 mol/m²/day of light (12 hours a day).",
+      "About 8.6 mol/m²/day of light 30 cm below it (12 hours a day).",
     );
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
     await waitFor(() => {
@@ -355,6 +355,7 @@ describe("light sources", () => {
         name: "",
         direction: null,
         ppfd: 200,
+        ppfd_distance_cm: 30,
         on_time: "07:00",
         off_time: "19:00",
         enabled: true,
@@ -365,10 +366,10 @@ describe("light sources", () => {
   it("accepts an exact brightness for people who know it", async () => {
     signInAs(gardener);
     withSites([site()]);
-    let sent: { ppfd?: number } = {};
+    let sent: { ppfd?: number; ppfd_distance_cm?: number } = {};
     server.use(
       http.post("*/api/v1/locations/10/light-sources", async ({ request }) => {
-        sent = (await request.json()) as { ppfd?: number };
+        sent = (await request.json()) as typeof sent;
         return HttpResponse.json({}, { status: 201 });
       }),
     );
@@ -385,11 +386,18 @@ describe("light sources", () => {
       within(listbox).getByRole("option", { name: /exact brightness/, hidden: true }),
     );
     await user.type(within(dialog).getByLabelText(/PPFD/), "300");
+    // As on its spec sheet: 300 at 45 cm below it.
+    const measuredAt = within(dialog).getByRole("textbox", { name: /Measured at \(cm\)/ });
+    expect(measuredAt).toHaveValue("30");
+    await user.clear(measuredAt);
+    await user.type(measuredAt, "45");
 
-    expect(within(dialog).getByRole("status")).toHaveTextContent("About 13 mol/m²/day");
+    expect(within(dialog).getByRole("status")).toHaveTextContent(
+      "About 13 mol/m²/day of light 45 cm below it",
+    );
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
     await waitFor(() => {
-      expect(sent.ppfd).toBe(300);
+      expect(sent).toMatchObject({ ppfd: 300, ppfd_distance_cm: 45 });
     });
   });
 
@@ -406,6 +414,7 @@ describe("light sources", () => {
                 name: "Bay window",
                 direction: "SW",
                 ppfd: null,
+                ppfd_distance_cm: 30,
                 on_time: null,
                 off_time: null,
                 enabled: true,
@@ -418,6 +427,7 @@ describe("light sources", () => {
                 name: "",
                 direction: null,
                 ppfd: 200,
+                ppfd_distance_cm: 30,
                 on_time: "07:00:00",
                 off_time: "19:00:00",
                 enabled: false,
@@ -488,6 +498,7 @@ describe("light sources", () => {
                 name: "Bay window",
                 direction: "S",
                 ppfd: null,
+                ppfd_distance_cm: 30,
                 on_time: null,
                 off_time: null,
                 enabled: true,

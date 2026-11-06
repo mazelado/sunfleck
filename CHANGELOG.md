@@ -30,6 +30,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Grow lights take each plant's distance into account** (#144), as windows already did: the
+  plant form asks how far below the light each plant is, and a grow light can say where its
+  brightness was measured ("600 at 45 cm"). Plants nearer the light get more light, and
+  ones further away less. Plants without a distance get the same light as before.
 - **Today shows a new household how to get started** (#122): until there's a plant, a
   checklist (a place, a location in it, a first plant) replaces the empty lists of care, ticks
   off each step that's done, and has a button for the next. It replaces the two cards that

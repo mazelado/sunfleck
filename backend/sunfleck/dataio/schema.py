@@ -50,6 +50,8 @@ class LightSource(Model):
     name: str
     direction: str
     ppfd: int | None
+    # Added in 0.8: how far below the light its PPFD was measured.
+    ppfd_distance_cm: int = 30
     on_time: time | None
     off_time: time | None
     enabled: bool

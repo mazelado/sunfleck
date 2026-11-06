@@ -155,9 +155,9 @@ class PlantLight(models.Model):
     light_source = models.ForeignKey(
         LightSource, on_delete=models.CASCADE, related_name="plant_links"
     )
-    # Windows only.
+    # How far the plant is from the window, or below the grow light.
     distance_cm = models.PositiveIntegerField(
-        _("distance from the window (cm)"),
+        _("distance from the light (cm)"),
         null=True,
         blank=True,
         validators=[MaxValueValidator(10_000)],

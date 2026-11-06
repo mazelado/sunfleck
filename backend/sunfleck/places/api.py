@@ -16,7 +16,13 @@ from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
 from sunfleck.places import frost, light_report, services
 from sunfleck.places.humidity import estimated_humidity
-from sunfleck.places.light import grow_light_dli, hours_on
+from sunfleck.places.light import (
+    DEFAULT_PPFD_DISTANCE_CM,
+    MAX_DISTANCE_CM,
+    MIN_DISTANCE_CM,
+    grow_light_dli,
+    hours_on,
+)
 from sunfleck.places.models import (
     BedType,
     Direction,
@@ -41,6 +47,12 @@ class LightSourceIn(Schema):
     name: str = Field(default="", max_length=100)
     direction: Direction | None = None
     ppfd: int | None = Field(default=None, ge=1, le=2500)
+    ppfd_distance_cm: int = Field(
+        default=DEFAULT_PPFD_DISTANCE_CM,
+        ge=MIN_DISTANCE_CM,
+        le=MAX_DISTANCE_CM,
+        description="Grow lights: how far below the light its PPFD was measured.",
+    )
     on_time: time | None = None
     off_time: time | None = None
     enabled: bool = True
@@ -52,6 +64,7 @@ class LightSourceOut(Schema):
     name: str
     direction: Direction | None
     ppfd: int | None
+    ppfd_distance_cm: int
     on_time: time | None
     off_time: time | None
     enabled: bool
@@ -173,6 +186,7 @@ def light_source_out(light: LightSource) -> LightSourceOut:
         name=light.name,
         direction=Direction(light.direction) if light.direction else None,
         ppfd=light.ppfd,
+        ppfd_distance_cm=light.ppfd_distance_cm,
         on_time=light.on_time,
         off_time=light.off_time,
         enabled=light.enabled,

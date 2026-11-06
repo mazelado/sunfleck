@@ -56,7 +56,10 @@ PHOTO_CACHE_CONTROL = "private, max-age=31536000, immutable"
 class PlantLightIn(Schema):
     light_source_id: int
     distance_cm: int | None = Field(
-        default=None, ge=0, le=10_000, description="Windows: the plant's distance from it."
+        default=None,
+        ge=0,
+        le=10_000,
+        description="The plant's distance from the window, or below the grow light.",
     )
 
 

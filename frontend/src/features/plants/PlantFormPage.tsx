@@ -209,8 +209,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
           const distance = formValues.lights[String(light.id)]?.distance ?? "";
           return {
             light_source_id: light.id,
-            distance_cm:
-              light.kind === "window" && distance !== "" ? displayToCm(distance, units) : null,
+            distance_cm: distance !== "" ? displayToCm(distance, units) : null,
           };
         }),
       };
@@ -559,12 +558,16 @@ function LightPicker({ location, lights, error, units, onChange, onAddLight }: L
               }
               description={describeLight(light, t).join(" · ")}
             />
-            {choice.checked && light.kind === "window" && (
+            {choice.checked && (
               <NumberInput
                 ml={32}
                 maw={240}
                 size="xs"
-                label={`${t("plants.distanceFromWindow")} (${lengthUnit(units)})`}
+                label={`${
+                  light.kind === "window"
+                    ? t("plants.distanceFromWindow")
+                    : t("plants.distanceBelowLight")
+                } (${lengthUnit(units)})`}
                 description={t("common.optional")}
                 min={0}
                 value={choice.distance}

@@ -40,6 +40,7 @@ const bayWindow: LightSource = {
   name: "Bay window",
   direction: "S",
   ppfd: null,
+  ppfd_distance_cm: 30,
   on_time: null,
   off_time: null,
   enabled: true,
@@ -53,6 +54,7 @@ const growLight: LightSource = {
   name: "Shelf light",
   direction: null,
   ppfd: 200,
+  ppfd_distance_cm: 30,
   on_time: "07:00:00",
   off_time: "19:00:00",
   enabled: true,
@@ -276,6 +278,7 @@ describe("plant form", () => {
     await user.click(await screen.findByRole("checkbox", { name: /Bay window/ }));
     await user.type(screen.getByLabelText(/Distance from the window/), "80");
     await user.click(screen.getByRole("checkbox", { name: /Shelf light/ }));
+    await user.type(screen.getByRole("textbox", { name: /Distance below the light/ }), "20");
     await user.type(screen.getByLabelText(/Pot diameter/), "17");
     await user.type(screen.getByLabelText(/Pot height/), "12");
     await user.click(screen.getByRole("radio", { name: "A few days ago" }));
@@ -296,7 +299,7 @@ describe("plant form", () => {
       care_profile_key: null,
       light_sources: [
         { light_source_id: 1, distance_cm: 80 },
-        { light_source_id: 2, distance_cm: null },
+        { light_source_id: 2, distance_cm: 20 },
       ],
       // When it was last cared for: watered a few days ago; fertilized, not known.
       last_watered_days_ago: 3,

@@ -64,6 +64,7 @@ def _sites(household: Household) -> list[schema.Site]:
                             name=light.name,
                             direction=light.direction,
                             ppfd=light.ppfd,
+                            ppfd_distance_cm=light.ppfd_distance_cm,
                             on_time=light.on_time,
                             off_time=light.off_time,
                             enabled=light.enabled,
