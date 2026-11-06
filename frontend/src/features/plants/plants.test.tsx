@@ -1060,7 +1060,7 @@ describe("plant page", () => {
     expect(screen.getByText("39 in from the window")).toBeVisible();
     expect(await screen.findByRole("button", { name: "New leaf" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Edit" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Add a photo" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Add a photo/ })).not.toBeInTheDocument();
   });
 
   it("adds several photos at once, and says which didn't upload", async () => {
@@ -1086,6 +1086,31 @@ describe("plant page", () => {
       filename: "leaf.jpg",
       takenAt: null,
     });
+  });
+
+  it("adds a photo from the cover, as a button over the placeholder of a plant without one", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    uploadPhoto.mockResolvedValueOnce(photo);
+    const { user } = renderApp("/plants/7");
+
+    const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
+    expect(button).toHaveTextContent("Add a photo");
+    const input = button.parentElement?.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!input) throw new Error("No file input");
+    await user.upload(input, new File(["jpeg"], "leaf.jpg", { type: "image/jpeg" }));
+
+    expect(await screen.findByText("Photo added.")).toBeVisible();
+    expect(uploadPhoto).toHaveBeenCalledWith(7, expect.objectContaining({ filename: "leaf.jpg" }));
+  });
+
+  it("shows a camera button on a cover photo", async () => {
+    signInAs(gardener);
+    withPlant(plant({ cover_photo: photo }), [photo]);
+    renderApp("/plants/7");
+
+    const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
+    expect(button).not.toHaveTextContent("Add a photo");
   });
 
   it("lets gardeners choose the cover photo", async () => {

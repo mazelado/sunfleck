@@ -145,7 +145,7 @@ test("add a photo of a plant", async () => {
   await withinBudget(page, BUDGETS.addPhoto, async (effort) => {
     await effort.tap(page.getByRole("link", { name: /^Monty/ }));
     const chooser = page.waitForEvent("filechooser");
-    await effort.tap(page.getByRole("button", { name: "Add a photo" }));
+    await effort.tap(page.getByRole("button", { name: "Add a photo of Monty" })); // on the cover
     await effort.choosePhoto(await chooser, PHOTO);
     await expect(page.getByRole("button", { name: /^Photo from/ })).toBeVisible();
   });

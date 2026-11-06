@@ -126,3 +126,8 @@ body,
     transform: none;
   }
 }
+
+/* A button on a plant's cover photo stands out from whatever the photo shows. */
+.sunfleck-cover-button {
+  box-shadow: var(--mantine-shadow-md);
+}

@@ -1,5 +1,6 @@
 import {
   Anchor,
+  Box,
   Button,
   Center,
   Group,
@@ -67,11 +68,21 @@ export function PlantPage() {
       <Anchor component={Link} to="/plants" size="sm">
         ← {t("plants.title")}
       </Anchor>
-      <PlantCover
-        photo={data.cover_photo}
-        alt={t("plants.photoOf", { name: data.nickname })}
-        height={260}
-      />
+      <Box pos="relative">
+        <PlantCover
+          photo={data.cover_photo}
+          alt={t("plants.photoOf", { name: data.nickname })}
+          height={260}
+        />
+        {canEdit && (
+          <Box pos="absolute" bottom={12} right={12}>
+            <AddPhotoButton
+              plantId={data.id}
+              cover={{ plantName: data.nickname, hasPhoto: Boolean(data.cover_photo) }}
+            />
+          </Box>
+        )}
+      </Box>
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Stack gap={4} style={{ minWidth: 0 }}>
           <Group gap="xs">
