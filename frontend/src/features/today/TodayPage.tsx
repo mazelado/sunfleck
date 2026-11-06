@@ -33,6 +33,7 @@ import { FullPageLoader } from "../../components/FullPageLoader";
 import { useSites } from "../../api/places";
 import { usePlants } from "../../api/plants";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { EmptyState } from "../../components/EmptyState";
 import { CareEventDialog } from "../care/CareEventDialog";
 import { CareIcon } from "../care/icons";
 import { GardenNote } from "../garden/GardenNote";
@@ -76,18 +77,21 @@ export function TodayPage() {
 
   return (
     <Stack gap="lg">
-      <Stack gap={0}>
-        <Title order={1} fz="h2">
-          {t("today.title")}
-        </Title>
-        <Text c="dimmed">
-          {new Intl.DateTimeFormat(i18n.language, {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          }).format(new Date())}
-        </Text>
-      </Stack>
+      <Group justify="space-between" align="flex-end" wrap="nowrap">
+        <Stack gap={0}>
+          <Text size="xs" fw={700} tt="uppercase" lts="0.06em" c="dimmed">
+            {new Intl.DateTimeFormat(i18n.language, {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            }).format(new Date())}
+          </Text>
+          <Title order={1} fz="h1">
+            {t("today.title")}
+          </Title>
+        </Stack>
+        {due.length > 0 && <DueCount count={due.length} />}
+      </Group>
 
       {isNew && <GettingStarted sites={places} canEdit={canEdit} />}
 
@@ -124,7 +128,9 @@ export function TodayPage() {
             <Title order={2} fz="h4">
               {t("today.needsCare")}
             </Title>
-            {due.length === 0 && <Text c="dimmed">{t("today.allCaughtUp")}</Text>}
+            {due.length === 0 && (
+              <EmptyState illustration="done">{t("today.allCaughtUp")}</EmptyState>
+            )}
             {[...byLocation].map(([location, group]) => (
               <TaskGroup
                 key={location}
@@ -165,6 +171,21 @@ export function TodayPage() {
   );
 }
 
+/** How many plants need care today, as a tile beside the page title. */
+function DueCount({ count }: { count: number }) {
+  const { t } = useTranslation();
+  return (
+    <Stack gap={0} align="center" className="sunfleck-count">
+      <Text fw={800} fz={26} lh={1}>
+        {count}
+      </Text>
+      <Text fz={11} fw={600}>
+        {t("today.toDo", { count })}
+      </Text>
+    </Stack>
+  );
+}
+
 interface TaskGroupProps {
   title: string;
   tasks: Task[];
@@ -180,7 +201,7 @@ function TaskGroup({ title, tasks, canEdit, bulk }: TaskGroupProps) {
     <Paper withBorder radius="lg" p="md">
       <Stack gap="sm">
         <Group justify="space-between" gap="xs">
-          <Text fw={600} size="sm">
+          <Text fw={700} size="xs" tt="uppercase" lts="0.06em" c="dimmed">
             {title}
           </Text>
           {shared.map((group) => (
@@ -322,13 +343,13 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
     );
   } else if (task.days_until < 0) {
     status = (
-      <Text span size="sm" c="red">
+      <Text span size="sm" fw={600} c="var(--mantine-color-red-light-color)">
         {t("today.overdue", { count: -task.days_until })}
       </Text>
     );
   } else if (task.days_until === 0) {
     status = (
-      <Text span size="sm" c="dimmed">
+      <Text span size="sm" fw={600} c="var(--mantine-color-orange-light-color)">
         {t("today.dueToday")}
       </Text>
     );
@@ -358,7 +379,9 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
           <ActionIcon
             size="lg"
             radius="xl"
-            variant="light"
+            // Care that's due stands out; care coming up can be done early, more quietly.
+            variant={task.days_until <= 0 ? "filled" : "light"}
+            className="sunfleck-done"
             aria-label={t("today.done", labels)}
             loading={logCare.isPending}
             onClick={() => void log(false)}

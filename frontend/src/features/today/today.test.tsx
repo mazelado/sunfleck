@@ -149,6 +149,8 @@ describe("today", () => {
     renderApp("/");
 
     expect(await screen.findByRole("heading", { name: "Today" })).toBeVisible();
+    // How many need care today, beside the title.
+    expect(screen.getByText("to do").parentElement).toHaveTextContent(/^3to do$/);
     expect(screen.getByText("2 plants have no care schedule yet.")).toBeVisible();
     // Several: to the list, showing only those.
     expect(

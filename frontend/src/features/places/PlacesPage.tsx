@@ -7,6 +7,7 @@ import { type Site, useSites } from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
+import { EmptyState } from "../../components/EmptyState";
 import { LocationKindBadge } from "./LocationKindBadge";
 import { describeConditions } from "./describe";
 
@@ -34,9 +35,7 @@ export function PlacesPage() {
       </Group>
       <ErrorAlert error={sites.error} />
       {sites.data?.length === 0 && (
-        <Paper withBorder radius="lg" p="lg">
-          <Text c="dimmed">{t("places.empty")}</Text>
-        </Paper>
+        <EmptyState illustration="place">{t("places.empty")}</EmptyState>
       )}
       {sites.data?.map((site) => (
         <SiteCard key={site.id} site={site} />

@@ -973,6 +973,8 @@
   },
   "today": {
     "title": "Today",
+    "toDo_one": "to do",
+    "toDo_other": "to do",
     "needsCare": "Needs care",
     "comingUp": "Coming up",
     "tomorrow": "Tomorrow",
