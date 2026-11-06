@@ -1165,6 +1165,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/seeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Seeds
+         * @description The household's seeds, by name. A household has a few dozen at most.
+         */
+        get: operations["sunfleck_garden_api_list_seeds"];
+        put?: never;
+        /** Create Seed */
+        post: operations["sunfleck_garden_api_create_seed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/seeds/{seed_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Seed */
+        put: operations["sunfleck_garden_api_update_seed"];
+        post?: never;
+        /** Delete Seed */
+        delete: operations["sunfleck_garden_api_delete_seed"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -2736,6 +2775,56 @@ export interface components {
             summer: number | null;
             /** Winter */
             winter: number | null;
+        };
+        /** SeedIn */
+        SeedIn: {
+            /**
+             * Name
+             * @description As on the packet, e.g. Tomato.
+             */
+            name: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Quantity
+             * @description e.g. about 20 seeds.
+             * @default
+             */
+            quantity: string;
+            /**
+             * Sow By
+             * @description The last year to sow them in.
+             */
+            sow_by?: number | null;
+            /**
+             * Taxon Id
+             * @description Its species, for when to sow and plant it out.
+             */
+            taxon_id?: number | null;
+            /**
+             * Variety
+             * @default
+             */
+            variety: string;
+        };
+        /** SeedOut */
+        SeedOut: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Notes */
+            notes: string;
+            /** Quantity */
+            quantity: string;
+            /** Sow By */
+            sow_by: number | null;
+            species: components["schemas"]["SpeciesOut"] | null;
+            /** Variety */
+            variety: string;
         };
         /** SettingsCheckOut */
         SettingsCheckOut: {
@@ -5021,6 +5110,96 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SettingsCheckOut"];
                 };
+            };
+        };
+    };
+    sunfleck_garden_api_list_seeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedOut"][];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_create_seed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SeedIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedOut"];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_update_seed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seed_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SeedIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedOut"];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_delete_seed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seed_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

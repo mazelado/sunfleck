@@ -20,6 +20,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   width and length. Raised beds dry out sooner, so their plants are watered a little more
   often, and a bed's size gives how much water the whole bed needs ("about 20 mm: 60 L for the
   whole bed"). Exports include beds, and older exports still import.
+- **Seeds**: a list of the seeds you have (from the Plants page), with their species, variety,
+  how many, and the year to sow them by. Exports include them.
 - **Crop timing** in the care dataset: when to sow, plant out and harvest 32 vegetables, herbs
   and annual flowers, in weeks from the frost dates. The Care guide shows it ("Sow indoors: 8
   to 6 weeks before the last frost"). It's a draft, written like the timings on seed packets.

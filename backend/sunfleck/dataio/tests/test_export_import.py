@@ -18,6 +18,7 @@ from sunfleck.care import services as care_services
 from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
 from sunfleck.care.tests.factories import builtin
 from sunfleck.dataio import exporter, importer, schema
+from sunfleck.garden.models import SeedPacket
 from sunfleck.notifications import services as notification_services
 from sunfleck.places.models import LightSource, Location, LocationKind, Site
 from sunfleck.plants import services as plant_services
@@ -133,6 +134,15 @@ def filled(household: Household, ada: Membership) -> Household:
     plugin_services.update(household, "weather_openmeteo", True, {"frost_c": 3})
     plugin_services.update(household, "identify_plantnet", True, {"api_key": "secret-key"})
     notification_services.add_channel(ada.user, "Phone", "ntfy://ntfy.sh/secret-topic")
+    SeedPacket.objects.create(
+        household=household,
+        taxon=Taxon.objects.get(scientific_name="Solanum lycopersicum"),
+        name="Tomato",
+        variety="Gardener's Delight",
+        quantity="about 20",
+        sow_by=2028,
+        notes="From Ana",
+    )
     return household
 
 
@@ -246,6 +256,15 @@ def test_exports_from_before_garden_beds_import(filled: Household) -> None:
 
     garden = Location.objects.get(site__household=target, name="Garden")
     assert (garden.bed_type, garden.bed_width_cm, garden.bed_length_cm) == ("", None, None)
+
+
+def test_exports_from_before_seeds_import(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda exported: exported.pop("seeds"))
+
+    importer.import_into(target, io.BytesIO(data))
+
+    assert not SeedPacket.objects.filter(household=target).exists()
 
 
 def test_exports_from_before_routines_import(filled: Household) -> None:

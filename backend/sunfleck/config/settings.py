@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "sunfleck.plugins",
     "sunfleck.notifications",
     "sunfleck.dataio",
+    "sunfleck.garden",
     # Installed plugins with their own models (see sunfleck/plugins/discovery.py).
     *plugin_apps(),
 ]

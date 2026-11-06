@@ -24,6 +24,7 @@ from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.core.images import MAX_UPLOAD_BYTES
 from sunfleck.dataio import schema
+from sunfleck.garden.models import SeedPacket
 from sunfleck.places.models import LightSource, Location, Site
 from sunfleck.plants.models import Photo, Plant, PlantLight
 from sunfleck.plugins import services as plugin_services
@@ -319,6 +320,25 @@ class _Importer:
             if item.enabled and plugin_services.secret_fields(info.settings_schema):
                 self.summary.plugins_needing_keys.append(info.name)
 
+    def import_seeds(self, seeds: list[schema.Seed]) -> None:
+        for item in seeds:
+            taxon = None
+            if item.species:
+                taxon = Taxon.objects.filter(scientific_name=item.species).first()
+                if taxon is None and item.species not in self.summary.unknown_species:
+                    self.summary.unknown_species.append(item.species)
+            packet = SeedPacket(
+                household=self.household,
+                taxon=taxon,
+                name=item.name,
+                variety=item.variety,
+                quantity=item.quantity,
+                sow_by=item.sow_by,
+                notes=item.notes,
+            )
+            _check(packet, f"seeds {item.name!r}")
+            packet.save()
+
     def run(self, data: schema.Export) -> Summary:
         self.household.name = data.household
         self.household.save(update_fields=["name", "updated_at"])
@@ -327,6 +347,7 @@ class _Importer:
         self.import_sites(data.sites)
         for plant in data.plants:
             self.import_plant(plant)
+        self.import_seeds(data.seeds)
         self.import_plugins(data.plugins)
         return self.summary
 
@@ -361,6 +382,7 @@ def is_empty(household: Household) -> bool:
     return not (
         household.sites.exists()
         or household.plants.exists()
+        or household.seeds.exists()
         or CareType.objects.filter(household=household).exists()
     )
 

@@ -15,7 +15,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconSeeding } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
@@ -59,11 +59,21 @@ export function PlantsPage() {
         <Title order={1} fz="h2">
           {t("plants.title")}
         </Title>
-        {canEdit && (
-          <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>
-            {t("plants.addPlant")}
+        <Group gap="xs">
+          <Button
+            component={Link}
+            to="/seeds"
+            variant="default"
+            leftSection={<IconSeeding size={16} />}
+          >
+            {t("seeds.title")}
           </Button>
-        )}
+          {canEdit && (
+            <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>
+              {t("plants.addPlant")}
+            </Button>
+          )}
+        </Group>
       </Group>
 
       <Stack gap="xs">
