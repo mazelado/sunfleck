@@ -15,6 +15,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
   green is brighter, and every text colour still meets WCAG AA contrast in both modes.
+- **Today and plant pages**:
+  - Today shows how many plants need care, beside its title.
+  - Care that's due has a filled done button, and "Due today" stands out in orange.
+  - A plant's page shows water, fertilizer and light as rings, still described in words.
+- **Empty pages** have a small illustration: no plants or places yet, nothing on the wishlist,
+  no seeds, no search results, and nothing to do today.
+- **Gentle motion**: cards rise into place as a page opens, and done buttons give a little
+  when tapped. None of it shows if your device is set to reduce motion.
 
 ## [0.9.0] - 2026-11-06
 

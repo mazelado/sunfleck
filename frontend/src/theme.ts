@@ -144,6 +144,7 @@ export const cssVariablesResolver: CSSVariablesResolver = (current) => ({
     "--sunfleck-page": "#f2f4f3",
     "--sunfleck-bar": "rgba(242, 244, 243, 0.92)",
     "--sunfleck-card-shadow": current.shadows.sm,
+    "--sunfleck-track": "#e8ecea",
     // Links a shade darker than buttons, so they read well on tinted alerts too (5.4:1).
     "--mantine-color-anchor": leaf[8],
     ...Object.fromEntries(
@@ -162,6 +163,7 @@ export const cssVariablesResolver: CSSVariablesResolver = (current) => ({
     "--sunfleck-page": current.colors.dark[7],
     "--sunfleck-bar": "rgba(11, 16, 13, 0.92)",
     "--sunfleck-card-shadow": "none",
+    "--sunfleck-track": current.colors.dark[5],
     // Mantine's "light" variants are opaque, deep shades in dark mode (a brick-red alert for
     // a toxic plant): here a translucent tint of the colour, with its pale shade as text.
     ...Object.fromEntries(

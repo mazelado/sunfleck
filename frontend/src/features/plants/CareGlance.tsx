@@ -1,4 +1,15 @@
-import { Box, Group, Progress, Stack, Text, VisuallyHidden } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Group,
+  Paper,
+  Progress,
+  RingProgress,
+  SimpleGrid,
+  Stack,
+  Text,
+  VisuallyHidden,
+} from "@mantine/core";
 import { IconDroplet, IconSeedling, IconSun } from "@tabler/icons-react";
 import type { TFunction } from "i18next";
 import type { ComponentType } from "react";
@@ -22,8 +33,9 @@ interface Bar {
 }
 
 /**
- * Slim water, fertilizer and light bars. The bars are only a picture: the same is said in
- * words, shown (`compact` off) or for screen readers only (`compact` on, e.g. on a card).
+ * Water, fertilizer and light at a glance: rings on a plant's page, slim bars on a plant's card
+ * (`compact`). The rings and bars are only a picture: the same is said in words, shown under
+ * the rings, or for screen readers only on a card.
  */
 export function CareGlance({ glance, compact = false }: { glance: Glance; compact?: boolean }) {
   const { t, i18n } = useTranslation();
@@ -31,23 +43,46 @@ export function CareGlance({ glance, compact = false }: { glance: Glance; compac
   if (bars.length === 0) {
     return null;
   }
+  if (!compact) {
+    return (
+      <Paper withBorder radius="lg" p="md">
+        <SimpleGrid cols={bars.length} spacing="xs">
+          {bars.map((bar) => (
+            <Stack key={bar.key} gap={4} align="center" ta="center">
+              <RingProgress
+                aria-hidden
+                size={68}
+                thickness={6}
+                roundCaps
+                transitionDuration={400}
+                rootColor="var(--sunfleck-track)"
+                sections={[{ value: bar.value, color: bar.color }]}
+                label={
+                  <Center>
+                    <bar.icon size={20} color={bar.iconColor} />
+                  </Center>
+                }
+              />
+              <Text size="sm" lh={1.3}>
+                {bar.text}
+              </Text>
+            </Stack>
+          ))}
+        </SimpleGrid>
+      </Paper>
+    );
+  }
   return (
-    <Stack gap={compact ? 4 : "xs"}>
+    <Stack gap={4}>
       {bars.map((bar) => (
         <Stack key={bar.key} gap={2}>
-          <Group gap={compact ? 6 : "xs"} wrap="nowrap" aria-hidden>
-            <bar.icon size={compact ? 14 : 18} color={bar.iconColor} />
+          <Group gap={6} wrap="nowrap" aria-hidden>
+            <bar.icon size={14} color={bar.iconColor} />
             <Box style={{ flex: 1 }}>
-              <Progress value={bar.value} color={bar.color} size={compact ? 4 : 6} radius="xl" />
+              <Progress value={bar.value} color={bar.color} size={4} radius="xl" />
             </Box>
           </Group>
-          {compact ? (
-            <VisuallyHidden>{bar.text}</VisuallyHidden>
-          ) : (
-            <Text size="sm" c="dimmed">
-              {bar.text}
-            </Text>
-          )}
+          <VisuallyHidden>{bar.text}</VisuallyHidden>
         </Stack>
       ))}
     </Stack>

@@ -25,6 +25,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { sentenceCase } from "../../lib/text";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { EmptyState } from "../../components/EmptyState";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { SowingCalendar } from "./SowingCalendar";
@@ -66,7 +67,9 @@ export function SeedsPage() {
       </Text>
       <ErrorAlert error={seeds.error} />
       {items.length > 0 && <SowingCalendar />}
-      {items.length === 0 && !seeds.error && <Text c="dimmed">{t("seeds.empty")}</Text>}
+      {items.length === 0 && !seeds.error && (
+        <EmptyState illustration="seeds">{t("seeds.empty")}</EmptyState>
+      )}
       {items.map((seed) => (
         <SeedCard
           key={seed.id}

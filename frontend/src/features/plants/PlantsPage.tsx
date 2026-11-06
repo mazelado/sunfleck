@@ -26,6 +26,7 @@ import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { relativeDay } from "../../lib/relativeTime";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { EmptyState } from "../../components/EmptyState";
 import { CareGlance } from "./CareGlance";
 import { PlantImage } from "./PlantImage";
 import { PlantStatusBadge } from "./PlantStatusBadge";
@@ -142,14 +143,19 @@ export function PlantsPage() {
           <Loader />
         </Center>
       ) : items.length === 0 ? (
-        <Stack align="center" py="xl" gap="sm">
-          <Text c="dimmed">{filtered ? t("plants.noMatches") : t("plants.empty")}</Text>
-          {canEdit && !filtered && (
-            <Button component={Link} to="/plants/new" variant="light">
-              {t("plants.addPlant")}
-            </Button>
-          )}
-        </Stack>
+        <EmptyState
+          illustration={filtered ? "search" : "plant"}
+          action={
+            canEdit &&
+            !filtered && (
+              <Button component={Link} to="/plants/new" variant="light">
+                {t("plants.addPlant")}
+              </Button>
+            )
+          }
+        >
+          {filtered ? t("plants.noMatches") : t("plants.empty")}
+        </EmptyState>
       ) : (
         <>
           <Text size="sm" c="dimmed">

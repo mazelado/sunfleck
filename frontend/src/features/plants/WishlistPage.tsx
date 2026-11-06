@@ -23,6 +23,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { sentenceCase } from "../../lib/text";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { EmptyState } from "../../components/EmptyState";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 
@@ -61,7 +62,9 @@ export function WishlistPage() {
         {t("wishlist.intro")}
       </Text>
       <ErrorAlert error={wishlist.error} />
-      {items.length === 0 && !wishlist.error && <Text c="dimmed">{t("wishlist.empty")}</Text>}
+      {items.length === 0 && !wishlist.error && (
+        <EmptyState illustration="plant">{t("wishlist.empty")}</EmptyState>
+      )}
       {items.map((wish) => (
         <WishCard
           key={wish.id}
