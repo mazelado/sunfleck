@@ -1,15 +1,18 @@
 """Care at a glance: how far each plant is through its watering and fertilizing, and how its
 light compares with what it likes, for the slim bars on plant cards and pages.
 
-Everything here is already known: the schedules' last predictions and the light estimate.
-Nothing is recalculated, so a long list of plants stays quick.
+Mostly, everything here is already known: the schedules' last predictions and the light
+estimate. Only a water or fertilizer schedule that was marked out of date (after care was
+logged, or the plant, its spot or its light changed; see signals.py) is recalculated first, so
+the bars are right straight away. A long list of plants stays quick: on a new day, schedules
+aren't recalculated here (the bars count the days from their last prediction).
 """
 
 from dataclasses import dataclass
 from datetime import date
 
 from sunfleck.care.models import CareSchedule
-from sunfleck.care.schedules import local_today, plant_lights
+from sunfleck.care.schedules import local_today, plant_lights, recalculate
 from sunfleck.places.models import LocationKind
 from sunfleck.plants.models import Plant
 from sunfleck.prediction.engine import Conditions, Profile, light_level
@@ -48,11 +51,18 @@ class Glance:
 
 def glance(plant: Plant, today: date | None = None) -> Glance:
     """Reads `plant.schedules` and `plant.light_links`: prefetch `schedules__care_type` and
-    `light_links__light_source` when doing this for many plants."""
+    `light_links__light_source` when doing this for many plants.
+
+    Recalculates the water and fertilizer schedules first if they're marked out of date.
+    """
     today = today or local_today(plant)
     schedules = [schedule for schedule in plant.schedules.all() if schedule.enabled]
     water = next((s for s in schedules if s.care_type.counts_as_watering), None)
     fertilizer = next((s for s in schedules if s.care_type.key == "fertilize"), None)
+    for schedule in (water, fertilizer):
+        if schedule is not None and schedule.calculated_on is None:
+            schedule.plant = plant  # already loaded, with its location and profile
+            recalculate(schedule, today)
     return Glance(
         water=care_level(water, today) if water else None,
         fertilizer=care_level(fertilizer, today) if fertilizer else None,

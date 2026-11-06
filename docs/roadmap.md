@@ -147,6 +147,7 @@ Growing food outside, and fewer clicks for everyday tasks.
 - **Follow-ups from Fuchsia:** water amounts for plants in the ground from the soil water
   balance, not the weekly rule; Dracaena marginata and the avocado (Persea americana) in the
   dataset.
+- **Fix:** the water and fertilizer bars update as soon as care is logged (#136).
 
 ### More gardening
 
