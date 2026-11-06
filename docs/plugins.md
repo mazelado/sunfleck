@@ -176,4 +176,5 @@ registry.remove(plugin.id)
 `api_version` is the plugin API version a plugin was built for. Sunfleck only loads plugins
 built for its current major version (`1`). New hooks and new optional fields don't change the
 major version; removing or changing anything does, after at least one minor release in which
-the old way still works and is deprecated.
+the old way still works and is deprecated. What exactly is stable is in
+[stability.md](stability.md#the-plugin-interface-plugin-api-version-1).

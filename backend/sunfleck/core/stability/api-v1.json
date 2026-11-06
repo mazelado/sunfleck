@@ -1,0 +1,3271 @@
+{
+  "DELETE /api/v1/care-events/{event_id}": {
+    "request": {
+      "fields": {
+        "path:event_id": "integer"
+      },
+      "required": [
+        "path:event_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/care-schedules/{schedule_id}": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/care-schedules/{schedule_id}/routine": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "DELETE /api/v1/care-types/{care_type_id}": {
+    "request": {
+      "fields": {
+        "path:care_type_id": "integer"
+      },
+      "required": [
+        "path:care_type_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/conversations/{conversation_id}": {
+    "request": {
+      "fields": {
+        "path:conversation_id": "integer"
+      },
+      "required": [
+        "path:conversation_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/harvests/{harvest_id}": {
+    "request": {
+      "fields": {
+        "path:harvest_id": "integer"
+      },
+      "required": [
+        "path:harvest_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/household/invitations/{invitation_id}": {
+    "request": {
+      "fields": {
+        "path:invitation_id": "integer"
+      },
+      "required": [
+        "path:invitation_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/household/members/{member_id}": {
+    "request": {
+      "fields": {
+        "path:member_id": "integer"
+      },
+      "required": [
+        "path:member_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/light-sources/{light_id}": {
+    "request": {
+      "fields": {
+        "path:light_id": "integer"
+      },
+      "required": [
+        "path:light_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/locations/{location_id}": {
+    "request": {
+      "fields": {
+        "path:location_id": "integer"
+      },
+      "required": [
+        "path:location_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/me/avatar": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "DELETE /api/v1/notifications/calendar": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/notifications/channels/{channel_id}": {
+    "request": {
+      "fields": {
+        "path:channel_id": "integer"
+      },
+      "required": [
+        "path:channel_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/photos/{photo_id}": {
+    "request": {
+      "fields": {
+        "path:photo_id": "integer"
+      },
+      "required": [
+        "path:photo_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/plants/{plant_id}": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/seeds/{seed_id}": {
+    "request": {
+      "fields": {
+        "path:seed_id": "integer"
+      },
+      "required": [
+        "path:seed_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/sites/{site_id}": {
+    "request": {
+      "fields": {
+        "path:site_id": "integer"
+      },
+      "required": [
+        "path:site_id"
+      ]
+    },
+    "response": {}
+  },
+  "DELETE /api/v1/wishlist/{wish_id}": {
+    "request": {
+      "fields": {
+        "path:wish_id": "integer"
+      },
+      "required": [
+        "path:wish_id"
+      ]
+    },
+    "response": {}
+  },
+  "GET /api/v1/about": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "care_dataset": "null|string",
+      "public_url": "null|string",
+      "release_name": "null|string",
+      "release_notes_url": "string",
+      "source_url": "string",
+      "version": "string"
+    }
+  },
+  "GET /api/v1/calendar": {
+    "request": {
+      "fields": {
+        "query:site_id": "integer|null"
+      },
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "entries": "array",
+      "entries[].action": "string",
+      "entries[].ends_on": "string",
+      "entries[].name": "string",
+      "entries[].seed_id": "integer",
+      "entries[].starts_on": "string",
+      "frost": "string",
+      "site_id": "integer",
+      "site_name": "string",
+      "today": "string"
+    }
+  },
+  "GET /api/v1/care-profile-suggestions": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "available": "boolean"
+    }
+  },
+  "GET /api/v1/care-profiles": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].description": "string",
+      "[].genus_count": "integer",
+      "[].key": "string",
+      "[].name": "string",
+      "[].setting": "string"
+    }
+  },
+  "GET /api/v1/care-profiles/{key}": {
+    "request": {
+      "fields": {
+        "path:key": "string"
+      },
+      "required": [
+        "path:key"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "description": "string",
+      "dormancy_months_north": "array",
+      "examples": "array",
+      "fertilizing": "null|object",
+      "fertilizing.interval_days": "integer",
+      "fertilizing.pause_months_north": "array",
+      "genera": "array",
+      "humidity": "string",
+      "key": "string",
+      "light": "object",
+      "light.dli_ideal": "number",
+      "light.dli_max": "number",
+      "light.dli_min": "number",
+      "light.outdoor_exposure": "array",
+      "name": "string",
+      "notes": "null|string",
+      "setting": "string",
+      "sources": "array",
+      "status": "string",
+      "temperature_c": "object",
+      "temperature_c.ideal_max": "number",
+      "temperature_c.ideal_min": "number",
+      "temperature_c.max": "number",
+      "temperature_c.min": "number",
+      "watering": "object",
+      "watering.interval_days": "object",
+      "watering.interval_days.autumn": "integer|null",
+      "watering.interval_days.spring": "integer|null",
+      "watering.interval_days.summer": "integer|null",
+      "watering.interval_days.winter": "integer|null",
+      "watering.let_dry": "string"
+    }
+  },
+  "GET /api/v1/care-types": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].affects_prediction": "boolean",
+      "[].counts_as_watering": "boolean",
+      "[].icon": "string",
+      "[].id": "integer",
+      "[].is_builtin": "boolean",
+      "[].key": "null|string",
+      "[].name": "string"
+    }
+  },
+  "GET /api/v1/conversations/{conversation_id}": {
+    "request": {
+      "fields": {
+        "path:conversation_id": "integer"
+      },
+      "required": [
+        "path:conversation_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "can_continue": "boolean",
+      "created_at": "string",
+      "id": "integer",
+      "messages": "array",
+      "messages[].asked_by": "null|string",
+      "messages[].attribution": "string",
+      "messages[].created_at": "string",
+      "messages[].id": "integer",
+      "messages[].role": "string",
+      "messages[].text": "string",
+      "plant_id": "integer",
+      "started_by": "null|string",
+      "title": "string",
+      "updated_at": "string"
+    }
+  },
+  "GET /api/v1/export": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {}
+  },
+  "GET /api/v1/health": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "database": "string",
+      "status": "string",
+      "version": "string"
+    }
+  },
+  "GET /api/v1/household": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "id": "integer",
+      "name": "string"
+    }
+  },
+  "GET /api/v1/household/invitations": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].created_at": "string",
+      "[].email": "string",
+      "[].expires_at": "string",
+      "[].id": "integer",
+      "[].invited_by": "null|string",
+      "[].role": "string"
+    }
+  },
+  "GET /api/v1/household/members": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].avatar_url": "null|string",
+      "[].display_name": "string",
+      "[].email": "string",
+      "[].id": "integer",
+      "[].role": "string",
+      "[].user_id": "integer"
+    }
+  },
+  "GET /api/v1/identify": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "available": "boolean"
+    }
+  },
+  "GET /api/v1/import": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "allowed": "boolean"
+    }
+  },
+  "GET /api/v1/invitations/{token}": {
+    "request": {
+      "fields": {
+        "path:token": "string"
+      },
+      "required": [
+        "path:token"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "email": "string",
+      "household_name": "string",
+      "invited_by": "null|string",
+      "role": "string"
+    }
+  },
+  "GET /api/v1/locations/{location_id}": {
+    "request": {
+      "fields": {
+        "path:location_id": "integer"
+      },
+      "required": [
+        "path:location_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "bed_length_cm": "integer|null",
+      "bed_type": "null|string",
+      "bed_width_cm": "integer|null",
+      "exposure": "null|string",
+      "humidity": "null|string",
+      "humidity_estimate": "integer|null",
+      "id": "integer",
+      "kind": "string",
+      "light_sources": "array",
+      "light_sources[].direction": "null|string",
+      "light_sources[].dli": "null|number",
+      "light_sources[].enabled": "boolean",
+      "light_sources[].hours_per_day": "null|number",
+      "light_sources[].id": "integer",
+      "light_sources[].kind": "string",
+      "light_sources[].name": "string",
+      "light_sources[].off_time": "null|string",
+      "light_sources[].on_time": "null|string",
+      "light_sources[].ppfd": "integer|null",
+      "light_sources[].ppfd_distance_cm": "integer",
+      "name": "string",
+      "site_id": "integer",
+      "temperature_max_c": "null|number",
+      "temperature_min_c": "null|number"
+    }
+  },
+  "GET /api/v1/locations/{location_id}/light": {
+    "request": {
+      "fields": {
+        "path:location_id": "integer"
+      },
+      "required": [
+        "path:location_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].distance_cm": "integer",
+      "[].dli": "object",
+      "[].dli.autumn": "number",
+      "[].dli.spring": "number",
+      "[].dli.summer": "number",
+      "[].dli.winter": "number",
+      "[].id": "integer",
+      "[].kind": "string",
+      "[].name": "string"
+    }
+  },
+  "GET /api/v1/me": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "GET /api/v1/notifications": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "channels": "array",
+      "channels[].enabled": "boolean",
+      "channels[].id": "integer",
+      "channels[].label": "string",
+      "channels[].last_error": "null|string",
+      "channels[].last_sent_at": "null|string",
+      "channels[].service": "string",
+      "preferences": "object",
+      "preferences.digest_time": "string",
+      "preferences.reminder_time": "null|string",
+      "preferences.timezone": "string"
+    }
+  },
+  "GET /api/v1/notifications/calendar": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "active": "boolean",
+      "created_at": "null|string",
+      "last_read_at": "null|string"
+    }
+  },
+  "GET /api/v1/notifications/preview": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "message": "null|object",
+      "message.body": "string",
+      "message.title": "string"
+    }
+  },
+  "GET /api/v1/notifications/push/key": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "public_key": "string"
+    }
+  },
+  "GET /api/v1/people/{user_id}/avatar": {
+    "request": {
+      "fields": {
+        "path:user_id": "integer"
+      },
+      "required": [
+        "path:user_id"
+      ]
+    },
+    "response": {}
+  },
+  "GET /api/v1/photos/{photo_id}/image": {
+    "request": {
+      "fields": {
+        "path:photo_id": "integer"
+      },
+      "required": [
+        "path:photo_id"
+      ]
+    },
+    "response": {}
+  },
+  "GET /api/v1/photos/{photo_id}/thumbnail": {
+    "request": {
+      "fields": {
+        "path:photo_id": "integer"
+      },
+      "required": [
+        "path:photo_id"
+      ]
+    },
+    "response": {}
+  },
+  "GET /api/v1/plants": {
+    "request": {
+      "fields": {
+        "query:limit": "integer",
+        "query:location_id": "integer|null",
+        "query:needs_routine": "boolean|null",
+        "query:offset": "integer",
+        "query:q": "string",
+        "query:status": "null|string"
+      },
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].cover_thumbnail_url": "null|string",
+      "items[].glance": "object",
+      "items[].glance.fertilizer": "null|object",
+      "items[].glance.light": "null|object",
+      "items[].glance.light.dli": "number",
+      "items[].glance.light.ideal": "number",
+      "items[].glance.water": "null|object",
+      "items[].glance.water.due_in_days": "integer|null",
+      "items[].glance.water.level": "null|number",
+      "items[].glance.water.resting_until": "null|string",
+      "items[].id": "integer",
+      "items[].last_watered_at": "null|string",
+      "items[].location": "null|object",
+      "items[].location.id": "integer",
+      "items[].location.kind": "string",
+      "items[].location.name": "string",
+      "items[].location.site_id": "integer",
+      "items[].location.site_name": "string",
+      "items[].needs_routine": "boolean",
+      "items[].nickname": "string",
+      "items[].species": "null|object",
+      "items[].species.common_name": "null|string",
+      "items[].species.id": "integer",
+      "items[].species.scientific_name": "string",
+      "items[].species.toxicity": "null|object",
+      "items[].species.toxicity.cats": "boolean",
+      "items[].species.toxicity.dogs": "boolean",
+      "items[].species.toxicity.note": "null|string",
+      "items[].species.toxicity.sources": "array",
+      "items[].status": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "acquired_on": "null|string",
+      "care_profile": "null|object",
+      "care_profile.chosen": "boolean",
+      "care_profile.key": "string",
+      "care_profile.name": "string",
+      "container_diameter_cm": "integer|null",
+      "container_height_cm": "integer|null",
+      "container_material": "null|string",
+      "cover_photo": "null|object",
+      "cover_photo.caption": "string",
+      "cover_photo.crop": "null|object",
+      "cover_photo.crop.height": "number",
+      "cover_photo.crop.width": "number",
+      "cover_photo.crop.x": "number",
+      "cover_photo.crop.y": "number",
+      "cover_photo.height": "integer",
+      "cover_photo.id": "integer",
+      "cover_photo.image_url": "string",
+      "cover_photo.plant_id": "integer",
+      "cover_photo.taken_at": "string",
+      "cover_photo.thumbnail_url": "string",
+      "cover_photo.width": "integer",
+      "created_at": "string",
+      "glance": "object",
+      "glance.fertilizer": "null|object",
+      "glance.light": "null|object",
+      "glance.light.dli": "number",
+      "glance.light.ideal": "number",
+      "glance.water": "null|object",
+      "glance.water.due_in_days": "integer|null",
+      "glance.water.level": "null|number",
+      "glance.water.resting_until": "null|string",
+      "id": "integer",
+      "last_watered_at": "null|string",
+      "light_sources": "array",
+      "light_sources[].distance_cm": "integer|null",
+      "light_sources[].light_source": "object",
+      "light_sources[].light_source.direction": "null|string",
+      "light_sources[].light_source.dli": "null|number",
+      "light_sources[].light_source.enabled": "boolean",
+      "light_sources[].light_source.hours_per_day": "null|number",
+      "light_sources[].light_source.id": "integer",
+      "light_sources[].light_source.kind": "string",
+      "light_sources[].light_source.name": "string",
+      "light_sources[].light_source.off_time": "null|string",
+      "light_sources[].light_source.on_time": "null|string",
+      "light_sources[].light_source.ppfd": "integer|null",
+      "light_sources[].light_source.ppfd_distance_cm": "integer",
+      "lineage": "object",
+      "lineage.offspring": "array",
+      "lineage.offspring[].acquired_on": "null|string",
+      "lineage.offspring[].id": "integer",
+      "lineage.offspring[].nickname": "string",
+      "lineage.offspring[].propagation_method": "null|string",
+      "lineage.offspring[].status": "string",
+      "lineage.parent": "null|object",
+      "lineage.parent.id": "integer",
+      "lineage.parent.nickname": "string",
+      "lineage.propagation_method": "null|string",
+      "location": "null|object",
+      "location.id": "integer",
+      "location.kind": "string",
+      "location.name": "string",
+      "location.site_id": "integer",
+      "location.site_name": "string",
+      "nickname": "string",
+      "notes": "string",
+      "soil_type": "null|string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "status": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/conversations": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].created_at": "string",
+      "[].id": "integer",
+      "[].questions": "integer",
+      "[].started_by": "null|string",
+      "[].title": "string",
+      "[].updated_at": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/harvests": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "items": "array",
+      "items[].amount": "null|number",
+      "items[].harvested_on": "string",
+      "items[].id": "integer",
+      "items[].logged_by": "null|string",
+      "items[].notes": "string",
+      "items[].unit": "null|string",
+      "this_year": "object",
+      "this_year.bunches": "null|number",
+      "this_year.grams": "null|number",
+      "this_year.pieces": "null|number",
+      "this_year.year": "integer"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/light": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "null|object",
+      "current_season": "string",
+      "seasons": "array",
+      "seasons[].dli": "number",
+      "seasons[].ideal": "number",
+      "seasons[].season": "string",
+      "seasons[].verdict": "string",
+      "sources": "array",
+      "sources[].distance_cm": "integer",
+      "sources[].dli": "object",
+      "sources[].dli.autumn": "number",
+      "sources[].dli.spring": "number",
+      "sources[].dli.summer": "number",
+      "sources[].dli.winter": "number",
+      "sources[].id": "integer",
+      "sources[].kind": "string",
+      "sources[].name": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/photos": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].caption": "string",
+      "items[].crop": "null|object",
+      "items[].crop.height": "number",
+      "items[].crop.width": "number",
+      "items[].crop.x": "number",
+      "items[].crop.y": "number",
+      "items[].height": "integer",
+      "items[].id": "integer",
+      "items[].image_url": "string",
+      "items[].plant_id": "integer",
+      "items[].taken_at": "string",
+      "items[].thumbnail_url": "string",
+      "items[].width": "integer"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/routine-suggestion": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_type": "object",
+      "[].care_type.affects_prediction": "boolean",
+      "[].care_type.counts_as_watering": "boolean",
+      "[].care_type.icon": "string",
+      "[].care_type.id": "integer",
+      "[].care_type.is_builtin": "boolean",
+      "[].care_type.key": "null|string",
+      "[].care_type.name": "string",
+      "[].factors": "array",
+      "[].factors[].code": "string",
+      "[].factors[].details": "object",
+      "[].factors[].multiplier": "number",
+      "[].fixed_interval_days": "integer|null",
+      "[].interval_days": "integer|null",
+      "[].mode": "string",
+      "[].next_due": "null|string",
+      "[].recommended": "boolean"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/schedules": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_type": "object",
+      "[].care_type.affects_prediction": "boolean",
+      "[].care_type.counts_as_watering": "boolean",
+      "[].care_type.icon": "string",
+      "[].care_type.id": "integer",
+      "[].care_type.is_builtin": "boolean",
+      "[].care_type.key": "null|string",
+      "[].care_type.name": "string",
+      "[].due_on": "null|string",
+      "[].enabled": "boolean",
+      "[].factors": "array",
+      "[].factors[].code": "string",
+      "[].factors[].details": "object",
+      "[].factors[].multiplier": "number",
+      "[].fixed_interval_days": "integer|null",
+      "[].id": "integer",
+      "[].interval_days": "integer|null",
+      "[].mode": "string",
+      "[].next_due": "null|string",
+      "[].origin": "string",
+      "[].plant_id": "integer",
+      "[].routine_since": "null|string",
+      "[].routine_suggestion": "null|object",
+      "[].routine_suggestion.schedule_days": "integer",
+      "[].routine_suggestion.your_days": "integer",
+      "[].snoozed_until": "null|string",
+      "[].started_on": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/timeline": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "query:before": "null|string",
+        "query:limit": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "items": "array",
+      "items[].at": "string",
+      "items[].care_event": "null|object",
+      "items[].care_event.care_type": "object",
+      "items[].care_event.care_type.affects_prediction": "boolean",
+      "items[].care_event.care_type.counts_as_watering": "boolean",
+      "items[].care_event.care_type.icon": "string",
+      "items[].care_event.care_type.id": "integer",
+      "items[].care_event.care_type.is_builtin": "boolean",
+      "items[].care_event.care_type.key": "null|string",
+      "items[].care_event.care_type.name": "string",
+      "items[].care_event.estimated": "boolean",
+      "items[].care_event.feedback": "null|string",
+      "items[].care_event.id": "integer",
+      "items[].care_event.notes": "string",
+      "items[].care_event.performed_at": "string",
+      "items[].care_event.performed_by": "null|object",
+      "items[].care_event.performed_by.avatar_url": "null|string",
+      "items[].care_event.performed_by.display_name": "string",
+      "items[].care_event.performed_by.id": "integer",
+      "items[].care_event.plant_id": "integer",
+      "items[].care_event.skipped": "boolean",
+      "items[].kind": "string",
+      "items[].photo": "null|object",
+      "items[].photo.caption": "string",
+      "items[].photo.crop": "null|object",
+      "items[].photo.crop.height": "number",
+      "items[].photo.crop.width": "number",
+      "items[].photo.crop.x": "number",
+      "items[].photo.crop.y": "number",
+      "items[].photo.height": "integer",
+      "items[].photo.id": "integer",
+      "items[].photo.image_url": "string",
+      "items[].photo.plant_id": "integer",
+      "items[].photo.taken_at": "string",
+      "items[].photo.thumbnail_url": "string",
+      "items[].photo.width": "integer",
+      "next_cursor": "null|string"
+    }
+  },
+  "GET /api/v1/plugins": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "plugins": "array",
+      "plugins[].can_check": "boolean",
+      "plugins[].description": "string",
+      "plugins[].enabled": "boolean",
+      "plugins[].id": "string",
+      "plugins[].last_error": "null|string",
+      "plugins[].last_error_at": "null|string",
+      "plugins[].name": "string",
+      "plugins[].secrets_set": "array",
+      "plugins[].sends_data_to": "array",
+      "plugins[].settings": "null|object",
+      "plugins[].settings_schema": "null|object",
+      "plugins[].version": "string",
+      "problems": "array",
+      "problems[].message": "string",
+      "problems[].source": "string"
+    }
+  },
+  "GET /api/v1/seeds": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].id": "integer",
+      "[].name": "string",
+      "[].notes": "string",
+      "[].quantity": "string",
+      "[].sow_by": "integer|null",
+      "[].species": "null|object",
+      "[].species.care_profile": "null|object",
+      "[].species.care_profile.key": "string",
+      "[].species.care_profile.name": "string",
+      "[].species.common_name": "null|string",
+      "[].species.common_names": "array",
+      "[].species.crop": "null|object",
+      "[].species.crop.harvest_days": "array|null",
+      "[].species.crop.note": "null|string",
+      "[].species.crop.steps": "array",
+      "[].species.crop.steps[].action": "string",
+      "[].species.crop.steps[].after": "string",
+      "[].species.crop.steps[].weeks": "array",
+      "[].species.family": "string",
+      "[].species.id": "integer",
+      "[].species.note": "null|string",
+      "[].species.rank": "string",
+      "[].species.scientific_name": "string",
+      "[].species.synonyms": "array",
+      "[].species.toxicity": "null|object",
+      "[].species.toxicity.cats": "boolean",
+      "[].species.toxicity.dogs": "boolean",
+      "[].species.toxicity.note": "null|string",
+      "[].species.toxicity.sources": "array",
+      "[].variety": "string"
+    }
+  },
+  "GET /api/v1/setup": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "needs_setup": "boolean"
+    }
+  },
+  "GET /api/v1/sites": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].first_frost": "null|string",
+      "[].frost_source": "null|string",
+      "[].frost_years": "integer|null",
+      "[].id": "integer",
+      "[].last_frost": "null|string",
+      "[].latitude": "number",
+      "[].locations": "array",
+      "[].locations[].bed_length_cm": "integer|null",
+      "[].locations[].bed_type": "null|string",
+      "[].locations[].bed_width_cm": "integer|null",
+      "[].locations[].exposure": "null|string",
+      "[].locations[].humidity": "null|string",
+      "[].locations[].humidity_estimate": "integer|null",
+      "[].locations[].id": "integer",
+      "[].locations[].kind": "string",
+      "[].locations[].light_sources": "array",
+      "[].locations[].light_sources[].direction": "null|string",
+      "[].locations[].light_sources[].dli": "null|number",
+      "[].locations[].light_sources[].enabled": "boolean",
+      "[].locations[].light_sources[].hours_per_day": "null|number",
+      "[].locations[].light_sources[].id": "integer",
+      "[].locations[].light_sources[].kind": "string",
+      "[].locations[].light_sources[].name": "string",
+      "[].locations[].light_sources[].off_time": "null|string",
+      "[].locations[].light_sources[].on_time": "null|string",
+      "[].locations[].light_sources[].ppfd": "integer|null",
+      "[].locations[].light_sources[].ppfd_distance_cm": "integer",
+      "[].locations[].name": "string",
+      "[].locations[].site_id": "integer",
+      "[].locations[].temperature_max_c": "null|number",
+      "[].locations[].temperature_min_c": "null|number",
+      "[].longitude": "number",
+      "[].name": "string",
+      "[].timezone": "string"
+    }
+  },
+  "GET /api/v1/sites/{site_id}": {
+    "request": {
+      "fields": {
+        "path:site_id": "integer"
+      },
+      "required": [
+        "path:site_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "first_frost": "null|string",
+      "frost_source": "null|string",
+      "frost_years": "integer|null",
+      "id": "integer",
+      "last_frost": "null|string",
+      "latitude": "number",
+      "locations": "array",
+      "locations[].bed_length_cm": "integer|null",
+      "locations[].bed_type": "null|string",
+      "locations[].bed_width_cm": "integer|null",
+      "locations[].exposure": "null|string",
+      "locations[].humidity": "null|string",
+      "locations[].humidity_estimate": "integer|null",
+      "locations[].id": "integer",
+      "locations[].kind": "string",
+      "locations[].light_sources": "array",
+      "locations[].light_sources[].direction": "null|string",
+      "locations[].light_sources[].dli": "null|number",
+      "locations[].light_sources[].enabled": "boolean",
+      "locations[].light_sources[].hours_per_day": "null|number",
+      "locations[].light_sources[].id": "integer",
+      "locations[].light_sources[].kind": "string",
+      "locations[].light_sources[].name": "string",
+      "locations[].light_sources[].off_time": "null|string",
+      "locations[].light_sources[].on_time": "null|string",
+      "locations[].light_sources[].ppfd": "integer|null",
+      "locations[].light_sources[].ppfd_distance_cm": "integer",
+      "locations[].name": "string",
+      "locations[].site_id": "integer",
+      "locations[].temperature_max_c": "null|number",
+      "locations[].temperature_min_c": "null|number",
+      "longitude": "number",
+      "name": "string",
+      "timezone": "string"
+    }
+  },
+  "GET /api/v1/species": {
+    "request": {
+      "fields": {
+        "query:limit": "integer",
+        "query:q": "string"
+      },
+      "required": [
+        "query:q"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_profile": "null|object",
+      "[].care_profile.key": "string",
+      "[].care_profile.name": "string",
+      "[].common_name": "null|string",
+      "[].common_names": "array",
+      "[].crop": "null|object",
+      "[].crop.harvest_days": "array|null",
+      "[].crop.note": "null|string",
+      "[].crop.steps": "array",
+      "[].crop.steps[].action": "string",
+      "[].crop.steps[].after": "string",
+      "[].crop.steps[].weeks": "array",
+      "[].family": "string",
+      "[].id": "integer",
+      "[].matched_name": "null|string",
+      "[].note": "null|string",
+      "[].rank": "string",
+      "[].scientific_name": "string",
+      "[].synonyms": "array",
+      "[].toxicity": "null|object",
+      "[].toxicity.cats": "boolean",
+      "[].toxicity.dogs": "boolean",
+      "[].toxicity.note": "null|string",
+      "[].toxicity.sources": "array"
+    }
+  },
+  "GET /api/v1/species/{taxon_id}": {
+    "request": {
+      "fields": {
+        "path:taxon_id": "integer"
+      },
+      "required": [
+        "path:taxon_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_profile": "null|object",
+      "care_profile.key": "string",
+      "care_profile.name": "string",
+      "common_name": "null|string",
+      "common_names": "array",
+      "crop": "null|object",
+      "crop.harvest_days": "array|null",
+      "crop.note": "null|string",
+      "crop.steps": "array",
+      "crop.steps[].action": "string",
+      "crop.steps[].after": "string",
+      "crop.steps[].weeks": "array",
+      "family": "string",
+      "id": "integer",
+      "note": "null|string",
+      "rank": "string",
+      "scientific_name": "string",
+      "synonyms": "array",
+      "toxicity": "null|object",
+      "toxicity.cats": "boolean",
+      "toxicity.dogs": "boolean",
+      "toxicity.note": "null|string",
+      "toxicity.sources": "array"
+    }
+  },
+  "GET /api/v1/today": {
+    "request": {
+      "fields": {
+        "query:days_ahead": "integer"
+      },
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "sites": "array",
+      "sites[].alerts": "array",
+      "sites[].alerts[].details": "object",
+      "sites[].alerts[].kind": "string",
+      "sites[].alerts[].on": "string",
+      "sites[].attribution": "string",
+      "sites[].plugin_id": "string",
+      "sites[].precipitation_mm": "null|number",
+      "sites[].site_id": "integer",
+      "sites[].site_name": "string",
+      "sites[].temperature_c": "null|number",
+      "sites[].today": "string",
+      "sites[].today_max_c": "null|number",
+      "sites[].today_min_c": "null|number",
+      "sites[].updated_at": "string",
+      "sites[].weather_code": "integer|null",
+      "tasks": "array",
+      "tasks[].care_type": "object",
+      "tasks[].care_type.affects_prediction": "boolean",
+      "tasks[].care_type.counts_as_watering": "boolean",
+      "tasks[].care_type.icon": "string",
+      "tasks[].care_type.id": "integer",
+      "tasks[].care_type.is_builtin": "boolean",
+      "tasks[].care_type.key": "null|string",
+      "tasks[].care_type.name": "string",
+      "tasks[].days_until": "integer",
+      "tasks[].due_on": "string",
+      "tasks[].interval_days": "integer|null",
+      "tasks[].mode": "string",
+      "tasks[].plant": "object",
+      "tasks[].plant.cover_thumbnail_url": "null|string",
+      "tasks[].plant.id": "integer",
+      "tasks[].plant.location": "null|object",
+      "tasks[].plant.location.id": "integer",
+      "tasks[].plant.location.kind": "string",
+      "tasks[].plant.location.name": "string",
+      "tasks[].plant.location.site_id": "integer",
+      "tasks[].plant.location.site_name": "string",
+      "tasks[].plant.nickname": "string",
+      "tasks[].schedule_id": "integer",
+      "tasks[].snoozed_until": "null|string",
+      "unscheduled_plant_id": "integer|null",
+      "unscheduled_plants": "integer"
+    }
+  },
+  "GET /api/v1/wishlist": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "array",
+      "[].created_at": "string",
+      "[].id": "integer",
+      "[].link": "string",
+      "[].name": "string",
+      "[].notes": "string",
+      "[].species": "null|object",
+      "[].species.common_name": "null|string",
+      "[].species.id": "integer",
+      "[].species.scientific_name": "string",
+      "[].species.toxicity": "null|object",
+      "[].species.toxicity.cats": "boolean",
+      "[].species.toxicity.dogs": "boolean",
+      "[].species.toxicity.note": "null|string",
+      "[].species.toxicity.sources": "array"
+    }
+  },
+  "PATCH /api/v1/household": {
+    "request": {
+      "fields": {
+        "name": "string"
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "id": "integer",
+      "name": "string"
+    }
+  },
+  "PATCH /api/v1/household/members/{member_id}": {
+    "request": {
+      "fields": {
+        "path:member_id": "integer",
+        "role": "string"
+      },
+      "required": [
+        "path:member_id",
+        "role"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "id": "integer",
+      "role": "string",
+      "user_id": "integer"
+    }
+  },
+  "PATCH /api/v1/me": {
+    "request": {
+      "fields": {
+        "display_name": "null|string",
+        "locale": "null|string",
+        "unit_system": "null|string"
+      },
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "POST /api/v1/care-events/bulk": {
+    "request": {
+      "fields": {
+        "care_type_id": "integer",
+        "feedback": "null|string",
+        "notes": "string",
+        "performed_at": "null|string",
+        "plant_ids": "array",
+        "skipped": "boolean"
+      },
+      "required": [
+        "care_type_id",
+        "plant_ids"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_type": "object",
+      "[].care_type.affects_prediction": "boolean",
+      "[].care_type.counts_as_watering": "boolean",
+      "[].care_type.icon": "string",
+      "[].care_type.id": "integer",
+      "[].care_type.is_builtin": "boolean",
+      "[].care_type.key": "null|string",
+      "[].care_type.name": "string",
+      "[].estimated": "boolean",
+      "[].feedback": "null|string",
+      "[].id": "integer",
+      "[].notes": "string",
+      "[].performed_at": "string",
+      "[].performed_by": "null|object",
+      "[].performed_by.avatar_url": "null|string",
+      "[].performed_by.display_name": "string",
+      "[].performed_by.id": "integer",
+      "[].plant_id": "integer",
+      "[].skipped": "boolean"
+    }
+  },
+  "POST /api/v1/care-profile-suggestions": {
+    "request": {
+      "fields": {
+        "indoor": "boolean|null",
+        "name": "string",
+        "taxon_id": "integer|null"
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "attribution": "string",
+      "confidence": "string",
+      "profile": "object",
+      "profile.key": "string",
+      "profile.name": "string",
+      "reason": "string"
+    }
+  },
+  "POST /api/v1/care-schedules/{schedule_id}/routine": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "POST /api/v1/care-schedules/{schedule_id}/routine/dismiss": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "POST /api/v1/care-types": {
+    "request": {
+      "fields": {
+        "counts_as_watering": "boolean",
+        "icon": "string",
+        "name": "string"
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "affects_prediction": "boolean",
+      "counts_as_watering": "boolean",
+      "icon": "string",
+      "id": "integer",
+      "is_builtin": "boolean",
+      "key": "null|string",
+      "name": "string"
+    }
+  },
+  "POST /api/v1/conversations/{conversation_id}/messages": {
+    "request": {
+      "fields": {
+        "path:conversation_id": "integer",
+        "question": "string"
+      },
+      "required": [
+        "path:conversation_id",
+        "question"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "can_continue": "boolean",
+      "created_at": "string",
+      "id": "integer",
+      "messages": "array",
+      "messages[].asked_by": "null|string",
+      "messages[].attribution": "string",
+      "messages[].created_at": "string",
+      "messages[].id": "integer",
+      "messages[].role": "string",
+      "messages[].text": "string",
+      "plant_id": "integer",
+      "started_by": "null|string",
+      "title": "string",
+      "updated_at": "string"
+    }
+  },
+  "POST /api/v1/household/invitations": {
+    "request": {
+      "fields": {
+        "email": "string",
+        "role": "object"
+      },
+      "required": [
+        "email"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "created_at": "string",
+      "email": "string",
+      "email_sent": "boolean",
+      "expires_at": "string",
+      "id": "integer",
+      "invited_by": "null|string",
+      "role": "string",
+      "url": "string"
+    }
+  },
+  "POST /api/v1/household/members/{member_id}/password-reset-link": {
+    "request": {
+      "fields": {
+        "path:member_id": "integer"
+      },
+      "required": [
+        "path:member_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "url": "string"
+    }
+  },
+  "POST /api/v1/identify": {
+    "request": {
+      "fields": {
+        "photos": "array"
+      },
+      "required": [
+        "photos"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "attribution": "string",
+      "candidates": "array",
+      "candidates[].common_names": "array",
+      "candidates[].exact": "boolean",
+      "candidates[].family": "string",
+      "candidates[].scientific_name": "string",
+      "candidates[].score": "number",
+      "candidates[].species": "null|object",
+      "candidates[].species.care_profile": "null|object",
+      "candidates[].species.care_profile.key": "string",
+      "candidates[].species.care_profile.name": "string",
+      "candidates[].species.common_name": "null|string",
+      "candidates[].species.common_names": "array",
+      "candidates[].species.crop": "null|object",
+      "candidates[].species.crop.harvest_days": "array|null",
+      "candidates[].species.crop.note": "null|string",
+      "candidates[].species.crop.steps": "array",
+      "candidates[].species.crop.steps[].action": "string",
+      "candidates[].species.crop.steps[].after": "string",
+      "candidates[].species.crop.steps[].weeks": "array",
+      "candidates[].species.family": "string",
+      "candidates[].species.id": "integer",
+      "candidates[].species.note": "null|string",
+      "candidates[].species.rank": "string",
+      "candidates[].species.scientific_name": "string",
+      "candidates[].species.synonyms": "array",
+      "candidates[].species.toxicity": "null|object",
+      "candidates[].species.toxicity.cats": "boolean",
+      "candidates[].species.toxicity.dogs": "boolean",
+      "candidates[].species.toxicity.note": "null|string",
+      "candidates[].species.toxicity.sources": "array",
+      "remaining": "integer|null"
+    }
+  },
+  "POST /api/v1/import": {
+    "request": {
+      "fields": {
+        "file": "string"
+      },
+      "required": [
+        "file"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_events": "integer",
+      "members_to_invite": "array",
+      "photos": "integer",
+      "plants": "integer",
+      "plugins_needing_keys": "array",
+      "plugins_not_installed": "array",
+      "sites": "integer",
+      "unknown_care_profiles": "array",
+      "unknown_species": "array"
+    }
+  },
+  "POST /api/v1/invitations/{token}/accept": {
+    "request": {
+      "fields": {
+        "display_name": "string",
+        "password": "string",
+        "path:token": "string"
+      },
+      "required": [
+        "display_name",
+        "password",
+        "path:token"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "POST /api/v1/locations/{location_id}/light-sources": {
+    "request": {
+      "fields": {
+        "direction": "null|string",
+        "enabled": "boolean",
+        "kind": "string",
+        "name": "string",
+        "off_time": "null|string",
+        "on_time": "null|string",
+        "path:location_id": "integer",
+        "ppfd": "integer|null",
+        "ppfd_distance_cm": "integer"
+      },
+      "required": [
+        "kind",
+        "path:location_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "direction": "null|string",
+      "dli": "null|number",
+      "enabled": "boolean",
+      "hours_per_day": "null|number",
+      "id": "integer",
+      "kind": "string",
+      "name": "string",
+      "off_time": "null|string",
+      "on_time": "null|string",
+      "ppfd": "integer|null",
+      "ppfd_distance_cm": "integer"
+    }
+  },
+  "POST /api/v1/me/avatar": {
+    "request": {
+      "fields": {
+        "crop_height": "null|number",
+        "crop_width": "null|number",
+        "crop_x": "null|number",
+        "crop_y": "null|number",
+        "file": "string"
+      },
+      "required": [
+        "file"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "POST /api/v1/notifications/calendar": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "url": "string"
+    }
+  },
+  "POST /api/v1/notifications/channels": {
+    "request": {
+      "fields": {
+        "label": "string",
+        "url": "string"
+      },
+      "required": [
+        "label",
+        "url"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "enabled": "boolean",
+      "id": "integer",
+      "label": "string",
+      "last_error": "null|string",
+      "last_sent_at": "null|string",
+      "service": "string"
+    }
+  },
+  "POST /api/v1/notifications/channels/{channel_id}/test": {
+    "request": {
+      "fields": {
+        "path:channel_id": "integer"
+      },
+      "required": [
+        "path:channel_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "enabled": "boolean",
+      "id": "integer",
+      "label": "string",
+      "last_error": "null|string",
+      "last_sent_at": "null|string",
+      "service": "string"
+    }
+  },
+  "POST /api/v1/notifications/push/devices": {
+    "request": {
+      "fields": {
+        "label": "string",
+        "subscription": "object"
+      },
+      "required": [
+        "label",
+        "subscription"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "enabled": "boolean",
+      "id": "integer",
+      "label": "string",
+      "last_error": "null|string",
+      "last_sent_at": "null|string",
+      "service": "string"
+    }
+  },
+  "POST /api/v1/plants": {
+    "request": {
+      "fields": {
+        "acquired_on": "null|string",
+        "care_profile_key": "null|string",
+        "container_diameter_cm": "integer|null",
+        "container_height_cm": "integer|null",
+        "container_material": "null|string",
+        "from_wish_id": "integer|null",
+        "last_fertilized_days_ago": "integer|null",
+        "last_watered_days_ago": "integer|null",
+        "light_sources": "array",
+        "light_sources[].distance_cm": "integer|null",
+        "light_sources[].light_source_id": "integer",
+        "location_id": "integer|null",
+        "nickname": "string",
+        "notes": "string",
+        "soil_type": "null|string",
+        "status": "object",
+        "taxon_id": "integer|null"
+      },
+      "required": [
+        "nickname"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "acquired_on": "null|string",
+      "care_profile": "null|object",
+      "care_profile.chosen": "boolean",
+      "care_profile.key": "string",
+      "care_profile.name": "string",
+      "container_diameter_cm": "integer|null",
+      "container_height_cm": "integer|null",
+      "container_material": "null|string",
+      "cover_photo": "null|object",
+      "cover_photo.caption": "string",
+      "cover_photo.crop": "null|object",
+      "cover_photo.crop.height": "number",
+      "cover_photo.crop.width": "number",
+      "cover_photo.crop.x": "number",
+      "cover_photo.crop.y": "number",
+      "cover_photo.height": "integer",
+      "cover_photo.id": "integer",
+      "cover_photo.image_url": "string",
+      "cover_photo.plant_id": "integer",
+      "cover_photo.taken_at": "string",
+      "cover_photo.thumbnail_url": "string",
+      "cover_photo.width": "integer",
+      "created_at": "string",
+      "glance": "object",
+      "glance.fertilizer": "null|object",
+      "glance.light": "null|object",
+      "glance.light.dli": "number",
+      "glance.light.ideal": "number",
+      "glance.water": "null|object",
+      "glance.water.due_in_days": "integer|null",
+      "glance.water.level": "null|number",
+      "glance.water.resting_until": "null|string",
+      "id": "integer",
+      "last_watered_at": "null|string",
+      "light_sources": "array",
+      "light_sources[].distance_cm": "integer|null",
+      "light_sources[].light_source": "object",
+      "light_sources[].light_source.direction": "null|string",
+      "light_sources[].light_source.dli": "null|number",
+      "light_sources[].light_source.enabled": "boolean",
+      "light_sources[].light_source.hours_per_day": "null|number",
+      "light_sources[].light_source.id": "integer",
+      "light_sources[].light_source.kind": "string",
+      "light_sources[].light_source.name": "string",
+      "light_sources[].light_source.off_time": "null|string",
+      "light_sources[].light_source.on_time": "null|string",
+      "light_sources[].light_source.ppfd": "integer|null",
+      "light_sources[].light_source.ppfd_distance_cm": "integer",
+      "lineage": "object",
+      "lineage.offspring": "array",
+      "lineage.offspring[].acquired_on": "null|string",
+      "lineage.offspring[].id": "integer",
+      "lineage.offspring[].nickname": "string",
+      "lineage.offspring[].propagation_method": "null|string",
+      "lineage.offspring[].status": "string",
+      "lineage.parent": "null|object",
+      "lineage.parent.id": "integer",
+      "lineage.parent.nickname": "string",
+      "lineage.propagation_method": "null|string",
+      "location": "null|object",
+      "location.id": "integer",
+      "location.kind": "string",
+      "location.name": "string",
+      "location.site_id": "integer",
+      "location.site_name": "string",
+      "nickname": "string",
+      "notes": "string",
+      "soil_type": "null|string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "status": "string"
+    }
+  },
+  "POST /api/v1/plants/move": {
+    "request": {
+      "fields": {
+        "location_id": "integer",
+        "plant_ids": "array"
+      },
+      "required": [
+        "location_id",
+        "plant_ids"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].cover_thumbnail_url": "null|string",
+      "[].glance": "object",
+      "[].glance.fertilizer": "null|object",
+      "[].glance.light": "null|object",
+      "[].glance.light.dli": "number",
+      "[].glance.light.ideal": "number",
+      "[].glance.water": "null|object",
+      "[].glance.water.due_in_days": "integer|null",
+      "[].glance.water.level": "null|number",
+      "[].glance.water.resting_until": "null|string",
+      "[].id": "integer",
+      "[].last_watered_at": "null|string",
+      "[].location": "null|object",
+      "[].location.id": "integer",
+      "[].location.kind": "string",
+      "[].location.name": "string",
+      "[].location.site_id": "integer",
+      "[].location.site_name": "string",
+      "[].needs_routine": "boolean",
+      "[].nickname": "string",
+      "[].species": "null|object",
+      "[].species.common_name": "null|string",
+      "[].species.id": "integer",
+      "[].species.scientific_name": "string",
+      "[].species.toxicity": "null|object",
+      "[].species.toxicity.cats": "boolean",
+      "[].species.toxicity.dogs": "boolean",
+      "[].species.toxicity.note": "null|string",
+      "[].species.toxicity.sources": "array",
+      "[].status": "string"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/care-events": {
+    "request": {
+      "fields": {
+        "care_type_id": "integer",
+        "feedback": "null|string",
+        "notes": "string",
+        "path:plant_id": "integer",
+        "performed_at": "null|string",
+        "skipped": "boolean"
+      },
+      "required": [
+        "care_type_id",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "estimated": "boolean",
+      "feedback": "null|string",
+      "id": "integer",
+      "notes": "string",
+      "performed_at": "string",
+      "performed_by": "null|object",
+      "performed_by.avatar_url": "null|string",
+      "performed_by.display_name": "string",
+      "performed_by.id": "integer",
+      "plant_id": "integer",
+      "skipped": "boolean"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/conversations": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "question": "string"
+      },
+      "required": [
+        "path:plant_id",
+        "question"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "can_continue": "boolean",
+      "created_at": "string",
+      "id": "integer",
+      "messages": "array",
+      "messages[].asked_by": "null|string",
+      "messages[].attribution": "string",
+      "messages[].created_at": "string",
+      "messages[].id": "integer",
+      "messages[].role": "string",
+      "messages[].text": "string",
+      "plant_id": "integer",
+      "started_by": "null|string",
+      "title": "string",
+      "updated_at": "string"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/diagnosis": {
+    "request": {
+      "fields": {
+        "description": "string",
+        "file": "string",
+        "keep_photo": "boolean",
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "file",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "attribution": "string",
+      "causes": "array",
+      "causes[].cause": "string",
+      "causes[].likelihood": "string",
+      "causes[].signs": "string",
+      "next_steps": "array",
+      "photo": "null|object",
+      "photo.caption": "string",
+      "photo.crop": "null|object",
+      "photo.crop.height": "number",
+      "photo.crop.width": "number",
+      "photo.crop.x": "number",
+      "photo.crop.y": "number",
+      "photo.height": "integer",
+      "photo.id": "integer",
+      "photo.image_url": "string",
+      "photo.plant_id": "integer",
+      "photo.taken_at": "string",
+      "photo.thumbnail_url": "string",
+      "photo.width": "integer",
+      "photo_clear": "boolean",
+      "summary": "string",
+      "urgent": "boolean"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/harvests": {
+    "request": {
+      "fields": {
+        "amount": "null|number|string",
+        "harvested_on": "string",
+        "notes": "string",
+        "path:plant_id": "integer",
+        "unit": "null|string"
+      },
+      "required": [
+        "harvested_on",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "amount": "null|number",
+      "harvested_on": "string",
+      "id": "integer",
+      "logged_by": "null|string",
+      "notes": "string",
+      "unit": "null|string"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/photos": {
+    "request": {
+      "fields": {
+        "caption": "string",
+        "file": "string",
+        "path:plant_id": "integer",
+        "taken_at": "null|string"
+      },
+      "required": [
+        "file",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "caption": "string",
+      "crop": "null|object",
+      "crop.height": "number",
+      "crop.width": "number",
+      "crop.x": "number",
+      "crop.y": "number",
+      "height": "integer",
+      "id": "integer",
+      "image_url": "string",
+      "plant_id": "integer",
+      "taken_at": "string",
+      "thumbnail_url": "string",
+      "width": "integer"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/propagate": {
+    "request": {
+      "fields": {
+        "count": "integer",
+        "location_id": "integer|null",
+        "method": "string",
+        "nickname": "string",
+        "path:plant_id": "integer",
+        "started_on": "null|string"
+      },
+      "required": [
+        "method",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].cover_thumbnail_url": "null|string",
+      "[].glance": "object",
+      "[].glance.fertilizer": "null|object",
+      "[].glance.light": "null|object",
+      "[].glance.light.dli": "number",
+      "[].glance.light.ideal": "number",
+      "[].glance.water": "null|object",
+      "[].glance.water.due_in_days": "integer|null",
+      "[].glance.water.level": "null|number",
+      "[].glance.water.resting_until": "null|string",
+      "[].id": "integer",
+      "[].last_watered_at": "null|string",
+      "[].location": "null|object",
+      "[].location.id": "integer",
+      "[].location.kind": "string",
+      "[].location.name": "string",
+      "[].location.site_id": "integer",
+      "[].location.site_name": "string",
+      "[].needs_routine": "boolean",
+      "[].nickname": "string",
+      "[].species": "null|object",
+      "[].species.common_name": "null|string",
+      "[].species.id": "integer",
+      "[].species.scientific_name": "string",
+      "[].species.toxicity": "null|object",
+      "[].species.toxicity.cats": "boolean",
+      "[].species.toxicity.dogs": "boolean",
+      "[].species.toxicity.note": "null|string",
+      "[].species.toxicity.sources": "array",
+      "[].status": "string"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/routine": {
+    "request": {
+      "fields": {
+        "items": "array",
+        "items[].care_type_id": "integer",
+        "items[].enabled": "boolean",
+        "items[].fixed_interval_days": "integer|null",
+        "items[].mode": "string",
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "items",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_type": "object",
+      "[].care_type.affects_prediction": "boolean",
+      "[].care_type.counts_as_watering": "boolean",
+      "[].care_type.icon": "string",
+      "[].care_type.id": "integer",
+      "[].care_type.is_builtin": "boolean",
+      "[].care_type.key": "null|string",
+      "[].care_type.name": "string",
+      "[].due_on": "null|string",
+      "[].enabled": "boolean",
+      "[].factors": "array",
+      "[].factors[].code": "string",
+      "[].factors[].details": "object",
+      "[].factors[].multiplier": "number",
+      "[].fixed_interval_days": "integer|null",
+      "[].id": "integer",
+      "[].interval_days": "integer|null",
+      "[].mode": "string",
+      "[].next_due": "null|string",
+      "[].origin": "string",
+      "[].plant_id": "integer",
+      "[].routine_since": "null|string",
+      "[].routine_suggestion": "null|object",
+      "[].routine_suggestion.schedule_days": "integer",
+      "[].routine_suggestion.your_days": "integer",
+      "[].snoozed_until": "null|string",
+      "[].started_on": "string"
+    }
+  },
+  "POST /api/v1/plants/{plant_id}/schedules": {
+    "request": {
+      "fields": {
+        "care_type_id": "integer",
+        "enabled": "boolean",
+        "fixed_interval_days": "integer|null",
+        "mode": "string",
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "care_type_id",
+        "mode",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "POST /api/v1/plugins/{plugin_id}/check": {
+    "request": {
+      "fields": {
+        "path:plugin_id": "string",
+        "settings": "object"
+      },
+      "required": [
+        "path:plugin_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "details": "string",
+      "problem": "null|string",
+      "works": "boolean"
+    }
+  },
+  "POST /api/v1/seeds": {
+    "request": {
+      "fields": {
+        "name": "string",
+        "notes": "string",
+        "quantity": "string",
+        "sow_by": "integer|null",
+        "taxon_id": "integer|null",
+        "variety": "string"
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "id": "integer",
+      "name": "string",
+      "notes": "string",
+      "quantity": "string",
+      "sow_by": "integer|null",
+      "species": "null|object",
+      "species.care_profile": "null|object",
+      "species.care_profile.key": "string",
+      "species.care_profile.name": "string",
+      "species.common_name": "null|string",
+      "species.common_names": "array",
+      "species.crop": "null|object",
+      "species.crop.harvest_days": "array|null",
+      "species.crop.note": "null|string",
+      "species.crop.steps": "array",
+      "species.crop.steps[].action": "string",
+      "species.crop.steps[].after": "string",
+      "species.crop.steps[].weeks": "array",
+      "species.family": "string",
+      "species.id": "integer",
+      "species.note": "null|string",
+      "species.rank": "string",
+      "species.scientific_name": "string",
+      "species.synonyms": "array",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "variety": "string"
+    }
+  },
+  "POST /api/v1/seeds/{seed_id}/sown": {
+    "request": {
+      "fields": {
+        "location_id": "integer|null",
+        "path:seed_id": "integer"
+      },
+      "required": [
+        "path:seed_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "plant_id": "integer"
+    }
+  },
+  "POST /api/v1/setup": {
+    "request": {
+      "fields": {
+        "display_name": "string",
+        "email": "string",
+        "household_name": "string",
+        "password": "string"
+      },
+      "required": [
+        "display_name",
+        "email",
+        "household_name",
+        "password"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
+    }
+  },
+  "POST /api/v1/sites": {
+    "request": {
+      "fields": {
+        "latitude": "number",
+        "longitude": "number",
+        "name": "string",
+        "timezone": "string"
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "name",
+        "timezone"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "first_frost": "null|string",
+      "frost_source": "null|string",
+      "frost_years": "integer|null",
+      "id": "integer",
+      "last_frost": "null|string",
+      "latitude": "number",
+      "locations": "array",
+      "locations[].bed_length_cm": "integer|null",
+      "locations[].bed_type": "null|string",
+      "locations[].bed_width_cm": "integer|null",
+      "locations[].exposure": "null|string",
+      "locations[].humidity": "null|string",
+      "locations[].humidity_estimate": "integer|null",
+      "locations[].id": "integer",
+      "locations[].kind": "string",
+      "locations[].light_sources": "array",
+      "locations[].light_sources[].direction": "null|string",
+      "locations[].light_sources[].dli": "null|number",
+      "locations[].light_sources[].enabled": "boolean",
+      "locations[].light_sources[].hours_per_day": "null|number",
+      "locations[].light_sources[].id": "integer",
+      "locations[].light_sources[].kind": "string",
+      "locations[].light_sources[].name": "string",
+      "locations[].light_sources[].off_time": "null|string",
+      "locations[].light_sources[].on_time": "null|string",
+      "locations[].light_sources[].ppfd": "integer|null",
+      "locations[].light_sources[].ppfd_distance_cm": "integer",
+      "locations[].name": "string",
+      "locations[].site_id": "integer",
+      "locations[].temperature_max_c": "null|number",
+      "locations[].temperature_min_c": "null|number",
+      "longitude": "number",
+      "name": "string",
+      "timezone": "string"
+    }
+  },
+  "POST /api/v1/sites/{site_id}/locations": {
+    "request": {
+      "fields": {
+        "bed_length_cm": "integer|null",
+        "bed_type": "null|string",
+        "bed_width_cm": "integer|null",
+        "exposure": "null|string",
+        "humidity": "null|string",
+        "kind": "string",
+        "name": "string",
+        "path:site_id": "integer",
+        "temperature_max_c": "null|number",
+        "temperature_min_c": "null|number"
+      },
+      "required": [
+        "kind",
+        "name",
+        "path:site_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "bed_length_cm": "integer|null",
+      "bed_type": "null|string",
+      "bed_width_cm": "integer|null",
+      "exposure": "null|string",
+      "humidity": "null|string",
+      "humidity_estimate": "integer|null",
+      "id": "integer",
+      "kind": "string",
+      "light_sources": "array",
+      "light_sources[].direction": "null|string",
+      "light_sources[].dli": "null|number",
+      "light_sources[].enabled": "boolean",
+      "light_sources[].hours_per_day": "null|number",
+      "light_sources[].id": "integer",
+      "light_sources[].kind": "string",
+      "light_sources[].name": "string",
+      "light_sources[].off_time": "null|string",
+      "light_sources[].on_time": "null|string",
+      "light_sources[].ppfd": "integer|null",
+      "light_sources[].ppfd_distance_cm": "integer",
+      "name": "string",
+      "site_id": "integer",
+      "temperature_max_c": "null|number",
+      "temperature_min_c": "null|number"
+    }
+  },
+  "POST /api/v1/wishlist": {
+    "request": {
+      "fields": {
+        "link": "string",
+        "name": "string",
+        "notes": "string",
+        "taxon_id": "integer|null"
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "created_at": "string",
+      "id": "integer",
+      "link": "string",
+      "name": "string",
+      "notes": "string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array"
+    }
+  },
+  "PUT /api/v1/care-events/{event_id}": {
+    "request": {
+      "fields": {
+        "care_type_id": "integer",
+        "feedback": "null|string",
+        "notes": "string",
+        "path:event_id": "integer",
+        "performed_at": "null|string",
+        "skipped": "boolean"
+      },
+      "required": [
+        "care_type_id",
+        "path:event_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "estimated": "boolean",
+      "feedback": "null|string",
+      "id": "integer",
+      "notes": "string",
+      "performed_at": "string",
+      "performed_by": "null|object",
+      "performed_by.avatar_url": "null|string",
+      "performed_by.display_name": "string",
+      "performed_by.id": "integer",
+      "plant_id": "integer",
+      "skipped": "boolean"
+    }
+  },
+  "PUT /api/v1/care-schedules/{schedule_id}": {
+    "request": {
+      "fields": {
+        "enabled": "boolean",
+        "fixed_interval_days": "integer|null",
+        "mode": "string",
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "mode",
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "PUT /api/v1/care-schedules/{schedule_id}/snooze": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer",
+        "until": "null|string"
+      },
+      "required": [
+        "path:schedule_id",
+        "until"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "care_type": "object",
+      "care_type.affects_prediction": "boolean",
+      "care_type.counts_as_watering": "boolean",
+      "care_type.icon": "string",
+      "care_type.id": "integer",
+      "care_type.is_builtin": "boolean",
+      "care_type.key": "null|string",
+      "care_type.name": "string",
+      "due_on": "null|string",
+      "enabled": "boolean",
+      "factors": "array",
+      "factors[].code": "string",
+      "factors[].details": "object",
+      "factors[].multiplier": "number",
+      "fixed_interval_days": "integer|null",
+      "id": "integer",
+      "interval_days": "integer|null",
+      "mode": "string",
+      "next_due": "null|string",
+      "origin": "string",
+      "plant_id": "integer",
+      "routine_since": "null|string",
+      "routine_suggestion": "null|object",
+      "routine_suggestion.schedule_days": "integer",
+      "routine_suggestion.your_days": "integer",
+      "snoozed_until": "null|string",
+      "started_on": "string"
+    }
+  },
+  "PUT /api/v1/care-types/{care_type_id}": {
+    "request": {
+      "fields": {
+        "counts_as_watering": "boolean",
+        "icon": "string",
+        "name": "string",
+        "path:care_type_id": "integer"
+      },
+      "required": [
+        "name",
+        "path:care_type_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "affects_prediction": "boolean",
+      "counts_as_watering": "boolean",
+      "icon": "string",
+      "id": "integer",
+      "is_builtin": "boolean",
+      "key": "null|string",
+      "name": "string"
+    }
+  },
+  "PUT /api/v1/light-sources/{light_id}": {
+    "request": {
+      "fields": {
+        "direction": "null|string",
+        "enabled": "boolean",
+        "kind": "string",
+        "name": "string",
+        "off_time": "null|string",
+        "on_time": "null|string",
+        "path:light_id": "integer",
+        "ppfd": "integer|null",
+        "ppfd_distance_cm": "integer"
+      },
+      "required": [
+        "kind",
+        "path:light_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "direction": "null|string",
+      "dli": "null|number",
+      "enabled": "boolean",
+      "hours_per_day": "null|number",
+      "id": "integer",
+      "kind": "string",
+      "name": "string",
+      "off_time": "null|string",
+      "on_time": "null|string",
+      "ppfd": "integer|null",
+      "ppfd_distance_cm": "integer"
+    }
+  },
+  "PUT /api/v1/locations/{location_id}": {
+    "request": {
+      "fields": {
+        "bed_length_cm": "integer|null",
+        "bed_type": "null|string",
+        "bed_width_cm": "integer|null",
+        "exposure": "null|string",
+        "humidity": "null|string",
+        "kind": "string",
+        "name": "string",
+        "path:location_id": "integer",
+        "temperature_max_c": "null|number",
+        "temperature_min_c": "null|number"
+      },
+      "required": [
+        "kind",
+        "name",
+        "path:location_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "bed_length_cm": "integer|null",
+      "bed_type": "null|string",
+      "bed_width_cm": "integer|null",
+      "exposure": "null|string",
+      "humidity": "null|string",
+      "humidity_estimate": "integer|null",
+      "id": "integer",
+      "kind": "string",
+      "light_sources": "array",
+      "light_sources[].direction": "null|string",
+      "light_sources[].dli": "null|number",
+      "light_sources[].enabled": "boolean",
+      "light_sources[].hours_per_day": "null|number",
+      "light_sources[].id": "integer",
+      "light_sources[].kind": "string",
+      "light_sources[].name": "string",
+      "light_sources[].off_time": "null|string",
+      "light_sources[].on_time": "null|string",
+      "light_sources[].ppfd": "integer|null",
+      "light_sources[].ppfd_distance_cm": "integer",
+      "name": "string",
+      "site_id": "integer",
+      "temperature_max_c": "null|number",
+      "temperature_min_c": "null|number"
+    }
+  },
+  "PUT /api/v1/notifications/channels/{channel_id}": {
+    "request": {
+      "fields": {
+        "enabled": "boolean",
+        "label": "string",
+        "path:channel_id": "integer",
+        "url": "null|string"
+      },
+      "required": [
+        "enabled",
+        "label",
+        "path:channel_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "enabled": "boolean",
+      "id": "integer",
+      "label": "string",
+      "last_error": "null|string",
+      "last_sent_at": "null|string",
+      "service": "string"
+    }
+  },
+  "PUT /api/v1/notifications/preferences": {
+    "request": {
+      "fields": {
+        "digest_time": "string",
+        "reminder_time": "null|string",
+        "timezone": "string"
+      },
+      "required": [
+        "digest_time",
+        "reminder_time",
+        "timezone"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "digest_time": "string",
+      "reminder_time": "null|string",
+      "timezone": "string"
+    }
+  },
+  "PUT /api/v1/photos/{photo_id}": {
+    "request": {
+      "fields": {
+        "caption": "string",
+        "path:photo_id": "integer"
+      },
+      "required": [
+        "path:photo_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "caption": "string",
+      "crop": "null|object",
+      "crop.height": "number",
+      "crop.width": "number",
+      "crop.x": "number",
+      "crop.y": "number",
+      "height": "integer",
+      "id": "integer",
+      "image_url": "string",
+      "plant_id": "integer",
+      "taken_at": "string",
+      "thumbnail_url": "string",
+      "width": "integer"
+    }
+  },
+  "PUT /api/v1/photos/{photo_id}/crop": {
+    "request": {
+      "fields": {
+        "crop": "null|object",
+        "crop.height": "number",
+        "crop.width": "number",
+        "crop.x": "number",
+        "crop.y": "number",
+        "path:photo_id": "integer"
+      },
+      "required": [
+        "crop",
+        "path:photo_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "caption": "string",
+      "crop": "null|object",
+      "crop.height": "number",
+      "crop.width": "number",
+      "crop.x": "number",
+      "crop.y": "number",
+      "height": "integer",
+      "id": "integer",
+      "image_url": "string",
+      "plant_id": "integer",
+      "taken_at": "string",
+      "thumbnail_url": "string",
+      "width": "integer"
+    }
+  },
+  "PUT /api/v1/plants/{plant_id}": {
+    "request": {
+      "fields": {
+        "acquired_on": "null|string",
+        "care_profile_key": "null|string",
+        "container_diameter_cm": "integer|null",
+        "container_height_cm": "integer|null",
+        "container_material": "null|string",
+        "light_sources": "array",
+        "light_sources[].distance_cm": "integer|null",
+        "light_sources[].light_source_id": "integer",
+        "location_id": "integer|null",
+        "nickname": "string",
+        "notes": "string",
+        "path:plant_id": "integer",
+        "soil_type": "null|string",
+        "status": "object",
+        "taxon_id": "integer|null"
+      },
+      "required": [
+        "nickname",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "acquired_on": "null|string",
+      "care_profile": "null|object",
+      "care_profile.chosen": "boolean",
+      "care_profile.key": "string",
+      "care_profile.name": "string",
+      "container_diameter_cm": "integer|null",
+      "container_height_cm": "integer|null",
+      "container_material": "null|string",
+      "cover_photo": "null|object",
+      "cover_photo.caption": "string",
+      "cover_photo.crop": "null|object",
+      "cover_photo.crop.height": "number",
+      "cover_photo.crop.width": "number",
+      "cover_photo.crop.x": "number",
+      "cover_photo.crop.y": "number",
+      "cover_photo.height": "integer",
+      "cover_photo.id": "integer",
+      "cover_photo.image_url": "string",
+      "cover_photo.plant_id": "integer",
+      "cover_photo.taken_at": "string",
+      "cover_photo.thumbnail_url": "string",
+      "cover_photo.width": "integer",
+      "created_at": "string",
+      "glance": "object",
+      "glance.fertilizer": "null|object",
+      "glance.light": "null|object",
+      "glance.light.dli": "number",
+      "glance.light.ideal": "number",
+      "glance.water": "null|object",
+      "glance.water.due_in_days": "integer|null",
+      "glance.water.level": "null|number",
+      "glance.water.resting_until": "null|string",
+      "id": "integer",
+      "last_watered_at": "null|string",
+      "light_sources": "array",
+      "light_sources[].distance_cm": "integer|null",
+      "light_sources[].light_source": "object",
+      "light_sources[].light_source.direction": "null|string",
+      "light_sources[].light_source.dli": "null|number",
+      "light_sources[].light_source.enabled": "boolean",
+      "light_sources[].light_source.hours_per_day": "null|number",
+      "light_sources[].light_source.id": "integer",
+      "light_sources[].light_source.kind": "string",
+      "light_sources[].light_source.name": "string",
+      "light_sources[].light_source.off_time": "null|string",
+      "light_sources[].light_source.on_time": "null|string",
+      "light_sources[].light_source.ppfd": "integer|null",
+      "light_sources[].light_source.ppfd_distance_cm": "integer",
+      "lineage": "object",
+      "lineage.offspring": "array",
+      "lineage.offspring[].acquired_on": "null|string",
+      "lineage.offspring[].id": "integer",
+      "lineage.offspring[].nickname": "string",
+      "lineage.offspring[].propagation_method": "null|string",
+      "lineage.offspring[].status": "string",
+      "lineage.parent": "null|object",
+      "lineage.parent.id": "integer",
+      "lineage.parent.nickname": "string",
+      "lineage.propagation_method": "null|string",
+      "location": "null|object",
+      "location.id": "integer",
+      "location.kind": "string",
+      "location.name": "string",
+      "location.site_id": "integer",
+      "location.site_name": "string",
+      "nickname": "string",
+      "notes": "string",
+      "soil_type": "null|string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "status": "string"
+    }
+  },
+  "PUT /api/v1/plants/{plant_id}/cover": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "photo_id": "integer"
+      },
+      "required": [
+        "path:plant_id",
+        "photo_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "acquired_on": "null|string",
+      "care_profile": "null|object",
+      "care_profile.chosen": "boolean",
+      "care_profile.key": "string",
+      "care_profile.name": "string",
+      "container_diameter_cm": "integer|null",
+      "container_height_cm": "integer|null",
+      "container_material": "null|string",
+      "cover_photo": "null|object",
+      "cover_photo.caption": "string",
+      "cover_photo.crop": "null|object",
+      "cover_photo.crop.height": "number",
+      "cover_photo.crop.width": "number",
+      "cover_photo.crop.x": "number",
+      "cover_photo.crop.y": "number",
+      "cover_photo.height": "integer",
+      "cover_photo.id": "integer",
+      "cover_photo.image_url": "string",
+      "cover_photo.plant_id": "integer",
+      "cover_photo.taken_at": "string",
+      "cover_photo.thumbnail_url": "string",
+      "cover_photo.width": "integer",
+      "created_at": "string",
+      "glance": "object",
+      "glance.fertilizer": "null|object",
+      "glance.light": "null|object",
+      "glance.light.dli": "number",
+      "glance.light.ideal": "number",
+      "glance.water": "null|object",
+      "glance.water.due_in_days": "integer|null",
+      "glance.water.level": "null|number",
+      "glance.water.resting_until": "null|string",
+      "id": "integer",
+      "last_watered_at": "null|string",
+      "light_sources": "array",
+      "light_sources[].distance_cm": "integer|null",
+      "light_sources[].light_source": "object",
+      "light_sources[].light_source.direction": "null|string",
+      "light_sources[].light_source.dli": "null|number",
+      "light_sources[].light_source.enabled": "boolean",
+      "light_sources[].light_source.hours_per_day": "null|number",
+      "light_sources[].light_source.id": "integer",
+      "light_sources[].light_source.kind": "string",
+      "light_sources[].light_source.name": "string",
+      "light_sources[].light_source.off_time": "null|string",
+      "light_sources[].light_source.on_time": "null|string",
+      "light_sources[].light_source.ppfd": "integer|null",
+      "light_sources[].light_source.ppfd_distance_cm": "integer",
+      "lineage": "object",
+      "lineage.offspring": "array",
+      "lineage.offspring[].acquired_on": "null|string",
+      "lineage.offspring[].id": "integer",
+      "lineage.offspring[].nickname": "string",
+      "lineage.offspring[].propagation_method": "null|string",
+      "lineage.offspring[].status": "string",
+      "lineage.parent": "null|object",
+      "lineage.parent.id": "integer",
+      "lineage.parent.nickname": "string",
+      "lineage.propagation_method": "null|string",
+      "location": "null|object",
+      "location.id": "integer",
+      "location.kind": "string",
+      "location.name": "string",
+      "location.site_id": "integer",
+      "location.site_name": "string",
+      "nickname": "string",
+      "notes": "string",
+      "soil_type": "null|string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "status": "string"
+    }
+  },
+  "PUT /api/v1/plugins/{plugin_id}": {
+    "request": {
+      "fields": {
+        "enabled": "boolean",
+        "path:plugin_id": "string",
+        "settings": "object"
+      },
+      "required": [
+        "enabled",
+        "path:plugin_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "can_check": "boolean",
+      "description": "string",
+      "enabled": "boolean",
+      "id": "string",
+      "last_error": "null|string",
+      "last_error_at": "null|string",
+      "name": "string",
+      "secrets_set": "array",
+      "sends_data_to": "array",
+      "settings": "null|object",
+      "settings_schema": "null|object",
+      "version": "string"
+    }
+  },
+  "PUT /api/v1/seeds/{seed_id}": {
+    "request": {
+      "fields": {
+        "name": "string",
+        "notes": "string",
+        "path:seed_id": "integer",
+        "quantity": "string",
+        "sow_by": "integer|null",
+        "taxon_id": "integer|null",
+        "variety": "string"
+      },
+      "required": [
+        "name",
+        "path:seed_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "id": "integer",
+      "name": "string",
+      "notes": "string",
+      "quantity": "string",
+      "sow_by": "integer|null",
+      "species": "null|object",
+      "species.care_profile": "null|object",
+      "species.care_profile.key": "string",
+      "species.care_profile.name": "string",
+      "species.common_name": "null|string",
+      "species.common_names": "array",
+      "species.crop": "null|object",
+      "species.crop.harvest_days": "array|null",
+      "species.crop.note": "null|string",
+      "species.crop.steps": "array",
+      "species.crop.steps[].action": "string",
+      "species.crop.steps[].after": "string",
+      "species.crop.steps[].weeks": "array",
+      "species.family": "string",
+      "species.id": "integer",
+      "species.note": "null|string",
+      "species.rank": "string",
+      "species.scientific_name": "string",
+      "species.synonyms": "array",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array",
+      "variety": "string"
+    }
+  },
+  "PUT /api/v1/sites/{site_id}": {
+    "request": {
+      "fields": {
+        "latitude": "number",
+        "longitude": "number",
+        "name": "string",
+        "path:site_id": "integer",
+        "timezone": "string"
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "name",
+        "path:site_id",
+        "timezone"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "first_frost": "null|string",
+      "frost_source": "null|string",
+      "frost_years": "integer|null",
+      "id": "integer",
+      "last_frost": "null|string",
+      "latitude": "number",
+      "locations": "array",
+      "locations[].bed_length_cm": "integer|null",
+      "locations[].bed_type": "null|string",
+      "locations[].bed_width_cm": "integer|null",
+      "locations[].exposure": "null|string",
+      "locations[].humidity": "null|string",
+      "locations[].humidity_estimate": "integer|null",
+      "locations[].id": "integer",
+      "locations[].kind": "string",
+      "locations[].light_sources": "array",
+      "locations[].light_sources[].direction": "null|string",
+      "locations[].light_sources[].dli": "null|number",
+      "locations[].light_sources[].enabled": "boolean",
+      "locations[].light_sources[].hours_per_day": "null|number",
+      "locations[].light_sources[].id": "integer",
+      "locations[].light_sources[].kind": "string",
+      "locations[].light_sources[].name": "string",
+      "locations[].light_sources[].off_time": "null|string",
+      "locations[].light_sources[].on_time": "null|string",
+      "locations[].light_sources[].ppfd": "integer|null",
+      "locations[].light_sources[].ppfd_distance_cm": "integer",
+      "locations[].name": "string",
+      "locations[].site_id": "integer",
+      "locations[].temperature_max_c": "null|number",
+      "locations[].temperature_min_c": "null|number",
+      "longitude": "number",
+      "name": "string",
+      "timezone": "string"
+    }
+  },
+  "PUT /api/v1/sites/{site_id}/frost-dates": {
+    "request": {
+      "fields": {
+        "first_frost": "null|string",
+        "last_frost": "null|string",
+        "path:site_id": "integer"
+      },
+      "required": [
+        "path:site_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "first_frost": "null|string",
+      "frost_source": "null|string",
+      "frost_years": "integer|null",
+      "id": "integer",
+      "last_frost": "null|string",
+      "latitude": "number",
+      "locations": "array",
+      "locations[].bed_length_cm": "integer|null",
+      "locations[].bed_type": "null|string",
+      "locations[].bed_width_cm": "integer|null",
+      "locations[].exposure": "null|string",
+      "locations[].humidity": "null|string",
+      "locations[].humidity_estimate": "integer|null",
+      "locations[].id": "integer",
+      "locations[].kind": "string",
+      "locations[].light_sources": "array",
+      "locations[].light_sources[].direction": "null|string",
+      "locations[].light_sources[].dli": "null|number",
+      "locations[].light_sources[].enabled": "boolean",
+      "locations[].light_sources[].hours_per_day": "null|number",
+      "locations[].light_sources[].id": "integer",
+      "locations[].light_sources[].kind": "string",
+      "locations[].light_sources[].name": "string",
+      "locations[].light_sources[].off_time": "null|string",
+      "locations[].light_sources[].on_time": "null|string",
+      "locations[].light_sources[].ppfd": "integer|null",
+      "locations[].light_sources[].ppfd_distance_cm": "integer",
+      "locations[].name": "string",
+      "locations[].site_id": "integer",
+      "locations[].temperature_max_c": "null|number",
+      "locations[].temperature_min_c": "null|number",
+      "longitude": "number",
+      "name": "string",
+      "timezone": "string"
+    }
+  },
+  "PUT /api/v1/wishlist/{wish_id}": {
+    "request": {
+      "fields": {
+        "link": "string",
+        "name": "string",
+        "notes": "string",
+        "path:wish_id": "integer",
+        "taxon_id": "integer|null"
+      },
+      "required": [
+        "name",
+        "path:wish_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "created_at": "string",
+      "id": "integer",
+      "link": "string",
+      "name": "string",
+      "notes": "string",
+      "species": "null|object",
+      "species.common_name": "null|string",
+      "species.id": "integer",
+      "species.scientific_name": "string",
+      "species.toxicity": "null|object",
+      "species.toxicity.cats": "boolean",
+      "species.toxicity.dogs": "boolean",
+      "species.toxicity.note": "null|string",
+      "species.toxicity.sources": "array"
+    }
+  }
+}

@@ -65,6 +65,7 @@ and your phone, email, backups, upgrades and every setting.
 - [Development](docs/development.md): run it from the source code
 - [Writing plugins](docs/plugins.md), [translating](docs/translating.md), and the
   [care dataset](data/care/README.md)
+- [Stability and upgrades](docs/stability.md): what stays the same from 1.0, and how things change
 - [Roadmap](docs/roadmap.md): what's planned, and the release names
 - [Technical plan](docs/technical-plan.md) and [style guide](docs/STYLE_GUIDE.md)
 

@@ -1,0 +1,267 @@
+{
+  "api_version": "1",
+  "exports": [
+    "API_VERSION",
+    "Adjustment",
+    "AiAnswer",
+    "AiImage",
+    "AiTask",
+    "Alert",
+    "Candidate",
+    "CareContext",
+    "Conditions",
+    "Factor",
+    "FrostDates",
+    "Identification",
+    "PeriodicJob",
+    "PhotoToIdentify",
+    "PluginInfo",
+    "Profile",
+    "SettingsCheck",
+    "SiteConditions",
+    "hookimpl",
+    "is_enabled",
+    "mark_site_out_of_date",
+    "require_enabled",
+    "soil_water_mm",
+    "water_use"
+  ],
+  "hooks": {
+    "care_factors": [
+      "context",
+      "settings"
+    ],
+    "check_settings": [
+      "settings"
+    ],
+    "complete_json": [
+      "task",
+      "settings"
+    ],
+    "frost_dates": [
+      "site",
+      "settings"
+    ],
+    "identify_plant": [
+      "photos",
+      "language",
+      "settings"
+    ],
+    "on_care_event_logged": [
+      "event",
+      "settings"
+    ],
+    "on_plant_created": [
+      "plant",
+      "settings"
+    ],
+    "register_api": [
+      "router"
+    ],
+    "register_periodic_jobs": [],
+    "site_conditions": [
+      "site",
+      "settings"
+    ]
+  },
+  "models": {
+    "accounts.Household": [
+      "created_at",
+      "id",
+      "name",
+      "updated_at"
+    ],
+    "accounts.Membership": [
+      "created_at",
+      "household",
+      "id",
+      "role",
+      "updated_at",
+      "user"
+    ],
+    "care.CareEvent": [
+      "care_type",
+      "created_at",
+      "estimated",
+      "feedback",
+      "id",
+      "notes",
+      "performed_at",
+      "performed_by",
+      "plant",
+      "skipped",
+      "updated_at"
+    ],
+    "care.CareType": [
+      "affects_prediction",
+      "counts_as_watering",
+      "created_at",
+      "household",
+      "icon",
+      "id",
+      "key",
+      "name"
+    ],
+    "places.Site": [
+      "created_at",
+      "first_frost",
+      "frost_source",
+      "frost_years",
+      "household",
+      "id",
+      "last_frost",
+      "latitude",
+      "longitude",
+      "name",
+      "timezone",
+      "updated_at"
+    ],
+    "plants.Plant": [
+      "acquired_on",
+      "care_profile",
+      "container_diameter_cm",
+      "container_height_cm",
+      "container_material",
+      "cover_photo",
+      "created_at",
+      "household",
+      "id",
+      "location",
+      "nickname",
+      "notes",
+      "parent",
+      "propagation_method",
+      "soil_type",
+      "status",
+      "taxon",
+      "updated_at"
+    ]
+  },
+  "types": {
+    "Adjustment": [
+      "amount_mm",
+      "due_on",
+      "factor",
+      "not_before"
+    ],
+    "AiAnswer": [
+      "attribution",
+      "data",
+      "problem"
+    ],
+    "AiImage": [
+      "data",
+      "media_type"
+    ],
+    "AiTask": [
+      "images",
+      "instructions",
+      "name",
+      "prompt",
+      "schema"
+    ],
+    "Alert": [
+      "details",
+      "kind",
+      "on"
+    ],
+    "Candidate": [
+      "common_names",
+      "family",
+      "genus",
+      "scientific_name",
+      "score"
+    ],
+    "CareContext": [
+      "care_type",
+      "conditions",
+      "last_done",
+      "plant",
+      "profile",
+      "site",
+      "started_on",
+      "today"
+    ],
+    "Conditions": [
+      "bed_area_m2",
+      "dormant",
+      "exposure",
+      "grow_lights",
+      "humidity_estimated",
+      "humidity_percent",
+      "indoor",
+      "latitude",
+      "pot_diameter_cm",
+      "pot_height_cm",
+      "pot_material",
+      "propagating",
+      "raised_bed",
+      "temperature_max_c",
+      "temperature_min_c",
+      "windows"
+    ],
+    "Factor": [
+      "code",
+      "details",
+      "multiplier"
+    ],
+    "FrostDates": [
+      "first_frost",
+      "last_frost",
+      "years"
+    ],
+    "Identification": [
+      "attribution",
+      "candidates",
+      "problem",
+      "remaining"
+    ],
+    "PeriodicJob": [
+      "cron",
+      "function",
+      "name"
+    ],
+    "PhotoToIdentify": [
+      "jpeg",
+      "organ"
+    ],
+    "PluginInfo": [
+      "api_version",
+      "description",
+      "django_app",
+      "enabled_by_default",
+      "hooks",
+      "id",
+      "name",
+      "sends_data_to",
+      "settings_schema",
+      "version"
+    ],
+    "Profile": [
+      "dli_ideal",
+      "fertilize_days",
+      "fertilize_pause_north",
+      "humidity",
+      "in_soil",
+      "let_dry",
+      "temperature_ideal_max",
+      "temperature_ideal_min",
+      "watering_days"
+    ],
+    "SettingsCheck": [
+      "details",
+      "problem"
+    ],
+    "SiteConditions": [
+      "alerts",
+      "attribution",
+      "dew_point_c",
+      "precipitation_mm",
+      "temperature_c",
+      "today_max_c",
+      "today_min_c",
+      "updated_at",
+      "weather_code"
+    ]
+  }
+}
