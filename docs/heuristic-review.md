@@ -49,7 +49,7 @@ for deleting a room.
 The bin icon beside each harvest deletes it at once. It's less costly than H1, since one
 harvest is easy to log again, but the amount and notes are lost.
 
-**Fix:** an **Undo** in the message after deleting, as for care logged from Today.
+**Fix:** ask before deleting, showing which harvest, as for H1.
 
 ### H3. Names in capitals (severity 2)
 
