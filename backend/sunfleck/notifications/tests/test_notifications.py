@@ -296,6 +296,25 @@ def test_the_evening_reminder_lists_whats_still_due(
     assert apprise.sent[-1][1:] == ("Still to do today: 1 plant", "Living room: Rotate Monty")
 
 
+def test_a_reminder_set_after_the_last_run_of_the_day_still_goes_out(
+    apprise: FakeApprise, ada: User, phone: NotificationChannel, living_room: Location
+) -> None:
+    due(living_room, "Monty", "rotate", date(2026, 4, 8))
+    services.update_preferences(
+        ada, services.PreferencesData(time(8), time(23, 50), "Europe/Amsterdam")
+    )
+    services.send_due(at(8, 0))
+
+    # The worker runs every 15 minutes: 23:45 is too early, so the next run sends it, after
+    # midnight, as the 15th's.
+    assert services.send_due(at(23, 45)) == 0
+    assert services.send_due(datetime(2026, 4, 15, 22, 0, tzinfo=UTC)) == 1
+    assert services.send_due(datetime(2026, 4, 15, 22, 15, tzinfo=UTC)) == 0
+
+    reminder = NotificationLog.objects.get(kind="reminder")
+    assert reminder.local_date == date(2026, 4, 15)
+
+
 def test_digests_go_out_in_each_persons_time_zone(
     apprise: FakeApprise, ada: User, phone: NotificationChannel, living_room: Location
 ) -> None:

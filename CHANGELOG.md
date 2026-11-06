@@ -35,6 +35,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Gentle motion**: cards rise into place as a page opens, and done buttons give a little
   when tapped. None of it shows if your device is set to reduce motion.
 
+### Fixed
+
+- **A digest or evening reminder set between 23:46 and 23:59 was never sent**: the worker
+  checks every 15 minutes, and the next check was already the next day. It's now sent then,
+  just after midnight.
+- The message when your browser can't tell where you are (choosing a place) had too little
+  contrast.
+
 ### Security
 
 - **The Django admin site** (`/admin/`) no longer has a sign-in form of its own, which wasn't
