@@ -224,6 +224,9 @@ away: open one with the arrow next to its name, or just turn it on.
   yourself with Ollama or LM Studio (then nothing leaves your network). It's only asked when
   you ask for a suggestion, and you review every suggestion before it's used. See its
   [setup guide](../plugins/ai-openai/README.md).
+- **AI (Claude)**: the same, through Anthropic's Claude models, with your own API key from
+  [console.anthropic.com](https://console.anthropic.com). Claude Sonnet by default. See its
+  [setup guide](../plugins/ai-anthropic/README.md).
 
 ## Export and import
 

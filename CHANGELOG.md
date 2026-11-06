@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **AI (Claude)**: a plugin for Anthropic's Claude models, with your own API key, next to the
+  OpenAI-compatible one. Claude Sonnet by default; the model is a setting. It reaches
+  `api.anthropic.com`, only when someone asks for a suggestion.
+
 ## [0.8.0] - 2026-11-06
 
 **Hibiscus.** For collectors: grow new plants from the ones you have and keep track of where

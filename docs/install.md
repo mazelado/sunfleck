@@ -150,6 +150,10 @@ encryption. Special characters in the user name or password must be URL-encoded 
     `api.open-meteo.com` and `archive-api.open-meteo.com`.
   - **Plant identification (Pl@ntNet)**: identify a plant from a photo when adding it. Needs
     a free API key from [my.plantnet.org](https://my.plantnet.org) (500 identifications a day).
+  - **AI (OpenAI-compatible)** and **AI (Claude)**: suggestions from an AI model, only when
+    someone asks. Claude needs an API key from
+    [console.anthropic.com](https://console.anthropic.com), billed per use, and reaches
+    `api.anthropic.com`.
 
 ## Backups
 
