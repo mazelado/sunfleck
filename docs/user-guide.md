@@ -109,7 +109,8 @@ lists the latest harvests. Exports include them.
   The **timeline** on the plant's page shows everything, with its photos.
 - **Care types**: water, fertilize, repot, prune, mist, rotate, clean leaves and check for
   pests are built in. Add your own under **Care types**, e.g. "Bottom water" (which you can
-  mark as a kind of watering).
+  mark as a kind of watering), or with **Add a care type** while logging care or adding a
+  schedule.
 - **Schedules** say when each kind of care is due:
   - **Predicted** (watering and fertilizing): Sunfleck works out the interval from the care
     profile, the season, the light, the temperature, the humidity indoors, the pot and,

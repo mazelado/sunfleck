@@ -70,7 +70,7 @@ back, often losing what they'd typed.
 |---|---|---|
 | Plant form | A window or grow light the room doesn't have | #98, fixed in 0.7 |
 | Plant form, with no places yet | A place and a room: the link leaves the form | #120 |
-| Logging care, adding a schedule | A care type the household doesn't have yet | #121 |
+| Logging care, adding a schedule | A care type the household doesn't have yet | #121, fixed in 0.8 |
 | Today, in a new household | Any pointer to adding a place and a first plant | #122 |
 
 ## Limits

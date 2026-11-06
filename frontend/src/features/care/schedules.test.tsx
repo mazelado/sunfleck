@@ -471,4 +471,56 @@ describe("the care schedule", () => {
       });
     });
   });
+
+  it("adds a care type while adding a schedule, and chooses it", async () => {
+    signInAs(gardener);
+    withPlant([waterSchedule]);
+    const cleaning = {
+      id: 20,
+      key: null,
+      name: "Neem spray",
+      icon: "sparkles",
+      is_builtin: false,
+      affects_prediction: false,
+      counts_as_watering: false,
+    };
+    let careTypes = builtinCareTypes;
+    let sent: unknown = null;
+    server.use(
+      http.get("*/api/v1/care-types", () => HttpResponse.json(careTypes)),
+      http.post("*/api/v1/care-types", () => {
+        careTypes = [...builtinCareTypes, cleaning];
+        return HttpResponse.json(cleaning, { status: 201 });
+      }),
+      http.post("*/api/v1/plants/7/schedules", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(waterSchedule, { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "Add a schedule" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a schedule" });
+    await user.click(within(dialog).getByRole("button", { name: "Add a care type" }));
+    const newType = await screen.findByRole("dialog", { name: "New care type" });
+    await user.type(within(newType).getByLabelText(/Name/), "Neem spray");
+    await user.click(within(newType).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(within(dialog).getByRole("combobox", { name: "Care" })).toHaveValue("Neem spray");
+    });
+    const days = within(dialog).getByRole("textbox", { name: "Every how many days" });
+    await user.clear(days);
+    await user.type(days, "30");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(sent).toEqual({
+        care_type_id: 20,
+        mode: "fixed",
+        fixed_interval_days: 30,
+        enabled: true,
+      });
+    });
+  });
 });

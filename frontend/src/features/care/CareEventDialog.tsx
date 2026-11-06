@@ -11,6 +11,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -24,6 +26,7 @@ import {
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { toLocalInput } from "../../lib/relativeTime";
 import { useApplyFieldErrors } from "../auth/serverErrors";
+import { CareTypeDialog } from "./CareTypeDialog";
 import { useCareTypeName } from "./useCareTypeName";
 
 interface CareEventDialogProps {
@@ -52,6 +55,7 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
   const logCare = useLogCare(plantId);
   const updateEvent = useUpdateCareEvent();
   const save = event ? updateEvent : logCare;
+  const [addingType, setAddingType] = useState(false);
   const form = useForm<CareFormValues>({
     initialValues: {
       careTypeId: String(event?.care_type.id ?? careTypeId ?? careTypes[0]?.id ?? ""),
@@ -90,12 +94,25 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
       <form onSubmit={handleSubmit} noValidate>
         <Stack gap="sm">
           <ErrorAlert error={save.error} />
-          <Select
-            label={t("care.careType")}
-            allowDeselect={false}
-            data={careTypes.map((type) => ({ value: String(type.id), label: name(type) }))}
-            {...form.getInputProps("careTypeId")}
-          />
+          <Stack gap={4}>
+            <Select
+              label={t("care.careType")}
+              allowDeselect={false}
+              data={careTypes.map((type) => ({ value: String(type.id), label: name(type) }))}
+              {...form.getInputProps("careTypeId")}
+            />
+            <Button
+              variant="subtle"
+              size="compact-sm"
+              leftSection={<IconPlus size={14} />}
+              onClick={() => {
+                setAddingType(true);
+              }}
+              style={{ alignSelf: "flex-start" }}
+            >
+              {t("care.addCareType")}
+            </Button>
+          </Stack>
           <TextInput
             type="datetime-local"
             label={t("care.when")}
@@ -159,6 +176,17 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
           </Group>
         </Stack>
       </form>
+      {/* Outside the form above: a form can't hold another one, even in a dialog. */}
+      {addingType && (
+        <CareTypeDialog
+          onClose={() => {
+            setAddingType(false);
+          }}
+          onSaved={(type) => {
+            form.setFieldValue("careTypeId", String(type.id));
+          }}
+        />
+      )}
     </Modal>
   );
 }

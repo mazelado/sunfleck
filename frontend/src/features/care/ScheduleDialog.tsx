@@ -11,9 +11,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useCareTypes } from "../../api/care";
+import { type CareType, useCareTypes } from "../../api/care";
 import type { Plant } from "../../api/plants";
 import {
   type Schedule,
@@ -25,6 +27,7 @@ import {
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useApplyFieldErrors } from "../auth/serverErrors";
+import { CareTypeDialog } from "./CareTypeDialog";
 import { canPredict } from "./scheduleText";
 import { useCareTypeName } from "./useCareTypeName";
 
@@ -70,6 +73,16 @@ export function ScheduleDialog({ plant, schedule, scheduled, onClose }: Schedule
     },
   });
   const values = form.getValues();
+  const [addingType, setAddingType] = useState(false);
+
+  function choose(type: CareType | undefined) {
+    form.setFieldValue("careTypeId", type ? String(type.id) : null);
+    // Suggest predicting what can be predicted.
+    form.setFieldValue(
+      "mode",
+      type && canPredict(type) && plant.care_profile ? "predicted" : "fixed",
+    );
+  }
   const careType =
     schedule?.care_type ?? careTypes.find((type) => String(type.id) === values.careTypeId);
   const predictable = careType !== undefined && canPredict(careType) && plant.care_profile !== null;
@@ -105,21 +118,28 @@ export function ScheduleDialog({ plant, schedule, scheduled, onClose }: Schedule
         <Stack gap="sm">
           <ErrorAlert error={save.error} />
           {!schedule && (
-            <Select
-              label={t("schedules.careType")}
-              allowDeselect={false}
-              data={available.map((type) => ({ value: String(type.id), label: name(type) }))}
-              {...form.getInputProps("careTypeId")}
-              onChange={(value: string | null) => {
-                form.setFieldValue("careTypeId", value);
-                const type = careTypes.find((each) => String(each.id) === value);
-                // Suggest predicting what can be predicted.
-                form.setFieldValue(
-                  "mode",
-                  type && canPredict(type) && plant.care_profile ? "predicted" : "fixed",
-                );
-              }}
-            />
+            <Stack gap={4}>
+              <Select
+                label={t("schedules.careType")}
+                allowDeselect={false}
+                data={available.map((type) => ({ value: String(type.id), label: name(type) }))}
+                {...form.getInputProps("careTypeId")}
+                onChange={(value: string | null) => {
+                  choose(careTypes.find((each) => String(each.id) === value));
+                }}
+              />
+              <Button
+                variant="subtle"
+                size="compact-sm"
+                leftSection={<IconPlus size={14} />}
+                onClick={() => {
+                  setAddingType(true);
+                }}
+                style={{ alignSelf: "flex-start" }}
+              >
+                {t("care.addCareType")}
+              </Button>
+            </Stack>
           )}
           {careType && (
             <Stack gap={4}>
@@ -190,6 +210,18 @@ export function ScheduleDialog({ plant, schedule, scheduled, onClose }: Schedule
           </Group>
         </Stack>
       </form>
+      {/* Outside the form above: a form can't hold another one, even in a dialog. */}
+      {addingType && (
+        <CareTypeDialog
+          onClose={() => {
+            setAddingType(false);
+          }}
+          onSaved={(type) => {
+            // A second watering type can't be scheduled next to the first.
+            if (!(hasWatering && type.counts_as_watering)) choose(type);
+          }}
+        />
+      )}
     </Modal>
   );
 }

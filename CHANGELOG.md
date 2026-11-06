@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Add a care type while logging care or adding a schedule** (#121): **Add a care type**
+  under the care type opens the same dialog as Settings → Care types, and the new type is
+  chosen, without losing what you've typed.
+
 ## [0.7.0] - 2026-11-06
 
 **Gardenia.** Growing food outside: garden beds with their size, frost dates for each place, a
