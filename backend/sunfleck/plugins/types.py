@@ -139,6 +139,15 @@ class Identification:
 
 
 @dataclass(frozen=True)
+class AiImage:
+    """A photo for an AI model to look at: a JPEG, PNG or WebP (`media_type`) and its bytes.
+    Sunfleck sends them upright, at most 1568 px on their long edge, without metadata."""
+
+    media_type: str
+    data: bytes
+
+
+@dataclass(frozen=True)
 class AiTask:
     """Something for an AI model to answer, as JSON that matches `schema` (a JSON Schema).
 
@@ -151,6 +160,9 @@ class AiTask:
     instructions: str
     prompt: str
     schema: Mapping[str, Any]
+    # Photos to look at with the prompt (e.g. to diagnose a problem). A plugin that can't send
+    # them answers with the problem `unsupported`, rather than answering without them.
+    images: tuple[AiImage, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -158,9 +170,10 @@ class AiAnswer:
     """What a `complete_json` hook answered: the JSON data, or a problem.
 
     `problem` is one of `missing_settings` (no model or key set), `invalid_api_key`,
-    `quota_exceeded`, `unavailable` (the service can't be reached or is down) or
+    `quota_exceeded`, `unavailable` (the service can't be reached or is down),
     `invalid_answer` (the model didn't answer JSON of the right shape; Sunfleck also checks
-    the data against the task's schema). Other failures should raise.
+    the data against the task's schema) or `unsupported` (the task has images, and the
+    plugin or its model can't look at them). Other failures should raise.
     """
 
     # Which service and model answered, shown with the answer (e.g. "Suggested by AI: llama3.1").

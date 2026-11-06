@@ -6,6 +6,7 @@ a request a safety classifier declines is retried on Anthropic's recommended fal
 (`fallbacks: "default"`).
 """
 
+import base64
 import json
 import logging
 from collections.abc import Mapping
@@ -46,12 +47,13 @@ def request(task: AiTask, model: str) -> dict[str, Any]:
         "model": model,
         "max_tokens": MAX_TOKENS,
         "system": task.instructions,
-        "messages": [{"role": "user", "content": task.prompt}],
+        "messages": [{"role": "user", "content": _content(task)}],
         "output_config": output_config,
     }
     if model in EFFORT_MODELS:
-        # Sunfleck's questions are short and well-defined: little thinking is needed.
-        output_config["effort"] = "low"
+        # Sunfleck's questions are short and well-defined: little thinking is needed, except
+        # to make sense of a photo.
+        output_config["effort"] = "medium" if task.images else "low"
     if model in CURRENT_MODELS:
         body["betas"] = [FALLBACK_BETA]
         body["fallbacks"] = "default"
@@ -92,6 +94,25 @@ def complete(task: AiTask, api_key: str, model: str) -> AiAnswer:
         return AiAnswer(credit, problem="invalid_answer")
     # The model that answered, which differs from the one set after a fallback.
     return AiAnswer(attribution(message.model), data=data)
+
+
+def _content(task: AiTask) -> str | list[dict[str, Any]]:
+    """The question, after its photos if it has any."""
+    if not task.images:
+        return task.prompt
+    blocks: list[dict[str, Any]] = [
+        {
+            "type": "image",
+            "source": {
+                "type": "base64",
+                "media_type": image.media_type,
+                "data": base64.standard_b64encode(image.data).decode(),
+            },
+        }
+        for image in task.images
+    ]
+    blocks.append({"type": "text", "text": task.prompt})
+    return blocks
 
 
 def _json_object(text: str | None) -> dict[str, Any] | None:

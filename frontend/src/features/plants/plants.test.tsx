@@ -3,6 +3,8 @@ import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Me } from "../../api/accounts";
+import type { Diagnosis } from "../../api/diagnosis";
+import { ApiError } from "../../api/errors";
 import type { Identification } from "../../api/identify";
 import type { LightSource, Location, Site } from "../../api/places";
 import type { Photo, Plant, PlantSummary } from "../../api/plants";
@@ -13,9 +15,10 @@ import { ada, apiError, server, signInAs } from "../../test/server";
 
 // Uploads are checked in api/plants.test.ts and api/identify.test.ts: jsdom's FormData doesn't
 // survive Node's fetch.
-const { uploadPhoto, identifyPlant } = vi.hoisted(() => ({
+const { uploadPhoto, identifyPlant, diagnosePlant } = vi.hoisted(() => ({
   uploadPhoto: vi.fn(),
   identifyPlant: vi.fn(),
+  diagnosePlant: vi.fn(),
 }));
 vi.mock("../../api/plants", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../api/plants")>()),
@@ -25,10 +28,15 @@ vi.mock("../../api/identify", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../api/identify")>()),
   identifyPlant,
 }));
+vi.mock("../../api/diagnosis", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../api/diagnosis")>()),
+  diagnosePlant,
+}));
 
 afterEach(() => {
   uploadPhoto.mockReset();
   identifyPlant.mockReset();
+  diagnosePlant.mockReset();
 });
 
 const gardener: Me = { ...ada, role: "gardener" };
@@ -705,6 +713,107 @@ describe("plant form", () => {
 });
 
 describe("plant page", () => {
+  it("asks the AI what's wrong, from a photo, and shows its suggestions", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    server.use(
+      http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: true })),
+    );
+    const diagnosis: Diagnosis = {
+      summary: "The soil has stayed wet too long.",
+      causes: [
+        {
+          cause: "Overwatering",
+          likelihood: "likely",
+          signs: "Yellow lower leaves, and it was watered twice this week.",
+        },
+        { cause: "Root rot", likelihood: "possible", signs: "Soft stems at the base." },
+      ],
+      next_steps: ["Let the top 5 cm dry out.", "Check the roots if it keeps yellowing."],
+      urgent: true,
+      photo_clear: false,
+      attribution: "Suggested by AI (claude-sonnet-5-5)",
+      photo: null,
+    };
+    diagnosePlant.mockResolvedValue(diagnosis);
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "What's wrong?" }));
+    const dialog = await screen.findByRole("dialog", { name: "What's wrong with Monty?" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    const ask = within(dialog).getByRole("button", { name: "Ask the AI" });
+    expect(ask).toBeDisabled();
+    const fileInput = dialog.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!fileInput) throw new Error("No file input");
+    expect(fileInput).toHaveAttribute("capture", "environment");
+    const chosen = new File(["not really a jpeg"], "leaves.jpg", { type: "image/jpeg" });
+    await user.upload(fileInput, chosen);
+    await user.type(
+      within(dialog).getByRole("textbox", { name: /What did you notice/ }),
+      " Yellow leaves ",
+    );
+    await user.click(within(dialog).getByRole("checkbox", { name: "Keep the photo on the plant" }));
+    await user.click(ask);
+
+    expect(await within(dialog).findByText("The soil has stayed wet too long.")).toBeVisible();
+    expect(diagnosePlant).toHaveBeenCalledWith(7, {
+      photo: { file: chosen, filename: "leaves.jpg", takenAt: null },
+      description: "Yellow leaves",
+      keepPhoto: false,
+    });
+    expect(within(dialog).getByRole("alert")).toHaveTextContent("Act soon");
+    expect(within(dialog).getByText(/didn't show the problem clearly/)).toBeVisible();
+    expect(within(dialog).getByText("Overwatering")).toBeVisible();
+    expect(within(dialog).getByText("likely")).toBeVisible();
+    expect(within(dialog).getByText("possible")).toBeVisible();
+    expect(
+      within(dialog)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent),
+    ).toEqual(["Let the top 5 cm dry out.", "Check the roots if it keeps yellowing."]);
+    expect(within(dialog).getByText(/Suggested by AI \(claude-sonnet-5-5\)/)).toBeVisible();
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+
+    await user.click(within(dialog).getByRole("button", { name: "Ask about another photo" }));
+    expect(within(dialog).getByRole("button", { name: "Ask the AI" })).toBeDisabled();
+  });
+
+  it("says when the AI model can't look at photos", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    server.use(
+      http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: true })),
+    );
+    diagnosePlant.mockRejectedValue(new ApiError(502, "ai_unsupported", "No.", {}));
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "What's wrong?" }));
+    const dialog = await screen.findByRole("dialog");
+    const fileInput = dialog.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!fileInput) throw new Error("No file input");
+    await user.upload(fileInput, new File(["x"], "a.jpg", { type: "image/jpeg" }));
+    await user.click(within(dialog).getByRole("button", { name: "Ask the AI" }));
+
+    expect(await within(dialog).findByText(/The AI model can't look at photos/)).toBeVisible();
+  });
+
+  it("has no diagnosis without an AI plugin, or for viewers", async () => {
+    signInAs(gardener);
+    withPlant(plant());
+    const { unmount } = renderApp("/plants/7");
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "What's wrong?" })).not.toBeInTheDocument();
+    unmount();
+
+    signInAs(viewer);
+    server.use(
+      http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: true })),
+    );
+    renderApp("/plants/7");
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "What's wrong?" })).not.toBeInTheDocument();
+  });
+
   it("propagates cuttings from a plant, named after it", async () => {
     signInAs(gardener);
     withSites([home]);

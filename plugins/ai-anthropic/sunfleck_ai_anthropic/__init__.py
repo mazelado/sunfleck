@@ -37,7 +37,8 @@ plugin = PluginInfo(
     settings_schema=Settings,
     sends_data_to=(
         "api.anthropic.com: what Sunfleck asks, such as a plant's species and where it grows "
-        "when suggesting a care profile, and the API key; only when you ask for a suggestion, "
-        "or test the plugin",
+        "when suggesting a care profile, or a photo of a plant with its care and recent "
+        "history when asking what's wrong with it, and the API key; only when you ask, or "
+        "test the plugin",
     ),
 )

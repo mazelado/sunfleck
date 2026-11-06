@@ -14,6 +14,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **AI (Claude)**: a plugin for Anthropic's Claude models, with your own API key, next to the
   OpenAI-compatible one. Claude Sonnet by default; the model is a setting. It reaches
   `api.anthropic.com`, only when someone asks for a suggestion.
+- **What's wrong?**: on a plant's page, take or choose a photo of a struggling plant, add a few
+  words if you like, and the household's AI plugin suggests likely causes and what to do,
+  from the photo together with the plant's care, place and recent history. It says when to
+  act soon, and when the photo isn't clear enough. The photo can be kept on the plant. With
+  the OpenAI-compatible plugin, it needs a model that can look at photos.
 
 ## [0.8.0] - 2026-11-06
 

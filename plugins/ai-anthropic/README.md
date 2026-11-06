@@ -4,8 +4,8 @@ A built-in [Sunfleck](../../README.md) plugin: suggestions from Anthropic's Clau
 through the [Claude API](https://platform.claude.com/docs), with your own API key.
 
 AI is always optional in Sunfleck: everything works without it, and it's only asked when you
-ask for a suggestion (e.g. a care profile for an unusual plant), which you review before it's
-used.
+ask: for a care profile for an unusual plant, or what's wrong with a plant from a photo of it.
+Its answers are suggestions, which you review before acting on them.
 
 ## Setting it up
 
@@ -26,10 +26,14 @@ rate limit or credit balance, or no connection to `api.anthropic.com`.
 
 ## What it sends
 
-Only when someone asks for a suggestion (or an Admin clicks **Test**, which sends a tiny
-question of its own), to `api.anthropic.com`: Sunfleck's question (for a care profile: the
-plant's species and family, and whether it grows indoors or outdoors), the instructions for
-the answer, and the API key. Anthropic's terms for the API apply to what it does with them.
+Only when someone asks (or an Admin clicks **Test**, which sends a tiny question of its own),
+to `api.anthropic.com`: Sunfleck's question, the instructions for the answer, and the API key.
+
+- For a care profile: the plant's species and family, and whether it grows indoors or
+  outdoors.
+- For **What's wrong?**: the photo taken for it (made smaller, without its location data),
+  what the person wrote, and the plant's details: its name, species, care profile, place
+  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes. Anthropic's terms for the API apply to what it does with them.
 
 ## How it works
 
@@ -38,7 +42,7 @@ a schema (structured outputs). Sunfleck checks every answer against the schema b
 it.
 
 - Sunfleck's questions are short, so it asks the current models to think little
-  (`effort: low`), which keeps them quick and cheap.
+  (`effort: low`), which keeps them quick and cheap; a little more (`medium`) for a photo.
 - On the current models, a question one of Anthropic's safety classifiers declines is
   retried on Anthropic's recommended fallback model (`fallbacks: "default"`); the
   suggestion then says which model answered.

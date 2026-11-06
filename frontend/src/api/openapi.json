@@ -800,6 +800,31 @@
         "title": "CareTypeOut",
         "type": "object"
       },
+      "CauseOut": {
+        "properties": {
+          "cause": {
+            "title": "Cause",
+            "type": "string"
+          },
+          "likelihood": {
+            "description": "`likely` or `possible`.",
+            "title": "Likelihood",
+            "type": "string"
+          },
+          "signs": {
+            "description": "What in the photo or the plant's history points to it.",
+            "title": "Signs",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "likelihood",
+          "signs"
+        ],
+        "title": "CauseOut",
+        "type": "object"
+      },
       "ChannelIn": {
         "properties": {
           "label": {
@@ -1020,6 +1045,65 @@
           "weeks"
         ],
         "title": "CropStepOut",
+        "type": "object"
+      },
+      "DiagnosisOut": {
+        "properties": {
+          "attribution": {
+            "description": "Which AI suggested it, to show with it.",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "causes": {
+            "items": {
+              "$ref": "#/components/schemas/CauseOut"
+            },
+            "title": "Causes",
+            "type": "array"
+          },
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Steps",
+            "type": "array"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The photo, if it was kept on the plant."
+          },
+          "photo_clear": {
+            "description": "False if the photo didn't clearly show the problem.",
+            "title": "Photo Clear",
+            "type": "boolean"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "urgent": {
+            "description": "The plant could be lost within days without action.",
+            "title": "Urgent",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "summary",
+          "causes",
+          "next_steps",
+          "urgent",
+          "photo_clear",
+          "attribution",
+          "photo"
+        ],
+        "title": "DiagnosisOut",
         "type": "object"
       },
       "Direction": {
@@ -8302,6 +8386,75 @@
           }
         ],
         "summary": "Set Cover Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/diagnosis": {
+      "post": {
+        "description": "What might be wrong with the plant, from a photo of the problem (and a few words, if\ngiven), with the household's AI plugin. Sends the photo (resized, without metadata), the\nwords, and the plant's species, conditions, schedules and recent care; only when asked.\nThe answer is suggestions. With `keep_photo`, the photo is added to the plant's photos.",
+        "operationId": "sunfleck_plants_api_diagnose_plant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "default": "",
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "file": {
+                    "format": "binary",
+                    "title": "File",
+                    "type": "string"
+                  },
+                  "keep_photo": {
+                    "default": false,
+                    "title": "Keep Photo",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "title": "MultiPartBodyParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnosisOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Diagnose Plant",
         "tags": [
           "plants"
         ]

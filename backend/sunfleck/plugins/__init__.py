@@ -12,6 +12,7 @@ from sunfleck.plugins.info import API_VERSION, PluginInfo
 from sunfleck.plugins.types import (
     Adjustment,
     AiAnswer,
+    AiImage,
     AiTask,
     Alert,
     Candidate,
@@ -38,6 +39,7 @@ __all__ = [
     "API_VERSION",
     "Adjustment",
     "AiAnswer",
+    "AiImage",
     "AiTask",
     "Alert",
     "Candidate",

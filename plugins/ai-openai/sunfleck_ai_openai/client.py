@@ -6,6 +6,7 @@ plain JSON, with the schema in the instructions. Sunfleck checks the answer agai
 either way.
 """
 
+import base64
 import json
 import logging
 import urllib.error
@@ -60,6 +61,9 @@ def complete(task: AiTask, base_url: str, api_key: str, model: str) -> AiAnswer:
         logger.warning("The AI service couldn't be reached: %s", exc)
         return AiAnswer(credit, problem="unavailable")
 
+    if response.status == 400 and task.images and b"image" in response.body.lower():
+        # A model that can't look at photos.
+        return AiAnswer(credit, problem="unsupported")
     if response.status in (401, 403):
         return AiAnswer(credit, problem="invalid_api_key")
     if response.status == 404:
@@ -93,12 +97,25 @@ def _request(task: AiTask, model: str, *, structured: bool) -> dict[str, Any]:
         "model": model,
         "messages": [
             {"role": "system", "content": instructions},
-            {"role": "user", "content": task.prompt},
+            {"role": "user", "content": _user_content(task)},
         ],
         "response_format": response_format,
         # Facts rather than creativity.
         "temperature": 0.2,
     }
+
+
+def _user_content(task: AiTask) -> str | list[dict[str, Any]]:
+    """The question, with its photos as data URLs if it has any."""
+    if not task.images:
+        return task.prompt
+    parts: list[dict[str, Any]] = [{"type": "text", "text": task.prompt}]
+    for image in task.images:
+        data = base64.standard_b64encode(image.data).decode()
+        parts.append(
+            {"type": "image_url", "image_url": {"url": f"data:{image.media_type};base64,{data}"}}
+        )
+    return parts
 
 
 def _content(body: bytes) -> dict[str, Any] | None:

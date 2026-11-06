@@ -1,10 +1,11 @@
+import dataclasses
 import json
 from typing import Any
 
 import pytest
 from sunfleck.accounts.models import Household
 from sunfleck.ai import services as ai
-from sunfleck.plugins import AiAnswer, AiTask, SettingsCheck
+from sunfleck.plugins import AiAnswer, AiImage, AiTask, SettingsCheck
 from sunfleck.plugins import services as plugin_services
 
 from sunfleck_ai_openai import Settings, client, hooks
@@ -86,6 +87,29 @@ def test_servers_without_structured_output_are_asked_for_plain_json(server: Fake
     second = server.requests[1][1]
     assert second["response_format"] == {"type": "json_object"}
     assert '"greeting"' in second["messages"][0]["content"]  # the schema, in the instructions
+
+
+PHOTO_TASK = dataclasses.replace(TASK, images=(AiImage("image/jpeg", b"\xff\xd8photo"),))
+
+
+def test_photos_are_sent_as_data_urls(server: FakeServer) -> None:
+    server.responses = [ok('{"greeting": "Hello, Ada!"}')]
+
+    client.complete(PHOTO_TASK, "http://ollama:11434/v1", "", "llava")
+
+    [(_, body, _)] = server.requests
+    assert body["messages"][1]["content"] == [
+        {"type": "text", "text": "Say hello to Ada."},
+        {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64,/9hwaG90bw=="}},
+    ]
+
+
+def test_models_that_cant_see_photos_say_so(server: FakeServer) -> None:
+    server.responses = [client.Response(400, b'{"error": "this model does not support images"}')]
+
+    answer = client.complete(PHOTO_TASK, "http://ollama:11434/v1", "", "llama3.1")
+
+    assert answer.problem == "unsupported"
 
 
 @pytest.mark.parametrize(

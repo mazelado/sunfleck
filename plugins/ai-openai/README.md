@@ -6,8 +6,8 @@ yourself with [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), 
 nothing leaves your network.
 
 AI is always optional in Sunfleck: everything works without it, and it's only asked when you
-ask for a suggestion (e.g. a care profile for an unusual plant), which you review before it's
-used.
+ask: for a care profile for an unusual plant, or what's wrong with a plant from a photo of it.
+Its answers are suggestions, which you review before acting on them.
 
 ## Setting it up
 
@@ -24,6 +24,10 @@ With Docker, `<computer>` is the address of the machine running Ollama as seen f
 Sunfleck's container (not `localhost`, which is the container itself). Small models (under
 about 7B parameters) may give poor suggestions.
 
+**What's wrong?** sends a photo, so it needs a model that can look at images (a vision
+model), such as `gpt-4.1-mini` on OpenAI, or `qwen2.5vl:7b` or `gemma3` on Ollama. With a
+model that can't, Sunfleck says so.
+
 The API key is stored encrypted and never shown again.
 
 **Test** asks the model a tiny question with the settings in the form, before you save them,
@@ -32,17 +36,22 @@ have, a refused key. A model that has to be loaded first can take a minute.
 
 ## What it sends
 
-Only when someone asks for a suggestion (or an Admin clicks **Test**, which sends a tiny
-question of its own), to the server you set: Sunfleck's question (for a
-care profile: the plant's species and family, and whether it grows indoors or outdoors), the
-instructions for the answer, and the API key. The service's own terms apply to what it does
+Only when someone asks (or an Admin clicks **Test**, which sends a tiny question of its own),
+to the server you set: Sunfleck's question, the instructions for the answer, and the API key.
+
+- For a care profile: the plant's species and family, and whether it grows indoors or
+  outdoors.
+- For **What's wrong?**: the photo taken for it (made smaller, without its location data),
+  what the person wrote, and the plant's details: its name, species, care profile, place
+  (indoors or outdoors, temperature, humidity, light), pot, schedules, recent care and notes. The service's own terms apply to what it does
 with them.
 
 ## How it works
 
 It asks for an answer as JSON matching a schema (`response_format` of type `json_schema`).
 Servers that don't support that are asked again for plain JSON, with the schema in the
-instructions. Sunfleck checks every answer against the schema before using it.
+instructions. Sunfleck checks every answer against the schema before using it. Photos are
+sent in the message as `image_url` data URLs.
 
 ## Development
 
