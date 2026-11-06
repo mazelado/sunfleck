@@ -8,11 +8,12 @@ import { useCanEdit } from "../../lib/useCanEdit";
 type Season = "spring" | "summer" | "autumn" | "winter";
 type Verdict = "low" | "a_bit_low" | "good" | "bright";
 
+// The colours' text shades, which read well (4.5:1) on cards in light and dark mode.
 const VERDICT_COLOR: Record<Verdict, string> = {
-  low: "orange",
-  a_bit_low: "yellow.8",
-  good: "green",
-  bright: "orange",
+  low: "var(--mantine-color-orange-light-color)",
+  a_bit_low: "var(--mantine-color-yellow-light-color)",
+  good: "var(--mantine-color-leaf-light-color)",
+  bright: "var(--mantine-color-orange-light-color)",
 };
 
 /** "Is this spot bright enough?": the plant's light in each season, compared with what it

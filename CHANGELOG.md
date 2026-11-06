@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
+  It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
+  is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
+  green is brighter, and every text colour still meets WCAG AA contrast in both modes.
+
 ## [0.9.0] - 2026-11-06
 
 **Iris.** Help from an AI model, only when someone asks for it: Claude joins the AI plugins,

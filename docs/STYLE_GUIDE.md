@@ -251,7 +251,20 @@ Project conventions (on top of PEP 8):
 - Checking: `features/layout/accessibility.test.tsx` runs [axe](https://github.com/dequelabs/axe-core)
   on the main pages (add new pages to it). Colour contrast needs a real browser: check new
   colours with the axe DevTools extension or Lighthouse, in both themes. The theme
-  (`theme.ts`) already fixes Mantine's dimmed text and "light" badges, which are too faint.
+  (`theme.ts`) already fixes Mantine's dimmed text, "light" badges and dark mode's buttons,
+  which are too faint.
+- **Look and feel** (since 1.0, "crisp modern"; set up in `theme.ts` and `global.css`):
+  - Plus Jakarta Sans, bundled with the app (never loaded from a font service), with heavy
+    page titles (`Title order={1}`).
+  - Card and section headings (`Title order={2}`) appear as small capitals in the dimmed
+    colour. Keep them short.
+  - A page's cards are `Paper withBorder radius="lg"`: white (dark grey in dark mode) on the
+    soft grey-green page, shown without a border and with a soft shadow. A smaller bordered
+    `Paper` (`radius="md"`) inside a card keeps its border.
+  - One green, `leaf`: shade 7 for filled buttons in light mode (white text) and shade 4 in
+    dark mode (near-black text), shade 6 for icons and graphics, shade 8 for links.
+  - Coloured text uses the colour's text shade, e.g. `var(--mantine-color-orange-light-color)`,
+    never a plain shade such as `orange` or `yellow.8`, which are too faint on white.
 - **Every user-visible string goes through the translation function** (`t("plants.add")`).
   No hardcoded English in components.
 - Dates, numbers, and units are formatted with the user's locale and unit preferences.
