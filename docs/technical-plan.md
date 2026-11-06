@@ -502,7 +502,7 @@ own tables, and document what data they send.
 ### Installing third-party plugins
 For the MVP: install the package into the environment (`pip install ...`) and restart. For
 Docker users, we'll document extending the image with a two-line `Dockerfile`. A plugin
-directory or catalog is a 1.0 goal ([roadmap](roadmap.md#mature-and-beautiful)). **UI plugins** (plugins adding screens to the React
+directory or catalog is planned ([roadmap](roadmap.md#more-platform)). **UI plugins** (plugins adding screens to the React
 app) are also v1.0; until then, plugins contribute data the core UI already knows how to
 show (settings forms, dashboard conditions, identification results).
 
