@@ -160,6 +160,56 @@ describe("logging care", () => {
     expect(typeof logged.performed_at).toBe("string");
   });
 
+  it("adds a care type while logging care, and chooses it", async () => {
+    signInAs(gardener);
+    withPlant();
+    const cleaning = {
+      id: 20,
+      key: null,
+      name: "Neem spray",
+      icon: "sparkles",
+      is_builtin: false,
+      affects_prediction: false,
+      counts_as_watering: false,
+    };
+    let careTypes = builtinCareTypes;
+    let logged: Record<string, unknown> = {};
+    server.use(
+      http.get("*/api/v1/care-types", () => HttpResponse.json(careTypes)),
+      http.post("*/api/v1/care-types", () => {
+        careTypes = [...builtinCareTypes, cleaning];
+        return HttpResponse.json(cleaning, { status: 201 });
+      }),
+      http.post("*/api/v1/plants/7/care-events", async ({ request }) => {
+        logged = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(careEvent(), { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "More care" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Log care" });
+    await user.type(within(dialog).getByLabelText(/Notes/), "Both sides");
+    await user.click(within(dialog).getByRole("button", { name: "Add a care type" }));
+    const newType = await screen.findByRole("dialog", { name: "New care type" });
+    await user.type(within(newType).getByLabelText(/Name/), "Neem spray");
+    await user.click(within(newType).getByRole("button", { name: "Save" }));
+
+    // Back in the log dialog, with the new type chosen and the notes kept.
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "New care type" })).not.toBeInTheDocument();
+    });
+    expect(within(dialog).getByRole("combobox", { name: "What did you do?" })).toHaveValue(
+      "Neem spray",
+    );
+    expect(within(dialog).getByLabelText(/Notes/)).toHaveValue("Both sides");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(logged).toMatchObject({ care_type_id: 20, notes: "Both sides" });
+    });
+  });
+
   it("shows server errors in the dialog", async () => {
     signInAs(gardener);
     withPlant();

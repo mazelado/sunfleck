@@ -574,6 +574,7 @@
     }
   },
   "care": {
+    "addCareType": "Add a care type",
     "types": {
       "water": "Water",
       "fertilize": "Fertilize",

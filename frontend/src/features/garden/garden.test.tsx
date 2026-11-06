@@ -211,6 +211,9 @@ describe("sowing calendar", () => {
       expect(router.state.location.pathname).toBe("/plants/7");
     });
     expect(sent).toEqual({ location_id: 10 });
+    // Let the plant's page finish loading (here, to "not found"): a request still on its way
+    // when the test ends would reach the next test, after these handlers are gone.
+    expect(await screen.findByRole("alert")).toBeVisible();
   });
 
   it("asks for the frost dates when they aren't known", async () => {
