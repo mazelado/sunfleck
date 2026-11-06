@@ -19,8 +19,24 @@ export type PlantStatus = components["schemas"]["PlantStatus"];
 export type ContainerMaterial = components["schemas"]["ContainerMaterial"];
 export type SoilType = components["schemas"]["SoilType"];
 export type Photo = components["schemas"]["PhotoOut"];
+export type PropagationMethod = components["schemas"]["PropagationMethod"];
+export type PropagateInput = components["schemas"]["PropagateIn"];
 
-export const PLANT_STATUSES: PlantStatus[] = ["active", "dormant", "gifted", "deceased"];
+export const PLANT_STATUSES: PlantStatus[] = [
+  "active",
+  "dormant",
+  "propagating",
+  "gifted",
+  "deceased",
+];
+export const PROPAGATION_METHODS: PropagationMethod[] = [
+  "cutting",
+  "division",
+  "offset",
+  "seed",
+  "layering",
+  "other",
+];
 export const CONTAINER_MATERIALS: ContainerMaterial[] = [
   "plastic",
   "terracotta",
@@ -126,6 +142,21 @@ export function useUpdatePlant(plantId: number) {
 
 /** Move plants into a location. Their schedules change with it, so everything about plants is
  * refreshed (Today included). */
+/** Add plants grown from this one (cuttings, divisions, ...). */
+export function usePropagate(plantId: number) {
+  const invalidate = useInvalidatePlants();
+  return useMutation({
+    mutationFn: async (body: PropagateInput) =>
+      unwrap(
+        await api.POST("/api/v1/plants/{plant_id}/propagate", {
+          params: { path: { plant_id: plantId } },
+          body,
+        }),
+      ),
+    onSuccess: invalidate,
+  });
+}
+
 export function useMovePlants() {
   const invalidate = useInvalidatePlants();
   return useMutation({

@@ -87,6 +87,7 @@ class _Importer:
         self.locations: dict[int, Location] = {}
         self.lights: dict[int, LightSource] = {}
         self.members: dict[int, User] = {}
+        self.plants: dict[int, Plant] = {}
 
     # --- Lookups --------------------------------------------------------------------------
 
@@ -226,6 +227,17 @@ class _Importer:
                 plant.cover_photo = photo
                 plant.save(update_fields=["cover_photo"])
 
+    def link_parents(self, items: list[schema.Plant]) -> None:
+        """Link plants to the ones they were grown from, once all are imported (a parent can
+        come after its offspring)."""
+        for item in items:
+            if item.parent is None:
+                continue
+            parent = self.plants.get(item.parent)
+            if parent is None:
+                raise _invalid(f"plant {item.nickname!r}", f"unknown parent {item.parent}")
+            Plant.objects.filter(pk=self.plants[item.ref].pk).update(parent=parent)
+
     def import_plant(self, item: schema.Plant) -> None:
         where = f"plant {item.nickname!r}"
         taxon = None
@@ -253,10 +265,12 @@ class _Importer:
             soil_type=item.soil_type,
             acquired_on=item.acquired_on,
             notes=item.notes,
+            propagation_method=item.propagation_method,
         )
         _check(plant, where)
         plant.save()
         Plant.objects.filter(pk=plant.pk).update(created_at=item.created_at)
+        self.plants[item.ref] = plant
         self.summary.plants += 1
 
         for link in item.lights:
@@ -361,6 +375,7 @@ class _Importer:
         self.import_sites(data.sites)
         for plant in data.plants:
             self.import_plant(plant)
+        self.link_parents(data.plants)
         self.import_seeds(data.seeds)
         self.import_plugins(data.plugins)
         return self.summary

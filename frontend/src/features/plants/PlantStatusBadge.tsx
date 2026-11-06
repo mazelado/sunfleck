@@ -6,6 +6,7 @@ import type { PlantStatus } from "../../api/plants";
 const COLORS: Record<PlantStatus, string> = {
   active: "leaf",
   dormant: "yellow",
+  propagating: "teal",
   gifted: "blue",
   deceased: "gray",
 };

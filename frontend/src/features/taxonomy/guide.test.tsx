@@ -270,6 +270,7 @@ describe("species and care profile of a plant", () => {
       species: { id: 3, scientific_name: "Monstera deliciosa", common_name: "Swiss cheese plant" },
       care_profile: { key: "tropical_aroid", name: "Tropical aroid", chosen: false },
       created_at: "2026-04-01T10:00:00Z",
+      lineage: { parent: null, propagation_method: null, offspring: [] },
       glance: { water: null, fertilizer: null, light: null },
     };
     server.use(

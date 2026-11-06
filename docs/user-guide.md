@@ -78,7 +78,14 @@ signing out are in the account menu (your picture at the top right).
   its last watering with **Log with details** and set the date.
 - **Photos**: add as many as you like; the first becomes the plant's cover. Photos are made
   smaller and stripped of their location data when uploaded.
-- **Status**: Active, Dormant, Given away, or Died. Only active and dormant plants need care.
+- **Status**: Active, Dormant, Propagating, Given away, or Died. Only active, dormant and
+  propagating plants need care.
+- **Propagation**: **Propagate** on a plant's page adds the cuttings, divisions, offsets or
+  seedlings you've taken as plants of their own: with its species, care profile and (unless
+  you choose another) its location and lights, named after it ("Monty (cutting 2)"). They're
+  marked **Propagating**: watered as usual, but not fertilized until they've taken. Then set
+  each one's status to Active. Each shows the plant it was grown from, and the parent lists
+  them.
 - **Moving plants**: on a location's page, **Move plants here** moves plants from elsewhere
   (those without a location are listed first). Then choose, on each plant's page, which of
   the new location's windows and grow lights reach it; its schedules adjust.

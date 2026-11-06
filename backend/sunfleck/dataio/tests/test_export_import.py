@@ -106,6 +106,8 @@ def filled(household: Household, ada: Membership) -> Household:
         nickname="Mystery",
         care_profile=CareArchetype.objects.get(key="tropical_aroid"),
         status="dormant",
+        parent=monty,
+        propagation_method="cutting",
     )
     care_services.log_care(
         monty,
@@ -178,6 +180,7 @@ def comparable(household: Household) -> dict[str, Any]:
         "light_source": "light_sources",
         "cover_photo": "photos",
         "performed_by": "members",
+        "parent": "plants",
     }
 
     def number(kind: str, value: int) -> int:
@@ -274,6 +277,31 @@ def test_exports_from_before_harvests_import(filled: Household) -> None:
     importer.import_into(target, io.BytesIO(data))
 
     assert not Harvest.objects.filter(plant__household=target).exists()
+
+
+def test_a_parent_after_its_offspring_imports(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda exported: exported["plants"].reverse())
+
+    importer.import_into(target, io.BytesIO(data))
+
+    mystery = Plant.objects.get(household=target, nickname="Mystery")
+    assert mystery.parent is not None
+    assert (mystery.parent.nickname, mystery.propagation_method) == ("Monty", "cutting")
+
+
+def test_exports_from_before_lineage_import(filled: Household) -> None:
+    target = new_household()
+
+    def without_lineage(exported: dict[str, Any]) -> None:
+        for plant in exported["plants"]:
+            plant.pop("parent")
+            plant.pop("propagation_method")
+
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), without_lineage)))
+
+    mystery = Plant.objects.get(household=target, nickname="Mystery")
+    assert (mystery.parent, mystery.propagation_method) == (None, "")
 
 
 def test_exports_from_before_seeds_import(filled: Household) -> None:
@@ -383,6 +411,8 @@ def first_plant(exported: dict[str, Any]) -> dict[str, Any]:
         (lambda e: first_plant(e).update(status="flying"), "plant 'Monty'"),
         (lambda e: e["sites"][0].update(timezone="Mars/Olympus"), "unknown time zone"),
         (lambda e: first_plant(e).update(location=999), "unknown location"),
+        (lambda e: first_plant(e).update(parent=999), "unknown parent"),
+        (lambda e: first_plant(e).update(propagation_method="grafting"), "plant 'Monty'"),
         (
             lambda e: first_plant(e)["care_events"][0]["care_type"].update(key="dance"),
             "unknown care type",

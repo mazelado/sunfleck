@@ -141,6 +141,8 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
         return t("schedules.factors.raisedBed");
       case "dormant":
         return t("schedules.factors.dormant");
+      case "propagating_no_fertilizer":
+        return t("schedules.factors.propagatingNoFertilizer");
       case "feedback":
         return t("schedules.factors.feedback", {
           answers: (["too_dry", "just_right", "still_wet"] as const)

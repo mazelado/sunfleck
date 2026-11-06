@@ -15,12 +15,25 @@ from sunfleck.taxonomy.models import CareArchetype, Taxon
 class PlantStatus(models.TextChoices):
     ACTIVE = "active", _("Active")
     DORMANT = "dormant", _("Dormant")
+    # A cutting, division or seedling that hasn't taken yet.
+    PROPAGATING = "propagating", _("Propagating")
     GIFTED = "gifted", _("Given away")
     DECEASED = "deceased", _("Died")
 
 
 # Plants that are looked after: they get care, schedules and reminders.
-CARED_FOR = [PlantStatus.ACTIVE, PlantStatus.DORMANT]
+CARED_FOR = [PlantStatus.ACTIVE, PlantStatus.DORMANT, PlantStatus.PROPAGATING]
+
+
+class PropagationMethod(models.TextChoices):
+    """How a plant was grown from another one."""
+
+    CUTTING = "cutting", _("Cutting")
+    DIVISION = "division", _("Division")
+    OFFSET = "offset", _("Offset or pup")
+    SEED = "seed", _("Seed")
+    LAYERING = "layering", _("Layering")
+    OTHER = "other", _("Other")
 
 
 class ContainerMaterial(models.TextChoices):
@@ -94,6 +107,19 @@ class Plant(models.Model):
     )
     soil_type = models.CharField(_("soil"), max_length=16, choices=SoilType.choices, blank=True)
     acquired_on = models.DateField(_("acquired on"), null=True, blank=True)
+    # Lineage: the plant this one was grown from, and how. Deleting the parent keeps the
+    # method ("a cutting"), so it isn't mistaken for a bought plant.
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="offspring",
+        verbose_name=_("grown from"),
+    )
+    propagation_method = models.CharField(
+        _("how it was grown"), max_length=16, choices=PropagationMethod.choices, blank=True
+    )
     notes = models.TextField(_("notes"), blank=True)
     cover_photo = models.ForeignKey(
         "Photo", on_delete=models.SET_NULL, null=True, blank=True, related_name="+"

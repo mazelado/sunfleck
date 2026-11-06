@@ -93,6 +93,8 @@ def _plant(plant: Plant) -> schema.Plant:
         acquired_on=plant.acquired_on,
         notes=plant.notes,
         created_at=plant.created_at,
+        parent=plant.parent_id,
+        propagation_method=plant.propagation_method,
         cover_photo=plant.cover_photo_id,
         lights=[
             schema.PlantLight(light_source=link.light_source_id, distance_cm=link.distance_cm)

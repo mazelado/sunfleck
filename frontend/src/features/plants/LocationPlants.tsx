@@ -216,7 +216,7 @@ function MovePlantsDialog({ location, onClose }: { location: Location; onClose: 
 // With more plants than this, the list gets a search box.
 const SEARCH_FROM = 8;
 
-const LOOKED_AFTER = new Set<PlantSummary["status"]>(["active", "dormant"]);
+const LOOKED_AFTER = new Set<PlantSummary["status"]>(["active", "dormant", "propagating"]);
 
 /** Plants grouped by where they are now: those without a location first. */
 function groupByLocation(plants: PlantSummary[], noLocation: string) {

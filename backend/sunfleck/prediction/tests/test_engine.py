@@ -499,6 +499,13 @@ def test_dormant_plants_arent_fertilized() -> None:
     assert codes(prediction) == ["dormant_no_fertilizer"]
 
 
+def test_cuttings_arent_fertilized_until_they_have_taken() -> None:
+    prediction = predict_fertilizing(AROID, Conditions(propagating=True), WATERED, SPRING_DAY)
+
+    assert prediction.next_due is None
+    assert codes(prediction) == ["propagating_no_fertilizer"]
+
+
 # --- The real dataset -------------------------------------------------------------------------
 
 

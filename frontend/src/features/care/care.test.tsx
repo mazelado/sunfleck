@@ -37,6 +37,7 @@ const plant: Plant = {
   species: null,
   care_profile: null,
   created_at: "2026-04-01T10:00:00Z",
+  lineage: { parent: null, propagation_method: null, offspring: [] },
   glance: { water: null, fertilizer: null, light: null },
 };
 

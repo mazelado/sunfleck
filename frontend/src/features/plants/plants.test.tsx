@@ -123,6 +123,7 @@ function plant(overrides: Partial<Plant> = {}): Plant {
     species: null,
     care_profile: null,
     created_at: "2026-04-01T10:00:00Z",
+    lineage: { parent: null, propagation_method: null, offspring: [] },
     glance: { water: null, fertilizer: null, light: null },
     ...overrides,
   };
@@ -662,6 +663,81 @@ describe("plant form", () => {
 });
 
 describe("plant page", () => {
+  it("propagates cuttings from a plant, named after it", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    withPlant(plant());
+    let sent: unknown;
+    server.use(
+      http.post("*/api/v1/plants/7/propagate", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(
+          [
+            summary({ id: 8, nickname: "Monty (cutting 1)", status: "propagating" }),
+            summary({ id: 9, nickname: "Monty (cutting 2)", status: "propagating" }),
+          ],
+          { status: 201 },
+        );
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    expect(await screen.findByText(/Take cuttings, divide it or sow its seeds/)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Propagate" }));
+    const dialog = await screen.findByRole("dialog", { name: "Propagate Monty" });
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    // Named as the server will name them, and where the parent is.
+    expect(within(dialog).getByRole("textbox", { name: "Name" })).toHaveAttribute(
+      "placeholder",
+      "Monty (cutting)",
+    );
+    expect(within(dialog).getByRole("combobox", { name: "Where they are" })).toHaveValue(
+      "Living room",
+    );
+    const count = within(dialog).getByRole("textbox", { name: "How many" });
+    await user.clear(count);
+    await user.type(count, "2");
+    expect(within(dialog).getByText("Several are numbered: Monty (cutting 2)")).toBeVisible();
+    await user.click(within(dialog).getByRole("button", { name: "Propagate" }));
+
+    expect(await screen.findByText("Added 2 plants grown from Monty.")).toBeVisible();
+    expect(sent).toEqual({ method: "cutting", count: 2, nickname: "", location_id: 10 });
+  });
+
+  it("shows where a plant came from and what was grown from it", async () => {
+    signInAs(viewer);
+    withPlant(
+      plant({
+        lineage: {
+          parent: { id: 3, nickname: "Grandma's monstera" },
+          propagation_method: "cutting",
+          offspring: [
+            {
+              id: 12,
+              nickname: "Monty (offset)",
+              status: "propagating",
+              propagation_method: "offset",
+              acquired_on: "2026-05-02",
+            },
+          ],
+        },
+      }),
+    );
+
+    renderApp("/plants/7");
+
+    const parent = await screen.findByRole("link", { name: "Grandma's monstera" });
+    expect(parent).toHaveAttribute("href", "/plants/3");
+    expect(parent.closest("p")).toHaveTextContent("Grown from Grandma's monstera · Cutting");
+    expect(screen.getByRole("link", { name: "Monty (offset)" })).toHaveAttribute(
+      "href",
+      "/plants/12",
+    );
+    expect(screen.getAllByText("Propagating")[0]).toBeVisible();
+    // Viewers see it, but can't propagate.
+    expect(screen.queryByRole("button", { name: "Propagate" })).not.toBeInTheDocument();
+  });
+
   it("says what to add when the light at a plant's spot isn't known", async () => {
     signInAs(gardener);
     withPlant(

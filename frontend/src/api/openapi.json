@@ -1957,6 +1957,47 @@
         "title": "LightSourceOut",
         "type": "object"
       },
+      "LineageOut": {
+        "properties": {
+          "offspring": {
+            "description": "The plants grown from it, newest first.",
+            "items": {
+              "$ref": "#/components/schemas/OffspringOut"
+            },
+            "title": "Offspring",
+            "type": "array"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantRefOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The plant it was grown from, if it's kept."
+          },
+          "propagation_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PropagationMethod"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How it was grown."
+          }
+        },
+        "required": [
+          "parent",
+          "propagation_method",
+          "offspring"
+        ],
+        "title": "LineageOut",
+        "type": "object"
+      },
       "LinkOut": {
         "properties": {
           "url": {
@@ -2429,6 +2470,52 @@
           "channels"
         ],
         "title": "NotificationsOut",
+        "type": "object"
+      },
+      "OffspringOut": {
+        "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "nickname": {
+            "title": "Nickname",
+            "type": "string"
+          },
+          "propagation_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PropagationMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlantStatus"
+          }
+        },
+        "required": [
+          "id",
+          "nickname",
+          "status",
+          "propagation_method",
+          "acquired_on"
+        ],
+        "title": "OffspringOut",
         "type": "object"
       },
       "PageQuery": {
@@ -3149,6 +3236,9 @@
             "title": "Light Sources",
             "type": "array"
           },
+          "lineage": {
+            "$ref": "#/components/schemas/LineageOut"
+          },
           "location": {
             "anyOf": [
               {
@@ -3208,7 +3298,8 @@
           "species",
           "care_profile",
           "created_at",
-          "glance"
+          "glance",
+          "lineage"
         ],
         "title": "PlantOut",
         "type": "object"
@@ -3233,6 +3324,24 @@
           "count"
         ],
         "title": "PlantPage",
+        "type": "object"
+      },
+      "PlantRefOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "nickname": {
+            "title": "Nickname",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nickname"
+        ],
+        "title": "PlantRefOut",
         "type": "object"
       },
       "PlantSpeciesOut": {
@@ -3280,6 +3389,7 @@
         "enum": [
           "active",
           "dormant",
+          "propagating",
           "gifted",
           "deceased"
         ],
@@ -3329,7 +3439,7 @@
             ]
           },
           "needs_routine": {
-            "description": "Looked after (active or dormant) but has no care schedule yet.",
+            "description": "Looked after (active, dormant or propagating) but has no care schedule yet.",
             "title": "Needs Routine",
             "type": "boolean"
           },
@@ -3591,6 +3701,70 @@
         ],
         "title": "ProblemOut",
         "type": "object"
+      },
+      "PropagateIn": {
+        "properties": {
+          "count": {
+            "default": 1,
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Count",
+            "type": "integer"
+          },
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "By default, the parent's.",
+            "title": "Location Id"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PropagationMethod"
+          },
+          "nickname": {
+            "default": "",
+            "description": "Their name; by default the parent's with the method: 'Monty (cutting)'.",
+            "maxLength": 90,
+            "title": "Nickname",
+            "type": "string"
+          },
+          "started_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "By default, today.",
+            "title": "Started On"
+          }
+        },
+        "required": [
+          "method"
+        ],
+        "title": "PropagateIn",
+        "type": "object"
+      },
+      "PropagationMethod": {
+        "description": "How a plant was grown from another one.",
+        "enum": [
+          "cutting",
+          "division",
+          "offset",
+          "seed",
+          "layering",
+          "other"
+        ],
+        "title": "PropagationMethod",
+        "type": "string"
       },
       "PushDeviceIn": {
         "properties": {
@@ -8267,6 +8441,58 @@
           }
         ],
         "summary": "Add Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/propagate": {
+      "post": {
+        "description": "Add plants grown from this one (cuttings, divisions, offsets, seedlings), marked as\npropagating. They get its species, care profile and, by default, its location and\nlights.",
+        "operationId": "sunfleck_plants_api_propagate_plant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PropagateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlantSummaryOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Propagate Plant",
         "tags": [
           "plants"
         ]

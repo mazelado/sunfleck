@@ -155,6 +155,9 @@ class Plant(Model):
     schedules: list[Schedule] = Field(default_factory=list)
     # Added in 0.7.
     harvests: list[Harvest] = Field(default_factory=list)
+    # Added in 0.8: the plant it was grown from (its ref), and how.
+    parent: int | None = None
+    propagation_method: str = ""
 
 
 class PluginSettings(Model):

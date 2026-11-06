@@ -1084,6 +1084,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plants/{plant_id}/propagate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Propagate Plant
+         * @description Add plants grown from this one (cuttings, divisions, offsets, seedlings), marked as
+         *     propagating. They get its species, care profile and, by default, its location and
+         *     lights.
+         */
+        post: operations["sunfleck_plants_api_propagate_plant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plants/{plant_id}/routine": {
         parameters: {
             query?: never;
@@ -2225,6 +2247,18 @@ export interface components {
             /** Ppfd */
             ppfd: number | null;
         };
+        /** LineageOut */
+        LineageOut: {
+            /**
+             * Offspring
+             * @description The plants grown from it, newest first.
+             */
+            offspring: components["schemas"]["OffspringOut"][];
+            /** @description The plant it was grown from, if it's kept. */
+            parent: components["schemas"]["PlantRefOut"] | null;
+            /** @description How it was grown. */
+            propagation_method: components["schemas"]["PropagationMethod"] | null;
+        };
         /** LinkOut */
         LinkOut: {
             /** Url */
@@ -2345,6 +2379,17 @@ export interface components {
             /** Channels */
             channels: components["schemas"]["ChannelOut"][];
             preferences: components["schemas"]["PreferencesSchema"];
+        };
+        /** OffspringOut */
+        OffspringOut: {
+            /** Acquired On */
+            acquired_on: string | null;
+            /** Id */
+            id: number;
+            /** Nickname */
+            nickname: string;
+            propagation_method: components["schemas"]["PropagationMethod"] | null;
+            status: components["schemas"]["PlantStatus"];
         };
         /** PageQuery */
         PageQuery: {
@@ -2591,6 +2636,7 @@ export interface components {
             last_watered_at: string | null;
             /** Light Sources */
             light_sources: components["schemas"]["PlantLightOut"][];
+            lineage: components["schemas"]["LineageOut"];
             location: components["schemas"]["PlantLocationOut"] | null;
             /** Nickname */
             nickname: string;
@@ -2610,6 +2656,13 @@ export interface components {
             /** Items */
             items: components["schemas"]["PlantSummaryOut"][];
         };
+        /** PlantRefOut */
+        PlantRefOut: {
+            /** Id */
+            id: number;
+            /** Nickname */
+            nickname: string;
+        };
         /** PlantSpeciesOut */
         PlantSpeciesOut: {
             /** Common Name */
@@ -2625,7 +2678,7 @@ export interface components {
          * PlantStatus
          * @enum {string}
          */
-        PlantStatus: "active" | "dormant" | "gifted" | "deceased";
+        PlantStatus: "active" | "dormant" | "propagating" | "gifted" | "deceased";
         /** PlantSummaryOut */
         PlantSummaryOut: {
             /** Cover Thumbnail Url */
@@ -2638,7 +2691,7 @@ export interface components {
             location: components["schemas"]["PlantLocationOut"] | null;
             /**
              * Needs Routine
-             * @description Looked after (active or dormant) but has no care schedule yet.
+             * @description Looked after (active, dormant or propagating) but has no care schedule yet.
              */
             needs_routine: boolean;
             /** Nickname */
@@ -2742,6 +2795,37 @@ export interface components {
             /** Source */
             source: string;
         };
+        /** PropagateIn */
+        PropagateIn: {
+            /**
+             * Count
+             * @default 1
+             */
+            count: number;
+            /**
+             * Location Id
+             * @description By default, the parent's.
+             */
+            location_id?: number | null;
+            method: components["schemas"]["PropagationMethod"];
+            /**
+             * Nickname
+             * @description Their name; by default the parent's with the method: 'Monty (cutting)'.
+             * @default
+             */
+            nickname: string;
+            /**
+             * Started On
+             * @description By default, today.
+             */
+            started_on?: string | null;
+        };
+        /**
+         * PropagationMethod
+         * @description How a plant was grown from another one.
+         * @enum {string}
+         */
+        PropagationMethod: "cutting" | "division" | "offset" | "seed" | "layering" | "other";
         /** PushDeviceIn */
         PushDeviceIn: {
             /** Label */
@@ -5209,6 +5293,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PhotoOut"];
+                };
+            };
+        };
+    };
+    sunfleck_plants_api_propagate_plant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PropagateIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantSummaryOut"][];
                 };
             };
         };
