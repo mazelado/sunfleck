@@ -28,6 +28,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   - A plant's page shows water, fertilizer and light as rings, still described in words.
 - **Empty pages** have a small illustration: no plants or places yet, nothing on the wishlist,
   no seeds, no search results, and nothing to do today.
+- **Deleting a window, grow light or harvest asks first**, as deleting a plant or a room does.
+  Deleting a light also takes it away from the plants it reaches, with their distance from it.
+- **Easier to read**: plugin and care profile names are no longer in capitals, and a place's
+  page no longer shows its coordinates (only its time zone, when it isn't your device's).
 - **Gentle motion**: cards rise into place as a page opens, and done buttons give a little
   when tapped. None of it shows if your device is set to reduce motion.
 

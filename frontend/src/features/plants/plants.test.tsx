@@ -1262,6 +1262,47 @@ describe("harvests", () => {
     });
   });
 
+  it("asks before deleting a harvest", async () => {
+    signInAs(gardener);
+    withPlant(tomato);
+    let deleted = false;
+    server.use(
+      http.get("*/api/v1/plants/7/harvests", () =>
+        HttpResponse.json({
+          items: [
+            {
+              id: 1,
+              harvested_on: "2026-08-18",
+              amount: 450,
+              unit: "g",
+              notes: "",
+              logged_by: "Ada",
+            },
+          ],
+          this_year: { year: 2026, grams: 450, pieces: null, bunches: null },
+        }),
+      ),
+      http.get("*/api/v1/care-profiles/fruiting_vegetable", () => apiError(404, "not_found")),
+      http.delete("*/api/v1/harvests/1", () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(
+      await screen.findByRole("button", { name: "Delete the harvest of Aug 18, 2026" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Delete this harvest?" });
+    expect(within(dialog).getByText("Aug 18, 2026 · 450 g")).toBeVisible();
+    expect(deleted).toBe(false);
+    await user.click(within(dialog).getByRole("button", { name: "Delete" }));
+
+    await waitFor(() => {
+      expect(deleted).toBe(true);
+    });
+  });
+
   it("isn't offered for houseplants that have never been harvested", async () => {
     signInAs(gardener);
     withPlant(plant());

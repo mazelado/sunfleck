@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { ActionIcon, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,8 @@ interface ConfirmDeleteButtonProps {
   title: string;
   message: string;
   onConfirm: () => Promise<void>;
+  /** Show only a bin icon, named this for screen readers (e.g. in a list's rows). */
+  iconLabel?: string;
 }
 
 /** A delete button that asks for confirmation first, and shows any error in the dialog. */
@@ -18,6 +20,7 @@ export function ConfirmDeleteButton({
   title,
   message,
   onConfirm,
+  iconLabel,
 }: ConfirmDeleteButtonProps) {
   const { t } = useTranslation();
   const [opened, setOpened] = useState(false);
@@ -39,16 +42,29 @@ export function ConfirmDeleteButton({
 
   return (
     <>
-      <Button
-        variant="subtle"
-        color="red"
-        leftSection={<IconTrash size={16} />}
-        onClick={() => {
-          setOpened(true);
-        }}
-      >
-        {label}
-      </Button>
+      {iconLabel ? (
+        <ActionIcon
+          variant="subtle"
+          color="red"
+          aria-label={iconLabel}
+          onClick={() => {
+            setOpened(true);
+          }}
+        >
+          <IconTrash size={18} />
+        </ActionIcon>
+      ) : (
+        <Button
+          variant="subtle"
+          color="red"
+          leftSection={<IconTrash size={16} />}
+          onClick={() => {
+            setOpened(true);
+          }}
+        >
+          {label}
+        </Button>
+      )}
       <Modal
         opened={opened}
         onClose={() => {

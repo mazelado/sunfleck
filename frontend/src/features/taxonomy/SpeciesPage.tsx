@@ -99,7 +99,7 @@ export function SpeciesPage() {
                 <Text size="xs" c="dimmed">
                   {t("guide.careProfile")}
                 </Text>
-                <Title order={2} fz="h4">
+                <Title order={2} fz="h4" data-name>
                   {data.care_profile.name}
                 </Title>
               </Stack>

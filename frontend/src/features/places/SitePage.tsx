@@ -38,9 +38,12 @@ export function SitePage() {
           <Title order={1} fz="h2">
             {data.name}
           </Title>
-          <Text size="sm" c="dimmed">
-            {data.timezone} · {data.latitude.toFixed(4)}, {data.longitude.toFixed(4)}
-          </Text>
+          {/* Its time zone, when it isn't this device's: times on its page are in it. */}
+          {data.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone && (
+            <Text size="sm" c="dimmed">
+              {t("places.timeZone", { zone: data.timezone.replace(/_/g, " ") })}
+            </Text>
+          )}
         </Stack>
         {canEdit && (
           <Button

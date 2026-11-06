@@ -352,6 +352,8 @@
     "off": "Not in use",
     "editLight": "Edit {{name}}",
     "deleteLight": "Delete {{name}}",
+    "deleteLightTitle": "Delete {{name}}?",
+    "deleteLightConfirm": "Plants in this room that get light from it lose it, with their distance from it, so their light and watering are worked out again without it.",
     "lightName": "Name",
     "lightNamePlaceholder": "e.g. Bay window, Shelf light",
     "direction": "Direction it faces",
@@ -385,7 +387,8 @@
     "moved_one": "Moved {{count}} plant to {{location}}.",
     "moved_other": "Moved {{count}} plants to {{location}}.",
     "movedChooseLight_one": "On its page, choose which windows and grow lights reach it here.",
-    "movedChooseLight_other": "On each plant's page, choose which windows and grow lights reach it here."
+    "movedChooseLight_other": "On each plant's page, choose which windows and grow lights reach it here.",
+    "timeZone": "Time zone: {{zone}}"
   },
   "directions": {
     "N": "north",
@@ -437,6 +440,7 @@
     "bunches_one": "{{count}} bunch",
     "bunches_other": "{{count}} bunches",
     "delete": "Delete the harvest of {{date}}",
+    "deleteTitle": "Delete this harvest?",
     "date": "Harvested on",
     "amount": "How much",
     "unit": "Unit",

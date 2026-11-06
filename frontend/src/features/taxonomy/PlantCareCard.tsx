@@ -23,7 +23,7 @@ export function PlantCareCard({ plant }: { plant: Plant }) {
             <Text size="xs" c="dimmed">
               {t("guide.careProfile")}
             </Text>
-            <Title order={2} fz="h4">
+            <Title order={2} fz="h4" data-name>
               {ref ? ref.name : "—"}
             </Title>
             {ref && (

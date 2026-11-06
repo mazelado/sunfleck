@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Button,
   Group,
   Modal,
@@ -13,7 +12,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconBasket, IconTrash } from "@tabler/icons-react";
+import { IconBasket } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +24,7 @@ import {
   useLogHarvest,
 } from "../../api/garden";
 import type { Plant } from "../../api/plants";
+import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { formatWeight } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -101,18 +101,17 @@ export function PlantHarvests({ plant }: { plant: Plant }) {
           <Group key={harvest.id} justify="space-between" wrap="nowrap" gap="xs">
             <Text size="sm">{describe(harvest)}</Text>
             {canEdit && (
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                aria-label={t("harvests.delete", {
+              <ConfirmDeleteButton
+                iconLabel={t("harvests.delete", {
                   date: formatDate(harvest.harvested_on, i18n.language),
                 })}
-                onClick={() => {
-                  remove.mutate(harvest.id);
+                label={t("common.delete")}
+                title={t("harvests.deleteTitle")}
+                message={describe(harvest)}
+                onConfirm={async () => {
+                  await remove.mutateAsync(harvest.id);
                 }}
-              >
-                <IconTrash size={16} />
-              </ActionIcon>
+              />
             )}
           </Group>
         ))}
