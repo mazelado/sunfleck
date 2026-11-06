@@ -503,7 +503,7 @@ own tables, and document what data they send.
 For the MVP: install the package into the environment (`pip install ...`) and restart. For
 Docker users, we'll document extending the image with a two-line `Dockerfile`. A plugin
 directory or catalog is planned ([roadmap](roadmap.md#more-platform)). **UI plugins** (plugins adding screens to the React
-app) are also v1.0; until then, plugins contribute data the core UI already knows how to
+app) are planned with it; until then, plugins contribute data the core UI already knows how to
 show (settings forms, dashboard conditions, identification results).
 
 ## 7. Frontend design
