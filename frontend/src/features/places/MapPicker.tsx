@@ -43,6 +43,7 @@ export default function MapPicker({ latitude, longitude, onPick, label }: MapPic
       )}
       <ClickToPick onPick={onPick} />
       <FollowPosition position={position} />
+      <FitContainer />
     </MapContainer>
   );
 }
@@ -74,5 +75,26 @@ function FollowPosition({ position }: { position: [number, number] | null }) {
       map.setView([lat, lng], Math.max(map.getZoom(), 14));
     }
   }, [map, lat, lng]);
+  return null;
+}
+
+/**
+ * Redraws the map when its box changes size, as when a dialog opens with an animation: the
+ * map measures its box once, and would otherwise show grey gaps.
+ */
+function FitContainer() {
+  const map = useMap();
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    observer.observe(map.getContainer());
+    return () => {
+      observer.disconnect();
+    };
+  }, [map]);
   return null;
 }

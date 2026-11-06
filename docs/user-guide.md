@@ -21,8 +21,9 @@ the weather, and they get better as you tell it how the soil was.
 1. **Add a place** (Places → Add a place): your home or garden, with its location on a map.
    The location sets its time zone, seasons and, with the weather plugin, its weather.
 2. **Add locations** to it: rooms or garden beds, with their windows and grow lights.
-3. **Add plants** (Plants → Add a plant): a photo, the species, and where it lives. A window
-   or grow light the room doesn't have yet can be added from the plant's form.
+3. **Add plants** (Plants → Add a plant): a photo, the species, and where it lives. A place,
+   a location, or a window or grow light that isn't there yet can be added from the plant's
+   form, without losing what you've typed.
 4. **Accept its suggested routine** on the plant's page: when to water, fertilize and so on.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
 
