@@ -50,8 +50,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
-| **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features) | In progress |
-| **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
+| **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
+| **0.9 Iris** | [AI assistant](#ai-assistant) | Next |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
@@ -161,7 +161,7 @@ Split from Gardenia (0.7), not yet scheduled.
   toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
   control centres, since there's no single list like the ASPCA's.
 
-### Hibiscus: collector features
+### Hibiscus: collector features (released)
 
 Growing more plants from the ones you have, and finding each one's page quickly.
 
