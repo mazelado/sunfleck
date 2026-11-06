@@ -1,10 +1,22 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Me, Member } from "../../api/accounts";
+import { accessibilityProblems } from "../../test/axe";
 import { ada, basil, server, signInAs } from "../../test/server";
 import { renderApp } from "../../test/render";
+
+// Uploads are checked in api/accounts.test.ts: jsdom's FormData doesn't survive Node's fetch.
+const { uploadAvatar } = vi.hoisted(() => ({ uploadAvatar: vi.fn() }));
+vi.mock("../../api/avatar", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../api/avatar")>()),
+  uploadAvatar,
+}));
+
+afterEach(() => {
+  uploadAvatar.mockReset();
+});
 
 const adaMember: Member = {
   id: 1,
@@ -67,6 +79,31 @@ describe("profile", () => {
 
     expect(await screen.findByRole("button", { name: "Choose a picture" })).toBeVisible();
     expect(screen.queryByRole("img", { name: "Your profile picture" })).not.toBeInTheDocument();
+  });
+
+  it("frames a new profile picture before saving it", async () => {
+    signInAs(ada);
+    uploadAvatar.mockResolvedValue({ ...ada, avatar_url: "/api/v1/people/1/avatar?v=new" });
+    const { user } = renderApp("/settings/profile");
+
+    await screen.findByRole("button", { name: "Choose a picture" });
+    const fileInput = document.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!fileInput) throw new Error("No file input");
+    const chosen = new File(["not really a jpeg"], "me.jpg", { type: "image/jpeg" });
+    await user.upload(fileInput, chosen);
+
+    const dialog = await screen.findByRole("dialog", { name: "Frame your picture" });
+    expect(within(dialog).getByRole("slider", { name: "Zoom" })).toBeVisible();
+    expect(await accessibilityProblems(dialog)).toEqual([]);
+    // Nothing is uploaded until it's saved.
+    expect(uploadAvatar).not.toHaveBeenCalled();
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Profile picture saved")).toBeVisible();
+    // The test environment can't show images, so no square was chosen: the server takes the
+    // middle.
+    expect(uploadAvatar).toHaveBeenCalledWith(chosen, "me.jpg", null);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("shows allauth's message next to the current password", async () => {

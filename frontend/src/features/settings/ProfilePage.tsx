@@ -3,6 +3,7 @@ import {
   Button,
   FileButton,
   Group,
+  Modal,
   Paper,
   SegmentedControl,
   Select,
@@ -14,6 +15,7 @@ import {
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconPhoto } from "@tabler/icons-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -26,7 +28,8 @@ import {
 } from "../../api/accounts";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PersonAvatar } from "../../components/PersonAvatar";
-import { preparePhoto } from "../../lib/photos";
+import { type CropArea, PhotoCropper } from "../../components/PhotoCropper";
+import { type PreparedPhoto, preparePhoto } from "../../lib/photos";
 import { PasswordField } from "../../components/PasswordField";
 import { LANGUAGES, languageName } from "../../i18n";
 import { useApplyFieldErrors } from "../auth/serverErrors";
@@ -52,20 +55,35 @@ export function ProfilePage() {
   );
 }
 
-/** The person's picture: chosen from their photos, made a square on the server. */
+/** The person's picture: chosen from their photos, then framed in a circle before saving. */
 function ProfilePicture({ me }: { me: Me }) {
   const { t } = useTranslation();
   const setAvatar = useSetAvatar();
   const removeAvatar = useRemoveAvatar();
   const error = setAvatar.error ?? removeAvatar.error;
+  // The photo being framed, and an address the browser can show it from.
+  const [chosen, setChosen] = useState<{ photo: PreparedPhoto; url: string } | null>(null);
 
   async function choose(file: File | null) {
     if (!file) return;
+    setAvatar.reset();
+    const photo = await preparePhoto(file);
+    setChosen({ photo, url: URL.createObjectURL(photo.file) });
+  }
+
+  function close() {
+    if (chosen) URL.revokeObjectURL(chosen.url);
+    setChosen(null);
+  }
+
+  async function save(crop: CropArea | null) {
+    if (!chosen) return;
     try {
-      await setAvatar.mutateAsync(await preparePhoto(file));
+      await setAvatar.mutateAsync({ ...chosen.photo, crop: crop ?? undefined });
+      close();
       notifications.show({ message: t("profile.pictureSaved") });
     } catch {
-      // The error is shown by ErrorAlert.
+      // The error is shown in the dialog.
     }
   }
 
@@ -115,9 +133,58 @@ function ProfilePicture({ me }: { me: Me }) {
             </Group>
           </Stack>
         </Group>
-        <ErrorAlert error={error} />
+        <ErrorAlert error={chosen ? removeAvatar.error : error} />
       </Stack>
+      {chosen && (
+        <FrameDialog
+          url={chosen.url}
+          saving={setAvatar.isPending}
+          error={setAvatar.error}
+          onSave={(crop) => void save(crop)}
+          onCancel={close}
+        />
+      )}
     </Paper>
+  );
+}
+
+/** Frame the chosen photo in a circle before it becomes the profile picture. */
+function FrameDialog({
+  url,
+  saving,
+  error,
+  onSave,
+  onCancel,
+}: {
+  url: string;
+  saving: boolean;
+  error: unknown;
+  onSave: (crop: CropArea | null) => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation();
+  const [crop, setCrop] = useState<CropArea | null>(null);
+
+  return (
+    <Modal opened onClose={onCancel} title={t("profile.pictureFrame")} size="lg">
+      <Stack>
+        <PhotoCropper src={url} shape="round" aspect={1} onChange={setCrop} />
+        <ErrorAlert error={error} />
+        <Group justify="flex-end">
+          <Button variant="default" onClick={onCancel}>
+            {t("common.cancel")}
+          </Button>
+          <Button
+            loading={saving}
+            onClick={() => {
+              onSave(crop);
+            }}
+          >
+            {t("common.save")}
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
   );
 }
 

@@ -111,6 +111,10 @@ def _plant(plant: Plant) -> schema.Plant:
                 height=photo.height,
                 taken_at=photo.taken_at,
                 caption=photo.caption,
+                crop_x=photo.crop_x,
+                crop_y=photo.crop_y,
+                crop_width=photo.crop_width,
+                crop_height=photo.crop_height,
             )
             for photo in plant.photos.all()
         ],

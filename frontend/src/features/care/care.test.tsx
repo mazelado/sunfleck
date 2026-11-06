@@ -60,6 +60,7 @@ const photo: Photo = {
   id: 5,
   plant_id: 7,
   caption: "New leaf",
+  crop: null,
   taken_at: new Date(Date.now() - 3 * DAY).toISOString(),
   width: 2048,
   height: 1536,

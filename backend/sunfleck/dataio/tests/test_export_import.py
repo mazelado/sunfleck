@@ -19,6 +19,7 @@ from sunfleck.care import schedules
 from sunfleck.care import services as care_services
 from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
 from sunfleck.care.tests.factories import builtin
+from sunfleck.core import images
 from sunfleck.dataio import exporter, importer, schema
 from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.notifications import services as notification_services
@@ -100,7 +101,8 @@ def filled(household: Household, ada: Membership) -> Household:
         notes="From the market",
     )
     PlantLight.objects.create(plant=monty, light_source=window, distance_cm=80)
-    plant_services.add_photo(monty, io.BytesIO(image_bytes()), 1000, caption="New leaf")
+    leaf = plant_services.add_photo(monty, io.BytesIO(image_bytes()), 1000, caption="New leaf")
+    plant_services.crop_photo(leaf, images.Crop(0.1, 0.2, 0.5, 0.5))
     plant_services.add_photo(monty, io.BytesIO(image_bytes(color="red")), 1000)
     Plant.objects.create(
         household=household,
@@ -270,6 +272,7 @@ def test_an_export_imports_into_a_new_household_unchanged(
     monty = Plant.objects.get(household=target, nickname="Monty")
     assert monty.cover_photo is not None
     assert monty.cover_photo.caption == "New leaf"
+    assert monty.cover_photo.crop == images.Crop(0.1, 0.2, 0.5, 0.5)
     with monty.cover_photo.image.open("rb") as copy:
         original = Photo.objects.get(plant__household=filled, caption="New leaf")
         with original.image.open("rb") as source:

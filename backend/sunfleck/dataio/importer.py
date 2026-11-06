@@ -214,6 +214,11 @@ class _Importer:
                 height=photo_item.height,
                 taken_at=photo_item.taken_at,
                 caption=photo_item.caption,
+                # The thumbnail in the export already shows the crop.
+                crop_x=photo_item.crop_x,
+                crop_y=photo_item.crop_y,
+                crop_width=photo_item.crop_width,
+                crop_height=photo_item.crop_height,
             )
             name = uuid.uuid4().hex
             for field_name, path, suffix in (

@@ -233,7 +233,7 @@ def password_reset_url(request: HttpRequest, user: User) -> str:
 # --- Profile pictures -------------------------------------------------------------------------
 
 
-def set_avatar(user: User, file: IO[bytes], size: int) -> None:
+def set_avatar(user: User, file: IO[bytes], size: int, crop: images.Crop | None = None) -> None:
     """Set the person's profile picture, replacing the old one.
 
     Raises:
@@ -242,7 +242,7 @@ def set_avatar(user: User, file: IO[bytes], size: int) -> None:
     if size > images.MAX_UPLOAD_BYTES:
         limit = images.MAX_UPLOAD_BYTES // (1024 * 1024)
         raise images.ImageError("image_too_large", f"Photos can be at most {limit} MB.")
-    data = images.process_avatar(file)
+    data = images.process_avatar(file, crop)
     old = user.avatar.name
     # A new name each time, so browsers that cached the old picture fetch the new one.
     user.avatar.save(f"{uuid.uuid4().hex}.webp", ContentFile(data), save=False)

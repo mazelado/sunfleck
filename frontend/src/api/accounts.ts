@@ -1,9 +1,8 @@
 import { type QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import * as allauth from "./allauth";
+import { type AvatarCrop, uploadAvatar } from "./avatar";
 import { api, unwrap } from "./client";
-import { getCsrfToken } from "./csrf";
-import { toApiError } from "./errors";
 import type { components } from "./schema";
 
 export type Me = components["schemas"]["MeOut"];
@@ -135,25 +134,11 @@ export function useUpdateMe() {
   });
 }
 
-/** Upload your profile picture (made a square on the server). */
-export async function uploadAvatar(file: Blob, filename: string): Promise<Me> {
-  const body = new FormData();
-  body.append("file", file, filename);
-  const response = await globalThis.fetch(`${window.location.origin}/api/v1/me/avatar`, {
-    method: "POST",
-    body,
-    headers: { "X-CSRFToken": getCsrfToken() },
-  });
-  const data: unknown = await response.json().catch(() => null);
-  if (!response.ok) throw toApiError(response.status, data);
-  return data as Me;
-}
-
 export function useSetAvatar() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ file, filename }: { file: Blob; filename: string }) =>
-      uploadAvatar(file, filename),
+    mutationFn: ({ file, filename, crop }: { file: Blob; filename: string; crop?: AvatarCrop }) =>
+      uploadAvatar(file, filename, crop ?? null),
     onSuccess: (me) => updatedPicture(queryClient, me),
   });
 }

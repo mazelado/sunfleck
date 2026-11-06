@@ -31,6 +31,8 @@ IMAGE_QUALITY = 82
 THUMBNAIL_QUALITY = 75
 # EXIF dates before digital cameras existed are camera clock errors.
 EARLIEST_PLAUSIBLE_YEAR = 1990
+# A crop smaller than this, in pixels of the photo, is a slip of the fingers.
+MIN_CROP_PIXELS = 32
 
 
 class ImageError(Exception):
@@ -39,6 +41,41 @@ class ImageError(Exception):
     def __init__(self, code: str, message: str) -> None:
         super().__init__(message)
         self.code = code
+
+
+@dataclass(frozen=True)
+class Crop:
+    """The part of a photo to show, as fractions (0 to 1) of its width and height, measured
+    from its top left corner once it's upright."""
+
+    x: float
+    y: float
+    width: float
+    height: float
+
+    def box(self, width: int, height: int) -> tuple[int, int, int, int]:
+        """The crop in pixels of an image this size, as Pillow's (left, top, right, bottom).
+
+        Raises:
+            ImageError: `invalid_crop` if it isn't inside the image, or is too small.
+        """
+        # A little slack for rounding in the browser.
+        inside = (
+            0 <= self.x < 1
+            and 0 <= self.y < 1
+            and self.width > 0
+            and self.height > 0
+            and self.x + self.width <= 1.001
+            and self.y + self.height <= 1.001
+        )
+        if not inside:
+            raise ImageError("invalid_crop", "The crop isn't inside the photo.")
+        left, top = round(self.x * width), round(self.y * height)
+        right = min(round((self.x + self.width) * width), width)
+        bottom = min(round((self.y + self.height) * height), height)
+        if min(right - left, bottom - top) < min(MIN_CROP_PIXELS, width, height):
+            raise ImageError("invalid_crop", "The crop is too small.")
+        return left, top, right, bottom
 
 
 @dataclass(frozen=True)
@@ -78,14 +115,31 @@ def process_photo(file: IO[bytes]) -> ProcessedPhoto:
     )
 
 
-def process_avatar(file: IO[bytes]) -> bytes:
-    """A profile picture: the middle of the photo, as a WebP square of AVATAR_SIZE pixels,
-    upright and without metadata.
+def thumbnail(file: IO[bytes], crop: Crop | None) -> bytes:
+    """A new thumbnail for a stored photo: the part of it in `crop` (all of it without one), at
+    most THUMBNAIL_MAX_EDGE pixels on its long edge.
 
     Raises:
-        ImageError: If the file isn't a supported image or is too large to process.
+        ImageError: If the crop isn't inside the photo, or the photo can't be read.
+    """
+    source, image, _ = _open(file, IMAGE_MAX_EDGE)
+    if crop is not None:
+        image = image.crop(crop.box(image.width, image.height))
+    image.thumbnail((THUMBNAIL_MAX_EDGE, THUMBNAIL_MAX_EDGE), Image.Resampling.LANCZOS)
+    return _webp(image, THUMBNAIL_QUALITY, source.info.get("icc_profile"))
+
+
+def process_avatar(file: IO[bytes], crop: Crop | None = None) -> bytes:
+    """A profile picture: the part of the photo the person chose, or else the middle of it, as
+    a WebP square of AVATAR_SIZE pixels, upright and without metadata.
+
+    Raises:
+        ImageError: If the file isn't a supported image, is too large to process, or the crop
+            isn't inside it.
     """
     _, image, _ = _open(file, AVATAR_SIZE * 4)
+    if crop is not None:
+        image = image.crop(crop.box(image.width, image.height))
     # Faces tend to be in the upper part of a portrait: keep a little more of the top.
     square = ImageOps.fit(
         image.convert("RGB"),

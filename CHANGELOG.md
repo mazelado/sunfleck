@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Cropping photos** (#67): frame a new profile picture in a circle before saving it. Open
+  a plant photo and choose **Crop** to pick the part its thumbnails and the plant's cover
+  show. The whole photo is kept, so the crop can be changed later. Exports include crops,
+  and older exports still import.
+
 ### Changed
 
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.

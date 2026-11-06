@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { uploadAvatar } from "./accounts";
+import { uploadAvatar } from "./avatar";
 import { ApiError } from "./errors";
 
 // Called directly rather than through the fake server: in tests, jsdom's FormData doesn't
@@ -29,6 +29,22 @@ describe("uploadAvatar", () => {
     expect(init?.method).toBe("POST");
     expect(init?.headers).toEqual({ "X-CSRFToken": "secret-token" });
     expect(((init?.body as FormData).get("file") as File).name).toBe("me.jpg");
+  });
+
+  it("sends the square chosen, as fractions of the photo", async () => {
+    const fetch = stubFetch(new Response(JSON.stringify({ id: 1, avatar_url: "/a" })));
+
+    await uploadAvatar(new Blob(["jpeg bytes"]), "me.jpg", {
+      x: 0.25,
+      y: 0.1,
+      width: 0.5,
+      height: 0.75,
+    });
+
+    const body = fetch.mock.calls[0]?.[1]?.body as FormData;
+    expect(
+      ["crop_x", "crop_y", "crop_width", "crop_height"].map((field) => body.get(field)),
+    ).toEqual(["0.25", "0.1", "0.5", "0.75"]);
   });
 
   it("turns refusals into API errors", async () => {

@@ -200,7 +200,7 @@ def test_timeline_pages_through_care_and_photos(client_as: ClientAs, plant: Plan
 
     assert [item["kind"] for item in first["items"]] == ["care", "care"]
     assert [item["kind"] for item in second["items"]] == ["photo", "care"]
-    assert second["items"][0]["photo"]["thumbnail_url"].endswith("/thumbnail")
+    assert "/thumbnail?v=" in second["items"][0]["photo"]["thumbnail_url"]
     assert second["next_cursor"] is None
 
 

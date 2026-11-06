@@ -39,7 +39,7 @@ import { formatDate, formatDateTime } from "./dates";
 import { PhotoViewer } from "./PhotoViewer";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
 import { CareGlance } from "./CareGlance";
-import { PlantImage } from "./PlantImage";
+import { PlantCover } from "./PlantImage";
 import { PlantLineage } from "./PlantLineage";
 import { LightCheck } from "./LightCheck";
 import { PlantStatusBadge } from "./PlantStatusBadge";
@@ -67,11 +67,10 @@ export function PlantPage() {
       <Anchor component={Link} to="/plants" size="sm">
         ← {t("plants.title")}
       </Anchor>
-      <PlantImage
-        src={data.cover_photo?.image_url}
+      <PlantCover
+        photo={data.cover_photo}
         alt={t("plants.photoOf", { name: data.nickname })}
         height={260}
-        radius="lg"
       />
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Stack gap={4} style={{ minWidth: 0 }}>

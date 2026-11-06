@@ -333,6 +333,29 @@ def add_photo(
     return photo
 
 
+def crop_photo(photo: Photo, crop: images.Crop | None) -> Photo:
+    """Choose the part of the photo its thumbnail and the plant's cover show (None: all of it).
+    The photo itself is kept whole, so the crop can be changed again.
+
+    Raises:
+        PlantsError: `invalid_crop` if the crop isn't inside the photo or is too small.
+    """
+    try:
+        with photo.image.open("rb") as file:
+            data = images.thumbnail(file, crop)
+    except images.ImageError as exc:
+        raise PlantsError(exc.code, str(exc), "crop") from exc
+    old = photo.thumbnail.name
+    # A new name, so browsers that keep thumbnails for good fetch the new one.
+    photo.thumbnail.save(f"{uuid.uuid4().hex}-thumbnail.webp", ContentFile(data), save=False)
+    photo.crop_x, photo.crop_y = (crop.x, crop.y) if crop else (None, None)
+    photo.crop_width, photo.crop_height = (crop.width, crop.height) if crop else (None, None)
+    photo.save(update_fields=["thumbnail", "crop_x", "crop_y", "crop_width", "crop_height"])
+    if old:
+        photo.thumbnail.storage.delete(old)
+    return photo
+
+
 def update_photo(photo: Photo, caption: str) -> Photo:
     photo.caption = caption.strip()
     photo.save(update_fields=["caption"])

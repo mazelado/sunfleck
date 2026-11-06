@@ -94,7 +94,10 @@ signing out are in the account menu (your picture at the top right).
   enough; it's shown in its history as "Estimated when added". For a plant added before, log
   its last watering with **Log with details** and set the date.
 - **Photos**: add as many as you like; the first becomes the plant's cover. Photos are made
-  smaller and stripped of their location data when uploaded.
+  smaller and stripped of their location data when uploaded. Open a photo and choose **Crop**
+  to pick the part its thumbnails and the plant's cover show: drag the photo under the frame
+  and zoom with the slider (or pinch, or the arrow keys). The whole photo is always kept, so
+  you can change the crop later, or choose **Show the whole photo**.
 - **Status**: Active, Dormant, Propagating, Given away, or Died. Only active, dormant and
   propagating plants need care.
 - **Propagation**: **Propagate** on a plant's page adds the cuttings, divisions, offsets or
@@ -218,7 +221,8 @@ Everyone in a household shares its places and plants. Admins invite people from
 | **Admin** | Also invite people, change roles, and manage plugins and exports |
 
 Under **Profile**, everyone sets their name, a profile picture (only their household sees it),
-language, units (metric, or imperial: inches and °F), and password.
+language, units (metric, or imperial: inches and °F), and password. After choosing a picture,
+move and zoom it to frame it in the circle, then save.
 
 ## Plugins
 

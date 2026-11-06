@@ -18,7 +18,7 @@ from django.middleware.csrf import get_token
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from ninja import File, Router, Schema, Status
+from ninja import File, Form, Router, Schema, Status
 from ninja.files import UploadedFile
 from ninja.security import django_auth
 from ninja.utils import check_csrf
@@ -301,11 +301,27 @@ def update_me(request: HttpRequest, data: MeUpdate) -> MeOut:
 
 
 @router.post("/me/avatar", response=MeOut)
-def set_avatar(request: HttpRequest, file: File[UploadedFile]) -> MeOut:
-    """Set your profile picture: the middle of the photo, as a square."""
+def set_avatar(
+    request: HttpRequest,
+    file: File[UploadedFile],
+    crop_x: Form[float | None] = None,
+    crop_y: Form[float | None] = None,
+    crop_width: Form[float | None] = None,
+    crop_height: Form[float | None] = None,
+) -> MeOut:
+    """Set your profile picture: the square you chose (`crop_*`, as fractions of the photo's
+    width and height from its top left), or else the middle of the photo."""
     user = _user(request)
+    crop = None
+    if (
+        crop_x is not None
+        and crop_y is not None
+        and crop_width is not None
+        and crop_height is not None
+    ):
+        crop = images.Crop(crop_x, crop_y, crop_width, crop_height)
     try:
-        services.set_avatar(user, file, file.size or 0)
+        services.set_avatar(user, file, file.size or 0, crop)
     except images.ImageError as exc:
         raise ApiError(422, exc.code, str(exc), {"field": "file"}) from exc
     return _me(user)

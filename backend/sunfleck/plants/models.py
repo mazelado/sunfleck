@@ -8,6 +8,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from sunfleck.accounts.models import Household
+from sunfleck.core import images
 from sunfleck.places.models import LightSource, Location
 from sunfleck.taxonomy.models import CareArchetype, Taxon
 
@@ -196,6 +197,12 @@ class Photo(models.Model):
     height = models.PositiveIntegerField()
     taken_at = models.DateTimeField(_("taken at"))
     caption = models.CharField(_("caption"), max_length=200, blank=True)
+    # The part of the photo its thumbnail (and the plant's cover) shows, as fractions of its
+    # width and height; all of it when not set. The photo itself is always kept whole.
+    crop_x = models.FloatField(null=True, blank=True)
+    crop_y = models.FloatField(null=True, blank=True)
+    crop_width = models.FloatField(null=True, blank=True)
+    crop_height = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -205,6 +212,14 @@ class Photo(models.Model):
 
     def __str__(self) -> str:
         return self.caption or f"{self.plant} ({self.taken_at:%Y-%m-%d})"
+
+    @property
+    def crop(self) -> images.Crop | None:
+        if self.crop_x is None or self.crop_y is None:
+            return None
+        if self.crop_width is None or self.crop_height is None:
+            return None
+        return images.Crop(self.crop_x, self.crop_y, self.crop_width, self.crop_height)
 
 
 class Wish(models.Model):

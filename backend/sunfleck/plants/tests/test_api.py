@@ -386,6 +386,57 @@ def test_choose_caption_and_delete_photos(client_as: ClientAs, plant: Plant) -> 
 
 
 @pytest.mark.django_db
+def test_crop_a_photo_and_show_all_of_it_again(client_as: ClientAs, plant: Plant) -> None:
+    client = client_as(Role.GARDENER)
+    photo = _photo(plant)
+    old_thumbnail = photo.thumbnail.name
+    before = client.get(f"/api/v1/plants/{plant.pk}").json()["cover_photo"]
+    assert before["crop"] is None
+
+    crop = {"x": 0.25, "y": 0.1, "width": 0.5, "height": 0.5}
+    cropped = send(client, "PUT", f"/api/v1/photos/{photo.pk}/crop", {"crop": crop})
+
+    assert cropped.status_code == 200
+    assert cropped.json()["crop"] == crop
+    # A new thumbnail, at a new address, as browsers keep thumbnails for good.
+    assert cropped.json()["thumbnail_url"] != before["thumbnail_url"]
+    assert client.get(cropped.json()["thumbnail_url"]).status_code == 200
+    assert old_thumbnail
+    assert not photo.thumbnail.storage.exists(old_thumbnail)
+    listed = client.get("/api/v1/plants").json()["items"][0]
+    assert listed["cover_thumbnail_url"] == cropped.json()["thumbnail_url"]
+
+    whole = send(client, "PUT", f"/api/v1/photos/{photo.pk}/crop", {"crop": None})
+    assert whole.json()["crop"] is None
+
+
+@pytest.mark.django_db
+def test_crops_must_be_inside_the_photo(client_as: ClientAs, plant: Plant) -> None:
+    photo = _photo(plant)
+
+    response = send(
+        client_as(Role.GARDENER),
+        "PUT",
+        f"/api/v1/photos/{photo.pk}/crop",
+        {"crop": {"x": 0.8, "y": 0, "width": 0.5, "height": 1}},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_crop"
+
+
+@pytest.mark.django_db
+def test_viewers_cant_crop_photos(client_as: ClientAs, plant: Plant) -> None:
+    photo = _photo(plant)
+
+    response = send(
+        client_as(Role.VIEWER), "PUT", f"/api/v1/photos/{photo.pk}/crop", {"crop": None}
+    )
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
 def test_cover_must_be_one_of_the_plants_photos(
     client_as: ClientAs, plant: Plant, household: Household
 ) -> None:

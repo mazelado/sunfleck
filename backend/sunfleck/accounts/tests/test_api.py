@@ -592,3 +592,34 @@ def test_a_profile_picture_goes_with_its_account(
     ada.delete()
 
     assert not default_storage.exists(name)
+
+
+def test_a_profile_picture_can_be_cropped(member_of: Callable[[Role], Membership]) -> None:
+    ada = member_of(Role.VIEWER).user
+    client = Client()
+    client.force_login(ada)
+    file = SimpleUploadedFile("me.jpg", image_bytes(600, 400), content_type="image/jpeg")
+
+    response = client.post(
+        "/api/v1/me/avatar",
+        {"file": file, "crop_x": 0.5, "crop_y": 0.25, "crop_width": 0.5, "crop_height": 0.75},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["avatar_url"] is not None
+
+
+def test_profile_picture_crops_must_be_inside_the_photo(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    client = Client()
+    client.force_login(member_of(Role.VIEWER).user)
+    file = SimpleUploadedFile("me.jpg", image_bytes(600, 400), content_type="image/jpeg")
+
+    response = client.post(
+        "/api/v1/me/avatar",
+        {"file": file, "crop_x": 0.9, "crop_y": 0, "crop_width": 0.5, "crop_height": 0.5},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_crop"

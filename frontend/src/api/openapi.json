@@ -2844,6 +2844,99 @@
         "title": "PersonOut",
         "type": "object"
       },
+      "PhotoCropAreaIn": {
+        "description": "A part of a photo, as fractions (0 to 1) of its width and height from the top left.",
+        "properties": {
+          "height": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Height",
+            "type": "number"
+          },
+          "width": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Width",
+            "type": "number"
+          },
+          "x": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "PhotoCropAreaIn",
+        "type": "object"
+      },
+      "PhotoCropIn": {
+        "properties": {
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoCropAreaIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None shows the whole photo."
+          }
+        },
+        "required": [
+          "crop"
+        ],
+        "title": "PhotoCropIn",
+        "type": "object"
+      },
+      "PhotoCropOut": {
+        "properties": {
+          "height": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Height",
+            "type": "number"
+          },
+          "width": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Width",
+            "type": "number"
+          },
+          "x": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "PhotoCropOut",
+        "type": "object"
+      },
       "PhotoIn": {
         "properties": {
           "caption": {
@@ -2861,6 +2954,17 @@
           "caption": {
             "title": "Caption",
             "type": "string"
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PhotoCropOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The part of the photo its thumbnail and the plant's cover show."
           },
           "height": {
             "title": "Height",
@@ -2884,6 +2988,7 @@
             "type": "string"
           },
           "thumbnail_url": {
+            "description": "Shows the crop, when the photo has one.",
             "title": "Thumbnail Url",
             "type": "string"
           },
@@ -2900,7 +3005,8 @@
           "width",
           "height",
           "image_url",
-          "thumbnail_url"
+          "thumbnail_url",
+          "crop"
         ],
         "title": "PhotoOut",
         "type": "object"
@@ -7689,7 +7795,7 @@
         ]
       },
       "post": {
-        "description": "Set your profile picture: the middle of the photo, as a square.",
+        "description": "Set your profile picture: the square you chose (`crop_*`, as fractions of the photo's\nwidth and height from its top left), or else the middle of the photo.",
         "operationId": "sunfleck_accounts_api_set_avatar",
         "parameters": [],
         "requestBody": {
@@ -7697,6 +7803,50 @@
             "multipart/form-data": {
               "schema": {
                 "properties": {
+                  "crop_height": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Crop Height"
+                  },
+                  "crop_width": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Crop Width"
+                  },
+                  "crop_x": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Crop X"
+                  },
+                  "crop_y": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Crop Y"
+                  },
                   "file": {
                     "format": "binary",
                     "title": "File",
@@ -7706,7 +7856,7 @@
                 "required": [
                   "file"
                 ],
-                "title": "FileParams",
+                "title": "MultiPartBodyParams",
                 "type": "object"
               }
             }
@@ -8220,6 +8370,54 @@
           }
         ],
         "summary": "Update Photo",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/photos/{photo_id}/crop": {
+      "put": {
+        "description": "Choose the part of the photo its thumbnail and the plant's cover show, or show all of\nit again (`crop` null). The photo itself is kept whole.",
+        "operationId": "sunfleck_plants_api_crop_photo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "photo_id",
+            "required": true,
+            "schema": {
+              "title": "Photo Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoCropIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Crop Photo",
         "tags": [
           "plants"
         ]
