@@ -43,6 +43,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Fixed
 
+- **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first
+  item could be tapped. This came with the new look's card animation.
 - **A digest or evening reminder set between 23:46 and 23:59 was never sent**: the worker
   checks every 15 minutes, and the next check was already the next day. It's now sent then,
   just after midnight.

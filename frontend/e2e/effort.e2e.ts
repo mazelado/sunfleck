@@ -80,6 +80,21 @@ test("snooze care from Today", async () => {
   });
 });
 
+test("a care row's menu shows above the rows below it", async () => {
+  // The cards' rise-in animation once kept each card in its own layer, so the next card
+  // covered the menu: only its first item could be tapped.
+  await startOn("/", "Today");
+  await page
+    .getByRole("button", { name: /^More for / })
+    .first()
+    .click();
+  const items = page.getByRole("menuitem");
+  for (const item of await items.all()) {
+    await item.click({ trial: true }); // fails if something else would receive the tap
+  }
+  await page.keyboard.press("Escape");
+});
+
 test("log care from a plant's page, with how the soil was", async () => {
   await startOn("/plants", "Plants");
   await withinBudget(page, BUDGETS.careFromPlantPage, async (effort) => {
