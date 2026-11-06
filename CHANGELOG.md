@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-06
+
+**Gardenia.** Growing food outside: garden beds with their size, frost dates for each place, a
+sowing calendar for the seeds you have, and a harvest log. Adding a light no longer means
+leaving the plant form.
+
 ### Added
 
 - **Add a window or grow light from the plant form** (#98): when a plant's room has no lights
@@ -285,7 +291,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/mazelado/sunfleck/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/mazelado/sunfleck/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/mazelado/sunfleck/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/mazelado/sunfleck/compare/v0.5.0...v0.5.1
