@@ -49,8 +49,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.4 Dahlia** | [Smarter care](#dahlia-smarter-care-released) | Released 2026-10-30 |
 | **0.5 Echinacea** | [AI providers and toxicity](#echinacea-ai-providers-and-toxicity-released) | Released 2026-10-31 |
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
-| **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening) | In progress |
-| **0.8 Hibiscus** | [Collector features](#collector-features) | Planned |
+| **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
+| **0.8 Hibiscus** | [Collector features](#collector-features) | Next |
 | **0.9 Iris** | [AI assistant](#ai-assistant) | Planned |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
@@ -134,7 +134,7 @@ Split from Fuchsia (0.6), not yet scheduled.
   Sunfleck's CC BY-SA dataset. Perenual and Trefle could follow if there's a need: Perenual's
   free tier is non-commercial and limited to 100 requests a day, and Trefle is in beta.
 
-### Gardenia: outdoor and edible gardening
+### Gardenia: outdoor and edible gardening (released)
 
 Growing food outside, and fewer clicks for everyday tasks.
 
