@@ -33,6 +33,7 @@ import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { CareEventDialog } from "../care/CareEventDialog";
 import { CareIcon } from "../care/icons";
+import { GardenNote } from "../garden/GardenNote";
 import { useCareTypeName } from "../care/useCareTypeName";
 import { GettingStarted } from "../home/GettingStarted";
 import { formatDate } from "../plants/dates";
@@ -106,6 +107,8 @@ export function TodayPage() {
           </Anchor>
         </Alert>
       )}
+
+      <GardenNote />
 
       <Stack gap="sm">
         <Title order={2} fz="h4">

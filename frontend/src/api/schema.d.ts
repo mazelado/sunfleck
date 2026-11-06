@@ -24,6 +24,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sowing Calendar
+         * @description When to sow, plant out and harvest the household's seeds, from today to a year ahead,
+         *     at a site (by default the first with frost dates, or the first).
+         */
+        get: operations["sunfleck_garden_api_sowing_calendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-events/bulk": {
         parameters: {
             query?: never;
@@ -1199,6 +1220,26 @@ export interface paths {
         post?: never;
         /** Delete Seed */
         delete: operations["sunfleck_garden_api_delete_seed"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/seeds/{seed_id}/sown": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Seeds Sown
+         * @description The seeds were sown today: add the seedlings as a plant, of the seeds' species.
+         */
+        post: operations["sunfleck_garden_api_seeds_sown"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2980,6 +3021,65 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** SowingCalendarOut */
+        SowingCalendarOut: {
+            /** Entries */
+            entries: components["schemas"]["SowingEntryOut"][];
+            /**
+             * Frost
+             * @description `known`: timed from the site's frost dates. `none`: it doesn't freeze there, so nothing is timed. `unknown`: the frost dates aren't known yet.
+             * @enum {string}
+             */
+            frost: "known" | "none" | "unknown";
+            /** Site Id */
+            site_id: number;
+            /** Site Name */
+            site_name: string;
+            /**
+             * Today
+             * Format: date
+             * @description Today at the site.
+             */
+            today: string;
+        };
+        /** SowingEntryOut */
+        SowingEntryOut: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "sow_indoors" | "sow_outdoors" | "plant_out" | "harvest";
+            /**
+             * Ends On
+             * Format: date
+             */
+            ends_on: string;
+            /**
+             * Name
+             * @description The seeds' name, with their variety.
+             */
+            name: string;
+            /** Seed Id */
+            seed_id: number;
+            /**
+             * Starts On
+             * Format: date
+             */
+            starts_on: string;
+        };
+        /** SownIn */
+        SownIn: {
+            /**
+             * Location Id
+             * @description Where the seedlings are.
+             */
+            location_id?: number | null;
+        };
+        /** SownOut */
+        SownOut: {
+            /** Plant Id */
+            plant_id: number;
+        };
         /** SpeciesHitOut */
         SpeciesHitOut: {
             care_profile: components["schemas"]["CareProfileRef"] | null;
@@ -3241,6 +3341,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AboutOut"];
+                };
+            };
+        };
+    };
+    sunfleck_garden_api_sowing_calendar: {
+        parameters: {
+            query?: {
+                site_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SowingCalendarOut"];
                 };
             };
         };
@@ -5200,6 +5322,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_garden_api_seeds_sown: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                seed_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SownIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SownOut"];
+                };
             };
         };
     };

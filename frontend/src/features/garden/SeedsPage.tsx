@@ -27,6 +27,7 @@ import { sentenceCase } from "../../lib/text";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
+import { SowingCalendar } from "./SowingCalendar";
 
 /** The seeds the household has, for the sowing calendar. */
 export function SeedsPage() {
@@ -64,6 +65,7 @@ export function SeedsPage() {
         {t("seeds.intro")}
       </Text>
       <ErrorAlert error={seeds.error} />
+      {items.length > 0 && <SowingCalendar />}
       {items.length === 0 && !seeds.error && <Text c="dimmed">{t("seeds.empty")}</Text>}
       {items.map((seed) => (
         <SeedCard

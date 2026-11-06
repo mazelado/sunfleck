@@ -305,6 +305,62 @@ describe("today", () => {
     );
   });
 
+  it("says what to sow or plant out in the garden now", async () => {
+    signInAs(gardener);
+    withToday();
+    server.use(
+      http.get("*/api/v1/seeds", () => HttpResponse.json([{ id: 1, name: "Tomato" }])),
+      http.get("*/api/v1/calendar", () =>
+        HttpResponse.json({
+          site_id: 1,
+          site_name: "Home",
+          frost: "known",
+          today: "2027-02-20",
+          entries: [
+            {
+              seed_id: 1,
+              name: "Tomato",
+              action: "sow_indoors",
+              starts_on: "2027-02-18",
+              ends_on: "2027-03-04",
+            },
+            {
+              seed_id: 2,
+              name: "Lettuce",
+              action: "sow_outdoors",
+              starts_on: "2027-02-01",
+              ends_on: "2027-03-01",
+            },
+            // Not yet, and harvests aren't announced here.
+            {
+              seed_id: 3,
+              name: "Radish",
+              action: "sow_outdoors",
+              starts_on: "2027-03-18",
+              ends_on: "2027-06-10",
+            },
+            {
+              seed_id: 4,
+              name: "Garlic",
+              action: "harvest",
+              starts_on: "2027-02-01",
+              ends_on: "2027-03-01",
+            },
+          ],
+        }),
+      ),
+    );
+    renderApp("/");
+
+    expect(
+      await screen.findByText(/In the garden now: Sow Tomato indoors and Sow Lettuce outdoors\./),
+    ).toBeVisible();
+    expect(screen.getByRole("link", { name: "See the sowing calendar" })).toHaveAttribute(
+      "href",
+      "/seeds",
+    );
+  });
+
   it("helps getting started when there's nothing to do yet", async () => {
     signInAs(gardener);
     withToday([]);
