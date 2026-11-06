@@ -20,13 +20,64 @@
 }
 
 .sunfleck-tab[aria-current="page"] {
-  color: var(--mantine-color-anchor);
+  color: var(--mantine-color-leaf-light-color);
 }
 
 .sunfleck-tab[aria-current="page"] .mantine-Text-root {
   font-weight: 700;
 }
 
+/* The current page's icon sits in a pill, as on Android. */
+.sunfleck-tab .sunfleck-tab-icon {
+  padding: 2px 16px;
+  border-radius: 999px;
+  transition: background-color 150ms ease;
+}
+
+.sunfleck-tab[aria-current="page"] .sunfleck-tab-icon {
+  background-color: var(--mantine-color-leaf-light);
+}
+
 .sunfleck-nav-link[aria-current="page"] {
   background-color: var(--button-hover);
+}
+
+/*
+ * The 1.0 look ("crisp modern"; see theme.ts): a soft grey-green page with white cards on it,
+ * section headings in small capitals, and a translucent header and tab bar.
+ */
+html,
+body,
+.sunfleck-page {
+  background-color: var(--sunfleck-page);
+}
+
+.sunfleck-bar {
+  background-color: var(--sunfleck-bar);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+}
+
+.sunfleck-card {
+  border-color: transparent;
+  box-shadow: var(--sunfleck-card-shadow);
+}
+
+.sunfleck-title[data-order="1"] {
+  letter-spacing: -0.02em;
+}
+
+/* Card and section headings: small capitals, a step back from the content. */
+.sunfleck-title[data-order="2"] {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+}
+
+/* The page's own sections, between cards, sit a little further from what's above them. */
+.sunfleck-title[data-order="3"] {
+  letter-spacing: -0.01em;
 }

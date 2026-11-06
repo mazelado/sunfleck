@@ -18,6 +18,7 @@ import {
   IconInfoCircle,
   IconChecklist,
   IconDatabaseExport,
+  IconLeaf,
   IconLogout,
   IconMapPin,
   IconPlant2,
@@ -77,7 +78,16 @@ export function AppLayout() {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between" wrap="nowrap">
           <Group gap="lg" wrap="nowrap">
-            <Text component={Link} to="/" fw={700} fz="lg" c="var(--mantine-color-anchor)">
+            <Text
+              component={Link}
+              to="/"
+              fw={800}
+              fz="lg"
+              c="var(--mantine-color-text)"
+              td="none"
+              style={{ display: "flex", alignItems: "center", gap: 6, letterSpacing: "-0.01em" }}
+            >
+              <IconLeaf size={22} stroke={2} color="var(--mantine-color-leaf-6)" aria-hidden />
               {t("app.name")}
             </Text>
             {wide && <HeaderNavigation />}
@@ -252,7 +262,9 @@ function TabBar() {
           h="100%"
         >
           <Stack gap={2} align="center" justify="center" h="100%">
-            <Icon size={24} stroke={1.75} />
+            <span className="sunfleck-tab-icon">
+              <Icon size={24} stroke={1.75} />
+            </span>
             <Text size="xs" fw={500}>
               {t(label)}
             </Text>
