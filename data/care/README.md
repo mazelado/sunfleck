@@ -88,6 +88,32 @@ A genus or species can say it's **known to be toxic** to cats and dogs, with the
   species. When species differ, put it on those species. A species without its own
   `toxicity` takes its genus's.
 
+### Crop timing
+
+A genus or species grown from seed in a season can say **when to sow, plant out and harvest
+it**, in weeks from the site's typical frost dates. Sunfleck turns these into dates for each
+place, for the sowing calendar.
+
+```yaml
+- name: Solanum lycopersicum
+  crop:
+    steps:                        # in order
+    - action: sow_indoors         # sow_indoors, sow_outdoors or plant_out
+      after: last_frost           # last_frost (spring) or first_frost (autumn)
+      weeks: [-8, -6]             # from 8 to 6 weeks before it (negative is before)
+    - action: plant_out
+      after: last_frost
+      weeks: [1, 3]
+    harvest_days: [60, 85]        # from the last step to the first harvest; none for flowers
+```
+
+- A species without its own takes its genus's.
+- **Draft:** these were written from general gardening knowledge for temperate climates, like
+  the timings printed on seed packets, and haven't yet been checked against the sources
+  (e.g. the RHS's and university extension services' growing guides). Corrections with a
+  source are welcome.
+- Perennials planted once (herbs such as rosemary, strawberries, fruit trees) have none.
+
 ## Contributing
 
 This is a great place to help without writing code.

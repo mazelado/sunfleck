@@ -103,6 +103,7 @@ def _save_taxon(
         synonyms=entry.get("synonyms", []),
         note=entry.get("note", {}),
         toxicity=entry.get("toxicity") or (genus_entry or {}).get("toxicity", {}),
+        crop=entry.get("crop") or (genus_entry or {}).get("crop", {}),
         archetype=archetype,
     )
     taxon.search_text = "\n".join(name.lower() for name in taxon.all_names())
@@ -118,6 +119,7 @@ def _save_taxon(
                 "synonyms",
                 "note",
                 "toxicity",
+                "crop",
                 "archetype",
                 "search_text",
             )

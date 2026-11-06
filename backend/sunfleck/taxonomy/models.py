@@ -66,6 +66,11 @@ class Taxon(models.Model):
     # [...], "note": {...}}. Empty means unknown (never "safe"). A species without its own
     # takes its genus's.
     toxicity = models.JSONField(_("toxicity"), default=dict)
+    # When to sow, plant out and harvest it, as in the dataset: {"steps": [{"action":
+    # "sow_indoors", "after": "last_frost", "weeks": [-8, -6]}, ...], "harvest_days": [60, 85]}.
+    # Empty when it isn't grown from seed in a season. A species without its own takes its
+    # genus's.
+    crop = models.JSONField(_("crop timing"), default=dict)
     archetype = models.ForeignKey(
         CareArchetype,
         on_delete=models.SET_NULL,

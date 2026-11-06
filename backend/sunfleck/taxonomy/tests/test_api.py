@@ -41,6 +41,7 @@ def test_search_species(client_as: ClientAs) -> None:
             ],
             "note": "Insoluble calcium oxalates",
         },
+        "crop": None,
         "matched_name": "Swiss cheese plant",
     }
 
@@ -62,6 +63,24 @@ def test_get_species_with_its_note(client_as: ClientAs) -> None:
 
     assert sansevieria["note"].startswith("Now included in Dracaena")
     assert missing.status_code == 404
+
+
+@pytest.mark.django_db
+def test_crops_say_when_to_sow_plant_out_and_harvest(client_as: ClientAs) -> None:
+    client = client_as(Role.VIEWER)
+
+    tomato = client.get(f"/api/v1/species/{_taxon('Solanum lycopersicum').pk}").json()
+    monstera = client.get(f"/api/v1/species/{_taxon('Monstera deliciosa').pk}").json()
+
+    assert tomato["crop"] == {
+        "steps": [
+            {"action": "sow_indoors", "after": "last_frost", "weeks": [-8, -6]},
+            {"action": "plant_out", "after": "last_frost", "weeks": [1, 3]},
+        ],
+        "harvest_days": [60, 85],
+        "note": None,
+    }
+    assert monstera["crop"] is None
 
 
 @pytest.mark.django_db

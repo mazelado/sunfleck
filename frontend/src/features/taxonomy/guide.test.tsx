@@ -152,6 +152,35 @@ describe("care guide", () => {
     );
   });
 
+  it("says when to sow, plant out and harvest a crop", async () => {
+    signInAs(gardener);
+    withReferenceData();
+    server.use(
+      http.get("*/api/v1/species/3", () =>
+        HttpResponse.json({
+          ...deliciosa,
+          crop: {
+            steps: [
+              { action: "sow_indoors", after: "last_frost", weeks: [-8, -6] },
+              { action: "plant_out", after: "last_frost", weeks: [-1, 2] },
+            ],
+            harvest_days: [60, 85],
+            note: null,
+          },
+        }),
+      ),
+    );
+
+    renderApp("/guide/species/3");
+
+    expect(await screen.findByRole("heading", { name: "Growing from seed" })).toBeVisible();
+    expect(screen.getByText("Sow indoors: 8 to 6 weeks before the last frost")).toBeVisible();
+    expect(
+      screen.getByText("Plant out: from 1 week before the last frost to 2 weeks after it"),
+    ).toBeVisible();
+    expect(screen.getByText("First harvest: 60 to 85 days after planting out")).toBeVisible();
+  });
+
   it("doesn't call a plant safe when its toxicity isn't known", async () => {
     signInAs(gardener);
     withReferenceData();

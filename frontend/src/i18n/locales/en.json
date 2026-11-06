@@ -577,6 +577,30 @@
     },
     "estimated": "Estimated when added"
   },
+  "crop": {
+    "title": "Growing from seed",
+    "lastFrost": "the last frost",
+    "firstFrost": "the first autumn frost",
+    "weekCount_one": "{{count}} week",
+    "weekCount_other": "{{count}} weeks",
+    "before": "{{from}} to {{to}} before {{frost}}",
+    "after": "{{from}} to {{to}} after {{frost}}",
+    "inTheWeeksBefore": "in the {{weeks}} before {{frost}}",
+    "inTheWeeksAfter": "in the {{weeks}} after {{frost}}",
+    "around": "from {{before}} before {{frost}} to {{after}} after it",
+    "actions": {
+      "sow_indoors": "Sow indoors",
+      "sow_outdoors": "Sow outdoors",
+      "plant_out": "Plant out"
+    },
+    "afterStep": {
+      "sow_indoors": "sowing",
+      "sow_outdoors": "sowing",
+      "plant_out": "planting out"
+    },
+    "harvest": "First harvest: {{min}} to {{max}} days after {{step}}",
+    "help": "Timed from your place's frost dates (on its page). A guide for temperate climates, like the dates on seed packets."
+  },
   "guide": {
     "title": "Care guide",
     "intro": "Typical care for groups of plants. Sunfleck starts from these and learns from each plant's history.",
