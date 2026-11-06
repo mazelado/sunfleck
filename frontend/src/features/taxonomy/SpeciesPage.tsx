@@ -7,6 +7,7 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { sentenceCase } from "../../lib/text";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { CareProfileFacts } from "./CareProfileFacts";
+import { CropTiming } from "./CropTiming";
 import { ToxicityNotice } from "./Toxicity";
 
 /** A genus or species: its names, and the care its profile suggests. */
@@ -61,6 +62,7 @@ export function SpeciesPage() {
           {data.note && <Text size="sm">{data.note}</Text>}
         </Stack>
       </Paper>
+      {data.crop && <CropTiming crop={data.crop} />}
       {data.care_profile && (
         <Paper withBorder radius="lg" p="lg">
           <Stack gap="md">

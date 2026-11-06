@@ -20,6 +20,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   width and length. Raised beds dry out sooner, so their plants are watered a little more
   often, and a bed's size gives how much water the whole bed needs ("about 20 mm: 60 L for the
   whole bed"). Exports include beds, and older exports still import.
+- **Crop timing** in the care dataset: when to sow, plant out and harvest 32 vegetables, herbs
+  and annual flowers, in weeks from the frost dates. The Care guide shows it ("Sow indoors: 8
+  to 6 weeks before the last frost"). It's a draft, written like the timings on seed packets.
 - **Frost dates** for each site: the typical last spring frost and first autumn frost, for
   sowing and planting out. The weather plugin estimates them once from 20 years of Open-Meteo's
   past weather (a new host, `archive-api.open-meteo.com`); or enter them on the site's page.

@@ -925,6 +925,90 @@
         "title": "CoverIn",
         "type": "object"
       },
+      "CropOut": {
+        "description": "When to sow, plant out and harvest, from the site's typical frost dates.",
+        "properties": {
+          "harvest_days": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days from the last step to the first harvest, fewest and most; none for flowers.",
+            "title": "Harvest Days"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/CropStepOut"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "steps",
+          "harvest_days",
+          "note"
+        ],
+        "title": "CropOut",
+        "type": "object"
+      },
+      "CropStepOut": {
+        "properties": {
+          "action": {
+            "enum": [
+              "sow_indoors",
+              "sow_outdoors",
+              "plant_out"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "after": {
+            "description": "The frost date it's timed by.",
+            "enum": [
+              "last_frost",
+              "first_frost"
+            ],
+            "title": "After",
+            "type": "string"
+          },
+          "weeks": {
+            "description": "The first and last week, from the frost date (negative is before it).",
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Weeks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "action",
+          "after",
+          "weeks"
+        ],
+        "title": "CropStepOut",
+        "type": "object"
+      },
       "Direction": {
         "enum": [
           "N",
@@ -4186,6 +4270,16 @@
             "title": "Common Names",
             "type": "array"
           },
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CropOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "family": {
             "title": "Family",
             "type": "string"
@@ -4288,6 +4382,16 @@
             },
             "title": "Common Names",
             "type": "array"
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CropOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "family": {
             "title": "Family",

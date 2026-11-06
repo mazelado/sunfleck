@@ -1714,6 +1714,40 @@ export interface components {
             photo_id: number;
         };
         /**
+         * CropOut
+         * @description When to sow, plant out and harvest, from the site's typical frost dates.
+         */
+        CropOut: {
+            /**
+             * Harvest Days
+             * @description Days from the last step to the first harvest, fewest and most; none for flowers.
+             */
+            harvest_days: number[] | null;
+            /** Note */
+            note: string | null;
+            /** Steps */
+            steps: components["schemas"]["CropStepOut"][];
+        };
+        /** CropStepOut */
+        CropStepOut: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "sow_indoors" | "sow_outdoors" | "plant_out";
+            /**
+             * After
+             * @description The frost date it's timed by.
+             * @enum {string}
+             */
+            after: "last_frost" | "first_frost";
+            /**
+             * Weeks
+             * @description The first and last week, from the frost date (negative is before it).
+             */
+            weeks: number[];
+        };
+        /**
          * Direction
          * @enum {string}
          */
@@ -2867,6 +2901,7 @@ export interface components {
             common_name: string | null;
             /** Common Names */
             common_names: string[];
+            crop?: components["schemas"]["CropOut"] | null;
             /** Family */
             family: string;
             /** Id */
@@ -2898,6 +2933,7 @@ export interface components {
             common_name: string | null;
             /** Common Names */
             common_names: string[];
+            crop?: components["schemas"]["CropOut"] | null;
             /** Family */
             family: string;
             /** Id */

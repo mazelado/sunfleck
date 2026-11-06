@@ -66,6 +66,26 @@ def test_toxicity_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> 
 
 
 @pytest.mark.django_db
+def test_crop_timing_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> None:
+    sow = {"steps": [{"action": "sow_outdoors", "after": "last_frost", "weeks": [0, 4]}]}
+
+    def change(genera: list[dict[str, Any]]) -> None:
+        zinnia = next(entry for entry in genera if entry["genus"] == "Zinnia")
+        zinnia["species"] = [{"name": "Zinnia elegans"}]
+        zinnia["crop"] = sow
+
+    _edit_genera(dataset_copy, change)
+    _set_version(dataset_copy, "2099.1.0")
+    load_care_data(dataset_copy)
+
+    assert Taxon.objects.get(scientific_name="Zinnia elegans").crop == sow
+    # In the real dataset: tomatoes are sown indoors, then planted out.
+    tomato = Taxon.objects.get(scientific_name="Solanum lycopersicum").crop
+    assert [step["action"] for step in tomato["steps"]] == ["sow_indoors", "plant_out"]
+    assert Taxon.objects.get(scientific_name="Monstera deliciosa").crop == {}
+
+
+@pytest.mark.django_db
 def test_the_same_version_is_not_loaded_twice(dataset_copy: Path) -> None:
     result = load_care_data(dataset_copy)
 

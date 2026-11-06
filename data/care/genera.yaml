@@ -1473,6 +1473,15 @@ genera:
       en:
       - basil
       - sweet basil
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-6, -4]
+      - action: plant_out
+        after: last_frost
+        weeks: [1, 3]
+      harvest_days: [30, 60]
 - genus: Petroselinum
   family: Apiaceae
   archetype: leafy_herb
@@ -1484,6 +1493,12 @@ genera:
     common_names:
       en:
       - parsley
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-2, 6]
+      harvest_days: [70, 90]
 - genus: Coriandrum
   family: Apiaceae
   archetype: leafy_herb
@@ -1497,6 +1512,12 @@ genera:
       en:
       - coriander
       - cilantro
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [0, 8]
+      harvest_days: [40, 60]
 - genus: Mentha
   family: Lamiaceae
   archetype: leafy_herb
@@ -1523,6 +1544,12 @@ genera:
     common_names:
       en:
       - dill
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [0, 6]
+      harvest_days: [40, 60]
 - genus: Solanum
   family: Solanaceae
   archetype: fruiting_vegetable
@@ -1534,16 +1561,40 @@ genera:
     common_names:
       en:
       - tomato
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-8, -6]
+      - action: plant_out
+        after: last_frost
+        weeks: [1, 3]
+      harvest_days: [60, 85]
   - name: Solanum melongena
     common_names:
       en:
       - aubergine
       - eggplant
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-10, -8]
+      - action: plant_out
+        after: last_frost
+        weeks: [2, 4]
+      harvest_days: [70, 90]
   - name: Solanum tuberosum
     common_names:
       en:
       - potato
     archetype: root_vegetable
+    crop:
+      steps:
+      - action: plant_out
+        after: last_frost
+        weeks: [-4, -1]
+      harvest_days: [90, 120]
 - genus: Capsicum
   family: Solanaceae
   archetype: fruiting_vegetable
@@ -1558,6 +1609,15 @@ genera:
       - sweet pepper
       - bell pepper
       - chili pepper
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-10, -8]
+      - action: plant_out
+        after: last_frost
+        weeks: [2, 4]
+      harvest_days: [60, 90]
 - genus: Cucumis
   family: Cucurbitaceae
   archetype: fruiting_vegetable
@@ -1570,10 +1630,28 @@ genera:
     common_names:
       en:
       - cucumber
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-4, -3]
+      - action: plant_out
+        after: last_frost
+        weeks: [2, 3]
+      harvest_days: [45, 60]
   - name: Cucumis melo
     common_names:
       en:
       - melon
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-4, -3]
+      - action: plant_out
+        after: last_frost
+        weeks: [2, 4]
+      harvest_days: [70, 90]
 - genus: Cucurbita
   family: Cucurbitaceae
   archetype: fruiting_vegetable
@@ -1588,6 +1666,15 @@ genera:
       - courgette
       - zucchini
       - pumpkin
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-4, -3]
+      - action: plant_out
+        after: last_frost
+        weeks: [1, 3]
+      harvest_days: [45, 60]
 - genus: Phaseolus
   family: Fabaceae
   archetype: fruiting_vegetable
@@ -1600,10 +1687,22 @@ genera:
       en:
       - French bean
       - green bean
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [1, 8]
+      harvest_days: [55, 70]
   - name: Phaseolus coccineus
     common_names:
       en:
       - runner bean
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [1, 5]
+      harvest_days: [70, 90]
 - genus: Pisum
   family: Fabaceae
   archetype: fruiting_vegetable
@@ -1616,6 +1715,12 @@ genera:
       en:
       - pea
       - garden pea
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-6, 2]
+      harvest_days: [60, 80]
 - genus: Fragaria
   family: Rosaceae
   archetype: fruiting_vegetable
@@ -1638,6 +1743,12 @@ genera:
     common_names:
       en:
       - lettuce
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-4, 12]
+      harvest_days: [45, 65]
 - genus: Spinacia
   family: Amaranthaceae
   archetype: leafy_vegetable
@@ -1649,6 +1760,12 @@ genera:
     common_names:
       en:
       - spinach
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-6, -2]
+      harvest_days: [40, 50]
 - genus: Brassica
   family: Brassicaceae
   archetype: leafy_vegetable
@@ -1663,6 +1780,15 @@ genera:
       - cabbage
       - kale
       - broccoli
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-8, -6]
+      - action: plant_out
+        after: last_frost
+        weeks: [-3, 0]
+      harvest_days: [60, 90]
 - genus: Eruca
   family: Brassicaceae
   archetype: leafy_vegetable
@@ -1676,6 +1802,12 @@ genera:
       en:
       - rocket
       - arugula
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-4, 8]
+      harvest_days: [30, 40]
 - genus: Daucus
   family: Apiaceae
   archetype: root_vegetable
@@ -1687,6 +1819,12 @@ genera:
     common_names:
       en:
       - carrot
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-3, 8]
+      harvest_days: [70, 80]
 - genus: Raphanus
   family: Brassicaceae
   archetype: root_vegetable
@@ -1698,6 +1836,12 @@ genera:
     common_names:
       en:
       - radish
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-4, 8]
+      harvest_days: [25, 30]
 - genus: Beta
   family: Amaranthaceae
   archetype: root_vegetable
@@ -1712,6 +1856,12 @@ genera:
       - beetroot
       - chard
       - beet
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [-2, 8]
+      harvest_days: [55, 70]
 - genus: Citrus
   family: Rutaceae
   archetype: citrus
@@ -1943,6 +2093,14 @@ genera:
   common_names:
     en:
     - petunia
+  crop:
+    steps:
+    - action: sow_indoors
+      after: last_frost
+      weeks: [-12, -10]
+    - action: plant_out
+      after: last_frost
+      weeks: [1, 2]
 - genus: Tagetes
   family: Asteraceae
   archetype: bedding_annual
@@ -1954,6 +2112,14 @@ genera:
     common_names:
       en:
       - French marigold
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-8, -6]
+      - action: plant_out
+        after: last_frost
+        weeks: [1, 2]
 - genus: Impatiens
   family: Balsaminaceae
   archetype: bedding_annual
@@ -1966,6 +2132,14 @@ genera:
     common_names:
       en:
       - busy Lizzie
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-12, -10]
+      - action: plant_out
+        after: last_frost
+        weeks: [2, 3]
 - genus: Pelargonium
   family: Geraniaceae
   archetype: bedding_annual
@@ -1979,6 +2153,14 @@ genera:
   common_names:
     en:
     - lobelia
+  crop:
+    steps:
+    - action: sow_indoors
+      after: last_frost
+      weeks: [-12, -10]
+    - action: plant_out
+      after: last_frost
+      weeks: [1, 2]
 - genus: Calibrachoa
   family: Solanaceae
   archetype: bedding_annual
@@ -1996,18 +2178,39 @@ genera:
     common_names:
       en:
       - nasturtium
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [1, 4]
 - genus: Zinnia
   family: Asteraceae
   archetype: bedding_annual
   common_names:
     en:
     - zinnia
+  crop:
+    steps:
+    - action: sow_indoors
+      after: last_frost
+      weeks: [-6, -4]
+    - action: plant_out
+      after: last_frost
+      weeks: [1, 3]
 - genus: Cosmos
   family: Asteraceae
   archetype: bedding_annual
   common_names:
     en:
     - cosmos
+  crop:
+    steps:
+    - action: sow_indoors
+      after: last_frost
+      weeks: [-6, -4]
+    - action: plant_out
+      after: last_frost
+      weeks: [1, 2]
 - genus: Helianthus
   family: Asteraceae
   archetype: bedding_annual
@@ -2019,6 +2222,11 @@ genera:
     common_names:
       en:
       - sunflower
+    crop:
+      steps:
+      - action: sow_outdoors
+        after: last_frost
+        weeks: [0, 4]
 - genus: Tulipa
   family: Liliaceae
   archetype: spring_bulb
@@ -2066,13 +2274,34 @@ genera:
       en:
       - chives
     archetype: leafy_herb
+    crop:
+      steps:
+      - action: sow_indoors
+        after: last_frost
+        weeks: [-8, -6]
+      - action: plant_out
+        after: last_frost
+        weeks: [-2, 2]
+      harvest_days: [60, 90]
   - name: Allium cepa
     common_names:
       en:
       - onion
     archetype: root_vegetable
+    crop:
+      steps:
+      - action: plant_out
+        after: last_frost
+        weeks: [-4, -1]
+      harvest_days: [100, 140]
   - name: Allium sativum
     common_names:
       en:
       - garlic
     archetype: root_vegetable
+    crop:
+      steps:
+      - action: plant_out
+        after: first_frost
+        weeks: [-6, -2]
+      harvest_days: [240, 270]

@@ -111,6 +111,27 @@ class ToxicityOut(Schema):
     note: str | None
 
 
+class CropStepOut(Schema):
+    action: Literal["sow_indoors", "sow_outdoors", "plant_out"]
+    after: Literal["last_frost", "first_frost"] = Field(description="The frost date it's timed by.")
+    weeks: list[int] = Field(
+        description="The first and last week, from the frost date (negative is before it).",
+        min_length=2,
+        max_length=2,
+    )
+
+
+class CropOut(Schema):
+    """When to sow, plant out and harvest, from the site's typical frost dates."""
+
+    steps: list[CropStepOut]
+    harvest_days: list[int] | None = Field(
+        description="Days from the last step to the first harvest, fewest and most; none for "
+        "flowers.",
+    )
+    note: str | None
+
+
 class SpeciesOut(Schema):
     id: int
     scientific_name: str
@@ -122,6 +143,7 @@ class SpeciesOut(Schema):
     note: str | None
     care_profile: CareProfileRef | None
     toxicity: ToxicityOut | None = None
+    crop: CropOut | None = None
 
 
 class SpeciesHitOut(SpeciesOut):
@@ -207,6 +229,22 @@ def species_out(taxon: Taxon, lang: str) -> SpeciesOut:
         note=translated(taxon.note, lang) or None,
         care_profile=care_profile_ref(taxon.archetype, lang),
         toxicity=toxicity_out(taxon, lang),
+        crop=crop_out(taxon, lang),
+    )
+
+
+def crop_out(taxon: Taxon, lang: str) -> CropOut | None:
+    crop = taxon.crop
+    if not crop:
+        return None
+    harvest = crop.get("harvest_days")
+    return CropOut(
+        steps=[
+            CropStepOut(action=step["action"], after=step["after"], weeks=list(step["weeks"]))
+            for step in crop["steps"]
+        ],
+        harvest_days=list(harvest) if harvest else None,
+        note=translated(crop.get("note", {}), lang) or None,
     )
 
 

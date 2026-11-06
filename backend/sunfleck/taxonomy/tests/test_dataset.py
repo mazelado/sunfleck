@@ -138,6 +138,28 @@ def _set(path: list[str], value: Any) -> Callable[[Any], None]:
             "'sources' is a required property",
         ),
         (
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(
+                    crop={
+                        "steps": [
+                            {"action": "sow_outdoors", "after": "last_frost", "weeks": [4, 2]}
+                        ]
+                    }
+                ),
+            ),
+            "Monstera: crop step sow_outdoors: weeks must be in order",
+        ),
+        (
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(
+                    crop={"steps": [{"action": "prune", "after": "last_frost", "weeks": [1, 2]}]}
+                ),
+            ),
+            "'prune' is not one of",
+        ),
+        (
             lambda root: _edit_yaml(root / "dataset.yaml", _set(["version"], "latest")),
             "dataset.yaml: version must look like 2026.10.0",
         ),

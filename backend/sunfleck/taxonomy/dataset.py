@@ -134,13 +134,30 @@ def _check_genera(genera: list[dict[str, Any]], archetypes: set[str]) -> list[st
         ]:
             if key not in archetypes:
                 problems.append(f"{genus}: unknown care profile {key!r}")
+        problems += _check_crop(genus, entry.get("crop"))
         for species in entry.get("species", []):
             name = species["name"]
             claim(name, f"species of {genus}")
+            problems += _check_crop(name, species.get("crop"))
             if name.split(" ")[0] != genus:
                 problems.append(f"{name} doesn't belong to the genus {genus}")
             for synonym in species.get("synonyms", []):
                 claim(synonym, f"synonym of {name}")
+    return problems
+
+
+def _check_crop(name: str, crop: dict[str, Any] | None) -> list[str]:
+    """Each step's weeks in order, and the harvest's days too."""
+    if not crop:
+        return []
+    problems = []
+    for step in crop["steps"]:
+        first, last = step["weeks"]
+        if first > last:
+            problems.append(f"{name}: crop step {step['action']}: weeks must be in order")
+    harvest = crop.get("harvest_days")
+    if harvest and harvest[0] > harvest[1]:
+        problems.append(f"{name}: crop harvest_days must be in order")
     return problems
 
 

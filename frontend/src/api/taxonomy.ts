@@ -5,6 +5,8 @@ import type { components } from "./schema";
 
 export type SpeciesHit = components["schemas"]["SpeciesHitOut"];
 export type Species = components["schemas"]["SpeciesOut"];
+export type Crop = components["schemas"]["CropOut"];
+export type CropStep = components["schemas"]["CropStepOut"];
 export type CareProfile = components["schemas"]["CareProfileOut"];
 export type CareProfileSummary = components["schemas"]["CareProfileSummaryOut"];
 
