@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Badge,
   Box,
   Button,
@@ -162,6 +163,9 @@ export function PlantsPage() {
               </Button>
             </Center>
           )}
+          <Anchor component={Link} to="/plants/labels" size="sm">
+            {t("labels.printQr")}
+          </Anchor>
         </>
       )}
     </Stack>

@@ -1,0 +1,47 @@
+/* Printing the labels page prints only its sheet of labels, without the app around it. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .label-sheet,
+  .label-sheet * {
+    visibility: visible;
+  }
+
+  .label-sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+  }
+}
+
+.label-sheet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4mm;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1mm;
+  padding: 2mm;
+  border: 0.2mm dashed #999;
+  background: #fff;
+  color: #000;
+  text-align: center;
+  break-inside: avoid;
+}
+
+.label-name {
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.label-species {
+  font-style: italic;
+  line-height: 1.15;
+}

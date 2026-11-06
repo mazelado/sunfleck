@@ -45,6 +45,10 @@ export const routes: RouteObject[] = [
                 ...page(() => import("./features/plants/PlantsPage"), "PlantsPage"),
               },
               {
+                path: "/plants/labels",
+                ...page(() => import("./features/labels/LabelsPage"), "LabelsPage"),
+              },
+              {
                 path: "/plants/new",
                 ...page(() => import("./features/plants/PlantFormPage"), "PlantFormPage"),
               },

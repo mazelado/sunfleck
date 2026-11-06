@@ -704,6 +704,53 @@ describe("plant page", () => {
     expect(sent).toEqual({ method: "cutting", count: 2, nickname: "", location_id: 10 });
   });
 
+  it("has a QR label to print, and writes NFC tags where the browser can", async () => {
+    signInAs(viewer);
+    withPlant(plant());
+    const write = vi.fn().mockResolvedValue(undefined);
+    // Web NFC, as in Chrome on Android.
+    window.NDEFReader = class {
+      write = write;
+    };
+    try {
+      const { user } = renderApp("/plants/7");
+
+      expect(await screen.findByRole("img", { name: "QR code for Monty" })).toBeVisible();
+      expect(screen.getByRole("link", { name: "Print a label" })).toHaveAttribute(
+        "href",
+        "/plants/labels?plant=7",
+      );
+      await user.click(screen.getByRole("button", { name: "Write to an NFC tag" }));
+
+      expect(await screen.findByText("The tag now opens Monty.")).toBeVisible();
+      expect(write).toHaveBeenCalledWith({
+        records: [{ recordType: "url", data: "http://localhost:3000/plants/7" }],
+      });
+    } finally {
+      delete window.NDEFReader;
+    }
+  });
+
+  it("says when an NFC tag couldn't be written, and has no button without Web NFC", async () => {
+    signInAs(viewer);
+    withPlant(plant());
+    window.NDEFReader = class {
+      write = vi.fn().mockRejectedValue(new DOMException("Permission denied", "NotAllowedError"));
+    };
+    try {
+      const { user, unmount } = renderApp("/plants/7");
+      await user.click(await screen.findByRole("button", { name: "Write to an NFC tag" }));
+      expect(await screen.findByText(/The tag couldn't be written/)).toBeVisible();
+      unmount();
+    } finally {
+      delete window.NDEFReader;
+    }
+
+    renderApp("/plants/7");
+    expect(await screen.findByRole("img", { name: "QR code for Monty" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Write to an NFC tag" })).not.toBeInTheDocument();
+  });
+
   it("shows where a plant came from and what was grown from it", async () => {
     signInAs(viewer);
     withPlant(

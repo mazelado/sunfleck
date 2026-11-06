@@ -20,6 +20,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   lights. They're marked with the new **Propagating** status, watered but not fertilized
   until they've taken. Each plant shows the one it was grown from, and the plants grown from
   it. Exports include this, and older exports still import.
+- **QR and NFC labels**: each plant's page shows a QR code that opens it. **Print QR labels**
+  prints a sheet of them, for all plants, one location's or chosen ones, in three sizes. On
+  Chrome for Android, **Write to an NFC tag** writes the plant's address to a tag. Labels use
+  `SUNFLECK_PUBLIC_URL` when it's set.
 - **Add a care type while logging care or adding a schedule** (#121): **Add a care type**
   under the care type opens the same dialog as Settings → Care types, and the new type is
   chosen, without losing what you've typed.

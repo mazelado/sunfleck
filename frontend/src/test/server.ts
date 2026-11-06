@@ -38,6 +38,17 @@ export const server = setupServer(
   ),
   // Only its humidity estimate is read from here; the rest comes with the sites.
   http.get("*/api/v1/locations/:id", () => HttpResponse.json({ humidity_estimate: null })),
+  // The plant page's label asks for the public address: none set, unless a test says so.
+  http.get("*/api/v1/about", () =>
+    HttpResponse.json({
+      version: "0.8.0",
+      release_name: "Hibiscus",
+      care_dataset: null,
+      source_url: "https://github.com/mazelado/sunfleck",
+      release_notes_url: "https://github.com/mazelado/sunfleck/releases/tag/v0.8.0",
+      public_url: null,
+    }),
+  ),
   // Nothing known about the light, unless a test says otherwise.
   http.get("*/api/v1/plants/:id/light", () => HttpResponse.json(null)),
   http.get("*/api/v1/locations/:id/light", () => HttpResponse.json([])),

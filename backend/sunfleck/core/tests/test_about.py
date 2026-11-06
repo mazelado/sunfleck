@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 import pytest
 from django.test import Client
+from pytest_django.fixtures import Settings
 
 from sunfleck import __version__
 from sunfleck.accounts.models import Role
@@ -23,6 +24,18 @@ def test_about_shows_the_version_and_where_the_source_is(client_as: ClientAs) ->
     assert data["care_dataset"] == "2026.10.0"
     assert data["source_url"].startswith("https://")
     assert data["release_notes_url"].endswith(f"/releases/tag/v{__version__}")
+    assert data["public_url"] is None
+
+
+@pytest.mark.django_db
+def test_about_gives_the_public_address_when_its_set(
+    client_as: ClientAs, settings: Settings
+) -> None:
+    settings.PUBLIC_URL = "https://plants.example.com"
+
+    data = client_as(Role.VIEWER).get("/api/v1/about").json()
+
+    assert data["public_url"] == "https://plants.example.com"
 
 
 @pytest.mark.django_db
