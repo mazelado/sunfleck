@@ -1,9 +1,6 @@
 import {
-  Box,
   Center,
-  Group,
   Paper,
-  Progress,
   RingProgress,
   SimpleGrid,
   Stack,
@@ -33,9 +30,9 @@ interface Bar {
 }
 
 /**
- * Water, fertilizer and light at a glance: rings on a plant's page, slim bars on a plant's card
- * (`compact`). The rings and bars are only a picture: the same is said in words, shown under
- * the rings, or for screen readers only on a card.
+ * Water, fertilizer and light at a glance, as rings: with words under them on a plant's page,
+ * and small, spread across a plant's card (`compact`). The rings are only a picture: the
+ * same is said in words, shown on the page, or for screen readers only on a card.
  */
 export function CareGlance({ glance, compact = false }: { glance: Glance; compact?: boolean }) {
   const { t, i18n } = useTranslation();
@@ -73,19 +70,26 @@ export function CareGlance({ glance, compact = false }: { glance: Glance; compac
     );
   }
   return (
-    <Stack gap={4}>
+    <SimpleGrid cols={bars.length} spacing={4}>
       {bars.map((bar) => (
-        <Stack key={bar.key} gap={2}>
-          <Group gap={6} wrap="nowrap" aria-hidden>
-            <bar.icon size={14} color={bar.iconColor} />
-            <Box style={{ flex: 1 }}>
-              <Progress value={bar.value} color={bar.color} size={4} radius="xl" />
-            </Box>
-          </Group>
+        <Center key={bar.key}>
+          <RingProgress
+            aria-hidden
+            size={36}
+            thickness={4}
+            roundCaps
+            rootColor="var(--sunfleck-track)"
+            sections={[{ value: bar.value, color: bar.color }]}
+            label={
+              <Center>
+                <bar.icon size={14} color={bar.iconColor} />
+              </Center>
+            }
+          />
           <VisuallyHidden>{bar.text}</VisuallyHidden>
-        </Stack>
+        </Center>
       ))}
-    </Stack>
+    </SimpleGrid>
   );
 }
 

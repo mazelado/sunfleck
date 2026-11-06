@@ -644,6 +644,7 @@
     "photos": "Photos",
     "noPhotos": "No photos yet.",
     "addPhoto": "Add a photo",
+    "addPhotoOf": "Add a photo of {{name}}",
     "uploading": "Uploading…",
     "photoAdded": "Photo added.",
     "photoOf": "Photo of {{name}}",

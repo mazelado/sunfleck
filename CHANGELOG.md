@@ -40,6 +40,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   page no longer shows its coordinates (only its time zone, when it isn't your device's).
 - **Gentle motion**: cards rise into place as a page opens, and done buttons give a little
   when tapped. None of it shows if your device is set to reduce motion.
+- **Plant cards show care as small rings**, like a plant's page, instead of thin bars.
+- **Add a photo from the top of a plant's page**: a camera button on the cover photo, or
+  **Add a photo** over the placeholder of a plant without one. The Photos card keeps its
+  button too.
 
 ### Fixed
 
