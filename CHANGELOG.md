@@ -24,6 +24,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   prints a sheet of them, for all plants, one location's or chosen ones, in three sizes. On
   Chrome for Android, **Write to an NFC tag** writes the plant's address to a tag. Labels use
   `SUNFLECK_PUBLIC_URL` when it's set.
+- **A wishlist** of plants you'd like to have, with where to get them and notes; add one from
+  the Plants page or a species' page in the Care guide. **Got it** opens the plant form filled
+  in, and saving the plant takes it off the list. Exports include it.
 - **Add a care type while logging care or adding a schedule** (#121): **Add a care type**
   under the care type opens the same dialog as Settings → Care types, and the new type is
   chosen, without losing what you've typed.
@@ -42,6 +45,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 ### Fixed
 
 - **Screen readers announce the loading spinners** ("Loading…", "Loading map…").
+- **A seeds card's Edit button** isn't cut off by long notes on a phone.
 
 ## [0.7.0] - 2026-11-06
 

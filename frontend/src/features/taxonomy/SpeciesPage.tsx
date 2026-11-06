@@ -1,8 +1,12 @@
 import { Anchor, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconHeart } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
 import { useCareProfile, useSpecies } from "../../api/taxonomy";
+import { useSaveWish } from "../../api/wishlist";
+import { useCanEdit } from "../../lib/useCanEdit";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { sentenceCase } from "../../lib/text";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -15,6 +19,8 @@ export function SpeciesPage() {
   const { t } = useTranslation();
   const species = useSpecies(Number(useParams().taxonId));
   const profile = useCareProfile(species.data?.care_profile?.key ?? null);
+  const canEdit = useCanEdit();
+  const saveWish = useSaveWish();
 
   if (species.isPending) {
     return <FullPageLoader />;
@@ -48,6 +54,28 @@ export function SpeciesPage() {
           </Text>
         )}
       </Stack>
+      {canEdit && (
+        <Button
+          variant="light"
+          leftSection={<IconHeart size={16} />}
+          loading={saveWish.isPending}
+          style={{ alignSelf: "flex-start" }}
+          onClick={() => {
+            const name = data.common_name ? sentenceCase(data.common_name) : data.scientific_name;
+            saveWish.mutate(
+              { body: { name, taxon_id: data.id, link: "", notes: "" } },
+              {
+                onSuccess: () => {
+                  notifications.show({ message: t("wishlist.added", { name }) });
+                },
+              },
+            );
+          }}
+        >
+          {t("wishlist.addToWishlist")}
+        </Button>
+      )}
+      <ErrorAlert error={saveWish.error} />
       <ToxicityNotice toxicity={data.toxicity} showUnknown />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="xs">

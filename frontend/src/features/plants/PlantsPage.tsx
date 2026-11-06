@@ -16,7 +16,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconPlus, IconSearch, IconSeeding } from "@tabler/icons-react";
+import { IconHeart, IconPlus, IconSearch, IconSeeding } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
@@ -68,6 +68,14 @@ export function PlantsPage() {
             leftSection={<IconSeeding size={16} />}
           >
             {t("seeds.title")}
+          </Button>
+          <Button
+            component={Link}
+            to="/plants/wishlist"
+            variant="default"
+            leftSection={<IconHeart size={16} />}
+          >
+            {t("wishlist.title")}
           </Button>
           {canEdit && (
             <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>

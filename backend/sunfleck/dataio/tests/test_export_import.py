@@ -23,7 +23,7 @@ from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.notifications import services as notification_services
 from sunfleck.places.models import LightSource, Location, LocationKind, Site
 from sunfleck.plants import services as plant_services
-from sunfleck.plants.models import Photo, Plant, PlantLight
+from sunfleck.plants.models import Photo, Plant, PlantLight, Wish
 from sunfleck.plants.tests.factories import image_bytes
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareArchetype, Taxon
@@ -153,6 +153,13 @@ def filled(household: Household, ada: Membership) -> Household:
         quantity="about 20",
         sow_by=2028,
         notes="From Ana",
+    )
+    Wish.objects.create(
+        household=household,
+        taxon=Taxon.objects.get(scientific_name="Monstera deliciosa"),
+        name="Variegated monstera",
+        link="https://plants.example.com/monstera",
+        notes="Half-moon, not Thai Constellation",
     )
     return household
 
@@ -326,6 +333,15 @@ def test_exports_from_before_seeds_import(filled: Household) -> None:
     importer.import_into(target, io.BytesIO(data))
 
     assert not SeedPacket.objects.filter(household=target).exists()
+
+
+def test_exports_from_before_the_wishlist_import(filled: Household) -> None:
+    target = new_household()
+    data = rewrite(export_bytes(filled), lambda exported: exported.pop("wishlist"))
+
+    importer.import_into(target, io.BytesIO(data))
+
+    assert not Wish.objects.filter(household=target).exists()
 
 
 def test_exports_from_before_routines_import(filled: Household) -> None:

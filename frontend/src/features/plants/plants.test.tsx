@@ -304,6 +304,7 @@ describe("plant form", () => {
       // When it was last cared for: watered a few days ago; fertilized, not known.
       last_watered_days_ago: 3,
       last_fertilized_days_ago: null,
+      from_wish_id: null,
     });
   });
 
@@ -361,6 +362,44 @@ describe("plant form", () => {
       location_id: 11,
       light_sources: [{ light_source_id: 3, distance_cm: null }],
     });
+  });
+
+  it("adds a plant from the wishlist, which takes it off the list", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    let sent: Record<string, unknown> = {};
+    server.use(
+      http.get("*/api/v1/wishlist", () =>
+        HttpResponse.json([
+          {
+            id: 4,
+            name: "Variegated monstera",
+            species: { id: 3, scientific_name: "Monstera deliciosa", common_name: null },
+            link: "",
+            notes: "",
+            created_at: "2026-11-01T10:00:00Z",
+          },
+        ]),
+      ),
+      http.post("*/api/v1/plants", async ({ request }) => {
+        sent = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(plant(), { status: 201 });
+      }),
+    );
+    withPlant(plant());
+    const { user } = renderApp("/plants/new?wish=4");
+
+    expect(
+      await screen.findByText(
+        "From your wishlist: when you save it, Variegated monstera comes off the list.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByLabelText(/^Name/)).toHaveValue("Variegated monstera");
+    expect(screen.getByRole("combobox", { name: /^Species/ })).toHaveValue("Monstera deliciosa");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(sent).toMatchObject({ nickname: "Variegated monstera", taxon_id: 3, from_wish_id: 4 });
   });
 
   it("adds a place and its first location from the form when there are none yet", async () => {

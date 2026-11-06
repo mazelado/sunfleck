@@ -16,7 +16,7 @@ from sunfleck.care.models import CareEvent, CareSchedule, CareType
 from sunfleck.dataio import schema
 from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import Site
-from sunfleck.plants.models import Photo, Plant
+from sunfleck.plants.models import Photo, Plant, Wish
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareDataset
 
@@ -205,6 +205,15 @@ def build(household: Household) -> schema.Export:
                 notes=packet.notes,
             )
             for packet in SeedPacket.objects.filter(household=household).select_related("taxon")
+        ],
+        wishlist=[
+            schema.Wish(
+                name=wish.name,
+                species=wish.taxon.scientific_name if wish.taxon else None,
+                link=wish.link,
+                notes=wish.notes,
+            )
+            for wish in Wish.objects.filter(household=household).select_related("taxon")
         ],
         plugins=[
             schema.PluginSettings(

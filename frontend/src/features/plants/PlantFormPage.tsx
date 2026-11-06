@@ -1,4 +1,5 @@
 import {
+  Alert,
   Anchor,
   Button,
   Checkbox,
@@ -16,13 +17,14 @@ import {
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconBulb, IconPhoto, IconPlus, IconWindow } from "@tabler/icons-react";
+import { IconBulb, IconHeart, IconPhoto, IconPlus, IconWindow } from "@tabler/icons-react";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
 
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { type Location, type Site, useSites } from "../../api/places";
+import { useInvalidateWishlist, useWishlist, type Wish } from "../../api/wishlist";
 import {
   CONTAINER_MATERIALS,
   type ContainerMaterial,
@@ -55,24 +57,42 @@ import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
 import { SuggestCareProfile } from "./SuggestCareProfile";
 
-/** Add a plant (`/plants/new`, optionally `?location=<id>`) or edit one (`/plants/:id/edit`). */
+/**
+ * Add a plant (`/plants/new`, optionally `?location=<id>`, or `?wish=<id>` for one from the
+ * wishlist) or edit one (`/plants/:id/edit`).
+ */
 export function PlantFormPage() {
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const plantId = params.plantId ? Number(params.plantId) : null;
+  const wishId =
+    plantId === null && searchParams.get("wish") ? Number(searchParams.get("wish")) : null;
   const plant = usePlant(plantId);
   const sites = useSites();
+  const wishlist = useWishlist(wishId !== null);
   const canEdit = useCanEdit();
 
   if (!canEdit) {
     return <Navigate to={plantId ? `/plants/${String(plantId)}` : "/plants"} replace />;
   }
-  if (sites.isPending || (plantId !== null && plant.isPending)) {
+  if (
+    sites.isPending ||
+    (plantId !== null && plant.isPending) ||
+    (wishId !== null && wishlist.isPending)
+  ) {
     return <FullPageLoader />;
   }
   if (plantId !== null && !plant.data) {
     return <ErrorAlert error={plant.error ?? new Error("not found")} />;
   }
-  return <PlantForm sites={sites.data ?? []} plant={plantId !== null ? plant.data : undefined} />;
+  return (
+    <PlantForm
+      sites={sites.data ?? []}
+      plant={plantId !== null ? plant.data : undefined}
+      // Gone if someone else got it meanwhile: then it's an ordinary new plant.
+      wish={wishlist.data?.find((each) => each.id === wishId)}
+    />
+  );
 }
 
 interface LightChoice {
@@ -125,7 +145,7 @@ function initialLights(plant: Plant | undefined, units: UnitSystem): Record<stri
   return lights;
 }
 
-function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
+function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?: Wish }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -135,6 +155,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
   const createPlant = useCreatePlant();
   const updatePlant = useUpdatePlant(plant?.id ?? 0);
   const deletePlant = useDeletePlant();
+  const invalidateWishlist = useInvalidateWishlist();
   const save = plant ? updatePlant : createPlant;
   const backPath = plant ? `/plants/${String(plant.id)}` : "/plants";
   const locations = sites.flatMap((site) => site.locations);
@@ -142,7 +163,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
   const potHelpId = useId();
   const form = useForm<PlantFormValues>({
     initialValues: {
-      nickname: plant?.nickname ?? "",
+      nickname: plant?.nickname ?? wish?.name ?? "",
       locationId: plant
         ? plant.location
           ? String(plant.location.id)
@@ -159,7 +180,7 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
       acquiredOn: plant?.acquired_on ?? "",
       notes: plant?.notes ?? "",
       photo: null,
-      species: plant?.species ?? null,
+      species: plant?.species ?? wish?.species ?? null,
       careProfileKey: plant?.care_profile?.chosen ? plant.care_profile.key : null,
       lastWatered: "",
       lastFertilized: "",
@@ -220,7 +241,9 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
             ...body,
             last_watered_days_ago: daysAgo(formValues.lastWatered),
             last_fertilized_days_ago: daysAgo(formValues.lastFertilized),
+            from_wish_id: wish?.id ?? null,
           });
+      if (wish) void invalidateWishlist();
     } catch (error) {
       applyFieldErrors(form, error, {
         location_id: "locationId",
@@ -258,6 +281,11 @@ function PlantForm({ sites, plant }: { sites: Site[]; plant?: Plant }) {
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <ErrorAlert error={save.error} />
+            {wish && (
+              <Alert variant="light" icon={<IconHeart />}>
+                {t("wishlist.fromWishlist", { name: wish.name })}
+              </Alert>
+            )}
             {!plant && (
               <>
                 <FileInput

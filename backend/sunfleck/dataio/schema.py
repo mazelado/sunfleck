@@ -178,6 +178,13 @@ class Seed(Model):
     notes: str
 
 
+class Wish(Model):
+    name: str
+    species: str | None = Field(description="Scientific name")
+    link: str
+    notes: str
+
+
 class Export(Model):
     format: Literal["sunfleck-export"]
     format_version: int
@@ -191,4 +198,6 @@ class Export(Model):
     plants: list[Plant] = Field(default_factory=list)
     # Added in 0.7.
     seeds: list[Seed] = Field(default_factory=list)
+    # Added in 0.8.
+    wishlist: list[Wish] = Field(default_factory=list)
     plugins: list[PluginSettings] = Field(default_factory=list)

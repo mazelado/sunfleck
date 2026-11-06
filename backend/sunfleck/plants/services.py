@@ -26,6 +26,7 @@ from sunfleck.plants.models import (
     PlantStatus,
     PropagationMethod,
     SoilType,
+    Wish,
 )
 from sunfleck.plugins.registry import registry
 from sunfleck.taxonomy.models import CareArchetype, Taxon
@@ -360,3 +361,29 @@ def set_cover_photo(plant: Plant, photo_id: int) -> Plant:
     plant.cover_photo = photo
     plant.save(update_fields=["cover_photo", "updated_at"])
     return plant
+
+
+# --- The wishlist -----------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class WishData:
+    name: str
+    taxon_id: int | None = None
+    link: str = ""
+    notes: str = ""
+
+
+def save_wish(household: Household, wish: Wish | None, data: WishData) -> Wish:
+    """Add a plant to the wishlist, or change one on it.
+
+    Raises:
+        PlantsError: If the species isn't in the list.
+    """
+    wish = wish or Wish(household=household)
+    wish.name = data.name.strip()
+    wish.taxon = _taxon(data.taxon_id)
+    wish.link = data.link.strip()
+    wish.notes = data.notes.strip()
+    wish.save()
+    return wish

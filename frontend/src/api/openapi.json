@@ -2762,6 +2762,18 @@
               }
             ]
           },
+          "from_wish_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The wishlist entry it was on; taken off the wishlist.",
+            "title": "From Wish Id"
+          },
           "last_fertilized_days_ago": {
             "anyOf": [
               {
@@ -5515,6 +5527,92 @@
           "let_dry"
         ],
         "title": "WateringOut",
+        "type": "object"
+      },
+      "WishIn": {
+        "properties": {
+          "link": {
+            "default": "",
+            "description": "Where to get it, e.g. a shop's page.",
+            "maxLength": 500,
+            "pattern": "^(https?://\\S+)?$",
+            "title": "Link",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "taxon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its species, if known.",
+            "title": "Taxon Id"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "WishIn",
+        "type": "object"
+      },
+      "WishOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "link": {
+            "title": "Link",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlantSpeciesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "species",
+          "link",
+          "notes",
+          "created_at"
+        ],
+        "title": "WishOut",
         "type": "object"
       }
     },
@@ -9543,6 +9641,148 @@
         "summary": "Today",
         "tags": [
           "care"
+        ]
+      }
+    },
+    "/api/v1/wishlist": {
+      "get": {
+        "description": "The plants the household would like to have, by name.",
+        "operationId": "sunfleck_plants_api_list_wishlist",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/WishOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Wishlist",
+        "tags": [
+          "plants"
+        ]
+      },
+      "post": {
+        "operationId": "sunfleck_plants_api_add_wish",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WishIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WishOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Add Wish",
+        "tags": [
+          "plants"
+        ]
+      }
+    },
+    "/api/v1/wishlist/{wish_id}": {
+      "delete": {
+        "operationId": "sunfleck_plants_api_delete_wish",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wish_id",
+            "required": true,
+            "schema": {
+              "title": "Wish Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Delete Wish",
+        "tags": [
+          "plants"
+        ]
+      },
+      "put": {
+        "operationId": "sunfleck_plants_api_update_wish",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wish_id",
+            "required": true,
+            "schema": {
+              "title": "Wish Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WishIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WishOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Update Wish",
+        "tags": [
+          "plants"
         ]
       }
     }
