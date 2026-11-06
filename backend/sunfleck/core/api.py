@@ -1,9 +1,11 @@
 """Core API endpoints."""
 
+from django.conf import settings
 from django.db import DatabaseError, connection
 from django.http import HttpRequest
 from ninja import Router, Schema, Status
 from ninja.security import django_auth
+from pydantic import Field
 
 from sunfleck import __version__
 from sunfleck.taxonomy.loader import loaded_version
@@ -61,6 +63,10 @@ class AboutOut(Schema):
     care_dataset: str | None
     source_url: str
     release_notes_url: str
+    public_url: str | None = Field(
+        description="The address set as SUNFLECK_PUBLIC_URL, for links used away from the "
+        "browser (e.g. QR labels), if it's set."
+    )
 
 
 @router.get("/about", response=AboutOut, auth=django_auth)
@@ -72,4 +78,5 @@ def about(request: HttpRequest) -> AboutOut:
         care_dataset=loaded_version(),
         source_url=SOURCE_URL,
         release_notes_url=f"{SOURCE_URL}/releases/tag/v{__version__}",
+        public_url=settings.PUBLIC_URL or None,
     )

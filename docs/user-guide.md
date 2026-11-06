@@ -86,6 +86,13 @@ signing out are in the account menu (your picture at the top right).
   marked **Propagating**: watered as usual, but not fertilized until they've taken. Then set
   each one's status to Active. Each shows the plant it was grown from, and the parent lists
   them.
+- **Labels**: each plant's page shows its QR code. Scanning it with a phone opens that page
+  (after signing in). **Print a label** there, or **Print QR labels** under the plant list (or
+  on a location's page, for the plants there), prints a sheet of them in three sizes, with
+  or without the species. On Chrome for Android, **Write to an NFC tag** puts the plant's
+  address on a tag, so tapping it opens the page. Labels link to `SUNFLECK_PUBLIC_URL` if
+  it's set, else to the address you're using: print them from an address your phone can
+  reach.
 - **Moving plants**: on a location's page, **Move plants here** moves plants from elsewhere
   (those without a location are listed first). Then choose, on each plant's page, which of
   the new location's windows and grow lights reach it; its schedules adjust.

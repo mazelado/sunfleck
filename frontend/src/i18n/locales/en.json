@@ -463,6 +463,35 @@
     "deleteConfirm": "This only removes them from the list. Plants grown from them stay.",
     "deleted": "Deleted {{name}}"
   },
+  "labels": {
+    "title": "Print labels",
+    "intro": "QR labels to stick on pots or plant markers: scanning one with a phone opens the plant's page in Sunfleck.",
+    "size": "Label size",
+    "sizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "withSpecies": "Show the species",
+    "plants": "Plants",
+    "all": "All",
+    "none": "None",
+    "noPlants": "No plants here yet.",
+    "opens": "The codes open {{address}}. Phones that scan them must be able to reach this address; an Admin can set another with SUNFLECK_PUBLIC_URL.",
+    "print_one": "Print {{count}} label",
+    "print_other": "Print {{count}} labels",
+    "preview": "Labels to print",
+    "codeFor": "QR code for {{name}}",
+    "cardTitle": "Label",
+    "cardHelp": "Scan it to open this page. Print it as a label, or write it to an NFC tag.",
+    "printOne": "Print a label",
+    "writeNfc": "Write to an NFC tag",
+    "nfcHold": "Hold an NFC tag to the back of your phone…",
+    "nfcWritten": "The tag now opens {{name}}.",
+    "nfcFailed": "The tag couldn't be written. Allow NFC for this site, use a tag that isn't locked, and hold it still until it's done.",
+    "printQr": "Print QR labels",
+    "printQrHere": "Print QR labels for the plants here"
+  },
   "plants": {
     "title": "Plants",
     "empty": "No plants yet. Add your first one!",

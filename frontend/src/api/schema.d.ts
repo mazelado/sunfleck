@@ -1480,6 +1480,11 @@ export interface components {
         AboutOut: {
             /** Care Dataset */
             care_dataset: string | null;
+            /**
+             * Public Url
+             * @description The address set as SUNFLECK_PUBLIC_URL, for links used away from the browser (e.g. QR labels), if it's set.
+             */
+            public_url: string | null;
             /** Release Name */
             release_name: string | null;
             /** Release Notes Url */

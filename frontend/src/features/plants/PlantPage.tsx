@@ -27,6 +27,7 @@ import { useUnits } from "../../lib/useUnits";
 import { PlantSchedules } from "../care/PlantSchedules";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { PlantHarvests } from "../garden/PlantHarvests";
+import { PlantLabelCard } from "../labels/PlantLabelCard";
 import { QuickCare } from "../care/QuickCare";
 import { PlantCareCard } from "../taxonomy/PlantCareCard";
 import { describeLight } from "../places/describe";
@@ -135,6 +136,7 @@ export function PlantPage() {
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
       <PlantLineage plant={data} canEdit={canEdit} />
+      <PlantLabelCard plant={data} />
       <LightCheck plant={data} />
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantHarvests plant={data} />

@@ -212,7 +212,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `SUNFLECK_ENCRYPTION_KEY` | *(made from `SECRET_KEY`)* | Encrypts stored secrets; recommended. Several, comma-separated, to replace a key: the first encrypts, all decrypt |
 | `ALLOWED_HOSTS` | `localhost` | The host names you reach Sunfleck at, comma-separated |
 | `CSRF_TRUSTED_ORIGINS` | *(none)* | Those addresses with `https://`, needed for signing in through them |
-| `SUNFLECK_PUBLIC_URL` | *(none)* | The address notifications link to |
+| `SUNFLECK_PUBLIC_URL` | *(none)* | The address notifications, calendar entries, QR labels and NFC tags link to |
 | `SUNFLECK_BEHIND_PROXY` | `false` | `true` behind a reverse proxy with HTTPS |
 | `TIME_ZONE` | `UTC` | The server's time zone; each site has its own |
 | `EMAIL_URL`, `EMAIL_FROM` | *(log only)* | Sending emails ([above](#email)) |

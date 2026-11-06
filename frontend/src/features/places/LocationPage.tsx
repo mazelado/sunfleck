@@ -181,6 +181,9 @@ export function LocationPage() {
       )}
 
       <LocationPlants location={location} />
+      <Anchor component={Link} to={`/plants/labels?location=${String(location.id)}`} size="sm">
+        {t("labels.printQrHere")}
+      </Anchor>
 
       {dialog && (
         <LightSourceForm
