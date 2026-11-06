@@ -2,7 +2,10 @@
 
 Measured rather than judged by feel: what the core tasks cost a person in taps, fields and
 page changes, with a budget for each that the browser tests check. Started in 0.7 Gardenia
-(#97). A task test with a few people, scored with the System Usability Scale, follows in 1.0.
+(#97). For 1.0 there's also:
+- a [task test with a few people](usability-test.md), scored with the System Usability
+  Scale;
+- a [heuristic review](heuristic-review.md) of every page.
 
 ## How it's measured
 
@@ -16,7 +19,7 @@ in the demo household (`manage.py demo_household`), and counts:
 
 A task starts on the page a person would be on, usually Today or one of the main tabs, and
 getting there isn't counted. The counts come from what the test does, so they're the shortest
-way through, not what a new person would take; the task test in 1.0 covers that.
+way through, not what a new person would take; the [task test](usability-test.md) covers that.
 
 Run them with the other browser tests: `make e2e` (or `npm run e2e` in `frontend/`). Each
 task's cost is printed, and is in the HTML report (`frontend/e2e/report`).
@@ -75,7 +78,7 @@ back, often losing what they'd typed.
 
 ## Limits
 
-- Taps measure effort, not whether the screens are understood; the task test in 1.0 covers
-  that.
+- Taps measure effort, not whether the screens are understood; the
+  [task test](usability-test.md) covers that.
 - The counts are for the demo household, at phone size. Wider screens show the same pages.
 - No usage analytics: a self-hosted app shouldn't phone home.
