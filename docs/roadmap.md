@@ -51,7 +51,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.6 Fuchsia** | [Integrations](#fuchsia-integrations-released) | Released 2026-11-01 |
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
-| **0.9 Iris** | [AI assistant](#ai-assistant) | Next |
+| **0.9 Iris** | [AI assistant](#iris-ai-assistant) | In progress |
 | **1.0 Jasmine** | [Mature and beautiful](#mature-and-beautiful) | Planned |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
@@ -185,12 +185,18 @@ Split from Hibiscus (0.8), not yet scheduled.
 - Statistics and charts.
 - A growth time-lapse from photos.
 
-### AI assistant
+### Iris: AI assistant
 
-- **An AI provider plugin for Anthropic's API**, next to the OpenAI-compatible one.
-- **Photo diagnosis:** "what's wrong with my plant?", with likely causes and next steps,
-  clearly labelled as suggestions.
+Help from an AI model, only when it's asked for and only with an AI plugin an Admin turns on.
+
+- **An AI provider plugin for Anthropic's API**, next to the OpenAI-compatible one, first, so
+  the rest can be tried against it. Claude Sonnet by default; the model is a setting.
+- **Photo diagnosis:** "what's wrong with my plant?" from a photo taken or picked for it (a
+  close-up of the problem), with a few words if you like. Only that photo is sent, and only
+  when asked. The answer gives likely causes and next steps, clearly labelled as suggestions,
+  and the photo can be kept on the plant.
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
+  Conversations are kept on the plant, for the household to read and continue.
 
 ### Mature and beautiful
 
