@@ -30,7 +30,7 @@ from sunfleck.care.models import (
 )
 from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.humidity import location_humidity
-from sunfleck.places.light import grow_light_dli
+from sunfleck.places.light import grow_light_dli, ppfd_at
 from sunfleck.places.models import BedType, LightSourceKind, LocationKind
 from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
 from sunfleck.plugins import services as plugin_services
@@ -121,7 +121,8 @@ def plant_lights(plant: Plant) -> tuple[tuple[Window, ...], tuple[GrowLight, ...
         if light.kind == LightSourceKind.WINDOW and light.direction:
             windows.append(Window(light.direction, link.distance_cm))
         elif light.ppfd and light.on_time and light.off_time:
-            grow_lights.append(GrowLight(grow_light_dli(light.ppfd, light.on_time, light.off_time)))
+            ppfd = ppfd_at(light.ppfd, light.ppfd_distance_cm, link.distance_cm)
+            grow_lights.append(GrowLight(grow_light_dli(ppfd, light.on_time, light.off_time)))
     return tuple(windows), tuple(grow_lights)
 
 

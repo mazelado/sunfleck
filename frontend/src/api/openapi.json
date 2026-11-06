@@ -1852,6 +1852,14 @@
               }
             ],
             "title": "Ppfd"
+          },
+          "ppfd_distance_cm": {
+            "default": 30,
+            "description": "Grow lights: how far below the light its PPFD was measured.",
+            "maximum": 300,
+            "minimum": 5,
+            "title": "Ppfd Distance Cm",
+            "type": "integer"
           }
         },
         "required": [
@@ -1953,6 +1961,10 @@
               }
             ],
             "title": "Ppfd"
+          },
+          "ppfd_distance_cm": {
+            "title": "Ppfd Distance Cm",
+            "type": "integer"
           }
         },
         "required": [
@@ -1961,6 +1973,7 @@
           "name",
           "direction",
           "ppfd",
+          "ppfd_distance_cm",
           "on_time",
           "off_time",
           "enabled",
@@ -3052,7 +3065,7 @@
                 "type": "null"
               }
             ],
-            "description": "Windows: the plant's distance from it.",
+            "description": "The plant's distance from the window, or below the grow light.",
             "title": "Distance Cm"
           },
           "light_source_id": {

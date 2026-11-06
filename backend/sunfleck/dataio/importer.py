@@ -171,6 +171,7 @@ class _Importer:
                         name=light_item.name,
                         direction=light_item.direction,
                         ppfd=light_item.ppfd,
+                        ppfd_distance_cm=light_item.ppfd_distance_cm,
                         on_time=light_item.on_time,
                         off_time=light_item.off_time,
                         enabled=light_item.enabled,

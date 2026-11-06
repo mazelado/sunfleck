@@ -254,6 +254,21 @@ def test_grow_light_reports_hours_and_daily_light(client_as: ClientAs, location:
 
 
 @pytest.mark.django_db
+def test_grow_light_says_where_its_brightness_was_measured(
+    client_as: ClientAs, location: Location
+) -> None:
+    client = client_as(Role.GARDENER)
+    url = f"/api/v1/locations/{location.pk}/light-sources"
+
+    # 30 cm unless given: the presets' distance.
+    assert send(client, "POST", url, GROW_LIGHT).json()["ppfd_distance_cm"] == 30
+    measured = send(client, "POST", url, {**GROW_LIGHT, "ppfd_distance_cm": 45})
+    assert measured.json()["ppfd_distance_cm"] == 45
+    assert send(client, "POST", url, {**GROW_LIGHT, "ppfd_distance_cm": 2}).status_code == 422
+    assert send(client, "POST", url, {**GROW_LIGHT, "ppfd_distance_cm": 400}).status_code == 422
+
+
+@pytest.mark.django_db
 def test_window_has_no_daily_light_figure(client_as: ClientAs, location: Location) -> None:
     response = send(
         client_as(Role.GARDENER),

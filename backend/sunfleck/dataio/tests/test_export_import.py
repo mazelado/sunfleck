@@ -279,6 +279,21 @@ def test_exports_from_before_harvests_import(filled: Household) -> None:
     assert not Harvest.objects.filter(plant__household=target).exists()
 
 
+def test_exports_from_before_grow_light_distances_import(filled: Household) -> None:
+    target = new_household()
+
+    def without_distances(exported: dict[str, Any]) -> None:
+        for location in exported["sites"][0]["locations"]:
+            for light in location["light_sources"]:
+                light.pop("ppfd_distance_cm")
+
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), without_distances)))
+
+    lights = LightSource.objects.filter(location__site__household=target, kind="grow_light")
+    assert lights.exists()
+    assert {light.ppfd_distance_cm for light in lights} == {30}
+
+
 def test_a_parent_after_its_offspring_imports(filled: Household) -> None:
     target = new_household()
     data = rewrite(export_bytes(filled), lambda exported: exported["plants"].reverse())

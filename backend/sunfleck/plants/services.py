@@ -17,7 +17,7 @@ from django.utils.translation import gettext as _
 
 from sunfleck.accounts.models import Household
 from sunfleck.core import images
-from sunfleck.places.models import LightSourceKind, Location
+from sunfleck.places.models import Location
 from sunfleck.plants.models import (
     ContainerMaterial,
     Photo,
@@ -99,11 +99,7 @@ def _light_links(
         PlantLight(
             plant=plant,
             light_source=found[light.light_source_id],
-            distance_cm=(
-                light.distance_cm
-                if found[light.light_source_id].kind == LightSourceKind.WINDOW
-                else None
-            ),
+            distance_cm=light.distance_cm,
         )
         for light in lights
     ]

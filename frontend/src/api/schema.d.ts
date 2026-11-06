@@ -2219,6 +2219,12 @@ export interface components {
             on_time?: string | null;
             /** Ppfd */
             ppfd?: number | null;
+            /**
+             * Ppfd Distance Cm
+             * @description Grow lights: how far below the light its PPFD was measured.
+             * @default 30
+             */
+            ppfd_distance_cm: number;
         };
         /**
          * LightSourceKind
@@ -2251,6 +2257,8 @@ export interface components {
             on_time: string | null;
             /** Ppfd */
             ppfd: number | null;
+            /** Ppfd Distance Cm */
+            ppfd_distance_cm: number;
         };
         /** LineageOut */
         LineageOut: {
@@ -2584,7 +2592,7 @@ export interface components {
         PlantLightIn: {
             /**
              * Distance Cm
-             * @description Windows: the plant's distance from it.
+             * @description The plant's distance from the window, or below the grow light.
              */
             distance_cm?: number | null;
             /** Light Source Id */

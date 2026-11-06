@@ -15,7 +15,8 @@ import { useTranslation } from "react-i18next";
 
 import { type Direction, type LightSource, useSaveLightSource } from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { dailyLightIntegral, hoursOn } from "../../lib/units";
+import { cmToDisplay, dailyLightIntegral, displayToCm, hoursOn, lengthUnit } from "../../lib/units";
+import { useUnits } from "../../lib/useUnits";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
 const DIRECTIONS: Direction[] = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -27,6 +28,8 @@ const DIRECTIONS: Direction[] = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 const BRIGHTNESS_PRESETS = { small: 100, medium: 200, strong: 400 } as const;
 type Brightness = keyof typeof BRIGHTNESS_PRESETS | "custom";
 const DEFAULT_BRIGHTNESS: Brightness = "medium";
+// Where the presets' brightness is measured, below the light; also the default for others.
+const PRESET_DISTANCE_CM = 30;
 
 function brightnessOf(ppfd: number | null | undefined): Brightness {
   const preset = Object.entries(BRIGHTNESS_PRESETS).find(([, value]) => value === ppfd);
@@ -54,6 +57,8 @@ interface LightFormValues {
   brightness: Brightness;
   /** Only used when `brightness` is "custom". */
   ppfd: number | "";
+  /** How far below the light that brightness was measured, in the person's units. */
+  measuredAt: number | "";
   on_time: string;
   off_time: string;
   enabled: boolean;
@@ -71,6 +76,7 @@ export function LightSourceForm({
 }: LightSourceFormProps) {
   const { t } = useTranslation();
   const applyFieldErrors = useApplyFieldErrors();
+  const units = useUnits();
   const save = useSaveLightSource(locationId);
   const form = useForm<LightFormValues>({
     initialValues: {
@@ -79,6 +85,7 @@ export function LightSourceForm({
       direction: light?.direction ?? null,
       brightness: brightnessOf(light?.ppfd),
       ppfd: light?.ppfd ?? "",
+      measuredAt: cmToDisplay(light?.ppfd_distance_cm ?? PRESET_DISTANCE_CM, units),
       on_time: light?.on_time?.slice(0, 5) ?? "07:00",
       off_time: light?.off_time?.slice(0, 5) ?? "19:00",
       enabled: light?.enabled ?? true,
@@ -105,6 +112,10 @@ export function LightSourceForm({
           name: formValues.name,
           direction: isWindow ? formValues.direction : null,
           ppfd: isWindow ? null : ppfdOf(formValues),
+          ppfd_distance_cm:
+            formValues.brightness === "custom" && formValues.measuredAt !== ""
+              ? displayToCm(formValues.measuredAt, units)
+              : PRESET_DISTANCE_CM,
           on_time: isWindow ? null : formValues.on_time,
           off_time: isWindow ? null : formValues.off_time,
           enabled: formValues.enabled,
@@ -115,6 +126,7 @@ export function LightSourceForm({
     } catch (error) {
       applyFieldErrors(form, error, {
         ppfd: formValues.brightness === "custom" ? "ppfd" : "brightness",
+        ppfd_distance_cm: "measuredAt",
       });
     }
   });
@@ -186,14 +198,24 @@ export function LightSourceForm({
                 {...form.getInputProps("brightness")}
               />
               {values.brightness === "custom" && (
-                <NumberInput
-                  label={t("places.ppfd")}
-                  description={t("places.ppfdHelp")}
-                  required
-                  min={1}
-                  max={2500}
-                  {...form.getInputProps("ppfd")}
-                />
+                <Group grow align="flex-start">
+                  <NumberInput
+                    label={t("places.ppfd")}
+                    description={t("places.ppfdHelp")}
+                    required
+                    min={1}
+                    max={2500}
+                    {...form.getInputProps("ppfd")}
+                  />
+                  <NumberInput
+                    label={`${t("places.measuredAt")} (${lengthUnit(units)})`}
+                    description={t("places.measuredAtHelp")}
+                    min={units === "imperial" ? 2 : 5}
+                    max={units === "imperial" ? 118 : 300}
+                    allowDecimal={false}
+                    {...form.getInputProps("measuredAt")}
+                  />
+                </Group>
               )}
               <Group grow>
                 <TextInput
@@ -211,7 +233,15 @@ export function LightSourceForm({
               </Group>
               {dli !== null && hours !== null && (
                 <Text size="sm" role="status">
-                  {t("places.dliPreview", { dli, hours: Math.round(hours * 10) / 10 })}
+                  {t("places.dliPreview", {
+                    dli,
+                    hours: Math.round(hours * 10) / 10,
+                    distance: `${String(
+                      values.brightness === "custom" && values.measuredAt !== ""
+                        ? values.measuredAt
+                        : cmToDisplay(PRESET_DISTANCE_CM, units),
+                    )} ${lengthUnit(units)}`,
+                  })}
                 </Text>
               )}
               <Text size="xs" c="dimmed">

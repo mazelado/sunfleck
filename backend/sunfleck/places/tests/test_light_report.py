@@ -83,6 +83,26 @@ def test_a_plants_light_through_the_year(monty: Plant) -> None:
 
 
 @pytest.mark.django_db
+def test_a_grow_light_gives_more_the_closer_the_plant_is(monty: Plant) -> None:
+    def grow_light_dli_at(distance_cm: int | None) -> float:
+        PlantLight.objects.filter(plant=monty, light_source__name="Shelf light").update(
+            distance_cm=distance_cm
+        )
+        report = plant_light_report(monty, APRIL)
+        assert report is not None
+        [grow] = [s for s in report.sources if s.source.name == "Shelf light"]
+        assert grow.distance_cm == distance_cm
+        return grow.dli[Season.SPRING]
+
+    # 150 umol/m2/s for 12 hours, as measured at 30 cm: 6.5 mol/m2/day.
+    assert grow_light_dli_at(None) == grow_light_dli_at(30) == 6.5
+    assert grow_light_dli_at(15) > 6.5 > grow_light_dli_at(60)
+    # Its brightness was measured at 60 cm instead: at 60 cm, that's what the plant gets.
+    LightSource.objects.filter(name="Shelf light").update(ppfd_distance_cm=60)
+    assert grow_light_dli_at(60) == 6.5
+
+
+@pytest.mark.django_db
 def test_lights_that_arent_in_use_dont_count(monty: Plant) -> None:
     LightSource.objects.filter(name="Shelf light").update(enabled=False)
 

@@ -166,6 +166,12 @@ class LightSource(models.Model):
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(2500)],
     )
+    # Where that PPFD was measured: the distance below the light, as on its box or spec sheet.
+    ppfd_distance_cm = models.PositiveIntegerField(
+        _("PPFD measured at (cm)"),
+        default=30,
+        validators=[MinValueValidator(5), MaxValueValidator(300)],
+    )
     on_time = models.TimeField(_("turns on at"), null=True, blank=True)
     off_time = models.TimeField(_("turns off at"), null=True, blank=True)
     enabled = models.BooleanField(_("in use"), default=True)

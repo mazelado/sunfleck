@@ -174,6 +174,8 @@ Growing more plants from the ones you have, and finding each one's page quickly.
 - **QR and NFC labels** that open the plant's page: a printable sheet of QR labels for the
   plants chosen, and writing an NFC tag where the browser can (Chrome on Android).
 - **A wishlist** of plants wanted.
+- **Grow lights by distance:** the light a plant gets from a grow light depends on how far
+  below it the plant is, as for windows (#144).
 
 ### More collector features
 

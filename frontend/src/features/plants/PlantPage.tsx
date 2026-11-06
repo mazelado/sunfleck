@@ -226,9 +226,12 @@ function PlantLight({ plant, units }: { plant: Plant; units: UnitSystem }) {
           const lines = describeLight(light, t);
           if (distance_cm !== null) {
             lines.push(
-              t("plants.distanceFromWindowShort", {
-                distance: `${String(cmToDisplay(distance_cm, units))} ${lengthUnit(units)}`,
-              }),
+              t(
+                light.kind === "window"
+                  ? "plants.distanceFromWindowShort"
+                  : "plants.distanceBelowLightShort",
+                { distance: `${String(cmToDisplay(distance_cm, units))} ${lengthUnit(units)}` },
+              ),
             );
           }
           // What it gives this season, from the light check.

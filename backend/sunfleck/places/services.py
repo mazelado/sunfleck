@@ -10,6 +10,7 @@ from zoneinfo import available_timezones
 from django.db import transaction
 
 from sunfleck.accounts.models import Household
+from sunfleck.places.light import DEFAULT_PPFD_DISTANCE_CM
 from sunfleck.places.models import (
     BedType,
     Direction,
@@ -151,6 +152,7 @@ class LightSourceData:
     name: str = ""
     direction: Direction | None = None
     ppfd: int | None = None
+    ppfd_distance_cm: int = DEFAULT_PPFD_DISTANCE_CM
     on_time: time | None = None
     off_time: time | None = None
     enabled: bool = True
@@ -176,6 +178,7 @@ def _apply_light_source(light: LightSource, data: LightSourceData) -> None:
                 "schedule_empty", "It must turn on and off at different times.", "off_time"
             )
         light.ppfd = data.ppfd
+        light.ppfd_distance_cm = data.ppfd_distance_cm
         light.on_time = data.on_time
         light.off_time = data.off_time
         light.direction = ""

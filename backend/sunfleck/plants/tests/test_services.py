@@ -66,8 +66,8 @@ def test_plant_gets_the_lights_that_reach_it(
 
     assert plant.nickname == "Monty"
     distances = {link.light_source_id: link.distance_cm for link in plant.light_links.all()}
-    # Distance only means something for windows.
-    assert distances == {window.pk: 120, grow_light.pk: None}
+    # From the window, and below the grow light.
+    assert distances == {window.pk: 120, grow_light.pk: 30}
 
 
 @pytest.mark.django_db

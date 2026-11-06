@@ -51,8 +51,13 @@ signing out are in the account menu (your picture at the top right).
   and length, the watering amount also says how much water the whole bed needs.
 - **Light** indoors comes from **windows** (with the direction they face) and **grow
   lights** (with their brightness and when they're on). Each plant says which reach it, and
-  how far it is from a window. Sunfleck estimates how much light each plant gets, which
-  changes with the season, and uses it to predict watering.
+  how far it is from each window and below each grow light. Sunfleck estimates how much light
+  each plant gets, which changes with the season, and uses it to predict watering.
+- **A grow light's brightness** is measured at a distance below it: about 30 cm for the
+  typical figures to choose from. If you enter its exact brightness, say where it was
+  measured too, as on its box or spec sheet ("600 at 45 cm"). A plant nearer the light gets
+  more, and one further away less. Without a distance, a plant is taken to be where the
+  brightness was measured.
 - **Is it bright enough?** A plant's page compares the light at its spot with what it likes
   in each season, and suggests moving it or adding a grow light when it's too dim. A
   location's page shows each window's light through the year. Light is the day's total
