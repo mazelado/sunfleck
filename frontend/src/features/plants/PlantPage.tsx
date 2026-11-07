@@ -53,6 +53,12 @@ export function PlantPage() {
   const units = useUnits();
   // Photos open from the gallery or from the history.
   const [openPhoto, setOpenPhoto] = useState<Photo | null>(null);
+  // Whether it opens on choosing the part to show (after adding it).
+  const [cropOnOpen, setCropOnOpen] = useState(false);
+  const open = (photo: Photo, crop = false) => {
+    setCropOnOpen(crop);
+    setOpenPhoto(photo);
+  };
 
   if (plant.isPending) {
     return <FullPageLoader />;
@@ -69,16 +75,32 @@ export function PlantPage() {
         ← {t("plants.title")}
       </Anchor>
       <Box pos="relative">
-        <PlantCover
-          photo={data.cover_photo}
-          alt={t("plants.photoOf", { name: data.nickname })}
-          height={260}
-        />
+        {data.cover_photo ? (
+          <UnstyledButton
+            display="block"
+            w="100%"
+            aria-label={t("plants.openCover", { name: data.nickname })}
+            onClick={() => {
+              if (data.cover_photo) open(data.cover_photo);
+            }}
+          >
+            <PlantCover photo={data.cover_photo} alt="" height={260} />
+          </UnstyledButton>
+        ) : (
+          <PlantCover
+            photo={null}
+            alt={t("plants.photoOf", { name: data.nickname })}
+            height={260}
+          />
+        )}
         {canEdit && (
           <Box pos="absolute" bottom={12} right={12}>
             <AddPhotoButton
               plantId={data.id}
               cover={{ plantName: data.nickname, hasPhoto: Boolean(data.cover_photo) }}
+              onCrop={(photo) => {
+                open(photo, true);
+              }}
             />
           </Box>
         )}
@@ -154,8 +176,15 @@ export function PlantPage() {
       {location?.kind === "indoor" && <PlantLight plant={data} units={units} />}
       <PlantHarvests plant={data} />
       <PlantConversations plantId={data.id} plantName={data.nickname} canEdit={canEdit} />
-      <PlantPhotos plant={data} canEdit={canEdit} onOpen={setOpenPhoto} />
-      <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={setOpenPhoto} />
+      <PlantPhotos
+        plant={data}
+        canEdit={canEdit}
+        onOpen={open}
+        onCrop={(photo) => {
+          open(photo, true);
+        }}
+      />
+      <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={open} />
       {openPhoto && (
         <PhotoViewer
           key={openPhoto.id}
@@ -163,6 +192,7 @@ export function PlantPage() {
           plantName={data.nickname}
           isCover={data.cover_photo?.id === openPhoto.id}
           canEdit={canEdit}
+          startCropping={cropOnOpen}
           onClose={() => {
             setOpenPhoto(null);
           }}
@@ -292,9 +322,11 @@ interface PlantPhotosProps {
   plant: Plant;
   canEdit: boolean;
   onOpen: (photo: Photo) => void;
+  /** Open a photo just added on choosing the part it shows. */
+  onCrop: (photo: Photo) => void;
 }
 
-function PlantPhotos({ plant, canEdit, onOpen }: PlantPhotosProps) {
+function PlantPhotos({ plant, canEdit, onOpen, onCrop }: PlantPhotosProps) {
   const { t, i18n } = useTranslation();
   const photos = usePhotos(plant.id);
   const items = photos.data?.pages.flatMap((page) => page.items) ?? [];
@@ -306,7 +338,7 @@ function PlantPhotos({ plant, canEdit, onOpen }: PlantPhotosProps) {
           <Title order={2} fz="h4">
             {t("plants.photos")}
           </Title>
-          {canEdit && <AddPhotoButton plantId={plant.id} />}
+          {canEdit && <AddPhotoButton plantId={plant.id} onCrop={onCrop} />}
         </Group>
         <ErrorAlert error={photos.error} />
         {!photos.isPending && items.length === 0 && (

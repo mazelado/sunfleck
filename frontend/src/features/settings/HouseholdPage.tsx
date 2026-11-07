@@ -15,8 +15,9 @@ import {
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconDots, IconKey, IconTrash, IconX } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router";
 
 import {
   type InvitationCreated,
@@ -48,6 +49,15 @@ function useRoleOptions() {
 export function HouseholdPage() {
   const { t } = useTranslation();
   const me = useMe().data;
+  const { hash } = useLocation();
+  const loaded = Boolean(me?.household);
+  // From "Invite someone" on the Settings page: straight to the email field.
+  useEffect(() => {
+    if (!loaded || hash !== "#invite") return;
+    const card = document.getElementById("invite");
+    card?.scrollIntoView({ block: "start" });
+    card?.querySelector<HTMLInputElement>('input[type="email"]')?.focus();
+  }, [hash, loaded]);
   if (!me?.household) {
     return null;
   }
@@ -57,13 +67,22 @@ export function HouseholdPage() {
       <Title order={1} fz="h2">
         {t("household.title")}
       </Title>
-      {isAdmin ? (
-        <HouseholdNameForm name={me.household.name} />
-      ) : (
-        <Text fz="lg">{me.household.name}</Text>
+      {!isAdmin && <Text fz="lg">{me.household.name}</Text>}
+      {/* Inviting someone first, in a card of its own: it's what people come here to do, and
+          the household's name has its own Save. */}
+      {isAdmin && (
+        <Paper withBorder radius="lg" p="lg" id="invite">
+          <Stack gap="sm">
+            <Title order={2} fz="h4">
+              {t("household.inviteSomeone")}
+            </Title>
+            <InviteForm />
+          </Stack>
+        </Paper>
       )}
       <MembersList me={me} isAdmin={isAdmin} />
       {isAdmin && <Invitations />}
+      {isAdmin && <HouseholdNameForm name={me.household.name} />}
     </Stack>
   );
 }
@@ -89,10 +108,13 @@ function HouseholdNameForm({ name }: { name: string }) {
     <Paper withBorder radius="lg" p="lg">
       <form onSubmit={handleSubmit} noValidate>
         <Stack gap="sm">
+          <Title order={2} fz="h4">
+            {t("household.name")}
+          </Title>
           <ErrorAlert error={updateHousehold.error} />
           <Group align="flex-end" wrap="nowrap">
             <TextInput
-              label={t("household.name")}
+              aria-label={t("household.name")}
               style={{ flex: 1 }}
               {...form.getInputProps("name")}
             />
@@ -281,7 +303,6 @@ function Invitations() {
         <Title order={2} fz="h4">
           {t("household.invitations")}
         </Title>
-        <InviteForm />
         <ErrorAlert error={invitations.error ?? revoke.error} />
         {invitations.data?.length === 0 && (
           <Text size="sm" c="dimmed">
@@ -339,7 +360,6 @@ function InviteForm() {
     <Stack gap="sm">
       <form onSubmit={handleSubmit} noValidate>
         <Stack gap="sm">
-          <Text fw={500}>{t("household.inviteSomeone")}</Text>
           <ErrorAlert error={createInvitation.error} />
           <TextInput
             label={t("household.inviteEmail")}

@@ -16,8 +16,8 @@ const VERDICT_COLOR: Record<Verdict, string> = {
   bright: "var(--mantine-color-orange-light-color)",
 };
 
-/** "Is this spot bright enough?": the plant's light in each season, compared with what it
- * likes, and a tip when it's too dim or too bright. When its light isn't known, what to add. */
+/** The plant's light: first whether it gets enough now, and a tip when it's too dim or too
+ * bright, then its light in each season compared with what it likes. When its light isn't known, what to add. */
 export function LightCheck({ plant }: { plant: Plant }) {
   const { t } = useTranslation();
   const { data: report, isSuccess } = usePlantLight(plant.id);
@@ -27,6 +27,7 @@ export function LightCheck({ plant }: { plant: Plant }) {
   const season = (key: string) => t(`guide.seasons.${key as Season}`);
   const dim = report.seasons.filter((s) => s.verdict === "low" || s.verdict === "a_bit_low");
   const bright = report.seasons.filter((s) => s.verdict === "bright");
+  const current = report.seasons.find((s) => s.season === report.current_season);
   const list = (seasons: typeof report.seasons) =>
     seasons.length === report.seasons.length
       ? t("light.allYear")
@@ -40,6 +41,16 @@ export function LightCheck({ plant }: { plant: Plant }) {
         <Title order={2} fz="h4">
           {t("light.title")}
         </Title>
+        {/* The answer first, and what to do about it; the numbers after. */}
+        {current && (
+          <Text fw={600} c={VERDICT_COLOR[current.verdict as Verdict]}>
+            {t(`light.answer.${current.verdict as Verdict}`, { name: plant.nickname })}
+          </Text>
+        )}
+        {dim.length > 0 && <Text size="sm">{t("light.tipDim", { seasons: list(dim) })}</Text>}
+        {bright.length > 0 && (
+          <Text size="sm">{t("light.tipBright", { seasons: list(bright) })}</Text>
+        )}
         <Table withRowBorders={false} verticalSpacing={4} horizontalSpacing="xs">
           <Table.Thead>
             <Table.Tr>
@@ -81,10 +92,6 @@ export function LightCheck({ plant }: { plant: Plant }) {
         <Text size="xs" c="dimmed">
           {t("light.unit")}
         </Text>
-        {dim.length > 0 && <Text size="sm">{t("light.tipDim", { seasons: list(dim) })}</Text>}
-        {bright.length > 0 && (
-          <Text size="sm">{t("light.tipBright", { seasons: list(bright) })}</Text>
-        )}
       </Stack>
     </Paper>
   );

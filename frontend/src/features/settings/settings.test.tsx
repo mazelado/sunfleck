@@ -141,6 +141,44 @@ describe("profile", () => {
   });
 });
 
+describe("settings page", () => {
+  it("is a gear away, and says what each setting is for", async () => {
+    signInAs(ada);
+    withMembers([adaMember]);
+    withInvitations();
+    const { user, router } = renderApp("/");
+
+    await user.click(await screen.findByRole("link", { name: "Settings" }));
+
+    expect(await screen.findByRole("heading", { name: "Settings", level: 1 })).toBeVisible();
+    expect(await accessibilityProblems(document.body)).toEqual([]);
+    expect(screen.getByText(/invite people, and choose who can do what/)).toBeVisible();
+    expect(screen.getByText(/Reminders of what needs care/)).toBeVisible();
+    // A shortcut to inviting someone, which goes straight to the email field.
+    await user.click(screen.getByRole("link", { name: "Invite someone" }));
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe("/settings/household");
+    });
+    await waitFor(() => {
+      expect(screen.getByRole("textbox", { name: /Their email address/ })).toHaveFocus();
+    });
+  });
+
+  it("leaves the account menu for things about you", async () => {
+    signInAs(ada);
+    const { user } = renderApp("/");
+
+    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
+    const menu = await screen.findByRole("menu");
+    expect(within(menu).getByRole("menuitem", { name: "Profile" })).toBeVisible();
+    expect(within(menu).getByRole("menuitem", { name: "Settings" })).toHaveAttribute(
+      "href",
+      "/settings",
+    );
+    expect(within(menu).queryByRole("menuitem", { name: "Household" })).toBeNull();
+  });
+});
+
 describe("household", () => {
   it("shows members read-only to non-admins, without invitations", async () => {
     const viewer: Me = { ...ada, id: 2, role: "viewer" };
@@ -181,6 +219,12 @@ describe("household", () => {
     );
     const { user } = renderApp("/settings/household");
 
+    // Inviting comes first, in its own card; the household's name, with its own Save, last.
+    const headings = (await screen.findAllByRole("heading", { level: 2 })).map(
+      (heading) => heading.textContent,
+    );
+    expect(headings[0]).toBe("Invite someone");
+    expect(headings.at(-1)).toBe("Household name");
     await user.type(await screen.findByLabelText(/Their email address/), "new@example.com");
     await user.click(screen.getByRole("button", { name: "Create invitation" }));
 

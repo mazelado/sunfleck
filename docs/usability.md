@@ -46,10 +46,12 @@ why in the pull request; when one gets cheaper, lower it.
 | Add a room, with a window | Today | 8 | 1 | 4 |
 | Move a plant to another room | Places | 4 | 0 | 1 |
 | Give a plant a grow light its room doesn't have yet | Plants | 6 | 0 | 3 |
-| Invite someone to the household | Today | 3 | 1 | 1 |
-| Put care in a calendar app | Today | 4 | 0 | 1 |
+| Invite someone to the household | Today | 3 | 1 | 2 |
+| Put care in a calendar app | Today | 4 | 0 | 2 |
 
-Measured on 2026-11-05, for 0.7.
+Measured on 2026-11-05, for 0.7. After the 1.0 usability test, settings moved from the account
+menu to a Settings page (the gear at the top), which said what each setting is for: inviting
+someone and the calendar now pass through it, one page change more for the same taps.
 
 ## What the numbers say
 

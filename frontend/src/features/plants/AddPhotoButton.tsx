@@ -1,10 +1,10 @@
-import { ActionIcon, Button, FileButton } from "@mantine/core";
+import { ActionIcon, Button, FileButton, Group, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCamera } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useUploadPhoto } from "../../api/plants";
+import { type Photo, useUploadPhoto } from "../../api/plants";
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { preparePhoto } from "../../lib/photos";
 
@@ -15,10 +15,12 @@ interface AddPhotoButtonProps {
    * labelled button over the placeholder of a plant without one.
    */
   cover?: { plantName: string; hasPhoto: boolean };
+  /** Offered in the "Photo added" message, to choose the part of the photo to show. */
+  onCrop?: (photo: Photo) => void;
 }
 
 /** Take or choose photos (phones offer the camera) and upload them, shrunk first. */
-export function AddPhotoButton({ plantId, cover }: AddPhotoButtonProps) {
+export function AddPhotoButton({ plantId, cover, onCrop }: AddPhotoButtonProps) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
   const upload = useUploadPhoto(plantId);
@@ -29,8 +31,29 @@ export function AddPhotoButton({ plantId, cover }: AddPhotoButtonProps) {
     try {
       for (const file of files) {
         try {
-          await upload.mutateAsync(await preparePhoto(file));
-          notifications.show({ message: t("plants.photoAdded") });
+          const photo = await upload.mutateAsync(await preparePhoto(file));
+          const id = `photo-${String(photo.id)}`;
+          notifications.show({
+            id,
+            message:
+              onCrop && files.length === 1 ? (
+                <Group justify="space-between" wrap="nowrap">
+                  <Text size="sm">{t("plants.photoAdded")}</Text>
+                  <Button
+                    size="compact-sm"
+                    variant="subtle"
+                    onClick={() => {
+                      notifications.hide(id);
+                      onCrop(photo);
+                    }}
+                  >
+                    {t("photoCrop.button")}
+                  </Button>
+                </Group>
+              ) : (
+                t("plants.photoAdded")
+              ),
+          });
         } catch (error) {
           notifications.show({ color: "red", message: `${file.name}: ${errorMessage(error)}` });
         }

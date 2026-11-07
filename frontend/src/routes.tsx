@@ -117,6 +117,10 @@ export const routes: RouteObject[] = [
                 ...page(() => import("./features/about/AboutPage"), "AboutPage"),
               },
               {
+                path: "/settings",
+                ...page(() => import("./features/settings/SettingsPage"), "SettingsPage"),
+              },
+              {
                 path: "/settings/profile",
                 ...page(() => import("./features/settings/ProfilePage"), "ProfilePage"),
               },

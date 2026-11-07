@@ -32,8 +32,9 @@ and has a button for the next.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
 
 The main pages, **Today**, **Plants**, **Places** and the **Care guide**, are in the tab bar
-at the bottom on a phone, and at the top on a wider screen. Your settings, your household and
-signing out are in the account menu (your picture at the top right).
+at the bottom on a phone, and at the top on a wider screen. **Settings** (the gear at the top
+right) has your household and inviting people, reminders, care types and, for Admins, plugins
+and export. Your profile and signing out are in the account menu, beside it.
 
 ## Places: homes, rooms and light
 
@@ -60,8 +61,9 @@ signing out are in the account menu (your picture at the top right).
   measured too, as on its box or spec sheet ("600 at 45 cm"). A plant nearer the light gets
   more, and one further away less. Without a distance, a plant is taken to be where the
   brightness was measured.
-- **Is it bright enough?** A plant's page compares the light at its spot with what it likes
-  in each season, and suggests moving it or adding a grow light when it's too dim. A
+- **Is it bright enough?** A plant's page says, under **Light check**, whether it gets enough
+  light now, and suggests moving it or adding a grow light when it's too dim. Below, it
+  compares the light at its spot with what it likes in each season. A
   room's page shows each window's light through the year. Light is the day's total
   (DLI, in mol/m²/day), estimated for a typical day.
 

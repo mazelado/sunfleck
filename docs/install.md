@@ -57,7 +57,7 @@ database and plant photos, is in one volume. It runs fine on a Raspberry Pi 4 or
 
 5. Open <http://localhost:8000> (or your address). The first visit shows the **setup page**:
    create your account, which becomes the household's Admin. Then invite the others from
-   **Household** in the account menu.
+   **Settings → Household** (the gear at the top).
 
 `docker compose ps` shows whether it's running and healthy, and `docker compose logs -f`
 follows what it's doing (Ctrl+C stops following, not Sunfleck).
@@ -135,7 +135,7 @@ encryption. Special characters in the user name or password must be URL-encoded 
 ## Notifications and plugins
 
 - **Notifications** (a daily digest of what needs care, an evening reminder, frost warnings)
-  are set up by each person under **Notifications** in the account menu. They go through
+  are set up by each person under **Settings → Notifications**. They go through
   [Apprise](https://github.com/caronc/apprise/wiki), which supports ntfy, Telegram, email,
   Discord, Signal, Gotify and about 100 more. The worker container sends them.
   - **Web Push**, notifications from Sunfleck itself, needs Sunfleck reached over **HTTPS**
@@ -159,7 +159,7 @@ encryption. Special characters in the user name or password must be URL-encoded 
 
 Two ways, best used together:
 
-- **An export**, from **Export and import** in the account menu (Admins): a ZIP file with the
+- **An export**, from **Settings → Export and import** (Admins): a ZIP file with the
   household's places, plants, photos and care history. It can be imported into a new
   Sunfleck, e.g. on another server. It leaves out passwords and secrets (notification
   addresses, API keys). For very large households, use the command instead, and copy the file
