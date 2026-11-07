@@ -230,7 +230,7 @@ describe("plant list", () => {
     expect(within(monty).getByText("Living room")).toBeVisible();
     const fern = screen.getByRole("link", { name: /^Old fern/ });
     expect(within(fern).getByText("Died")).toBeVisible();
-    expect(within(fern).getByText("No location")).toBeVisible();
+    expect(within(fern).getByText("No room yet")).toBeVisible();
     expect(screen.getByText("2 plants")).toBeVisible();
     expect(screen.queryByRole("link", { name: "Add a plant" })).not.toBeInTheDocument();
 
@@ -284,7 +284,7 @@ describe("plant form", () => {
 
     await user.type(await screen.findByLabelText(/^Name/), "Monty");
     // The location comes from the link on the location's page.
-    expect(screen.getByRole("combobox", { name: /Location/ })).toHaveValue("Living room");
+    expect(screen.getByRole("combobox", { name: /Room or spot/ })).toHaveValue("Living room");
     await user.click(await screen.findByRole("checkbox", { name: /Bay window/ }));
     await user.type(screen.getByLabelText(/Distance from the window/), "80");
     await user.click(screen.getByRole("checkbox", { name: /Shelf light/ }));
@@ -343,9 +343,7 @@ describe("plant form", () => {
     const { user } = renderApp("/plants/new?location=11");
 
     await user.type(await screen.findByLabelText(/^Name/), "Monty");
-    expect(
-      await screen.findByText("This location has no windows or grow lights yet."),
-    ).toBeVisible();
+    expect(await screen.findByText("This room has no windows or grow lights yet.")).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Add a window or grow light" }));
     const dialog = await screen.findByRole("dialog", { name: "Add a window" });
     expect(await accessibilityProblems(dialog)).toEqual([]);
@@ -448,8 +446,8 @@ describe("plant form", () => {
 
     await user.type(await screen.findByLabelText(/^Name/), "Monty");
     expect(screen.getByText("You haven't added any places yet.")).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Add a place and a location" }));
-    const dialog = await screen.findByRole("dialog", { name: "Add a place" });
+    await user.click(screen.getByRole("button", { name: "Add your home and a room" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a home or garden" });
     expect(await accessibilityProblems(dialog)).toEqual([]);
     const [placeName, locationName] = within(dialog).getAllByRole("textbox", { name: /^Name/ });
     if (!placeName || !locationName) throw new Error("The dialog has no name fields");
@@ -463,7 +461,7 @@ describe("plant form", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-    expect(screen.getByRole("combobox", { name: /^Location/ })).toHaveValue("Hallway");
+    expect(screen.getByRole("combobox", { name: /^Room or spot/ })).toHaveValue("Hallway");
     expect(screen.getByLabelText(/^Name/)).toHaveValue("Monty");
     expect(siteSent).toMatchObject({ name: "Home", latitude: 52.37, longitude: 4.89 });
     expect(locationSent).toEqual({ name: "Hallway", kind: "indoor" });
@@ -489,8 +487,8 @@ describe("plant form", () => {
     );
     const { user } = renderApp("/plants/new");
 
-    await user.click(await screen.findByRole("button", { name: "Add a location" }));
-    const dialog = await screen.findByRole("dialog", { name: "Add a location" });
+    await user.click(await screen.findByRole("button", { name: "Add a room or spot" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a room or spot" });
     // With several places, it asks which one.
     const place = within(dialog).getByRole("combobox", { name: /^Place/ });
     await user.click(place);
@@ -502,7 +500,7 @@ describe("plant form", () => {
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
-      expect(screen.getByRole("combobox", { name: /^Location/ })).toHaveValue("Bed 3");
+      expect(screen.getByRole("combobox", { name: /^Room or spot/ })).toHaveValue("Bed 3");
     });
     expect(locationSent).toEqual({ name: "Bed 3", kind: "outdoor" });
   });
@@ -698,7 +696,7 @@ describe("plant form", () => {
 
     // In the form's error summary, and next to the lights.
     expect(
-      await screen.findAllByText("Choose windows and grow lights from the plant's location."),
+      await screen.findAllByText("Choose windows and grow lights from the plant's room."),
     ).toHaveLength(2);
   });
 
@@ -1240,7 +1238,7 @@ describe("location page", () => {
     const choices = await within(dialog).findByRole("group", { name: /^Plants/ });
     // Plants that aren't looked after any more aren't offered.
     expect(within(choices).queryByRole("checkbox", { name: "Old fern" })).toBeNull();
-    expect(within(choices).getByText("No location")).toBeVisible();
+    expect(within(choices).getByText("No room yet")).toBeVisible();
     await user.click(within(choices).getByRole("checkbox", { name: "Monty" }));
     await user.click(within(dialog).getByRole("button", { name: "Move here" }));
 

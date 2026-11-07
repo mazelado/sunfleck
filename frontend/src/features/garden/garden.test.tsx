@@ -200,7 +200,7 @@ describe("sowing calendar", () => {
     await user.click(screen.getByRole("button", { name: "Sown: Tomato 'Gardener's Delight'" }));
     const dialog = await screen.findByRole("dialog", { name: /Sown Tomato/ });
     expect(await accessibilityProblems(dialog)).toEqual([]);
-    const location = within(dialog).getByRole("combobox", { name: "Location" });
+    const location = within(dialog).getByRole("combobox", { name: "Room or spot" });
     await user.click(location);
     const listbox = document.getElementById(location.getAttribute("aria-controls") ?? "");
     if (!listbox) throw new Error("The location dropdown didn't open");

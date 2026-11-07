@@ -54,6 +54,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
     you watered yesterday?").
   - **Water all** names its room on Today ("Water all 2 in Living room"), and a room's
     page can water all its plants at once.
+- **Easier setting up**, from the 1.0 usability test:
+  - Rooms, shelves, beds and balconies are called **rooms and spots**, not "locations",
+    and places are added with **Add a home or garden**.
+  - **Adding a plant** asks for its room right after its name, uses its species' care
+    profile without asking (choose another later, under **Edit**), and folds pot material,
+    soil and notes under **More details**.
+  - Leaving a plant, room or place form with unsaved changes asks first.
 - **Settings** have their own page, behind the gear at the top, saying what each is for,
   with a shortcut to **Invite someone**. The account menu keeps your profile and signing
   out. On the household page, inviting someone comes first, in its own card.

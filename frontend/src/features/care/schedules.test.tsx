@@ -187,7 +187,7 @@ describe("wording", () => {
         multiplier: 1.2,
         details: { percent: 70, estimated: false, likes_humid: false },
       }).text,
-    ).toBe("The air in this location is about 70% humidity");
+    ).toBe("The air in this room is about 70% humidity");
     expect(
       explain({
         code: "feedback",

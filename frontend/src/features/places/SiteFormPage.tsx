@@ -7,9 +7,11 @@ import { Link, Navigate, useNavigate, useParams } from "react-router";
 
 import { type Site, useCreateSite, useDeleteSite, useSite, useUpdateSite } from "../../api/places";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
+import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useLeaveGuard } from "../../lib/useLeaveGuard";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { SitePositionFields } from "./SitePositionFields";
 import { browserTimezone, timezoneOptions } from "./timezones";
@@ -62,6 +64,7 @@ function SiteForm({ site }: { site?: Site }) {
       timezone: isNotEmpty(t("validation.required")),
     },
   });
+  const leaveGuard = useLeaveGuard(form.isDirty);
   const { latitude, longitude } = form.getValues();
 
   const handleSubmit = form.onSubmit(async (values) => {
@@ -72,6 +75,7 @@ function SiteForm({ site }: { site?: Site }) {
         longitude: Number(values.longitude),
         timezone: values.timezone,
       });
+      leaveGuard.allowLeave();
       await navigate(`/places/${String(saved.id)}`);
     } catch (error) {
       applyFieldErrors(form, error);
@@ -127,6 +131,7 @@ function SiteForm({ site }: { site?: Site }) {
                   onConfirm={async () => {
                     await deleteSite.mutateAsync(site.id);
                     notifications.show({ message: t("places.siteDeleted", { name: site.name }) });
+                    leaveGuard.allowLeave();
                     await navigate("/places");
                   }}
                 />
@@ -135,6 +140,7 @@ function SiteForm({ site }: { site?: Site }) {
           </Stack>
         </form>
       </Paper>
+      <LeaveDialog blocker={leaveGuard.blocker} />
     </Stack>
   );
 }

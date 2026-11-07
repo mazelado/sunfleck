@@ -246,10 +246,9 @@ describe("species and care profile of a plant", () => {
     );
 
     expect(screen.getByLabelText(/^Name/)).toHaveValue("Swiss cheese plant");
-    expect(screen.getByRole("combobox", { name: /Care profile/ })).toHaveAttribute(
-      "placeholder",
-      "From its species: Tropical aroid",
-    );
+    // Its care comes from the species; choosing another care profile is for the edit form.
+    expect(screen.getByText("Its care comes from its species: Tropical aroid.")).toBeVisible();
+    expect(screen.queryByRole("combobox", { name: /Care profile/ })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => {
       expect(sent).toMatchObject({ taxon_id: 3, care_profile_key: null });

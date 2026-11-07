@@ -3,6 +3,7 @@ import {
   Anchor,
   Button,
   Checkbox,
+  Collapse,
   FileInput,
   Group,
   NumberInput,
@@ -17,7 +18,15 @@ import {
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconBulb, IconHeart, IconPhoto, IconPlus, IconWindow } from "@tabler/icons-react";
+import {
+  IconBulb,
+  IconChevronDown,
+  IconChevronUp,
+  IconHeart,
+  IconPhoto,
+  IconPlus,
+  IconWindow,
+} from "@tabler/icons-react";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
@@ -40,12 +49,14 @@ import {
 } from "../../api/plants";
 import { uploadPhoto } from "../../api/photoUpload";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
+import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { preparePhoto } from "../../lib/photos";
 import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, displayToCm, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useLeaveGuard } from "../../lib/useLeaveGuard";
 import { useUnits } from "../../lib/useUnits";
 import { type Species, useCareProfiles } from "../../api/taxonomy";
 import { useApplyFieldErrors } from "../auth/serverErrors";
@@ -56,6 +67,9 @@ import { IdentifyPlant } from "../taxonomy/IdentifyPlant";
 import { type ChosenSpecies, SpeciesPicker } from "../taxonomy/SpeciesPicker";
 import { locationOptions } from "./locationOptions";
 import { SuggestCareProfile } from "./SuggestCareProfile";
+
+// The fields under "More details".
+const DETAIL_FIELDS = ["status", "potMaterial", "soil", "acquiredOn", "notes"];
 
 /**
  * Add a plant (`/plants/new`, optionally `?location=<id>`, or `?wish=<id>` for one from the
@@ -187,11 +201,17 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
     },
     validate: { nickname: isNotEmpty(t("validation.required")) },
   });
+  const leaveGuard = useLeaveGuard(form.isDirty);
   const values = form.getValues();
   const location = locations.find((each) => String(each.id) === values.locationId);
   const careProfiles = useCareProfiles().data ?? [];
   const [addingLight, setAddingLight] = useState(false);
   const [addingLocation, setAddingLocation] = useState(false);
+  // Pot material, soil, notes and the like: folded away when adding a plant, open when editing one, and
+  // opened when one of them has a problem to show.
+  const [detailsOpen, setDetailsOpen] = useState(Boolean(plant));
+  const detailsId = useId();
+  const showDetails = detailsOpen || DETAIL_FIELDS.some((field) => Boolean(form.errors[field]));
   // The species' own care profile, shown when no other is chosen.
   const [speciesProfile, setSpeciesProfile] = useState(
     plant?.care_profile && !plant.care_profile.chosen ? plant.care_profile.name : null,
@@ -266,6 +286,7 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
         notifications.show({ color: "red", message: errorMessage(error) });
       }
     }
+    leaveGuard.allowLeave();
     await navigate(`/plants/${String(saved.id)}`);
   });
 
@@ -310,41 +331,17 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
                 chooseSpecies(hit, hit && sentenceCase(hit.common_name ?? hit.scientific_name));
               }}
             />
+            {!plant && speciesProfile && (
+              <Text size="sm" c="dimmed" mt={-8}>
+                {t("guide.careFromSpecies", { name: speciesProfile })}
+              </Text>
+            )}
             <TextInput
               label={t("plants.name")}
               placeholder={t("plants.namePlaceholder")}
               required
               {...form.getInputProps("nickname")}
             />
-            <Select
-              label={t("guide.careProfile")}
-              description={t("guide.careProfileHelp")}
-              placeholder={
-                speciesProfile
-                  ? t("guide.careProfilePlaceholderFromSpecies", { name: speciesProfile })
-                  : t("common.optional")
-              }
-              clearable
-              searchable
-              data={careProfiles.map((profile) => ({ value: profile.key, label: profile.name }))}
-              {...form.getInputProps("careProfileKey")}
-            />
-            {!speciesProfile && !values.careProfileKey && (
-              <SuggestCareProfile
-                request={
-                  values.species || values.nickname.trim()
-                    ? {
-                        name: values.species?.scientific_name ?? values.nickname.trim(),
-                        taxon_id: values.species?.id ?? null,
-                        indoor: location ? location.kind === "indoor" : null,
-                      }
-                    : null
-                }
-                onUse={(key) => {
-                  form.setFieldValue("careProfileKey", key);
-                }}
-              />
-            )}
             {locations.length > 0 ? (
               <Stack gap={4}>
                 <Select
@@ -397,56 +394,6 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
                 }}
               />
             )}
-            <Select
-              label={t("plants.status")}
-              allowDeselect={false}
-              data={PLANT_STATUSES.map((value) => ({
-                value,
-                label: t(`plants.statuses.${value}`),
-              }))}
-              {...form.getInputProps("status")}
-            />
-            <Group grow align="flex-start">
-              <NumberInput
-                label={`${t("plants.potDiameter")} (${lengthUnit(units)})`}
-                min={1}
-                aria-describedby={potHelpId}
-                {...form.getInputProps("potDiameter")}
-              />
-              <NumberInput
-                label={`${t("plants.potHeight")} (${lengthUnit(units)})`}
-                placeholder={t("common.optional")}
-                min={1}
-                aria-describedby={potHelpId}
-                {...form.getInputProps("potHeight")}
-              />
-            </Group>
-            <Text id={potHelpId} size="xs" c="dimmed" mt={-8}>
-              {t("plants.potSizeHelp")}
-            </Text>
-            <Select
-              label={t("plants.potMaterial")}
-              placeholder={t("common.optional")}
-              clearable
-              data={CONTAINER_MATERIALS.map((value) => ({
-                value,
-                label: t(`plants.materials.${value}`),
-              }))}
-              {...form.getInputProps("potMaterial")}
-            />
-            <Select
-              label={t("plants.soil")}
-              placeholder={t("common.optional")}
-              clearable
-              data={SOIL_TYPES.map((value) => ({ value, label: t(`plants.soils.${value}`) }))}
-              {...form.getInputProps("soil")}
-            />
-            <TextInput
-              type="date"
-              label={t("plants.acquiredOn")}
-              description={t("common.optional")}
-              {...form.getInputProps("acquiredOn")}
-            />
             {!plant && (
               <>
                 <Radio.Group
@@ -472,14 +419,124 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
                 </Radio.Group>
               </>
             )}
-            <Textarea
-              label={t("plants.notes")}
-              description={t("common.optional")}
-              autosize
-              minRows={2}
-              maxLength={5000}
-              {...form.getInputProps("notes")}
-            />
+            {/* A species' own care profile is used; choosing another is for the edit form. */}
+            {(plant || !speciesProfile) && (
+              <>
+                <Select
+                  label={t("guide.careProfile")}
+                  description={t("guide.careProfileHelp")}
+                  placeholder={
+                    speciesProfile
+                      ? t("guide.careProfilePlaceholderFromSpecies", { name: speciesProfile })
+                      : t("common.optional")
+                  }
+                  clearable
+                  searchable
+                  data={careProfiles.map((profile) => ({
+                    value: profile.key,
+                    label: profile.name,
+                  }))}
+                  {...form.getInputProps("careProfileKey")}
+                />
+                {!speciesProfile && !values.careProfileKey && (
+                  <SuggestCareProfile
+                    request={
+                      values.species || values.nickname.trim()
+                        ? {
+                            name: values.species?.scientific_name ?? values.nickname.trim(),
+                            taxon_id: values.species?.id ?? null,
+                            indoor: location ? location.kind === "indoor" : null,
+                          }
+                        : null
+                    }
+                    onUse={(key) => {
+                      form.setFieldValue("careProfileKey", key);
+                    }}
+                  />
+                )}
+              </>
+            )}
+            <Group grow align="flex-start">
+              <NumberInput
+                label={`${t("plants.potDiameter")} (${lengthUnit(units)})`}
+                min={1}
+                aria-describedby={potHelpId}
+                {...form.getInputProps("potDiameter")}
+              />
+              <NumberInput
+                label={`${t("plants.potHeight")} (${lengthUnit(units)})`}
+                placeholder={t("common.optional")}
+                min={1}
+                aria-describedby={potHelpId}
+                {...form.getInputProps("potHeight")}
+              />
+            </Group>
+            <Text id={potHelpId} size="xs" c="dimmed" mt={-8}>
+              {t("plants.potSizeHelp")}
+            </Text>
+            <Button
+              variant="subtle"
+              size="compact-sm"
+              rightSection={
+                showDetails ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />
+              }
+              aria-expanded={showDetails}
+              aria-controls={detailsId}
+              onClick={() => {
+                setDetailsOpen((open) => !open);
+              }}
+              style={{ alignSelf: "flex-start" }}
+            >
+              {t("plants.moreDetails")}
+            </Button>
+            <Collapse expanded={showDetails} id={detailsId}>
+              <Stack gap="md">
+                {plant && (
+                  <>
+                    <Select
+                      label={t("plants.status")}
+                      allowDeselect={false}
+                      data={PLANT_STATUSES.map((value) => ({
+                        value,
+                        label: t(`plants.statuses.${value}`),
+                      }))}
+                      {...form.getInputProps("status")}
+                    />
+                  </>
+                )}
+                <Select
+                  label={t("plants.potMaterial")}
+                  placeholder={t("common.optional")}
+                  clearable
+                  data={CONTAINER_MATERIALS.map((value) => ({
+                    value,
+                    label: t(`plants.materials.${value}`),
+                  }))}
+                  {...form.getInputProps("potMaterial")}
+                />
+                <Select
+                  label={t("plants.soil")}
+                  placeholder={t("common.optional")}
+                  clearable
+                  data={SOIL_TYPES.map((value) => ({ value, label: t(`plants.soils.${value}`) }))}
+                  {...form.getInputProps("soil")}
+                />
+                <TextInput
+                  type="date"
+                  label={t("plants.acquiredOn")}
+                  description={t("common.optional")}
+                  {...form.getInputProps("acquiredOn")}
+                />
+                <Textarea
+                  label={t("plants.notes")}
+                  description={t("common.optional")}
+                  autosize
+                  minRows={2}
+                  maxLength={5000}
+                  {...form.getInputProps("notes")}
+                />
+              </Stack>
+            </Collapse>
             <Group justify="space-between">
               <Button type="submit" loading={form.submitting || save.isPending}>
                 {t("common.save")}
@@ -494,6 +551,7 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
                     notifications.show({
                       message: t("plants.plantDeleted", { name: plant.nickname }),
                     });
+                    leaveGuard.allowLeave();
                     await navigate("/plants");
                   }}
                 />
@@ -527,6 +585,7 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
           />
         )}
       </Paper>
+      <LeaveDialog blocker={leaveGuard.blocker} />
     </Stack>
   );
 }
