@@ -139,7 +139,7 @@ test("add a plant to a room, with its species", async () => {
     await effort.type(page.getByRole("combobox", { name: /^Species/ }), "monstera");
     await effort.tap(page.getByRole("option", { name: /Monstera deliciosa/ }));
     await effort.type(page.getByRole("textbox", { name: /^Name/ }), "Monty");
-    await effort.choose(page.getByRole("combobox", { name: /^Location/ }), /Kitchen/);
+    await effort.choose(page.getByRole("combobox", { name: /^Room or spot/ }), /Kitchen/);
     await effort.type(page.getByRole("textbox", { name: /Pot diameter/ }), "15");
     await effort.tap(page.getByRole("radio", { name: "A few days ago" }));
     await effort.tap(page.getByRole("button", { name: "Save" }));
@@ -193,8 +193,8 @@ test("add a room, with a window", async () => {
   await startOn("/", "Today");
   await withinBudget(page, BUDGETS.addRoomWithWindow, async (effort) => {
     await effort.tap(nav().getByRole("link", { name: "Places" }));
-    await effort.tap(page.getByRole("link", { name: "Home" }));
-    await effort.tap(page.getByRole("link", { name: "Add a location" }).first());
+    await effort.tap(page.getByRole("link", { name: "Home", exact: true }));
+    await effort.tap(page.getByRole("link", { name: "Add a room or spot" }).first());
     await effort.type(page.getByRole("textbox", { name: /^Name/ }), "Bedroom");
     await effort.tap(page.getByRole("button", { name: "Save" }));
     await effort.tap(page.getByRole("button", { name: "Add a window" }));
