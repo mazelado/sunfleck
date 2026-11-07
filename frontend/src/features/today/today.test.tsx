@@ -216,7 +216,7 @@ describe("today", () => {
 
     // Only the living room has more than one plant needing the same care.
     expect(await screen.findAllByRole("button", { name: /all \d/ })).toHaveLength(1);
-    await user.click(screen.getByRole("button", { name: "Water all 2" }));
+    await user.click(screen.getByRole("button", { name: "Water all 2 in Living room" }));
 
     await waitFor(() => {
       expect(sent).toEqual({
@@ -248,17 +248,40 @@ describe("today", () => {
     );
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: "More for Water Monty" }));
+    await user.click(await screen.findByRole("button", { name: "Later: Water Monty" }));
     await user.click(await screen.findByRole("menuitem", { name: "Snooze for 3 days" }));
     // Counted from the plant's today: Monty's water was due two days ago, on Apr 13.
     await waitFor(() => {
       expect(snoozed).toEqual({ until: "2026-04-18" });
     });
 
-    await user.click(screen.getByRole("button", { name: "More for Water Fern" }));
+    await user.click(screen.getByRole("button", { name: "Later: Water Fern" }));
     await user.click(await screen.findByRole("menuitem", { name: "Skip this time" }));
     await waitFor(() => {
       expect(skipped).toEqual({ care_type_id: water.id, notes: "", skipped: true });
+    });
+  });
+
+  it("snoozes until a day chosen in a dialog", async () => {
+    signInAs(gardener);
+    withToday();
+    let snoozed: unknown = null;
+    server.use(
+      http.put("*/api/v1/care-schedules/11/snooze", async ({ request }) => {
+        snoozed = await request.json();
+        return HttpResponse.json({});
+      }),
+    );
+    const { user } = renderApp("/");
+
+    await user.click(await screen.findByRole("button", { name: "Later: Water Monty" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Snooze until a day…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Put off care for Monty" });
+    await user.click(within(dialog).getByText("In 3 days"));
+    await user.click(within(dialog).getByRole("button", { name: "Put off" }));
+
+    await waitFor(() => {
+      expect(snoozed).toEqual({ until: inDaysFromNow(3) });
     });
   });
 
@@ -268,7 +291,7 @@ describe("today", () => {
     const { user } = renderApp("/");
 
     // Fern's mist is due in 3 days: only a week's snooze puts it off.
-    await user.click(await screen.findByRole("button", { name: "More for Mist Fern" }));
+    await user.click(await screen.findByRole("button", { name: "Later: Mist Fern" }));
     expect(await screen.findByRole("menuitem", { name: "Snooze for a week" })).toBeInTheDocument();
     expect(screen.queryByRole("menuitem", { name: "Snooze until tomorrow" })).toBeNull();
     expect(screen.queryByRole("menuitem", { name: "Snooze for 3 days" })).toBeNull();
@@ -453,3 +476,11 @@ describe("today", () => {
     expect(screen.queryByRole("region", { name: "Getting started" })).not.toBeInTheDocument();
   });
 });
+
+/** A date `days` from today on this device ("YYYY-MM-DD"). */
+function inDaysFromNow(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${String(date.getFullYear())}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}

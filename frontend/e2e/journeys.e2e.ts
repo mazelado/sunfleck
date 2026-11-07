@@ -71,7 +71,7 @@ test("adds a plant there and accepts its suggested routine", async () => {
 test("logs watering and sees it in the plant's history", async () => {
   await page.getByRole("button", { name: "Water", exact: true }).click();
 
-  await expect(page.getByText("How was the soil?")).toBeVisible();
+  await expect(page.getByText("How was the soil when you watered today?")).toBeVisible();
   await goTo("Plants");
   await expect(page.getByRole("link", { name: /Monty/ })).toBeVisible();
 });

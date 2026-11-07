@@ -35,6 +35,7 @@ why in the pull request; when one gets cheaper, lower it.
 | Water every plant in a room that needs it | Today | 1 | 0 | 0 |
 | Log a watering | Today | 1 | 0 | 0 |
 | Snooze care | Today | 2 | 0 | 0 |
+| Put a plant's care off from its page (added after the 1.0 usability test) | Plants | 5 | 0 | 1 |
 | Log care from a plant's page, with how the soil was | Plants | 3 | 0 | 1 |
 | Find a plant by name | Today | 2 | 1 | 2 |
 | Add a plant to a room, with its species | Today | 7 | 3 | 3 |

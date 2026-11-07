@@ -17,6 +17,7 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconDots, IconPencil, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
+import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -124,7 +125,7 @@ interface CareEntryProps {
 }
 
 function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { done } = useCareTypeName();
   const deleteEvent = useDeleteCareEvent();
   const updateEvent = useUpdateCareEvent();
@@ -182,7 +183,9 @@ function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
         {askFeedback && (
           <Stack gap={4} mt={4}>
             <Text size="xs" c="dimmed" id={`soil-${String(event.id)}`}>
-              {t("care.howWasSoil")}
+              {t("care.howWasSoilWhen", {
+                when: wateredWhen(event.performed_at, t, i18n.language),
+              })}
             </Text>
             <Group gap={6} role="group" aria-labelledby={`soil-${String(event.id)}`}>
               {FEEDBACK.map((feedback) => (
@@ -263,4 +266,19 @@ function PhotoEntry({ item, onOpen }: { item: TimelineItem; onOpen: (photo: Phot
       </Stack>
     </Group>
   );
+}
+
+/** "today", "yesterday" or "on 3 Nov 2026": when a watering was, to say which one is meant. */
+function wateredWhen(performedAt: string, t: TFunction, locale: string, now = new Date()): string {
+  const day = new Date(performedAt);
+  const days = Math.round(
+    (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
+      Date.UTC(day.getFullYear(), day.getMonth(), day.getDate())) /
+      86_400_000,
+  );
+  if (days === 0) return t("care.wateredToday");
+  if (days === 1) return t("care.wateredYesterday");
+  return t("care.wateredOn", {
+    date: new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(day),
+  });
 }
