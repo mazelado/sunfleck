@@ -28,6 +28,7 @@ import {
   useUpdateLocation,
 } from "../../api/places";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
+import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import {
@@ -39,6 +40,7 @@ import {
   temperatureUnit,
 } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useLeaveGuard } from "../../lib/useLeaveGuard";
 import { useUnits } from "../../lib/useUnits";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
@@ -102,6 +104,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
     },
     validate: { name: isNotEmpty(t("validation.required")) },
   });
+  const leaveGuard = useLeaveGuard(form.isDirty);
   const indoor = form.getValues().kind === "indoor";
   const unit = temperatureUnit(units);
   const toCelsius = (value: number | "") => (value === "" ? null : displayToCelsius(value, units));
@@ -121,6 +124,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
         bed_width_cm: values.bed_type ? toCm(values.bed_width) : null,
         bed_length_cm: values.bed_type ? toCm(values.bed_length) : null,
       });
+      leaveGuard.allowLeave();
       await navigate(`${sitePath}/locations/${String(saved.id)}`);
     } catch (error) {
       // The API names the temperature fields in °C; the form shows the person's units.
@@ -263,6 +267,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
                     notifications.show({
                       message: t("places.locationDeleted", { name: location.name }),
                     });
+                    leaveGuard.allowLeave();
                     await navigate(sitePath);
                   }}
                 />
@@ -271,6 +276,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
           </Stack>
         </form>
       </Paper>
+      <LeaveDialog blocker={leaveGuard.blocker} />
     </Stack>
   );
 }

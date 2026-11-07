@@ -5,7 +5,7 @@ into account each plant's type, where it grows, its light, its pot, the season a
 the weather, and they get better as you tell it how the soil was.
 
 - [Getting started](#getting-started)
-- [Places: sites, locations and light](#places-sites-locations-and-light)
+- [Places: homes, rooms and light](#places-homes-rooms-and-light)
 - [Plants](#plants)
 - [Seeds](#seeds)
 - [Harvests](#harvests)
@@ -21,11 +21,12 @@ the weather, and they get better as you tell it how the soil was.
 Until your household has a plant, **Today** shows these steps, ticks off each one that's done,
 and has a button for the next.
 
-1. **Add a place** (Places → Add a place): your home or garden, with its location on a map.
-   The location sets its time zone, seasons and, with the weather plugin, its weather.
-2. **Add locations** to it: rooms or garden beds, with their windows and grow lights.
+1. **Add your home or garden** (Places → Add a home or garden), with where it is on a map.
+   That sets its time zone, seasons and, with the weather plugin, its weather.
+2. **Add rooms and spots** to it: rooms, shelves or garden beds, with their windows and grow
+   lights.
 3. **Add plants** (Plants → Add a plant): a photo, the species, and where it lives. A place,
-   a location, or a window or grow light that isn't there yet can be added from the plant's
+   a room, or a window or grow light that isn't there yet can be added from the plant's
    form, without losing what you've typed.
 4. **Accept its suggested routine** on the plant's page: when to water, fertilize and so on.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
@@ -34,19 +35,20 @@ The main pages, **Today**, **Plants**, **Places** and the **Care guide**, are in
 at the bottom on a phone, and at the top on a wider screen. Your settings, your household and
 signing out are in the account menu (your picture at the top right).
 
-## Places: sites, locations and light
+## Places: homes, rooms and light
 
 - A **site** is a place with an address: home, an allotment, an office. Its position on the
   map gives its time zone, its hemisphere (so seasons are right), and its weather. It's only
   sent elsewhere by plugins an Admin turns on. (The map itself is loaded from
   OpenStreetMap, which sees the area shown while you pick the spot; you can type the
   coordinates instead.)
-- A **location** is a room or a bed in a site: **indoor** or **outdoor**. Indoors, give its
+- A **room or spot** is where plants live in a site: a room, a shelf, a bed or a balcony,
+  **indoor** or **outdoor**. Indoors, give its
   temperature range and humidity if you know them; outdoors, how much sun it gets.
 - **Frost dates**: a site's typical last frost in spring and first in autumn, for sowing and
   planting out. With the weather plugin, Sunfleck estimates them from 20 years of past
   weather; or enter them on the site's page (only the day and month count).
-- A **garden bed** is an outdoor location marked as a raised bed or a bed in the ground. A
+- A **garden bed** is an outdoor spot marked as a raised bed or a bed in the ground. A
   raised bed dries out sooner, so its plants are watered a little more often. With its width
   and length, the watering amount also says how much water the whole bed needs.
 - **Light** indoors comes from **windows** (with the direction they face) and **grow
@@ -60,7 +62,7 @@ signing out are in the account menu (your picture at the top right).
   brightness was measured.
 - **Is it bright enough?** A plant's page compares the light at its spot with what it likes
   in each season, and suggests moving it or adding a grow light when it's too dim. A
-  location's page shows each window's light through the year. Light is the day's total
+  room's page shows each window's light through the year. Light is the day's total
   (DLI, in mol/m²/day), estimated for a typical day.
 
 ## Plants
@@ -102,20 +104,20 @@ signing out are in the account menu (your picture at the top right).
   propagating plants need care.
 - **Propagation**: **Propagate** on a plant's page adds the cuttings, divisions, offsets or
   seedlings you've taken as plants of their own: with its species, care profile and (unless
-  you choose another) its location and lights, named after it ("Monty (cutting 2)"). They're
+  you choose another) its room and lights, named after it ("Monty (cutting 2)"). They're
   marked **Propagating**: watered as usual, but not fertilized until they've taken. Then set
   each one's status to Active. Each shows the plant it was grown from, and the parent lists
   them.
 - **Labels**: each plant's page shows its QR code. Scanning it with a phone opens that page
   (after signing in). **Print a label** there, or **Print QR labels** under the plant list (or
-  on a location's page, for the plants there), prints a sheet of them in three sizes, with
+  on a room's page, for the plants there), prints a sheet of them in three sizes, with
   or without the species. On Chrome for Android, **Write to an NFC tag** puts the plant's
   address on a tag, so tapping it opens the page. Labels link to `SUNFLECK_PUBLIC_URL` if
   it's set, else to the address you're using: print them from an address your phone can
   reach.
-- **Moving plants**: on a location's page, **Move plants here** moves plants from elsewhere
-  (those without a location are listed first). Then choose, on each plant's page, which of
-  the new location's windows and grow lights reach it; its schedules adjust.
+- **Moving plants**: on a room's page, **Move plants here** moves plants from elsewhere
+  (those without a room are listed first). Then choose, on each plant's page, which of
+  the new room's windows and grow lights reach it; its schedules adjust.
 
 ## Wishlist
 
@@ -136,7 +138,7 @@ timing in the Care guide. It lists what to do now, in the next four weeks, and l
 mentions what to sow or plant out now. When you've sown some, tap **Sown**: the seedlings are
 added as a plant, of their species, so you can care for them and see when to plant them out.
 Seeds need their species for the calendar, and the place needs its frost dates (see
-[Places](#places-sites-locations-and-light)).
+[Places](#places-homes-rooms-and-light)).
 
 ## Harvests
 
@@ -162,9 +164,9 @@ lists the latest harvests. Exports include them.
     profile, the season, the light, the temperature, the humidity indoors, the pot and,
     outdoors, recent and forecast rain and heat. **Why?** on the plant's page shows what it
     took into account.
-  - **Humidity indoors**: dry air dries the soil sooner. Set a location's humidity if you
+  - **Humidity indoors**: dry air dries the soil sooner. Set a room's humidity if you
     know it. If you don't, and the weather plugin is on, Sunfleck estimates it in cold
-    weather: heated winter air is dry, often 20–30%. The location's page shows the estimate.
+    weather: heated winter air is dry, often 20–30%. The room's page shows the estimate.
   - **Every few days**: a fixed interval, for anything else, or if you prefer it.
 - **Soil feedback**: when you water, say whether the soil was **Too dry**, **Just right** or
   **Still wet**. Sunfleck adjusts that plant's watering from your last few answers.
@@ -176,7 +178,7 @@ lists the latest harvests. Exports include them.
 
 ## The Today page
 
-Today lists what's due or overdue, grouped by location, then what's coming up this week. Each
+Today lists what's due or overdue, grouped by room, then what's coming up this week. Each
 site's weather is shown at the top, with frost warnings, when the weather plugin is on. If
 some plants have no schedules yet, Today says so and links to them: to the plant when there's
 one, or to the plant list showing only those. In the plant list, they're marked **No routine

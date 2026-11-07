@@ -45,6 +45,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   **Add a photo** over the placeholder of a plant without one. The Photos card keeps its
   button too.
 
+- **Easier setting up**, from the 1.0 usability test:
+  - Rooms, shelves, beds and balconies are called **rooms and spots**, not "locations",
+    and places are added with **Add a home or garden**.
+  - **Adding a plant** asks for its room right after its name, uses its species' care
+    profile without asking (choose another later, under **Edit**), and folds pot material,
+    soil and notes under **More details**.
+  - Leaving a plant, room or place form with unsaved changes asks first.
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first

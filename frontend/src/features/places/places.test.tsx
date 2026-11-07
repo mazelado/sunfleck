@@ -70,7 +70,7 @@ describe("places list", () => {
     renderApp("/places");
 
     expect(await screen.findByText(/No places yet/)).toBeVisible();
-    expect(screen.getByRole("link", { name: "Add a place" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Add a home or garden" })).toBeVisible();
   });
 
   it("shows sites and locations, in the person's units, read-only for viewers", async () => {
@@ -91,7 +91,7 @@ describe("places list", () => {
     expect(await screen.findByRole("link", { name: "Home" })).toBeVisible();
     expect(screen.getByText("64°F to 75°F · Medium · 1 light source")).toBeVisible();
     expect(screen.getByText("Part shade (3–6 hours)")).toBeVisible();
-    expect(screen.queryByRole("link", { name: "Add a place" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Add a home or garden" })).not.toBeInTheDocument();
   });
 
   it("sends viewers who open a form back to the page", async () => {
@@ -202,6 +202,44 @@ describe("site form", () => {
 });
 
 describe("location form", () => {
+  it("asks before leaving with what's been typed unsaved", async () => {
+    signInAs(gardener);
+    withSites([site({ locations: [] })]);
+    const { user, router } = renderApp("/places/1/locations/new");
+
+    await user.type(await screen.findByLabelText(/^Name/), "Sunroom");
+    await user.click(screen.getAllByRole("link", { name: "Plants" })[0] as HTMLElement);
+
+    const dialog = await screen.findByRole("dialog", { name: "Leave without saving?" });
+    await user.click(within(dialog).getByRole("button", { name: "Keep editing" }));
+    expect(router.state.location.pathname).toBe("/places/1/locations/new");
+    expect(screen.getByLabelText(/^Name/)).toHaveValue("Sunroom");
+
+    await user.click(screen.getAllByRole("link", { name: "Plants" })[0] as HTMLElement);
+    await user.click(
+      within(await screen.findByRole("dialog", { name: "Leave without saving?" })).getByRole(
+        "button",
+        { name: "Leave" },
+      ),
+    );
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe("/plants");
+    });
+  });
+
+  it("leaves without asking when nothing was typed", async () => {
+    signInAs(gardener);
+    withSites([site({ locations: [] })]);
+    const { user, router } = renderApp("/places/1/locations/new");
+
+    await screen.findByLabelText(/^Name/);
+    await user.click(screen.getAllByRole("link", { name: "Plants" })[0] as HTMLElement);
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe("/plants");
+    });
+  });
+
   it("stores temperatures in °C whatever the person's units", async () => {
     signInAs({ ...gardener, unit_system: "imperial" });
     withSites([site({ locations: [] })]);
@@ -546,7 +584,7 @@ describe("light sources", () => {
     expect(
       await screen.findByText(
         "About 28% humidity today, estimated from the weather. Watering uses the humidity set " +
-          "for this location instead.",
+          "for this room instead.",
       ),
     ).toBeVisible();
   });

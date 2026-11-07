@@ -403,7 +403,7 @@ describe("today", () => {
     const steps = await screen.findByRole("region", { name: "Getting started" });
     expect(await accessibilityProblems(steps)).toEqual([]);
     expect(within(steps).getAllByRole("listitem")).toHaveLength(3);
-    expect(within(steps).getByRole("link", { name: "Add a place" })).toHaveAttribute(
+    expect(within(steps).getByRole("link", { name: "Add a home or garden" })).toHaveAttribute(
       "href",
       "/places/new",
     );
@@ -415,11 +415,11 @@ describe("today", () => {
     // With a place, its first location is next.
     sites = [{ ...home, id: 3, locations: [] }];
     const second = renderApp("/");
-    expect(await screen.findByRole("link", { name: "Add a location" })).toHaveAttribute(
+    expect(await screen.findByRole("link", { name: "Add a room or spot" })).toHaveAttribute(
       "href",
       "/places/3/locations/new",
     );
-    expect(screen.getByText(/Add a place: your home/)).toHaveTextContent("(done)");
+    expect(screen.getByText(/Add your home or garden/)).toHaveTextContent("(done)");
     second.unmount();
 
     // Then a plant, in that location.

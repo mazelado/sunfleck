@@ -38,14 +38,14 @@ test("the first visit sets up the household", async () => {
 
 test("adds a place and a room in it", async () => {
   await goTo("Places");
-  await page.getByRole("link", { name: "Add a place" }).first().click();
+  await page.getByRole("link", { name: "Add a home or garden" }).first().click();
   await page.getByRole("textbox", { name: /^Name/ }).fill("Home");
   await page.getByRole("textbox", { name: "Latitude" }).fill("52.37");
   await page.getByRole("textbox", { name: "Longitude" }).fill("4.89");
   await page.getByRole("button", { name: "Save" }).click();
 
   await expect(page.getByRole("heading", { name: "Home" })).toBeVisible();
-  await page.getByRole("link", { name: "Add a location" }).first().click();
+  await page.getByRole("link", { name: "Add a room or spot" }).first().click();
   await page.getByRole("textbox", { name: /^Name/ }).fill("Living room");
   await page.getByRole("button", { name: "Save" }).click();
 
