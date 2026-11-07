@@ -392,6 +392,57 @@ describe("the care schedule", () => {
     expect(screen.queryByText(/You've been watering/)).not.toBeInTheDocument();
   });
 
+  it("puts care off until a day, from the plant's care menu", async () => {
+    signInAs(gardener);
+    const fertilizeSchedule: Schedule = { ...waterSchedule, id: 2, care_type: fertilize };
+    withPlant([waterSchedule, fertilizeSchedule]);
+    let snoozed: unknown = null;
+    server.use(
+      http.put("*/api/v1/care-schedules/2/snooze", async ({ request }) => {
+        snoozed = await request.json();
+        return HttpResponse.json(fertilizeSchedule);
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "More care" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Put off care…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Put off care for Monty" });
+    await user.click(within(dialog).getByRole("radio", { name: /^Fertilize/ }));
+    await user.click(within(dialog).getByText("In a week"));
+    await user.click(within(dialog).getByRole("button", { name: "Put off" }));
+
+    await waitFor(() => {
+      expect(snoozed).toEqual({ until: inDays(7) });
+    });
+    expect(await screen.findByText(/^Fertilize for Monty put off until/)).toBeVisible();
+  });
+
+  it("puts one schedule off from its row, until a day typed in", async () => {
+    signInAs(gardener);
+    withPlant([waterSchedule]);
+    let snoozed: unknown = null;
+    server.use(
+      http.put("*/api/v1/care-schedules/1/snooze", async ({ request }) => {
+        snoozed = await request.json();
+        return HttpResponse.json(waterSchedule);
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "Put off Water" }));
+    const dialog = await screen.findByRole("dialog", { name: "Put off care for Monty" });
+    expect(within(dialog).queryByRole("radio")).not.toBeInTheDocument();
+    const until = within(dialog).getByLabelText(/^Until/);
+    await user.clear(until);
+    await user.type(until, inDays(5));
+    await user.click(within(dialog).getByRole("button", { name: "Put off" }));
+
+    await waitFor(() => {
+      expect(snoozed).toEqual({ until: inDays(5) });
+    });
+  });
+
   it("says when care is due, and why", async () => {
     signInAs({ ...ada, role: "viewer" });
     withPlant([waterSchedule]);

@@ -14,7 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconPencil, IconPlus } from "@tabler/icons-react";
+import { IconAlarmSnooze, IconPencil, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +33,7 @@ import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
 import { formatDate } from "../plants/dates";
 import { CareIcon } from "./icons";
+import { PutOffDialog } from "./PutOffDialog";
 import { ScheduleDialog } from "./ScheduleDialog";
 import {
   daysUntil,
@@ -89,6 +90,7 @@ export function PlantSchedules({ plant }: { plant: Plant }) {
           <ScheduleRow
             key={schedule.id}
             schedule={schedule}
+            plantName={plant.nickname}
             canEdit={canEdit}
             onEdit={() => {
               setDialog(schedule);
@@ -132,15 +134,17 @@ function DueBadge({ schedule }: { schedule: Schedule }) {
 
 interface ScheduleRowProps {
   schedule: Schedule;
+  plantName: string;
   canEdit: boolean;
   onEdit: () => void;
 }
 
-function ScheduleRow({ schedule, canEdit, onEdit }: ScheduleRowProps) {
+function ScheduleRow({ schedule, plantName, canEdit, onEdit }: ScheduleRowProps) {
   const { t, i18n } = useTranslation();
   const { name } = useCareTypeName();
   const units = useUnits();
   const [showWhy, setShowWhy] = useState(false);
+  const [puttingOff, setPuttingOff] = useState(false);
   const careName = name(schedule.care_type);
   const amount =
     schedule.interval_days === null
@@ -172,21 +176,43 @@ function ScheduleRow({ schedule, canEdit, onEdit }: ScheduleRowProps) {
           </Stack>
         </Group>
         {canEdit && (
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            aria-label={t("schedules.editTitle", { name: careName })}
-            onClick={onEdit}
-            style={{ flexShrink: 0 }}
-          >
-            <IconPencil size={16} />
-          </ActionIcon>
+          <Group gap={2} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {schedule.enabled && schedule.due_on !== null && (
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                aria-label={t("putOff.schedule", { care: careName })}
+                onClick={() => {
+                  setPuttingOff(true);
+                }}
+              >
+                <IconAlarmSnooze size={16} />
+              </ActionIcon>
+            )}
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              aria-label={t("schedules.editTitle", { name: careName })}
+              onClick={onEdit}
+            >
+              <IconPencil size={16} />
+            </ActionIcon>
+          </Group>
         )}
       </Group>
       {showWhy && (
         <FactorList
           factors={schedule.factors}
           label={t("schedules.whyTitle", { name: careName })}
+        />
+      )}
+      {puttingOff && (
+        <PutOffDialog
+          plantName={plantName}
+          care={[schedule]}
+          onClose={() => {
+            setPuttingOff(false);
+          }}
         />
       )}
     </Stack>

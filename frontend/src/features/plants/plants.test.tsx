@@ -1246,6 +1246,39 @@ describe("location page", () => {
   });
 });
 
+describe("location page: watering", () => {
+  it("waters every plant looked after there at once, with an undo", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    let sent: unknown = null;
+    server.use(
+      http.get("*/api/v1/plants", ({ request }) => {
+        const locationId = new URL(request.url).searchParams.get("location_id");
+        const items =
+          locationId === "10"
+            ? [
+                summary(),
+                summary({ id: 8, nickname: "Fern" }),
+                summary({ id: 9, nickname: "Old fern", status: "deceased" }),
+              ]
+            : [];
+        return HttpResponse.json({ items, count: items.length });
+      }),
+      http.post("*/api/v1/care-events/bulk", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json([], { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/places/1/locations/10");
+
+    await user.click(await screen.findByRole("button", { name: "Water all 2 in Living room" }));
+
+    await waitFor(() => {
+      expect(sent).toMatchObject({ plant_ids: [7, 8], notes: "", skipped: false });
+    });
+  });
+});
+
 describe("harvests", () => {
   const tomato = plant({
     nickname: "Tomato",
