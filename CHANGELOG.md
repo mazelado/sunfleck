@@ -45,6 +45,16 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   **Add a photo** over the placeholder of a plant without one. The Photos card keeps its
   button too.
 
+- **Easier everyday care**, from the 1.0 usability test:
+  - **Put off care** from a plant's page: under **More care**, or with the alarm button
+    beside a schedule. Pick tomorrow, 3 days, a week, or any day. On Today, the ⋯ button
+    is now **Later**, with **Snooze until a day…**.
+  - **Add earlier care**, beside a plant's care buttons, logs care for another day.
+    The question after a watering now says which one it's about ("How was the soil when
+    you watered yesterday?").
+  - **Water all** names its room on Today ("Water all 2 in Living room"), and a room's
+    page can water all its plants at once.
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first

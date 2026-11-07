@@ -15,8 +15,9 @@ import {
 import { notifications } from "@mantine/notifications";
 import {
   IconAlarmSnooze,
+  IconCalendarEvent,
   IconCheck,
-  IconDots,
+  IconChevronDown,
   IconInfoCircle,
   IconListDetails,
   IconPlayerSkipForward,
@@ -25,7 +26,7 @@ import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { type CareEvent, type CareType, useDeleteCareEvent, useLogCare } from "../../api/care";
+import { type CareType, useLogCare } from "../../api/care";
 import { type Task, useLogCareForPlants, useSnooze, useToday } from "../../api/today";
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -37,7 +38,9 @@ import { EmptyState } from "../../components/EmptyState";
 import { CareEventDialog } from "../care/CareEventDialog";
 import { CareIcon } from "../care/icons";
 import { GardenNote } from "../garden/GardenNote";
+import { PutOffDialog } from "../care/PutOffDialog";
 import { useCareTypeName } from "../care/useCareTypeName";
+import { useUndoable } from "../care/useUndoable";
 import { GettingStarted } from "../home/GettingStarted";
 import { formatDate } from "../plants/dates";
 import { PlantImage } from "../plants/PlantImage";
@@ -135,6 +138,7 @@ export function TodayPage() {
               <TaskGroup
                 key={location}
                 title={location}
+                place={group[0]?.plant.location?.name}
                 tasks={group}
                 canEdit={canEdit}
                 bulk={canEdit}
@@ -192,9 +196,11 @@ interface TaskGroupProps {
   canEdit: boolean;
   /** Offer doing the same care for every plant in the group at once. */
   bulk: boolean;
+  /** The room or spot the group is in, named on its "all at once" button. */
+  place?: string;
 }
 
-function TaskGroup({ title, tasks, canEdit, bulk }: TaskGroupProps) {
+function TaskGroup({ title, tasks, canEdit, bulk, place }: TaskGroupProps) {
   const byCare = groupBy(tasks, (task) => String(task.care_type.id));
   const shared = bulk ? [...byCare.values()].filter((group) => group.length > 1) : [];
   return (
@@ -205,7 +211,7 @@ function TaskGroup({ title, tasks, canEdit, bulk }: TaskGroupProps) {
             {title}
           </Text>
           {shared.map((group) => (
-            <DoAllButton key={group[0]?.care_type.id} tasks={group} />
+            <DoAllButton key={group[0]?.care_type.id} tasks={group} place={place} />
           ))}
         </Group>
         {tasks.map((task) => (
@@ -216,36 +222,7 @@ function TaskGroup({ title, tasks, canEdit, bulk }: TaskGroupProps) {
   );
 }
 
-/** Undo for care just logged: deletes the events again. */
-function useUndoable() {
-  const { t } = useTranslation();
-  const deleteEvent = useDeleteCareEvent();
-  return (message: string, events: CareEvent[]) => {
-    const id = `care-${events.map((event) => String(event.id)).join("-")}`;
-    notifications.show({
-      id,
-      message: (
-        <Group justify="space-between" wrap="nowrap">
-          <Text size="sm">{message}</Text>
-          <Button
-            size="compact-sm"
-            variant="subtle"
-            onClick={() => {
-              notifications.hide(id);
-              void Promise.all(events.map((event) => deleteEvent.mutateAsync(event.id))).then(() =>
-                notifications.show({ message: t("care.undone") }),
-              );
-            }}
-          >
-            {t("care.undo")}
-          </Button>
-        </Group>
-      ),
-    });
-  };
-}
-
-function DoAllButton({ tasks }: { tasks: Task[] }) {
+function DoAllButton({ tasks, place }: { tasks: Task[]; place?: string }) {
   const { t } = useTranslation();
   const { name, done } = useCareTypeName();
   const errorMessage = useErrorMessage();
@@ -275,7 +252,9 @@ function DoAllButton({ tasks }: { tasks: Task[] }) {
       loading={logForPlants.isPending}
       onClick={() => void doAll()}
     >
-      {t("today.allOf", { care: name(careType), count: tasks.length })}
+      {place
+        ? t("today.allIn", { care: name(careType), count: tasks.length, location: place })
+        : t("today.allOf", { care: name(careType), count: tasks.length })}
     </Button>
   );
 }
@@ -288,6 +267,7 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
   const snooze = useSnooze();
   const undoable = useUndoable();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [puttingOff, setPuttingOff] = useState(false);
   const care = name(task.care_type);
   const labels = { care, plant: task.plant.nickname };
   // The plant's own today (it may be in another time zone).
@@ -390,15 +370,15 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
           </ActionIcon>
           <Menu position="bottom-end" width={220}>
             <Menu.Target>
-              <ActionIcon
-                size="lg"
+              <Button
+                size="compact-sm"
                 radius="xl"
-                variant="subtle"
-                color="gray"
+                variant="default"
+                rightSection={<IconChevronDown size={14} />}
                 aria-label={t("today.more", labels)}
               >
-                <IconDots size={18} />
-              </ActionIcon>
+                {t("today.later")}
+              </Button>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item
@@ -417,6 +397,14 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
                   {label}
                 </Menu.Item>
               ))}
+              <Menu.Item
+                leftSection={<IconCalendarEvent size={16} />}
+                onClick={() => {
+                  setPuttingOff(true);
+                }}
+              >
+                {t("today.snoozeUntilDay")}
+              </Menu.Item>
               {task.snoozed_until && (
                 <Menu.Item onClick={() => void snoozeUntil(null)}>{t("today.unsnooze")}</Menu.Item>
               )}
@@ -432,6 +420,15 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
             </Menu.Dropdown>
           </Menu>
         </Group>
+      )}
+      {puttingOff && (
+        <PutOffDialog
+          plantName={task.plant.nickname}
+          care={[{ id: task.schedule_id, care_type: task.care_type, due_on: task.due_on }]}
+          onClose={() => {
+            setPuttingOff(false);
+          }}
+        />
       )}
       {detailsOpen && (
         <CareEventDialog

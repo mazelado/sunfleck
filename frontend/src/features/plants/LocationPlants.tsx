@@ -19,9 +19,15 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import type { Location } from "../../api/places";
+import { useCareTypes } from "../../api/care";
 import { type PlantSummary, useMovePlants, usePlants } from "../../api/plants";
+import { useLogCareForPlants } from "../../api/today";
+import { useErrorMessage } from "../../api/useErrorMessage";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { CareIcon } from "../care/icons";
+import { useCareTypeName } from "../care/useCareTypeName";
+import { useUndoable } from "../care/useUndoable";
 import { PlantStatusBadge } from "./PlantStatusBadge";
 
 /** The plants in a location, shown on the location's page. */
@@ -36,9 +42,12 @@ export function LocationPlants({ location }: { location: Location }) {
   return (
     <Paper withBorder radius="lg" p="lg">
       <Stack gap="sm">
-        <Title order={2} fz="h4">
-          {t("places.plantsHere")}
-        </Title>
+        <Group justify="space-between" gap="xs">
+          <Title order={2} fz="h4">
+            {t("places.plantsHere")}
+          </Title>
+          {canEdit && <WaterAllHere location={location} plants={items} />}
+        </Group>
         <ErrorAlert error={plants.error} />
         {!plants.isPending && items.length === 0 && (
           <Text size="sm">{t("places.noPlantsHere")}</Text>
@@ -99,6 +108,55 @@ export function LocationPlants({ location }: { location: Location }) {
         />
       )}
     </Paper>
+  );
+}
+
+/** Water every plant looked after here at once, e.g. after watering the whole room. */
+function WaterAllHere({ location, plants }: { location: Location; plants: PlantSummary[] }) {
+  const { t } = useTranslation();
+  const { name } = useCareTypeName();
+  const errorMessage = useErrorMessage();
+  const water = useCareTypes().data?.find((type) => type.key === "water");
+  const logForPlants = useLogCareForPlants();
+  const undoable = useUndoable();
+  const watered = plants.filter((plant) => LOOKED_AFTER.has(plant.status));
+  if (!water || watered.length < 2) {
+    return null;
+  }
+
+  async function waterAll() {
+    if (!water) return;
+    try {
+      const events = await logForPlants.mutateAsync({
+        plant_ids: watered.map((plant) => plant.id),
+        care_type_id: water.id,
+        notes: "",
+        skipped: false,
+      });
+      undoable(
+        t("places.wateredAllHere", { count: events.length, location: location.name }),
+        events,
+      );
+    } catch (error) {
+      notifications.show({ color: "red", message: errorMessage(error) });
+    }
+  }
+
+  return (
+    <Button
+      size="xs"
+      variant="light"
+      leftSection={<CareIcon icon={water.icon} size={14} />}
+      loading={logForPlants.isPending}
+      aria-label={t("today.allIn", {
+        care: name(water),
+        count: watered.length,
+        location: location.name,
+      })}
+      onClick={() => void waterAll()}
+    >
+      {t("places.waterAllHere", { count: watered.length })}
+    </Button>
   );
 }
 

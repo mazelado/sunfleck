@@ -1,13 +1,20 @@
 import { Button, Group, Menu, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconChevronDown, IconListDetails } from "@tabler/icons-react";
+import {
+  IconAlarmSnooze,
+  IconChevronDown,
+  IconHistory,
+  IconListDetails,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { type CareType, useCareTypes, useDeleteCareEvent, useLogCare } from "../../api/care";
+import { useSchedules } from "../../api/schedules";
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { CareEventDialog } from "./CareEventDialog";
 import { CareIcon } from "./icons";
+import { PutOffDialog } from "./PutOffDialog";
 import { useCareTypeName } from "./useCareTypeName";
 
 // Shown as their own buttons; everything else is under "More care".
@@ -22,6 +29,11 @@ export function QuickCare({ plantId, plantName }: { plantId: number; plantName: 
   const logCare = useLogCare(plantId);
   const deleteEvent = useDeleteCareEvent();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [puttingOff, setPuttingOff] = useState(false);
+  // Care that's due, or will be, and so can be put off.
+  const dueCare = (useSchedules(plantId).data ?? []).filter(
+    (schedule) => schedule.enabled && schedule.due_on !== null,
+  );
   const main = MAIN_KEYS.map((key) => careTypes.find((type) => type.key === key)).filter(
     (type): type is CareType => type !== undefined,
   );
@@ -91,6 +103,14 @@ export function QuickCare({ plantId, plantName }: { plantId: number; plantName: 
             ))}
             <Menu.Divider />
             <Menu.Item
+              leftSection={<IconAlarmSnooze size={16} />}
+              onClick={() => {
+                setPuttingOff(true);
+              }}
+            >
+              {t("care.putOff")}
+            </Menu.Item>
+            <Menu.Item
               leftSection={<IconListDetails size={16} />}
               onClick={() => {
                 setDialogOpen(true);
@@ -100,7 +120,25 @@ export function QuickCare({ plantId, plantName }: { plantId: number; plantName: 
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
+        <Button
+          variant="subtle"
+          leftSection={<IconHistory size={16} />}
+          onClick={() => {
+            setDialogOpen(true);
+          }}
+        >
+          {t("care.addEarlier")}
+        </Button>
       </Group>
+      {puttingOff && (
+        <PutOffDialog
+          plantName={plantName}
+          care={dueCare}
+          onClose={() => {
+            setPuttingOff(false);
+          }}
+        />
+      )}
       {dialogOpen && (
         <CareEventDialog
           plantId={plantId}
