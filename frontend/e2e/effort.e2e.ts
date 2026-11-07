@@ -15,6 +15,7 @@ const BUDGETS = {
   waterFromToday: { taps: 1, fields: 0, pages: 0 },
   waterAllDue: { taps: 1, fields: 0, pages: 0 },
   snooze: { taps: 2, fields: 0, pages: 0 },
+  putOffFromPlantPage: { taps: 5, fields: 0, pages: 1 },
   careFromPlantPage: { taps: 3, fields: 0, pages: 1 },
   findPlant: { taps: 2, fields: 1, pages: 2 },
   addPlant: { taps: 7, fields: 3, pages: 3 },
@@ -74,9 +75,23 @@ test("log a watering from Today", async () => {
 test("snooze care from Today", async () => {
   await startOn("/", "Today");
   await withinBudget(page, BUDGETS.snooze, async (effort) => {
-    await effort.tap(page.getByRole("button", { name: "More for Water Aloe" }));
+    await effort.tap(page.getByRole("button", { name: "Later: Water Aloe" }));
     await effort.tap(page.getByRole("menuitem", { name: "Snooze for a week" }));
     await expect(page.getByText(/Aloe: snoozed until/)).toBeVisible();
+  });
+});
+
+test("put a plant's care off from its page", async () => {
+  await startOn("/plants", "Plants");
+  await withinBudget(page, BUDGETS.putOffFromPlantPage, async (effort) => {
+    await effort.tap(page.getByRole("link", { name: /^Dragon tree/ }));
+    await effort.tap(page.getByRole("button", { name: "More care" }));
+    await effort.tap(page.getByRole("menuitem", { name: "Put off care…" }));
+    await effort.tap(page.getByRole("dialog").getByText("In 3 days"));
+    await effort.tap(
+      page.getByRole("dialog").getByRole("button", { name: "Put off", exact: true }),
+    );
+    await expect(page.getByText(/^Water for Dragon tree put off until/)).toBeVisible();
   });
 });
 
@@ -85,7 +100,7 @@ test("a care row's menu shows above the rows below it", async () => {
   // covered the menu: only its first item could be tapped.
   await startOn("/", "Today");
   await page
-    .getByRole("button", { name: /^More for / })
+    .getByRole("button", { name: /^Later: / })
     .first()
     .click();
   const items = page.getByRole("menuitem");
@@ -100,7 +115,7 @@ test("log care from a plant's page, with how the soil was", async () => {
   await withinBudget(page, BUDGETS.careFromPlantPage, async (effort) => {
     await effort.tap(page.getByRole("link", { name: /^Flaming Katy/ }));
     await effort.tap(page.getByRole("button", { name: "Water", exact: true }));
-    const soil = page.getByRole("group", { name: "How was the soil?" });
+    const soil = page.getByRole("group", { name: "How was the soil when you watered today?" });
     await effort.tap(soil.getByText("Just right"));
     await expect(page.getByText("Soil: Just right")).toBeVisible();
   });

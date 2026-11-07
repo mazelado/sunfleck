@@ -389,7 +389,10 @@
     "moved_other": "Moved {{count}} plants to {{location}}.",
     "movedChooseLight_one": "On its page, choose which windows and grow lights reach it here.",
     "movedChooseLight_other": "On each plant's page, choose which windows and grow lights reach it here.",
-    "timeZone": "Time zone: {{zone}}"
+    "timeZone": "Time zone: {{zone}}",
+    "waterAllHere": "Water all {{count}}",
+    "wateredAllHere_one": "Watered: {{count}} plant in {{location}}",
+    "wateredAllHere_other": "Watered: {{count}} plants in {{location}}"
   },
   "directions": {
     "N": "north",
@@ -705,7 +708,7 @@
     "howWasSoilHelp": "Before watering. This helps Sunfleck learn when this plant needs water.",
     "quickActions": "Log care",
     "more": "More care",
-    "logWithDetails": "Log with details…",
+    "logWithDetails": "Add details or another day…",
     "logCare": "Log care",
     "editCare": "Edit care",
     "careType": "What did you do?",
@@ -766,7 +769,13 @@
       "heart": "Heart",
       "note": "Note"
     },
-    "estimated": "Estimated when added"
+    "estimated": "Estimated when added",
+    "addEarlier": "Add earlier care",
+    "howWasSoilWhen": "How was the soil when you watered {{when}}?",
+    "wateredToday": "today",
+    "wateredYesterday": "yesterday",
+    "wateredOn": "on {{date}}",
+    "putOff": "Put off care…"
   },
   "crop": {
     "title": "Growing from seed",
@@ -998,7 +1007,7 @@
     "dueToday": "Due today",
     "snoozed": "Snoozed",
     "done": "Done: {{care}} {{plant}}",
-    "more": "More for {{care}} {{plant}}",
+    "more": "Later: {{care}} {{plant}}",
     "skip": "Skip this time",
     "skipped": "Skipped: {{care}} {{plant}}",
     "snoozeTomorrow": "Snooze until tomorrow",
@@ -1010,7 +1019,10 @@
     "allOf": "{{care}} all {{count}}",
     "loggedMany_one": "{{action}}: {{count}} plant",
     "loggedMany_other": "{{action}}: {{count}} plants",
-    "gettingStarted": "Getting started"
+    "gettingStarted": "Getting started",
+    "later": "Later",
+    "snoozeUntilDay": "Snooze until a day…",
+    "allIn": "{{care}} all {{count}} in {{location}}"
   },
   "plugins": {
     "title": "Plugins",
@@ -1333,6 +1345,20 @@
     "dogs": "dogs",
     "source": "Source:",
     "unknown": "Toxicity to pets: not known. That doesn't mean it's safe: check with your vet or the ASPCA's list."
+  },
+  "putOff": {
+    "title": "Put off care for {{plant}}",
+    "which": "Which care",
+    "careDue": "{{care}} (due {{date}})",
+    "until": "Until",
+    "untilHelp": "It won't be due, or reminded of, before then.",
+    "tomorrow": "Tomorrow",
+    "inDays": "In {{count}} days",
+    "week": "In a week",
+    "save": "Put off",
+    "done": "{{care}} for {{plant}} put off until {{date}}.",
+    "nothing": "Nothing is due for this plant yet, so there's nothing to put off.",
+    "schedule": "Put off {{care}}"
   },
   "settings": {
     "title": "Settings",

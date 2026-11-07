@@ -129,6 +129,17 @@ describe("logging care", () => {
     expect(logged.care_type_id).toBe(mist.id);
   });
 
+  it("adds earlier care from a button beside the care buttons", async () => {
+    signInAs(gardener);
+    withPlant();
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
+
+    const dialog = await screen.findByRole("dialog", { name: "Log care" });
+    expect(within(dialog).getByLabelText(/^When/)).toBeVisible();
+  });
+
   it("logs care with details: soil feedback, skipped, and notes", async () => {
     signInAs(gardener);
     withPlant();
@@ -142,7 +153,7 @@ describe("logging care", () => {
     const { user } = renderApp("/plants/7");
 
     await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     expect(within(dialog).getByRole("combobox", { name: "What did you do?" })).toHaveValue("Water");
     await user.click(within(dialog).getByText("Still wet"));
@@ -190,7 +201,7 @@ describe("logging care", () => {
     const { user } = renderApp("/plants/7");
 
     await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     await user.type(within(dialog).getByLabelText(/Notes/), "Both sides");
     await user.click(within(dialog).getByRole("button", { name: "Add a care type" }));
@@ -223,7 +234,7 @@ describe("logging care", () => {
     const { user } = renderApp("/plants/7");
 
     await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
@@ -244,7 +255,7 @@ describe("custom watering types", () => {
     const { user } = renderApp("/plants/7");
 
     await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Log with details…" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     const careType = within(dialog).getByRole("combobox", { name: "What did you do?" });
     await user.click(careType);
@@ -297,7 +308,9 @@ describe("history", () => {
     expect(screen.getByText("Soil: Too dry")).toBeVisible();
     expect(screen.getByText("5 days ago")).toBeVisible();
     // Only the latest watering asks.
-    const ask = screen.getByRole("group", { name: "How was the soil?" });
+    const ask = screen.getByRole("group", {
+      name: "How was the soil when you watered yesterday?",
+    });
     await user.click(within(ask).getByText("Just right"));
 
     await waitFor(() => {
@@ -319,7 +332,7 @@ describe("history", () => {
 
     expect(await screen.findByText(/by Ada/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "Water" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("group", { name: "How was the soil?" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: /^How was the soil/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Options for/ })).not.toBeInTheDocument();
   });
 
