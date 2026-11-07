@@ -45,6 +45,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   **Add a photo** over the placeholder of a plant without one. The Photos card keeps its
   button too.
 
+- **Settings** have their own page, behind the gear at the top, saying what each is for,
+  with a shortcut to **Invite someone**. The account menu keeps your profile and signing
+  out. On the household page, inviting someone comes first, in its own card.
+- **Cropping is easier to find**: tap a plant's cover photo to open it, and **Crop** is
+  offered right after adding a photo.
+- **The light check says first** whether a plant gets enough light now, and what to do
+  about it, before the numbers.
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first

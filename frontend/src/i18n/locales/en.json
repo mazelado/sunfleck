@@ -46,7 +46,8 @@
     "notifications": "Notifications",
     "data": "Export and import",
     "install": "Install app",
-    "about": "About Sunfleck"
+    "about": "About Sunfleck",
+    "settings": "Settings"
   },
   "about": {
     "title": "About Sunfleck",
@@ -669,7 +670,8 @@
       "thisMonth": "This month",
       "fewMonths": "A few months ago",
       "neverOrUnknown": "Never or don't know"
-    }
+    },
+    "openCover": "Open the photo of {{name}}"
   },
   "care": {
     "addCareType": "Add a care type",
@@ -1213,7 +1215,7 @@
     }
   },
   "light": {
-    "title": "Is this spot bright enough?",
+    "title": "Light check",
     "season": "Season",
     "here": "Here",
     "likes": "It likes",
@@ -1237,7 +1239,13 @@
     "missingIndoor": "To see whether {{name}} gets enough light, tell Sunfleck which windows or grow lights reach it, and how far it is from each window.",
     "missingOutdoor": "To see whether it gets enough light, set how much sun {{name}} gets.",
     "addLights": "Add the lights that reach {{name}}",
-    "setSun": "Set the sun exposure"
+    "setSun": "Set the sun exposure",
+    "answer": {
+      "low": "Too dark here for {{name}} now.",
+      "a_bit_low": "A little too dark here for {{name}} now.",
+      "good": "Enough light here for {{name}} now.",
+      "bright": "Brighter here than {{name}} likes now."
+    }
   },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
@@ -1325,5 +1333,14 @@
     "dogs": "dogs",
     "source": "Source:",
     "unknown": "Toxicity to pets: not known. That doesn't mean it's safe: check with your vet or the ASPCA's list."
+  },
+  "settings": {
+    "title": "Settings",
+    "householdAbout": "Who's in your household: invite people, and choose who can do what.",
+    "notificationsAbout": "Reminders of what needs care: when, and on which phones or computers.",
+    "careTypesAbout": "The kinds of care you keep track of, such as watering, misting and repotting.",
+    "profileAbout": "Your name, picture, language and units.",
+    "pluginsAbout": "Extras an Admin can turn on: the weather, plant identification and AI.",
+    "dataAbout": "Download your household's plants and history, or bring them into another Sunfleck."
   }
 }

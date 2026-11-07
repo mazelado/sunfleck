@@ -990,9 +990,9 @@ describe("plant page", () => {
 
     renderApp("/plants/7");
 
-    expect(
-      await screen.findByRole("heading", { name: "Is this spot bright enough?" }),
-    ).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Light check" })).toBeVisible();
+    // The answer for now comes first, in words.
+    expect(screen.getByText("Enough light here for Monty now.")).toBeVisible();
     const now = screen.getByRole("row", { name: /Spring \(now\)/ });
     expect(now).toHaveTextContent("Spring (now)810Good");
     expect(screen.getByRole("row", { name: /Winter/ })).toHaveTextContent("Winter3.55.5A bit low");
@@ -1111,6 +1111,34 @@ describe("plant page", () => {
 
     const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
     expect(button).not.toHaveTextContent("Add a photo");
+  });
+
+  it("opens the cover photo when it's tapped, to crop it", async () => {
+    signInAs(gardener);
+    withPlant(plant({ cover_photo: photo }), [photo]);
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "Open the photo of Monty" }));
+
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByRole("button", { name: "Crop" })).toBeVisible();
+  });
+
+  it("offers to crop a photo just added", async () => {
+    signInAs(gardener);
+    withPlant(plant({ cover_photo: photo }), [photo]);
+    uploadPhoto.mockResolvedValueOnce(photo);
+    const { user } = renderApp("/plants/7");
+
+    const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
+    const input = button.parentElement?.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!input) throw new Error("No file input");
+    await user.upload(input, new File(["jpeg"], "leaf.jpg", { type: "image/jpeg" }));
+    await user.click(await screen.findByRole("button", { name: "Crop" }));
+
+    // The photo opens on choosing the part of it to show.
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByText(/The whole photo is kept/)).toBeVisible();
   });
 
   it("lets gardeners choose the cover photo", async () => {

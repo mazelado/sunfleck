@@ -21,17 +21,26 @@ interface PhotoViewerProps {
   plantName: string;
   isCover: boolean;
   canEdit: boolean;
+  /** Open on choosing the part to show, e.g. right after adding the photo. */
+  startCropping?: boolean;
   onClose: () => void;
 }
 
 /** A photo at full size, with its caption, and (for Gardeners) ways to change it. */
-export function PhotoViewer({ photo, plantName, isCover, canEdit, onClose }: PhotoViewerProps) {
+export function PhotoViewer({
+  photo,
+  plantName,
+  isCover,
+  canEdit,
+  startCropping = false,
+  onClose,
+}: PhotoViewerProps) {
   const { t, i18n } = useTranslation();
   const [caption, setCaption] = useState(photo.caption);
   const updatePhoto = useUpdatePhoto();
   const setCover = useSetCoverPhoto(photo.plant_id);
   const deletePhoto = useDeletePhoto();
-  const [cropping, setCropping] = useState(false);
+  const [cropping, setCropping] = useState(startCropping && canEdit);
   const taken = formatDateTime(photo.taken_at, i18n.language);
 
   return (

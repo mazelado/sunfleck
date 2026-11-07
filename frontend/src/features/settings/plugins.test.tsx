@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import type { UserEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -326,21 +326,19 @@ describe("plugins", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeVisible();
   });
 
-  it("are in the menu for Admins only", async () => {
+  it("are in the settings for Admins only", async () => {
     signInAs({ ...ada, role: "gardener" });
-    const { user } = renderApp("/");
+    renderApp("/settings");
 
-    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
-    const menu = await screen.findByRole("menu");
-    expect(within(menu).queryByRole("menuitem", { name: "Plugins" })).toBeNull();
+    expect(await screen.findByRole("link", { name: "Household" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Plugins" })).toBeNull();
   });
 
-  it("are in the menu for Admins", async () => {
+  it("are in the settings for Admins", async () => {
     signInAs(admin);
-    const { user } = renderApp("/");
+    renderApp("/settings");
 
-    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
-    expect(await screen.findByRole("menuitem", { name: "Plugins" })).toHaveAttribute(
+    expect(await screen.findByRole("link", { name: "Plugins" })).toHaveAttribute(
       "href",
       "/settings/plugins",
     );

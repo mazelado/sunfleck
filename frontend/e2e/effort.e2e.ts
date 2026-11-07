@@ -25,8 +25,8 @@ const BUDGETS = {
   addLightFromPlant: { taps: 6, fields: 0, pages: 3 },
   movePlant: { taps: 4, fields: 0, pages: 1 },
   addRoomWithWindow: { taps: 8, fields: 1, pages: 4 },
-  invite: { taps: 3, fields: 1, pages: 1 },
-  calendar: { taps: 4, fields: 0, pages: 1 },
+  invite: { taps: 3, fields: 1, pages: 2 },
+  calendar: { taps: 4, fields: 0, pages: 2 },
 } satisfies Record<string, Cost>;
 
 let page: Page;
@@ -218,8 +218,8 @@ test("give a plant a grow light its room doesn't have yet", async () => {
 test("invite someone to the household", async () => {
   await startOn("/", "Today");
   await withinBudget(page, BUDGETS.invite, async (effort) => {
-    await effort.tap(page.getByRole("button", { name: /^Account menu/ }));
-    await effort.tap(page.getByRole("menuitem", { name: "Household" }));
+    await effort.tap(page.getByRole("link", { name: "Settings" }));
+    await effort.tap(page.getByRole("link", { name: "Invite someone" }));
     await effort.type(
       page.getByRole("textbox", { name: /Their email address/ }),
       "bea@example.com",
@@ -232,8 +232,8 @@ test("invite someone to the household", async () => {
 test("put care in a calendar app", async () => {
   await startOn("/", "Today");
   await withinBudget(page, BUDGETS.calendar, async (effort) => {
-    await effort.tap(page.getByRole("button", { name: /^Account menu/ }));
-    await effort.tap(page.getByRole("menuitem", { name: "Notifications" }));
+    await effort.tap(page.getByRole("link", { name: "Settings" }));
+    await effort.tap(page.getByRole("link", { name: "Notifications" }));
     await effort.tap(page.getByRole("button", { name: "Get a calendar address" }));
     await effort.tap(page.getByRole("button", { name: "Copy" }));
     await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();

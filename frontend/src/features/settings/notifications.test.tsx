@@ -31,12 +31,12 @@ function withChannels(channels: Channel[]) {
 }
 
 describe("notifications", () => {
-  it("are in everyone's menu", async () => {
+  it("are in everyone's settings, from the gear button", async () => {
     signInAs({ ...ada, role: "viewer" });
     const { user } = renderApp("/");
 
-    await user.click(await screen.findByRole("button", { name: /^Account menu/ }));
-    expect(await screen.findByRole("menuitem", { name: "Notifications" })).toHaveAttribute(
+    await user.click(await screen.findByRole("link", { name: "Settings" }));
+    expect(await screen.findByRole("link", { name: "Notifications" })).toHaveAttribute(
       "href",
       "/settings/notifications",
     );

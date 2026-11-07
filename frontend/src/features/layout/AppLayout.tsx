@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   AppShell,
   Button,
   Container,
@@ -11,20 +12,16 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
-  IconBell,
   IconBook,
   IconDeviceMobileDown,
-  IconDroplet,
   IconInfoCircle,
   IconChecklist,
-  IconDatabaseExport,
   IconLeaf,
   IconLogout,
   IconMapPin,
   IconPlant2,
-  IconPuzzle,
+  IconSettings,
   IconUser,
-  IconUsers,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { type ComponentType, useState } from "react";
@@ -92,92 +89,69 @@ export function AppLayout() {
             </Text>
             {wide && <HeaderNavigation />}
           </Group>
-          <Menu position="bottom-end" width={200}>
-            <Menu.Target>
-              {/* The name shown (on wider screens) is part of the button's name, as people
+          <Group gap="xs" wrap="nowrap">
+            <ActionIcon
+              component={Link}
+              to="/settings"
+              variant="subtle"
+              color="gray"
+              size="lg"
+              radius="xl"
+              aria-label={t("nav.settings")}
+            >
+              <IconSettings size={22} />
+            </ActionIcon>
+            <Menu position="bottom-end" width={200}>
+              <Menu.Target>
+                {/* The name shown (on wider screens) is part of the button's name, as people
                   using voice control say what they see. */}
-              <UnstyledButton aria-label={t("nav.accountMenu", { name })}>
-                <Group gap="xs">
-                  <PersonAvatar url={me?.avatar_url} />
-                  <Text size="sm" visibleFrom="xs">
-                    {name}
-                  </Text>
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                component={Link}
-                to="/settings/profile"
-                leftSection={<IconUser size={16} />}
-              >
-                {t("nav.profile")}
-              </Menu.Item>
-              <Menu.Item
-                component={Link}
-                to="/settings/notifications"
-                leftSection={<IconBell size={16} />}
-              >
-                {t("nav.notifications")}
-              </Menu.Item>
-              <Menu.Item
-                component={Link}
-                to="/settings/care-types"
-                leftSection={<IconDroplet size={16} />}
-              >
-                {t("nav.careTypes")}
-              </Menu.Item>
-              <Menu.Item
-                component={Link}
-                to="/settings/household"
-                leftSection={<IconUsers size={16} />}
-              >
-                {t("nav.household")}
-              </Menu.Item>
-              {me?.role === "admin" && (
+                <UnstyledButton aria-label={t("nav.accountMenu", { name })}>
+                  <Group gap="xs">
+                    <PersonAvatar url={me?.avatar_url} />
+                    <Text size="sm" visibleFrom="xs">
+                      {name}
+                    </Text>
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
                 <Menu.Item
                   component={Link}
-                  to="/settings/plugins"
-                  leftSection={<IconPuzzle size={16} />}
+                  to="/settings/profile"
+                  leftSection={<IconUser size={16} />}
                 >
-                  {t("nav.plugins")}
+                  {t("nav.profile")}
                 </Menu.Item>
-              )}
-              {me?.role === "admin" && (
+                <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
+                  {t("nav.settings")}
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Item component={Link} to="/about" leftSection={<IconInfoCircle size={16} />}>
+                  {t("nav.about")}
+                </Menu.Item>
+                {installMethod && (
+                  <Menu.Item
+                    leftSection={<IconDeviceMobileDown size={16} />}
+                    onClick={() => {
+                      if (installMethod === "ios") {
+                        setIosHelp(true);
+                      } else {
+                        void install();
+                      }
+                    }}
+                  >
+                    {t("nav.install")}
+                  </Menu.Item>
+                )}
                 <Menu.Item
-                  component={Link}
-                  to="/settings/data"
-                  leftSection={<IconDatabaseExport size={16} />}
+                  leftSection={<IconLogout size={16} />}
+                  onClick={() => void handleSignOut()}
                 >
-                  {t("nav.data")}
+                  {t("nav.signOut")}
                 </Menu.Item>
-              )}
-              <Menu.Divider />
-              <Menu.Item component={Link} to="/about" leftSection={<IconInfoCircle size={16} />}>
-                {t("nav.about")}
-              </Menu.Item>
-              {installMethod && (
-                <Menu.Item
-                  leftSection={<IconDeviceMobileDown size={16} />}
-                  onClick={() => {
-                    if (installMethod === "ios") {
-                      setIosHelp(true);
-                    } else {
-                      void install();
-                    }
-                  }}
-                >
-                  {t("nav.install")}
-                </Menu.Item>
-              )}
-              <Menu.Item
-                leftSection={<IconLogout size={16} />}
-                onClick={() => void handleSignOut()}
-              >
-                {t("nav.signOut")}
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
         </Group>
       </AppShell.Header>
       <Modal
