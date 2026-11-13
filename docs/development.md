@@ -153,6 +153,16 @@ Backend tests live in a `tests/` folder in each Django app. Frontend tests sit n
 code they test, as `*.test.tsx`. They run the real screens against a fake API (MSW,
 `src/test/server.ts`); any request a test didn't set up a fake response for fails the test.
 
+**Forced versions:** `overrides` in `frontend/package.json` replaces vulnerable versions of
+packages that the build and lint tools depend on, where even their newest release still asks
+for one. Remove an override once the tool itself requires a fixed version (`npm ls <package>`
+shows which version each tool gets).
+
+| Override | Why | Required by |
+|---|---|---|
+| `minimatch` 11.0.1 or later | [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) (denial of service) | eslint 10.14, typescript-eslint 8.72 |
+| `glob` 14.0.2 or later, under `workbox-build` | [GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) (traversal after a timeout) | workbox-build 7.4.1 (via vite-plugin-pwa) |
+
 ## 7. Configuration
 
 Settings come from environment variables (see
