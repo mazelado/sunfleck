@@ -169,6 +169,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **One household per person** is now enforced in the admin site, which refuses to add
   someone to a second household. Should someone already have two, they always get the
   older one, instead of whichever the database returned first.
+- **Plugins' API endpoints** need a signed-in member, and a CSRF token for changes, unless the
+  plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
+  plugin checked, and had no CSRF protection even when it did. No built-in plugin has
+  endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
 
 ## [0.9.0] - 2026-11-06
 

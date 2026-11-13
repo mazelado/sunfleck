@@ -123,6 +123,10 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 - Hooks are only called for households that turned the plugin on, with that household's
   `settings` (None if the plugin has no settings). `register_api` and `register_periodic_jobs`
   run once for everyone.
+- **Endpoints need a signed-in member** by default, like Sunfleck's own: anyone else gets 401,
+  and changes (`POST`, `PUT`, `PATCH`, `DELETE`) also need the CSRF token, which the app
+  sends. An endpoint that must be public says so with `auth=None`
+  (`@router.get("/feed", auth=None)`) and then checks access itself.
 - **Endpoints must check access**: start each one with `require_enabled(request, "example")`,
   which returns the signed-in member and refuses households that haven't turned the plugin on.
 - **Fail gracefully.** If a hook raises an exception, Sunfleck logs it, shows it to Admins on
