@@ -67,8 +67,8 @@ This starts three processes side by side:
 - **Vite** on port 5173 serves the React frontend and reloads the page instantly when you save
   a file.
 - **Django** on port 8000 serves the API. Vite forwards `/api`, `/admin`, and `/static` to it.
-- **The worker** (Huey) runs background jobs: reminders, weather updates, and the nightly
-  recalculation. Its queue is a file next to the database (`backend/data/huey.sqlite3`). It
+- **The worker** (Huey) runs background jobs: reminders, weather updates, and the daily
+  recalculation of due dates. Its queue is a file next to the database (`backend/data/huey.sqlite3`). It
   doesn't reload when you change code: stop `make dev` and start it again. (`make dev-worker`
   runs just the worker.)
 
@@ -198,8 +198,9 @@ DEBUG=true uv run python manage.py load_care_data --force
 The prediction engine is plain Python in `backend/sunfleck/prediction/`; the care app's
 `schedules.py` feeds it from the database and stores the results. Saving anything a prediction
 depends on marks the affected schedules out of date (`care/signals.py`); they recalculate when
-next read, or when read on a new day. To bring them all up to date at once (the nightly job will
-do this), run:
+next read. The worker recalculates each site's schedules every day, within the hour after the
+site's midnight, so reading them on a new day rarely has to. To bring them all up to date at
+once, run:
 
 ```bash
 cd backend
@@ -261,7 +262,7 @@ docker compose -f compose.yaml -f compose.build.yaml up -d --build
 ```
 
 This starts two containers from the same image: **sunfleck** (the app) and **worker** (background
-jobs: reminders, weather updates, the nightly recalculation), which starts once the app is up.
+jobs: reminders, weather updates, the daily recalculation of due dates), which starts once the app is up.
 `--build` rebuilds the image from your current code; drop it to reuse the last build. (Use the
 same `-f` options with the other `docker compose` commands below.) Data is
 kept in a Docker volume named `docker_sunfleck-data` (the `docker_` prefix comes from the

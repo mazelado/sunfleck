@@ -4,7 +4,8 @@ The prediction engine (sunfleck.prediction) does the calculation; this module ga
 inputs from the database and stores the results. A schedule is recalculated when it's created
 or changed, and when it's read if it's out of date: on a new day, or after something it
 depends on changed (its plant, location, light, care log, or care profile; see signals.py).
-`manage.py recalculate_schedules` (which the nightly job will run) recalculates them all.
+The worker recalculates them every hour, shortly after each site's day begins (see tasks.py),
+so reading them rarely has to; `manage.py recalculate_schedules` recalculates them all now.
 """
 
 import json
@@ -31,7 +32,7 @@ from sunfleck.care.models import (
 from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.humidity import location_humidity
 from sunfleck.places.light import grow_light_dli, ppfd_at
-from sunfleck.places.models import BedType, LightSourceKind, LocationKind
+from sunfleck.places.models import BedType, LightSourceKind, LocationKind, Site
 from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
@@ -287,6 +288,40 @@ def recalculate_all() -> int:
         "location__site", "taxon__archetype", "care_profile"
     ).iterator():
         count += len(schedules_for(plant))
+    return count
+
+
+def out_of_date() -> QuerySet[CareSchedule]:
+    """The schedules not yet calculated for their site's today (or marked out of date).
+
+    "Today" is each site's own, so a site's schedules become out of date when its day begins.
+    """
+    now = timezone.now()
+    zones = set(Site.objects.values_list("timezone", flat=True)) | {settings.TIME_ZONE}
+    stale = Q()
+    for zone in zones:
+        try:
+            today = now.astimezone(ZoneInfo(zone)).date()
+        except (ValueError, KeyError):  # pragma: no cover - sites' zones are checked when saved
+            continue
+        in_zone = Q(plant__location__site__timezone=zone)
+        if zone == settings.TIME_ZONE:
+            in_zone |= Q(plant__location__isnull=True)
+        stale |= in_zone & (Q(calculated_on__isnull=True) | ~Q(calculated_on=today))
+    return CareSchedule.objects.filter(stale)
+
+
+def recalculate_out_of_date() -> int:
+    """Recalculate the schedules whose site has begun a new day since they were last
+    calculated, or that were marked out of date; return how many. Run every hour by the
+    worker, so the day's first request (e.g. Today) finds them done."""
+    stale = out_of_date()
+    count = stale.count()
+    plants = Plant.objects.filter(pk__in=stale.values("plant_id"))
+    for plant in plants.select_related(
+        "location__site", "taxon__archetype", "care_profile"
+    ).iterator():
+        schedules_for(plant)
     return count
 
 

@@ -8,7 +8,7 @@ import time_machine
 from django.test import Client
 
 from sunfleck.accounts.models import Household, Role
-from sunfleck.care import schedules
+from sunfleck.care import schedules, tasks
 from sunfleck.care.models import CareEvent, CareSchedule, CareType, Feedback, ScheduleMode
 from sunfleck.care.schedules import ScheduleData
 from sunfleck.care.services import CareError, CareEventData, log_care_for_plants
@@ -456,3 +456,25 @@ def test_watering_a_room_through_the_api(
     assert [event["plant_id"] for event in logged.json()] == [monty.pk, fern.pk]
     assert refused.json()["error"]["code"] == "plant_not_found"
     assert viewer.status_code == 403
+
+
+# --- The day's first Today --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("plants", [5, 25])
+def test_the_first_today_of_the_day_makes_a_bounded_number_of_queries(
+    client_as: ClientAs, living_room: Location, django_assert_max_num_queries: Any, plants: int
+) -> None:
+    client = client_as(Role.VIEWER)
+    for number in range(plants):
+        plant = plant_in(living_room, f"Plant {number}")
+        for key in ("water", "fertilize"):
+            schedules.create_schedule(plant, ScheduleData(builtin(key).pk, ScheduleMode.PREDICTED))
+
+    with time_machine.travel(datetime(2026, 4, 16, 6, tzinfo=UTC), tick=False):
+        # The worker's hourly run after the site's midnight (Amsterdam: 22:00 UTC) did the work.
+        tasks.recalculate_schedules.call_local()
+        with django_assert_max_num_queries(10):
+            response = client.get("/api/v1/today")
+
+    assert response.status_code == 200

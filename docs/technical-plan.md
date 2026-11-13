@@ -133,7 +133,7 @@ Adding it later would mean rewriting every query.
 ### Background jobs (Huey)
 | Job | When |
 |---|---|
-| Recalculate due dates for all schedules (`manage.py recalculate_schedules`) | Nightly. Schedules are also recalculated whenever they're read or changed, so they follow changes to plants, places and the care log without this job |
+| Recalculate due dates for all schedules (`manage.py recalculate_schedules`) | Every hour, for the schedules whose site has begun a new day since they were calculated. Schedules are also recalculated whenever they're read or changed, so they follow changes to plants, places and the care log without this job |
 | Send reminders and daily digests | Every 15 minutes (checks who is due for a notification) |
 | Refresh weather per site (plugin) | Every 1–3 hours |
 
