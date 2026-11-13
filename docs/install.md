@@ -254,7 +254,8 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `LOG_LEVEL` | `INFO` | How much to log: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
 | `SUNFLECK_ACCESS_LOG` | `false` | `true` logs every request the web server answers, for tracking down a problem |
 | `SUNFLECK_PUSH_HOSTS` | *(none)* | More push services Web Push may send to, comma-separated ([below](#notifications-and-plugins)) |
-| `WEB_TIMEOUT` | `250` | Seconds a request may take before it's stopped. Long enough for an AI model that has to load first; lower it if you don't use AI plugins |
+| `WEB_CONCURRENCY`, `WEB_THREADS` | `2`, `4` | Web server processes, and requests each answers at once. More threads let more slow requests (AI answers) wait without holding up the app; more processes use more memory |
+| `WEB_TIMEOUT` | `250` | Seconds a web server process may stop answering before it's restarted. Long enough for an AI model that has to load first |
 
 ## Troubleshooting
 

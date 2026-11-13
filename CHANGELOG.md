@@ -199,6 +199,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **A few slow requests no longer stop the app for everyone**: each of the 2 web server
+  processes now answers 4 requests at once (`WEB_THREADS`), so two questions to a slow AI
+  model, or two tests of a notification server that doesn't answer, leave room for everyone
+  else.
 
 ## [0.9.0] - 2026-11-06
 
