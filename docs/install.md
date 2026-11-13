@@ -83,6 +83,9 @@ and run `docker compose up -d` again.
 
 ```
 plants.example.com {
+	request_body {
+		max_size 25MB  # photos can be up to 20 MB
+	}
 	reverse_proxy localhost:8000
 }
 ```
@@ -203,8 +206,9 @@ You can upgrade from any earlier release with the same major version in one step
 0.1 straight to 1.4. Going back to an older version isn't supported: restore the backup
 instead. What stays the same between versions is in [stability.md](stability.md).
 
-To check which version is running, open **About Sunfleck** in the account menu, or
-`curl http://localhost:8000/api/v1/health`.
+To check which version is running, open **About Sunfleck** in the account menu. (The health
+check at `/api/v1/health` only says which version to people signed in, and to the server
+itself, so strangers can't tell which known problems apply.)
 
 ## PostgreSQL and Redis (optional)
 
@@ -264,6 +268,9 @@ Set in `.env`; run `docker compose up -d` after changing them.
   `docker compose logs sunfleck` says why, for example a setting that's wrong or a data folder
   that isn't writable (see below).
 - **"Bad Request (400)"**: the address you use isn't in `ALLOWED_HOSTS`.
+- **"Request Entity Too Large" (413)**: the reverse proxy, or Sunfleck, refuses anything over
+  25 MB. Photos are up to 20 MB. To import an export larger than the proxy allows, use the
+  `import_household` command.
 - **"CSRF verification failed" or signing in fails**: add the address, with `https://`, to
   `CSRF_TRUSTED_ORIGINS`; behind a reverse proxy, also set `SUNFLECK_BEHIND_PROXY=true`.
 - **"Sunfleck can't be reached"** in the installed app: the server isn't running or the phone

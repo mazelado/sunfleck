@@ -19,18 +19,31 @@ class HealthOut(Schema):
     database: str
 
 
+def _shows_version(request: HttpRequest) -> bool:
+    """Whether to say which version runs: to members, and to checks from the server itself
+    (Docker's health check), but not to strangers, to whom it says which known problems
+    apply. A request through a proxy on the same machine comes from it too, so it counts as
+    from the server only without X-Forwarded-For."""
+    if request.user.is_authenticated:
+        return True
+    local = request.META.get("REMOTE_ADDR") in ("127.0.0.1", "::1")
+    return local and "HTTP_X_FORWARDED_FOR" not in request.META
+
+
 @router.get("/health", response={200: HealthOut, 503: HealthOut}, auth=None)
 def health(request: HttpRequest) -> Status[HealthOut]:
     """Report whether the app is running and can reach its database.
 
-    Used by Docker health checks and uptime monitors, so it needs no sign-in.
+    Used by Docker health checks and uptime monitors, so it needs no sign-in. `version` is
+    empty unless signed in, or asked from the server itself.
     """
+    version = __version__ if _shows_version(request) else ""
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
     except DatabaseError:
-        return Status(503, HealthOut(status="error", version=__version__, database="unreachable"))
-    return Status(200, HealthOut(status="ok", version=__version__, database="ok"))
+        return Status(503, HealthOut(status="error", version=version, database="unreachable"))
+    return Status(200, HealthOut(status="ok", version=version, database="ok"))
 
 
 # Where to get this version's source code, as the AGPL asks. Change it in a modified version.

@@ -43,10 +43,14 @@ runs. What it does to keep that safe, and what the people running it should know
 - **The Django admin site** (`/admin/`) is open only to the first account. It has no sign-in
   form of its own: sign in to Sunfleck first. Because that account reaches every household,
   other Admins can't make a password-reset link for it or remove it.
-- **Over HTTPS** (with `SUNFLECK_BEHIND_PROXY=true`), cookies are only ever sent over HTTPS.
+- **Over HTTPS** (with `SUNFLECK_BEHIND_PROXY=true`), cookies are only ever sent over HTTPS,
+  and browsers are told to use only HTTPS for a year (HSTS).
   Every page carries a Content-Security-Policy that allows only Sunfleck's own scripts.
 - **Secrets** (notification addresses, plugins' API keys) are stored encrypted with
   `SUNFLECK_ENCRYPTION_KEY`, are never shown again, and aren't exported.
+- **Limits on work**: requests over 25 MB are refused before they're read (an import can be
+  larger), photos over 50 megapixels aren't decoded, and each member may ask the AI, identify
+  a plant or test a notification channel only so often a minute.
 - **Uploads** are checked to be images, limited to 20 MB, and stored again without their
   metadata (such as where a photo was taken).
 - **Sunfleck contacts the addresses people give it,** as it's meant to:

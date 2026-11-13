@@ -24,7 +24,7 @@ from sunfleck.care import services as care_services
 from sunfleck.care.glance import glance
 from sunfleck.care.models import CareSchedule
 from sunfleck.care.schedules import local_today
-from sunfleck.core import images
+from sunfleck.core import images, limits
 from sunfleck.core.errors import ApiError
 from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.places.api import (
@@ -751,6 +751,7 @@ def diagnose_plant(
     The answer is suggestions. With `keep_photo`, the photo is added to the plant's photos."""
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant(household, plant_id)
+    limits.per_member(request, "ai", limits.AI_PER_MINUTE)
     size = file.size or 0
     if size > images.MAX_UPLOAD_BYTES:
         limit = images.MAX_UPLOAD_BYTES // (1024 * 1024)

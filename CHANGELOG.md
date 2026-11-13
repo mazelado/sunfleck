@@ -199,6 +199,18 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **Limits on how much work one request or member can cause**: requests over 25 MB are refused
+  before they're read (they used to be read whole, without signing in, before any check), and
+  so are photos over 50 megapixels, which took hundreds of MB of memory to decode. Each member
+  may ask the AI 10 times a minute, identify a plant 10 times, and test a notification
+  channel 5 times; each of these is slow, and may cost money. The Caddy example now limits
+  request sizes too.
+- **Behind an HTTPS proxy, browsers are told to use only HTTPS for a year** (HSTS), so a
+  first visit over `http://` can't be intercepted. **Only turn on `SUNFLECK_BEHIND_PROXY`
+  with HTTPS that you'll keep**: browsers that visited won't open the site over `http://`
+  for a year.
+- **The health check no longer tells strangers the exact version**, which says which known
+  problems apply. Members, and the server itself, still see it.
 
 ## [0.9.0] - 2026-11-06
 
