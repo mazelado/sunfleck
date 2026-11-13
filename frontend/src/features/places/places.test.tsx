@@ -88,10 +88,16 @@ describe("places list", () => {
 
     renderApp("/places");
 
-    expect(await screen.findByRole("link", { name: "Home" })).toBeVisible();
-    expect(screen.getByText("64°F to 75°F · Medium · 1 light source")).toBeVisible();
-    expect(screen.getByText("Part shade (3–6 hours)")).toBeVisible();
-    expect(screen.queryByRole("link", { name: "Add a home or garden" })).not.toBeInTheDocument();
+    // The only place: the Places tab is its page, with its rooms one tap away.
+    expect(await screen.findByRole("heading", { name: "Home", level: 1 })).toBeVisible();
+    expect(screen.getByRole("link", { name: /^Living room/ })).toHaveTextContent(
+      "Living roomIndoor · Window facing north",
+    );
+    expect(screen.getByRole("link", { name: /^Balcony/ })).toHaveTextContent(
+      "BalconyOutdoor · Part shade (3–6 hours)",
+    );
+    expect(screen.queryByRole("link", { name: "Add a room or spot" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "More actions" })).not.toBeInTheDocument();
   });
 
   it("sends viewers who open a form back to the page", async () => {
@@ -316,6 +322,28 @@ describe("garden beds", () => {
     });
   });
 
+  it("lists every place when there are several, each with its rooms", async () => {
+    signInAs(gardener);
+    withSites([site(), site({ id: 2, name: "Allotment", locations: [] })]);
+
+    renderApp("/places");
+
+    expect(await screen.findByRole("heading", { name: "Places", level: 1 })).toBeVisible();
+    expect(screen.getByRole("link", { name: /^Allotment/ })).toHaveAttribute("href", "/places/2");
+    expect(screen.getByRole("link", { name: /^Home/ })).toHaveAttribute("href", "/places/1");
+    expect(screen.getByRole("link", { name: "Add a home or garden" })).toBeVisible();
+  });
+
+  it("goes back from a room to the Places tab, named after the only place", async () => {
+    signInAs(gardener);
+    withSites([site()]);
+
+    renderApp("/places/1/locations/10");
+
+    const back = await screen.findByRole("link", { name: "Back to Home" });
+    expect(back).toHaveAttribute("href", "/places");
+  });
+
   it("describes a bed with its kind and size", async () => {
     signInAs(gardener);
     withSites([
@@ -334,7 +362,7 @@ describe("garden beds", () => {
     ]);
     renderApp("/places/1");
 
-    expect(await screen.findByText(/Raised bed · 120 × 240 cm/)).toBeVisible();
+    expect(await screen.findByText("Outdoor · Raised bed · 120 × 240 cm")).toBeVisible();
   });
 });
 

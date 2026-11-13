@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   Title,
-  UnstyledButton,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowsMove, IconPlant2, IconPlus, IconSearch } from "@tabler/icons-react";
@@ -24,6 +23,7 @@ import { type PlantSummary, useMovePlants, usePlants } from "../../api/plants";
 import { useLogCareForPlants } from "../../api/today";
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { RowLink } from "../../components/RowLink";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { CareIcon } from "../care/icons";
 import { useCareTypeName } from "../care/useCareTypeName";
@@ -52,19 +52,21 @@ export function LocationPlants({ location }: { location: Location }) {
         {!plants.isPending && items.length === 0 && (
           <Text size="sm">{t("places.noPlantsHere")}</Text>
         )}
-        {items.map((plant) => (
-          <UnstyledButton key={plant.id} component={Link} to={`/plants/${String(plant.id)}`}>
-            <Group gap="sm" wrap="nowrap">
-              <Avatar src={plant.cover_thumbnail_url} radius="md" color="leaf" alt="">
-                <IconPlant2 size={20} />
-              </Avatar>
-              <Text fw={500} truncate>
-                {plant.nickname}
-              </Text>
-              <PlantStatusBadge status={plant.status} />
-            </Group>
-          </UnstyledButton>
-        ))}
+        <Stack gap={0}>
+          {items.map((plant) => (
+            <RowLink
+              key={plant.id}
+              to={`/plants/${String(plant.id)}`}
+              leading={
+                <Avatar src={plant.cover_thumbnail_url} radius="md" color="leaf" alt="">
+                  <IconPlant2 size={20} />
+                </Avatar>
+              }
+              title={plant.nickname}
+              badge={<PlantStatusBadge status={plant.status} />}
+            />
+          ))}
+        </Stack>
         {plants.hasNextPage && (
           <Button
             variant="subtle"

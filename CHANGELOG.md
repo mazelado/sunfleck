@@ -65,6 +65,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   it's clear the form goes on. A plant's photo is a large "Add a photo" tile that shows the
   photo once chosen, and "When was it last watered?" is a row of one-tap choices. Forms are
   narrower on wide screens.
+- **Places** (UI plan, part 8): with one home, the Places tab is that home's page, with its
+  rooms and **Add a room or spot** right there, so adding a room with a window takes 7 taps
+  over 3 pages instead of 8 over 4. Rooms and plants are listed as full-width rows that say
+  what they are ("Indoor · South window", "No light source yet") with an arrow, and a room's
+  **Edit** and **Print QR labels** are at the top.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

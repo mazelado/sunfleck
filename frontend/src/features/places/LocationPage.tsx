@@ -23,6 +23,7 @@ import { LocationPlants } from "../plants/LocationPlants";
 import { LocationKindBadge } from "./LocationKindBadge";
 import { describeConditions, describeLight, lightWord } from "./describe";
 import { LightSourceForm } from "./LightSourceForm";
+import { useSiteHome } from "./useSiteHome";
 
 type Dialog = { kind: "window" | "grow_light"; light?: LightSource } | null;
 
@@ -33,6 +34,7 @@ export function LocationPage() {
   const canEdit = useCanEdit();
   const units = useUnits();
   const deleteLight = useDeleteLightSource();
+  const siteHome = useSiteHome(Number(params.siteId));
   const [dialog, setDialog] = useState<Dialog>(null);
   const estimate = useHumidityEstimate(found.data).data;
   const lightThroughYear = useLocationLight(
@@ -54,7 +56,7 @@ export function LocationPage() {
     <Stack gap="lg">
       <PageHeader
         title={location.name}
-        back={{ to: `/places/${String(site.id)}`, label: site.name }}
+        back={{ to: siteHome, label: site.name }}
         badge={<LocationKindBadge kind={location.kind} />}
         subtitle={
           <>

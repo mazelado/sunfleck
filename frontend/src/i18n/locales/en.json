@@ -394,7 +394,12 @@
     "timeZone": "Time zone: {{zone}}",
     "waterAllHere": "Water all {{count}}",
     "wateredAllHere_one": "Watered: {{count}} plant in {{location}}",
-    "wateredAllHere_other": "Watered: {{count}} plants in {{location}}"
+    "wateredAllHere_other": "Watered: {{count}} plants in {{location}}",
+    "windowFacing": "Window facing {{direction}}",
+    "noLightYet": "No light source yet",
+    "addAnotherSite": "Add another home or garden",
+    "locationCount_one": "{{count}} room or spot",
+    "locationCount_other": "{{count}} rooms and spots"
   },
   "directions": {
     "N": "north",
