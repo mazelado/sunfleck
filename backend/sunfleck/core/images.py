@@ -33,6 +33,9 @@ THUMBNAIL_QUALITY = 75
 EARLIEST_PLAUSIBLE_YEAR = 1990
 # A crop smaller than this, in pixels of the photo, is a slip of the fingers.
 MIN_CROP_PIXELS = 32
+# Photos with more pixels are refused before they're decoded (a 50 megapixel image takes about
+# 200 MB of memory; the server may be a Raspberry Pi). Below Pillow's own limit (89 MP).
+MAX_PIXELS = 50_000_000
 
 
 class ImageError(Exception):
@@ -234,6 +237,8 @@ def _open(file: IO[bytes], max_edge: int) -> tuple[Image.Image, Image.Image, dat
             source = Image.open(file)
             if source.format not in ALLOWED_FORMATS:
                 raise ImageError("unsupported_image", "Upload a JPEG, PNG, WebP, or HEIC photo.")
+            if source.width * source.height > MAX_PIXELS:
+                raise ImageError("image_too_large", "This photo has too many pixels.")
             taken_at = _taken_at(source.getexif())
             # For JPEGs, decode at a reduced size straight away, which saves a lot of memory.
             source.draft("RGB", (max_edge, max_edge))

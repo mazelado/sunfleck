@@ -17,6 +17,7 @@ from sunfleck.accounts.models import Household, Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.ai import chat
 from sunfleck.ai.models import Conversation, Message, MessageRole
+from sunfleck.core import limits
 from sunfleck.core.errors import ApiError
 from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.plants.models import Plant
@@ -161,6 +162,7 @@ def start_conversation(
     if the AI can't answer."""
     membership = require_role(request, Role.GARDENER)
     plant = _get_plant(membership.household, plant_id)
+    limits.per_member(request, "ai", limits.AI_PER_MINUTE)
     try:
         conversation = chat.start(plant, data.question, membership.user, language(request))
     except chat.ChatError as exc:
@@ -180,6 +182,7 @@ def ask_again(request: HttpRequest, conversation_id: int, data: QuestionIn) -> C
     too, so the AI can follow on. Nothing is saved if the AI can't answer."""
     membership = require_role(request, Role.GARDENER)
     conversation = _get_conversation(membership.household, conversation_id)
+    limits.per_member(request, "ai", limits.AI_PER_MINUTE)
     try:
         chat.continue_(conversation, data.question, membership.user, language(request))
     except chat.ChatError as exc:
