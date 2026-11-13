@@ -686,7 +686,8 @@
     "about": "About",
     "addPhotoTile": "Add a photo",
     "changePhoto": "Choose another photo instead of {{name}}",
-    "removePhoto": "Remove the photo"
+    "removePhoto": "Remove the photo",
+    "views": "Plants, seeds and wishlist"
   },
   "care": {
     "addCareType": "Add a care type",

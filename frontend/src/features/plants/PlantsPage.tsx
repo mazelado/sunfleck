@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconHeart, IconPlus, IconQrcode, IconSearch, IconSeeding } from "@tabler/icons-react";
+import { IconPlus, IconQrcode, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
@@ -23,6 +23,7 @@ import { PageHeader } from "../../components/PageHeader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { ActiveFilters } from "./ActiveFilters";
 import { PlantCard } from "./PlantCard";
+import { PlantsViews } from "./PlantsViews";
 import { type PlantFilterValues, PlantFilters } from "./PlantFilters";
 
 /** All plants, as a grid of photo cards, with search and (folded away) filters. */
@@ -63,7 +64,7 @@ export function PlantsPage() {
   const filtered = Boolean(q || locationId || status || needsRoutine);
 
   return (
-    <Stack gap="md">
+    <Stack gap="sm">
       <PageHeader
         title={t("plants.title")}
         action={
@@ -74,19 +75,12 @@ export function PlantsPage() {
           )
         }
         menu={
-          <>
-            <Menu.Item component={Link} to="/seeds" leftSection={<IconSeeding size={16} />}>
-              {t("seeds.title")}
-            </Menu.Item>
-            <Menu.Item component={Link} to="/plants/wishlist" leftSection={<IconHeart size={16} />}>
-              {t("wishlist.title")}
-            </Menu.Item>
-            <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
-              {t("labels.printQr")}
-            </Menu.Item>
-          </>
+          <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
+            {t("labels.printQr")}
+          </Menu.Item>
         }
       />
+      <PlantsViews />
 
       <Stack gap="xs">
         <Group gap="xs" wrap="nowrap">

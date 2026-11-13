@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 
 import { type Seed, useDeleteSeed, useSaveSeed, useSeeds } from "../../api/garden";
 import { PageHeader } from "../../components/PageHeader";
+import { PlantsViews } from "../plants/PlantsViews";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -44,8 +45,6 @@ export function SeedsPage() {
     <Stack gap="lg">
       <PageHeader
         title={t("seeds.title")}
-        back={{ to: "/plants", label: t("plants.title") }}
-        subtitle={t("seeds.intro")}
         action={
           canEdit && (
             <Button
@@ -59,6 +58,10 @@ export function SeedsPage() {
           )
         }
       />
+      <PlantsViews />
+      <Text c="dimmed" size="sm">
+        {t("seeds.intro")}
+      </Text>
       <ErrorAlert error={seeds.error} />
       {items.length > 0 && <SowingCalendar />}
       {items.length === 0 && !seeds.error && (

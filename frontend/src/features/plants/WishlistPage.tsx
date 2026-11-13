@@ -18,6 +18,7 @@ import { Link } from "react-router";
 
 import { useDeleteWish, useSaveWish, useWishlist, type Wish } from "../../api/wishlist";
 import { PageHeader } from "../../components/PageHeader";
+import { PlantsViews } from "./PlantsViews";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -42,8 +43,6 @@ export function WishlistPage() {
     <Stack gap="lg">
       <PageHeader
         title={t("wishlist.title")}
-        back={{ to: "/plants", label: t("plants.title") }}
-        subtitle={t("wishlist.intro")}
         action={
           canEdit && (
             <Button
@@ -57,6 +56,10 @@ export function WishlistPage() {
           )
         }
       />
+      <PlantsViews />
+      <Text c="dimmed" size="sm">
+        {t("wishlist.intro")}
+      </Text>
       <ErrorAlert error={wishlist.error} />
       {items.length === 0 && !wishlist.error && (
         <EmptyState illustration="plant">{t("wishlist.empty")}</EmptyState>
