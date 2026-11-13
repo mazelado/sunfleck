@@ -4,6 +4,11 @@ import { setupServer } from "msw/node";
 import type { Me, Member } from "../api/accounts";
 import type { CareType } from "../api/care";
 
+/** A list as the API answers the lists that can be paged: `{ items, count }`. */
+export function listOf<T>(items: T[]) {
+  return { items, count: items.length };
+}
+
 /** The built-in care types, as the API returns them. */
 export const builtinCareTypes: CareType[] = [
   ["water", "Water", "droplet", true],
@@ -29,7 +34,7 @@ export const server = setupServer(
   http.get("*/api/v1/setup", () => HttpResponse.json({ needs_setup: false })),
   http.get("*/api/v1/me", () => notSignedIn()),
   http.get("*/api/v1/sites", () => HttpResponse.json([])),
-  http.get("*/api/v1/seeds", () => HttpResponse.json([])),
+  http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([]))),
   http.get("*/api/v1/plants/:plantId/harvests", () =>
     HttpResponse.json({
       items: [],
@@ -61,7 +66,7 @@ export const server = setupServer(
   http.get("*/api/v1/import", () => HttpResponse.json({ allowed: true })),
   http.get("*/api/v1/identify", () => HttpResponse.json({ available: false })),
   http.get("*/api/v1/care-profile-suggestions", () => HttpResponse.json({ available: false })),
-  http.get("*/api/v1/plants/:plantId/conversations", () => HttpResponse.json([])),
+  http.get("*/api/v1/plants/:plantId/conversations", () => HttpResponse.json(listOf([]))),
   http.get("*/api/v1/notifications", () =>
     HttpResponse.json({
       preferences: { digest_time: "08:00:00", reminder_time: null, timezone: "Europe/Amsterdam" },

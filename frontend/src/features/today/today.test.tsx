@@ -8,7 +8,7 @@ import type { Location, Site } from "../../api/places";
 import type { Task } from "../../api/today";
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
-import { ada, builtinCareTypes, server, signInAs } from "../../test/server";
+import { ada, builtinCareTypes, listOf, server, signInAs } from "../../test/server";
 import { addDays, groupBy } from "./grouping";
 
 const gardener: Me = { ...ada, role: "gardener" };
@@ -390,7 +390,7 @@ describe("today", () => {
     signInAs(gardener);
     withToday();
     server.use(
-      http.get("*/api/v1/seeds", () => HttpResponse.json([{ id: 1, name: "Tomato" }])),
+      http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([{ id: 1, name: "Tomato" }]))),
       http.get("*/api/v1/calendar", () =>
         HttpResponse.json({
           site_id: 1,

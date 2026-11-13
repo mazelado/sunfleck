@@ -12,7 +12,7 @@ import type { Photo, Plant, PlantSummary } from "../../api/plants";
 import type { Species } from "../../api/taxonomy";
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
-import { ada, apiError, server, signInAs } from "../../test/server";
+import { ada, apiError, listOf, server, signInAs } from "../../test/server";
 
 // Uploads are checked in api/photoUpload.test.ts and api/identify.test.ts: jsdom's FormData doesn't
 // survive Node's fetch.
@@ -434,16 +434,18 @@ describe("plant form", () => {
     let sent: Record<string, unknown> = {};
     server.use(
       http.get("*/api/v1/wishlist", () =>
-        HttpResponse.json([
-          {
-            id: 4,
-            name: "Variegated monstera",
-            species: { id: 3, scientific_name: "Monstera deliciosa", common_name: null },
-            link: "",
-            notes: "",
-            created_at: "2026-11-01T10:00:00Z",
-          },
-        ]),
+        HttpResponse.json(
+          listOf([
+            {
+              id: 4,
+              name: "Variegated monstera",
+              species: { id: 3, scientific_name: "Monstera deliciosa", common_name: null },
+              link: "",
+              notes: "",
+              created_at: "2026-11-01T10:00:00Z",
+            },
+          ]),
+        ),
       ),
       http.post("*/api/v1/plants", async ({ request }) => {
         sent = (await request.json()) as Record<string, unknown>;
@@ -1562,16 +1564,18 @@ describe("questions about a plant", () => {
     withPlant(plant());
     server.use(
       http.get("*/api/v1/plants/7/conversations", () =>
-        HttpResponse.json([
-          {
-            id: 3,
-            title: "How often should I water it?",
-            started_by: "Ada",
-            questions: 2,
-            created_at: "2026-11-01T10:00:00Z",
-            updated_at: "2026-11-01T10:00:00Z",
-          },
-        ] satisfies ConversationSummary[]),
+        HttpResponse.json(
+          listOf([
+            {
+              id: 3,
+              title: "How often should I water it?",
+              started_by: "Ada",
+              questions: 2,
+              created_at: "2026-11-01T10:00:00Z",
+              updated_at: "2026-11-01T10:00:00Z",
+            },
+          ] satisfies ConversationSummary[]),
+        ),
       ),
       http.get("*/api/v1/conversations/3", () => HttpResponse.json(answered)),
     );

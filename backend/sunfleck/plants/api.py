@@ -26,6 +26,7 @@ from sunfleck.care.models import CareSchedule
 from sunfleck.care.schedules import local_today
 from sunfleck.core import images
 from sunfleck.core.errors import ApiError
+from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.places.api import (
     LightSourceOut,
     PlantLightReportOut,
@@ -849,12 +850,18 @@ def _get_wish(household: Household, wish_id: int) -> Wish:
     return wish
 
 
-@router.get("/wishlist", response=list[WishOut])
-def list_wishlist(request: HttpRequest) -> list[WishOut]:
+class WishPage(Schema):
+    items: list[WishOut]
+    count: int = Field(description="How many wishes there are, across all pages.")
+
+
+@router.get("/wishlist", response=WishPage)
+def list_wishlist(request: HttpRequest, query: Query[ListQuery]) -> WishPage:
     """The plants the household would like to have, by name."""
     household = require_role(request, Role.VIEWER).household
     lang = language(request)
-    return [_wish_out(wish, lang) for wish in household.wishlist.select_related("taxon")]
+    wishes, count = paginate(household.wishlist.select_related("taxon"), query)
+    return WishPage(items=[_wish_out(wish, lang) for wish in wishes], count=count)
 
 
 @router.post("/wishlist", response={201: WishOut})

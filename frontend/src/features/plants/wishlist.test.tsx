@@ -6,7 +6,7 @@ import type { Me } from "../../api/accounts";
 import type { Wish } from "../../api/wishlist";
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
-import { ada, server, signInAs } from "../../test/server";
+import { ada, listOf, server, signInAs } from "../../test/server";
 
 const gardener: Me = { ...ada, role: "gardener" };
 const viewer: Me = { ...ada, role: "viewer" };
@@ -23,7 +23,7 @@ const monstera: Wish = {
 describe("wishlist", () => {
   it("lists the plants wanted, with where to get them, read-only for viewers", async () => {
     signInAs(viewer);
-    server.use(http.get("*/api/v1/wishlist", () => HttpResponse.json([monstera])));
+    server.use(http.get("*/api/v1/wishlist", () => HttpResponse.json(listOf([monstera]))));
 
     renderApp("/plants/wishlist");
 
@@ -46,7 +46,7 @@ describe("wishlist", () => {
     let wishes: Wish[] = [];
     let sent: unknown;
     server.use(
-      http.get("*/api/v1/wishlist", () => HttpResponse.json(wishes)),
+      http.get("*/api/v1/wishlist", () => HttpResponse.json(listOf(wishes))),
       http.post("*/api/v1/wishlist", async ({ request }) => {
         sent = await request.json();
         wishes = [{ ...monstera, id: 5, name: "Hoya kerrii", species: null, notes: "" }];
@@ -92,7 +92,7 @@ describe("wishlist", () => {
     let wishes: Wish[] = [monstera];
     let sent: unknown;
     server.use(
-      http.get("*/api/v1/wishlist", () => HttpResponse.json(wishes)),
+      http.get("*/api/v1/wishlist", () => HttpResponse.json(listOf(wishes))),
       http.put("*/api/v1/wishlist/4", async ({ request }) => {
         sent = await request.json();
         wishes = [{ ...monstera, notes: "Half-moon, or Thai Constellation" }];

@@ -188,7 +188,16 @@ Project conventions (on top of PEP 8):
   ```json
   { "error": { "code": "plant_not_found", "message": "Plant 42 does not exist.", "details": {} } }
   ```
-- List endpoints are paginated. Never return unbounded lists.
+- List endpoints are paginated. Never return unbounded lists. A list answers
+  `{"items": [...], "count": n}` and takes `limit` and `offset`. Lists people page through
+  (plants, photos, the timeline) default to a page of 50; lists that grow with use but are
+  read whole (the wishlist, seeds, a plant's harvests and conversations) default to
+  everything up to 500 (`sunfleck.core.pagination`). Order every paged list by something
+  unique, such as the id last, so pages don't overlap.
+  The named exceptions, plain arrays because they stay short: sites (with their places and
+  lights), household members and invitations, care types, a plant's schedules, and a
+  conversation's messages (at most 100 questions). Adding another exception, or paging one
+  of these, needs a new API version after 1.0.
 - Every endpoint checks **permissions**. Write tests proving that an unauthorized user is
   refused.
 

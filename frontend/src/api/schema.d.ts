@@ -1132,7 +1132,7 @@ export interface paths {
         };
         /**
          * List Harvests
-         * @description A plant's harvests, the latest first (a few hundred at most), and this year's total.
+         * @description A plant's harvests, the latest first, and this year's total.
          */
         get: operations["sunfleck_garden_api_list_harvests"];
         put?: never;
@@ -1365,7 +1365,7 @@ export interface paths {
         };
         /**
          * List Seeds
-         * @description The household's seeds, by name. A household has a few dozen at most.
+         * @description The household's seeds, by name.
          */
         get: operations["sunfleck_garden_api_list_seeds"];
         put?: never;
@@ -2071,6 +2071,16 @@ export interface components {
              */
             updated_at: string;
         };
+        /** ConversationPage */
+        ConversationPage: {
+            /**
+             * Count
+             * @description How many conversations there are, across all pages.
+             */
+            count: number;
+            /** Items */
+            items: components["schemas"]["ConversationSummaryOut"][];
+        };
         /** ConversationSummaryOut */
         ConversationSummaryOut: {
             /**
@@ -2289,6 +2299,11 @@ export interface components {
         HarvestUnit: "g" | "kg" | "oz" | "lb" | "pieces" | "bunches";
         /** HarvestsOut */
         HarvestsOut: {
+            /**
+             * Count
+             * @description How many harvests the plant has, across all pages.
+             */
+            count: number;
             /**
              * Items
              * @description The latest first.
@@ -2548,6 +2563,21 @@ export interface components {
         LinkOut: {
             /** Url */
             url: string;
+        };
+        /** ListQuery */
+        ListQuery: {
+            /**
+             * Limit
+             * @description How many to return; everything up to 500 by default.
+             * @default 500
+             */
+            limit: number;
+            /**
+             * Offset
+             * @description How many to skip.
+             * @default 0
+             */
+            offset: number;
         };
         /** LocationIn */
         LocationIn: {
@@ -3389,6 +3419,16 @@ export interface components {
             /** Variety */
             variety: string;
         };
+        /** SeedPage */
+        SeedPage: {
+            /**
+             * Count
+             * @description How many seed packets there are, across all pages.
+             */
+            count: number;
+            /** Items */
+            items: components["schemas"]["SeedOut"][];
+        };
         /** SettingsCheckOut */
         SettingsCheckOut: {
             /**
@@ -3875,6 +3915,16 @@ export interface components {
             /** Notes */
             notes: string;
             species: components["schemas"]["PlantSpeciesOut"] | null;
+        };
+        /** WishPage */
+        WishPage: {
+            /**
+             * Count
+             * @description How many wishes there are, across all pages.
+             */
+            count: number;
+            /** Items */
+            items: components["schemas"]["WishOut"][];
         };
     };
     responses: never;
@@ -5614,7 +5664,12 @@ export interface operations {
     };
     sunfleck_ai_api_list_conversations: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
             header?: never;
             path: {
                 plant_id: number;
@@ -5629,7 +5684,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ConversationSummaryOut"][];
+                    "application/json": components["schemas"]["ConversationPage"];
                 };
             };
         };
@@ -5730,7 +5785,12 @@ export interface operations {
     };
     sunfleck_garden_api_list_harvests: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
             header?: never;
             path: {
                 plant_id: number;
@@ -6083,7 +6143,12 @@ export interface operations {
     };
     sunfleck_garden_api_list_seeds: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -6096,7 +6161,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SeedOut"][];
+                    "application/json": components["schemas"]["SeedPage"];
                 };
             };
         };
@@ -6474,7 +6539,12 @@ export interface operations {
     };
     sunfleck_plants_api_list_wishlist: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -6487,7 +6557,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WishOut"][];
+                    "application/json": components["schemas"]["WishPage"];
                 };
             };
         };

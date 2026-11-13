@@ -14,11 +14,12 @@ export function useConversations(plantId: number) {
   return useQuery({
     queryKey: [...CONVERSATIONS, "plant", plantId],
     queryFn: async () =>
+      // The whole list: it answers everything up to 500 unless asked for a page.
       unwrap(
         await api.GET("/api/v1/plants/{plant_id}/conversations", {
           params: { path: { plant_id: plantId } },
         }),
-      ),
+      ).items,
   });
 }
 

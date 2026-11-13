@@ -12,7 +12,8 @@ const WISHLIST = ["wishlist"] as const;
 export function useWishlist(enabled = true) {
   return useQuery({
     queryKey: WISHLIST,
-    queryFn: async () => unwrap(await api.GET("/api/v1/wishlist")),
+    // The whole list: it answers everything up to 500 unless asked for a page.
+    queryFn: async () => unwrap(await api.GET("/api/v1/wishlist")).items,
     enabled,
   });
 }

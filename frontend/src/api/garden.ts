@@ -16,7 +16,8 @@ const SEEDS = ["seeds"] as const;
 export function useSeeds() {
   return useQuery({
     queryKey: SEEDS,
-    queryFn: async () => unwrap(await api.GET("/api/v1/seeds")),
+    // The whole list: it answers everything up to 500 unless asked for a page.
+    queryFn: async () => unwrap(await api.GET("/api/v1/seeds")).items,
   });
 }
 
