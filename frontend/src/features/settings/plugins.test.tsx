@@ -290,6 +290,13 @@ describe("plugins", () => {
 
     // Off: folded, with what it sends shown as a badge.
     const details = await screen.findByRole("button", { name: "Details and settings of Rain" });
+    // The switch says what it is now, in words.
+    expect(
+      screen.getByRole("switch", { name: "Rain is on" }).closest(".mantine-Switch-root"),
+    ).toHaveTextContent("Off");
+    expect(
+      screen.getByRole("switch", { name: "Sun is on" }).closest(".mantine-Switch-root"),
+    ).toHaveTextContent("On");
     expect(details).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByText("Sends data")).toBeVisible();
     expect(screen.queryByRole("textbox", { name: "Rain threshold (mm)" })).toBeNull();

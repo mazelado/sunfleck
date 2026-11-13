@@ -53,8 +53,11 @@ describe("notifications", () => {
     );
     const { user } = renderApp("/settings/notifications");
 
-    expect(await screen.findByText(/Add somewhere to send them/)).toBeVisible();
-    await user.type(screen.getByRole("textbox", { name: "Name" }), "My phone");
+    // This device comes first; other ways are folded away.
+    expect(await screen.findByRole("heading", { name: "This device" })).toBeVisible();
+    expect(screen.queryByRole("textbox", { name: "Name" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /^Other ways/ }));
+    await user.type(await screen.findByRole("textbox", { name: "Name" }), "My phone");
     await user.type(
       screen.getByRole("textbox", { name: "Address (Apprise URL)" }),
       "ntfy://ntfy.sh/my-plants",
@@ -75,6 +78,7 @@ describe("notifications", () => {
     );
     const { user } = renderApp("/settings/notifications");
 
+    await user.click(await screen.findByRole("button", { name: /^Other ways/ }));
     await user.type(await screen.findByRole("textbox", { name: "Name" }), "Phone");
     const url = screen.getByRole("textbox", { name: "Address (Apprise URL)" });
     await user.type(url, "nope://x");

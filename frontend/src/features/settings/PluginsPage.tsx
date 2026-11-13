@@ -177,14 +177,9 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
                 />
               </ActionIcon>
               <Stack gap={4}>
-                <Group gap="xs">
-                  <Title order={2} fz="h4" data-name>
-                    {plugin.name}
-                  </Title>
-                  <Badge variant="light" color="gray" tt="none">
-                    {plugin.version}
-                  </Badge>
-                </Group>
+                <Title order={2} fz="h4" data-name>
+                  {plugin.name}
+                </Title>
                 {!open && (
                   <Group gap={6}>
                     {plugin.last_error && (
@@ -207,7 +202,8 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
               </Stack>
             </Group>
             <Switch
-              label={t("plugins.on")}
+              // What it is now, in words as well as the switch's position.
+              label={form.getValues().enabled ? t("plugins.on") : t("plugins.off")}
               labelPosition="left"
               aria-label={t("plugins.turnOn", { name: plugin.name })}
               {...form.getInputProps("enabled", { type: "checkbox" })}
@@ -220,6 +216,9 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
           </Group>
           <div id={detailsId} hidden={!open}>
             <Stack gap="sm">
+              <Badge variant="light" color="gray" tt="none">
+                {t("plugins.version", { version: plugin.version })}
+              </Badge>
               {plugin.description && (
                 <Text size="sm" c="dimmed">
                   {plugin.description}

@@ -1069,7 +1069,9 @@
       "unavailable": "The service couldn't be reached.",
       "invalid_answer": "The service answered something unexpected.",
       "failed": "The plugin failed while testing."
-    }
+    },
+    "off": "Off",
+    "version": "Version {{version}}"
   },
   "weather": {
     "today": "Today",
@@ -1121,9 +1123,8 @@
       "stopTitle": "Stop the calendar?",
       "stopMessage": "Calendar apps using this address will stop getting updates. You can get a new address later."
     },
-    "intro": "Get a daily digest of the care that's due, on your phone or by email. Sunfleck sends it through Apprise, which supports ntfy, Telegram, email, Discord, Signal and about 100 more.",
+    "intro": "Get a daily digest of the care that's due, on this device, or another way you choose.",
     "channels": "Where to send them",
-    "noChannels": "Add somewhere to send them, then send a test to check it works.",
     "add": "Add a channel",
     "label": "Name",
     "labelPlaceholder": "e.g. My phone",
@@ -1153,7 +1154,9 @@
     "saved": "Saved",
     "preview": "Today's digest",
     "previewHelp": "What it would say if it were sent now.",
-    "nothingToday": "Nothing needs care today, so no digest would be sent."
+    "nothingToday": "Nothing needs care today, so no digest would be sent.",
+    "otherWays": "Other ways: ntfy, Telegram, email…",
+    "otherWaysHelp": "Sunfleck sends these through Apprise, which supports ntfy, Telegram, email, Discord, Signal and about 100 more. Give each one a name and its address."
   },
   "identify": {
     "button": "Identify from the photo",

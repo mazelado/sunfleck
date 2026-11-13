@@ -216,14 +216,16 @@ yet**.
 
 ## Notifications
 
-Under **Notifications**, each person chooses where theirs go and when:
+Under **Settings**, each card opens its page, and each of those pages has a way back to
+Settings. Under **Notifications**, each person chooses where theirs go and when:
 
 - **This device**: **Get notifications on this device** sends them as notifications from
   Sunfleck itself, with no other app. Do it on each phone or computer you want them on. On
   iPhone and iPad, add Sunfleck to the Home Screen first and turn them on from there. The
   device then shows in the list like the channels below, where you can test, rename or pause
   it.
-- **Channels**: ntfy, Telegram, email, Discord, Signal and many more, as an
+- **Other ways** (folded under **Other ways: ntfy, Telegram, email…**): ntfy, Telegram, email,
+  Discord, Signal and many more, as an
   [Apprise address](https://github.com/caronc/apprise/wiki). Add one, then **Send a test**.
   The easiest is [ntfy](https://ntfy.sh): install its app, subscribe to a topic name nobody
   would guess, and add `ntfy://ntfy.sh/that-topic`. If your topic needs an access token, or you

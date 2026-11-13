@@ -342,3 +342,17 @@ html:has(.sunfleck-form-actions) {
     min-height: 44px;
   }
 }
+
+/* A link that makes its whole card the target (Settings' cards): it covers the card. */
+.sunfleck-stretched::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+@media (hover: hover) {
+  .mantine-Paper-root:has(> * .sunfleck-stretched:hover) {
+    background-color: var(--mantine-color-default-hover);
+  }
+}
