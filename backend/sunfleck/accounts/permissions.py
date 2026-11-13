@@ -11,8 +11,12 @@ from sunfleck.core.errors import ApiError
 
 
 def get_membership(user: User) -> Membership | None:
-    """Return the user's household membership. Each user belongs to one household for now."""
-    return user.memberships.select_related("household").first()
+    """Return the user's household membership. Each user belongs to one household for now.
+
+    The admin site refuses a second membership; should one exist anyway, the oldest is used,
+    so the household can't change from one request to the next.
+    """
+    return user.memberships.select_related("household").order_by("pk").first()
 
 
 def require_role(request: HttpRequest, minimum: Role) -> Membership:

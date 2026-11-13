@@ -249,6 +249,9 @@ Set in `.env`; run `docker compose up -d` after changing them.
   `docker compose run --rm -u root --entrypoint chown sunfleck -R 1000:999 /data`, or, when
   using a folder instead of the volume, `sudo chown -R 1000:999 <folder>`. The message shows the
   exact command.
+- **The first account's password is forgotten** and email isn't set up: other Admins can't
+  make a reset link for that account, so set a new password on the server with
+  `docker compose run --rm sunfleck manage changepassword <email>`.
 - **Stored secrets can't be read** after changing `SECRET_KEY`: set `SUNFLECK_ENCRYPTION_KEY`
   (and keep it), then enter notification addresses and API keys again.
 - Anything else: `docker compose logs` usually says what's wrong. Please

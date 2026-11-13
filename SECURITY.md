@@ -41,7 +41,8 @@ runs. What it does to keep that safe, and what the people running it should know
   the setup as soon as Sunfleck is running, before it can be reached from elsewhere: until
   then, whoever opens it first becomes its Admin.
 - **The Django admin site** (`/admin/`) is open only to the first account. It has no sign-in
-  form of its own: sign in to Sunfleck first.
+  form of its own: sign in to Sunfleck first. Because that account reaches every household,
+  other Admins can't make a password-reset link for it or remove it.
 - **Over HTTPS** (with `SUNFLECK_BEHIND_PROXY=true`), cookies are only ever sent over HTTPS.
   Every page carries a Content-Security-Policy that allows only Sunfleck's own scripts.
 - **Secrets** (notification addresses, plugins' API keys) are stored encrypted with

@@ -1,5 +1,8 @@
 """Django admin pages for accounts (at /admin, for the first Admin account)."""
 
+from typing import Any
+
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
@@ -39,8 +42,30 @@ class UserAdmin(DjangoUserAdmin[User]):
     add_fieldsets = ((None, {"classes": ("wide",), "fields": ("email", "password1", "password2")}),)
 
 
+class MembershipForm(forms.ModelForm[Membership]):
+    class Meta:
+        model = Membership
+        fields = ("user", "household", "role")
+
+    def clean(self) -> dict[str, Any]:
+        """Refuse to put someone in a second household: each person has one for now, and with
+        two, which one they'd see wouldn't be defined."""
+        cleaned = super().clean() or {}
+        user = cleaned.get("user")
+        if isinstance(user, User):
+            others = Membership.objects.filter(user=user).exclude(pk=self.instance.pk)
+            if others.exists():
+                raise forms.ValidationError(
+                    _("%(person)s already belongs to a household. Each person can belong to one."),
+                    code="one_household",
+                    params={"person": user.email},
+                )
+        return cleaned
+
+
 class MembershipInline(admin.TabularInline[Membership, Household]):
     model = Membership
+    form = MembershipForm
     extra = 0
     autocomplete_fields = ("user",)
 
