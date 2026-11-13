@@ -165,8 +165,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **The first account**, which can open the Django admin site and so every household on the
   server, can no longer be given a password-reset link or removed by another Admin: that let
   an Admin of one household take it over. Only its owner can do either; they reset a
-  forgotten password by email, or with `manage.py changepassword` on the server. 0.9 has
-  this problem too.
+  forgotten password by email, or with `manage.py changepassword` on the server.
 - **One household per person** is now enforced in the admin site, which refuses to add
   someone to a second household. Should someone already have two, they always get the
   older one, instead of whichever the database returned first.
