@@ -36,6 +36,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   photo and says in words what the plant needs next ("Water today", "Fertilize in 5 days"),
   in place of three unlabelled rings, plus "Low light" when its spot is too dark. Seeds,
   Wishlist and Print QR labels are in the page's "⋯" menu.
+- **A plant's care in one card** (UI plan, part 3): the rings, the care buttons and the care
+  schedule were three places saying when to water; now one **Care** card has a row per
+  schedule with its ring, when it's due in words, how often (tap to change it) and a button
+  named for the care. Its **⋯** menu puts care off in one tap (tomorrow, in 3 days, in a
+  week), so putting care off from a plant's page takes 3 taps instead of 5. Other care,
+  earlier care and a new schedule are under the rows.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

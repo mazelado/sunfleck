@@ -28,15 +28,6 @@ export function daysUntil(isoDate: string, now = new Date()): number {
   return Math.round((due - today) / 86_400_000);
 }
 
-export type Urgency = "overdue" | "today" | "soon" | "later";
-
-export function urgency(days: number): Urgency {
-  if (days < 0) return "overdue";
-  if (days === 0) return "today";
-  if (days <= 2) return "soon";
-  return "later";
-}
-
 /** "Due today", "Due tomorrow", "Due in 5 days", "Due Mar 1, 2027" (two weeks or more
  * away), "Overdue: due 2 days ago". */
 export function describeDue(

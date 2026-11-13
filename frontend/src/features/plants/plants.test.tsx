@@ -1058,32 +1058,13 @@ describe("plant page", () => {
     expect(screen.getByText("About 8 mol/m²/day of light here now")).toBeVisible();
   });
 
-  it("shows care at a glance, in words as well as bars", async () => {
-    signInAs(viewer);
-    withPlant(
-      plant({
-        glance: {
-          water: { level: 0.4, due_in_days: 2, resting_until: null },
-          fertilizer: { level: null, due_in_days: null, resting_until: "2027-03-01" },
-          light: { dli: 6, ideal: 10 },
-        },
-      }),
-    );
-
-    renderApp("/plants/7");
-
-    expect(await screen.findByText("Water in 2 days")).toBeVisible();
-    expect(screen.getByText("No fertilizer until Mar 1, 2027")).toBeVisible();
-    expect(screen.getByText("Light: a bit low for this plant")).toBeVisible();
-  });
-
-  it("says when care is due or overdue, and how the light compares", async () => {
+  it("says how the light compares with what the plant likes", async () => {
     signInAs(viewer);
     withPlant(
       plant({
         glance: {
           water: { level: 0, due_in_days: -3, resting_until: null },
-          fertilizer: { level: 0, due_in_days: 0, resting_until: null },
+          fertilizer: null,
           light: { dli: 30, ideal: 10 },
         },
       }),
@@ -1091,9 +1072,9 @@ describe("plant page", () => {
 
     renderApp("/plants/7");
 
-    expect(await screen.findByText("Watering overdue by 3 days")).toBeVisible();
-    expect(screen.getByText("Fertilize today")).toBeVisible();
-    expect(screen.getByText("Light: brighter than this plant likes")).toBeVisible();
+    expect(await screen.findByText("Light: brighter than this plant likes")).toBeVisible();
+    // Water is in the Care card, from its schedule, not repeated as a ring.
+    expect(screen.queryByText("Watering overdue by 3 days")).not.toBeInTheDocument();
   });
 
   it("shows the plant's details and light in the person's units", async () => {

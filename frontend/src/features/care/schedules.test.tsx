@@ -392,9 +392,14 @@ describe("the care schedule", () => {
     expect(screen.queryByText(/You've been watering/)).not.toBeInTheDocument();
   });
 
-  it("puts care off until a day, from the plant's care menu", async () => {
+  it("puts care off in one tap, from its row's menu", async () => {
     signInAs(gardener);
-    const fertilizeSchedule: Schedule = { ...waterSchedule, id: 2, care_type: fertilize };
+    const fertilizeSchedule: Schedule = {
+      ...waterSchedule,
+      id: 2,
+      care_type: fertilize,
+      due_on: inDays(0),
+    };
     withPlant([waterSchedule, fertilizeSchedule]);
     let snoozed: unknown = null;
     server.use(
@@ -405,17 +410,70 @@ describe("the care schedule", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Put off care…" }));
-    const dialog = await screen.findByRole("dialog", { name: "Put off care for Monty" });
-    await user.click(within(dialog).getByRole("radio", { name: /^Fertilize/ }));
-    await user.click(within(dialog).getByText("In a week"));
-    await user.click(within(dialog).getByRole("button", { name: "Put off" }));
+    await user.click(await screen.findByRole("button", { name: "Options for Fertilize" }));
+    await user.click(await screen.findByRole("menuitem", { name: "In a week" }));
 
     await waitFor(() => {
       expect(snoozed).toEqual({ until: inDays(7) });
     });
     expect(await screen.findByText(/^Fertilize for Monty put off until/)).toBeVisible();
+  });
+
+  it("puts care that isn't due yet off from when it's due", async () => {
+    signInAs(gardener);
+    withPlant([waterSchedule]); // due in 3 days
+    let snoozed: unknown = null;
+    server.use(
+      http.put("*/api/v1/care-schedules/1/snooze", async ({ request }) => {
+        snoozed = await request.json();
+        return HttpResponse.json(waterSchedule);
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "Options for Water" }));
+    expect(screen.queryByRole("menuitem", { name: "Tomorrow" })).not.toBeInTheDocument();
+    await user.click(await screen.findByRole("menuitem", { name: "A week later" }));
+
+    await waitFor(() => {
+      expect(snoozed).toEqual({ until: inDays(10) });
+    });
+  });
+
+  it("does the care from its row, with a button named for it", async () => {
+    signInAs(gardener);
+    withPlant([{ ...waterSchedule, due_on: inDays(-2) }]);
+    let logged: unknown = null;
+    server.use(
+      http.post("*/api/v1/plants/7/care-events", async ({ request }) => {
+        logged = await request.json();
+        return HttpResponse.json(
+          {
+            id: 30,
+            plant_id: 7,
+            care_type: water,
+            performed_at: new Date().toISOString(),
+            notes: "",
+            skipped: false,
+            feedback: null,
+            estimated: false,
+            performed_by: null,
+            photo: null,
+          },
+          { status: 201 },
+        );
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    expect(await screen.findByText("Overdue: due 2 days ago")).toBeVisible();
+    // Only one way to water: the row's, not a second button elsewhere on the page.
+    expect(screen.getAllByRole("button", { name: "Water" })).toHaveLength(1);
+    await user.click(screen.getByRole("button", { name: "Water" }));
+
+    await waitFor(() => {
+      expect(logged).toEqual({ care_type_id: water.id, notes: "", skipped: false });
+    });
   });
 
   it("puts one schedule off from its row, until a day typed in", async () => {
@@ -430,7 +488,8 @@ describe("the care schedule", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "Put off Water" }));
+    await user.click(await screen.findByRole("button", { name: "Options for Water" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Another day…" }));
     const dialog = await screen.findByRole("dialog", { name: "Put off care for Monty" });
     expect(within(dialog).queryByRole("radio")).not.toBeInTheDocument();
     const until = within(dialog).getByLabelText(/^Until/);
@@ -475,7 +534,8 @@ describe("the care schedule", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "Water schedule" }));
+    // How often it is, which changes it when tapped.
+    await user.click(await screen.findByRole("button", { name: /^Water schedule: / }));
     const dialog = await screen.findByRole("dialog", { name: "Water schedule" });
     await user.click(within(dialog).getByText("Every few days"));
     const days = within(dialog).getByRole("textbox", { name: "Every how many days" });

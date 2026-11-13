@@ -160,8 +160,14 @@ lists the latest harvests. Exports include them.
   rings for water, fertilizer and light. Water and fertilizer run down until the care is
   due, and turn orange when it's due today and red when it's overdue; light is full when the
   spot gets what the plant likes at this time of year.
-- **Logging care**: tap **Water**, **Fertilize** or **More care** on a plant's page, or the
-  check mark on Today. To add notes or log care you did earlier, use **Log with details**.
+- **A plant's care** is one **Care** card on its page: a row for each schedule, with a ring,
+  when it's due in words, how often (tap it to change the schedule) and **Why?**. The button
+  at the end of a row does that care (**Water**, **Fertilize**), and its **⋯** menu puts it
+  off (tomorrow, in 3 days, in a week, or another day), changes the schedule, or logs it
+  with details.
+- **Logging care**: tap the care's button on a plant's page, **More care** under the rows for
+  other care, or the check mark on Today. To add notes or log care you did earlier, use
+  **Add earlier care**.
   The **timeline** on the plant's page shows everything, with its photos.
 - **Care types**: water, fertilize, repot, prune, mist, rotate, clean leaves and check for
   pests are built in. Add your own under **Care types**, e.g. "Bottom water" (which you can
