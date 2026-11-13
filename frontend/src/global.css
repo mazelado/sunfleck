@@ -227,3 +227,33 @@ body,
 .sunfleck-page-bar {
   height: 100%;
 }
+
+/*
+ * Care done on Today: the row fades and folds away (TaskRow's data-leaving) before the list
+ * drops it, so the rows below slide up instead of jumping under the thumb.
+ */
+.sunfleck-task {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.sunfleck-task > * {
+  min-height: 0;
+}
+
+.sunfleck-task[data-leaving] > * {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sunfleck-task {
+    transition:
+      grid-template-rows 240ms ease,
+      opacity 180ms ease;
+  }
+
+  .sunfleck-task[data-leaving] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+}

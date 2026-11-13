@@ -156,10 +156,9 @@ describe("today", () => {
     expect(
       screen.getByRole("link", { name: "Show them, to add their suggested routines." }),
     ).toHaveAttribute("href", "/plants?needs_routine=true");
-    const livingRoomGroup = screen
-      .getByText("Home · Living room")
-      .closest("div.mantine-Paper-root");
-    const kitchen = screen.getByText("Home · Kitchen").closest("div.mantine-Paper-root");
+    // With one place, groups are named by room alone.
+    const livingRoomGroup = screen.getByText("Living room").closest("div.mantine-Paper-root");
+    const kitchen = screen.getByText("Kitchen").closest("div.mantine-Paper-root");
     if (!(livingRoomGroup instanceof HTMLElement) || !(kitchen instanceof HTMLElement)) {
       throw new Error("groups");
     }
@@ -172,6 +171,33 @@ describe("today", () => {
     // Coming up, by day.
     expect(screen.getByText("Tomorrow")).toBeVisible();
     expect(screen.getAllByRole("link", { name: "Monty" })).toHaveLength(2);
+  });
+
+  it("names the place too when the household has more than one", async () => {
+    signInAs(gardener);
+    withToday(tasks, 2);
+    const place = (id: number, name: string) => ({
+      id,
+      name,
+      latitude: 52.37,
+      longitude: 4.89,
+      timezone: "Europe/Amsterdam",
+      last_frost: null,
+      first_frost: null,
+      frost_source: null,
+      frost_years: null,
+      locations: [],
+    });
+    server.use(
+      http.get("*/api/v1/sites", () =>
+        HttpResponse.json([place(1, "Home"), place(2, "Allotment")]),
+      ),
+    );
+
+    renderApp("/");
+
+    expect(await screen.findByText("Home · Living room")).toBeVisible();
+    expect(screen.getByText("Home · Kitchen")).toBeVisible();
   });
 
   it("marks care done with one tap, and undoes it", async () => {

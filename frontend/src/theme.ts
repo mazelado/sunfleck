@@ -3,6 +3,7 @@ import "@fontsource-variable/plus-jakarta-sans";
 import {
   alpha,
   AppShell,
+  Container,
   createTheme,
   type CSSVariablesResolver,
   darken,
@@ -90,6 +91,11 @@ export const theme = createTheme({
     md: "0 4px 14px rgba(15, 26, 20, 0.08)",
   },
   components: {
+    // "reading": the width of reading and form pages (about 640px); lists and grids keep "md".
+    Container: Container.extend({
+      vars: (_theme, props) =>
+        props.size === "reading" ? { root: { "--container-size": "40rem" } } : { root: {} },
+    }),
     Menu: Menu.extend({
       defaultProps: {
         // Inside the page's landmarks (the header, the main content), not after them.
