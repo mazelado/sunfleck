@@ -189,6 +189,7 @@
     "invalid_password_reset": "This password reset link is invalid or has already been used.",
     "incorrect_password": "Your current password is incorrect.",
     "too_many_requests": "Too many attempts. Please wait a few minutes and try again.",
+    "request_too_large": "This is too large to send. Photos can be up to 20 MB.",
     "too_many_login_attempts": "Too many failed sign-in attempts. Please wait a few minutes and try again.",
     "rate_limited": "Too many attempts. Please wait a few minutes and try again.",
     "unexpected": "Something went wrong. Please try again.",

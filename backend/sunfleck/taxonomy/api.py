@@ -15,6 +15,7 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
+from sunfleck.core import limits
 from sunfleck.core.errors import ApiError
 from sunfleck.taxonomy import identify as identification
 from sunfleck.taxonomy import suggest as suggestions
@@ -365,6 +366,7 @@ def suggest_care_profile(
     Sends the plant's name, its species (if known) and whether it grows indoors, with the
     list of care profiles. The suggestion is only shown: choosing it is up to the person."""
     household = require_role(request, Role.GARDENER).household
+    limits.per_member(request, "ai", limits.AI_PER_MINUTE)
     taxon = Taxon.objects.filter(pk=data.taxon_id).first() if data.taxon_id else None
     lang = language(request)
     try:
@@ -403,6 +405,7 @@ def identify(request: HttpRequest, photos: File[list[UploadedFile]]) -> Identifi
     The photos are sent without their metadata (such as where they were taken) and aren't
     kept by Sunfleck."""
     household = require_role(request, Role.GARDENER).household
+    limits.per_member(request, "identify", limits.IDENTIFY_PER_MINUTE)
     lang = language(request)
     try:
         result = identification.identify(

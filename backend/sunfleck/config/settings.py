@@ -50,6 +50,9 @@ if env_bool("SUNFLECK_BEHIND_PROXY", default=False):
     # Cookies only over HTTPS, so a plain http:// address can't give the session away.
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    # Browsers that have been here over HTTPS use only HTTPS for a year, so a first request
+    # over http:// can't be intercepted later. (Hard to take back: only with HTTPS for good.)
+    SECURE_HSTS_SECONDS = 365 * 24 * 60 * 60
     # The person's own address is the proxy's last entry in X-Forwarded-For: limits on failed
     # sign-ins count each person, not everyone behind the proxy together.
     ALLAUTH_TRUSTED_PROXY_COUNT = 1
@@ -103,6 +106,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Before anything reads the body (the CSRF check reads forms).
+    "sunfleck.core.limits.BodySizeLimitMiddleware",
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

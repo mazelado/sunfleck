@@ -34,11 +34,15 @@ case "$1" in
     case "${SUNFLECK_ACCESS_LOG:-false}" in
       true|1|yes) access_log="--access-logfile -" ;;
     esac
-    # The timeout covers the slowest request Sunfleck makes while someone waits: an AI model
-    # that has to load first (up to 2 x 120 s). Gunicorn's own default, 30 s, cut it off.
+    # Each worker answers several requests at once in threads, so a few slow ones (an AI
+    # model thinking, a notification server that doesn't answer) don't stop the app for
+    # everyone. Threads share a worker's memory, which matters on a Raspberry Pi.
+    # The timeout restarts a worker that stops answering altogether; it's long enough for an
+    # AI model that has to load first (up to 2 x 120 s), which Gunicorn's 30 s default wasn't.
     exec gunicorn sunfleck.config.wsgi \
       --bind 0.0.0.0:8000 \
       --workers "${WEB_CONCURRENCY:-2}" \
+      --threads "${WEB_THREADS:-4}" \
       --timeout "${WEB_TIMEOUT:-250}" \
       --no-control-socket \
       $access_log
