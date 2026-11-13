@@ -199,6 +199,17 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **Without email set up, invitation and password-reset links no longer go to the log**,
+  where anyone who can read the logs could use them; anyone could ask for a reset email. The
+  log only notes that an email wasn't sent. Admins copy the links in the app, as before; if
+  you're the only Admin and locked out, use `manage.py changepassword`.
+- **Only the sign-in endpoints the app uses are reachable** under `/_allauth/`; the others
+  (sign-up, email addresses, phone numbers) answer 404. Adding an email address there ended
+  in a server error and left a stray row behind.
+- **First-run setup can't be completed twice at once on PostgreSQL**: two requests in the
+  same moment could both make an account with the admin site.
+- **The Docker image's base images are pinned by digest**, so a release can be rebuilt
+  exactly; Dependabot keeps them up to date.
 
 ## [0.9.0] - 2026-11-06
 

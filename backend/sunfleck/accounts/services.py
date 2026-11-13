@@ -16,7 +16,7 @@ from allauth.account.utils import user_pk_to_url_str
 from allauth.core import context as allauth_context
 from django.contrib.auth.password_validation import validate_password
 from django.core.files.base import ContentFile
-from django.db import transaction
+from django.db import connection, transaction
 from django.http import HttpRequest
 from django.utils import timezone, translation
 
@@ -59,6 +59,10 @@ class ProtectedAccountError(AccountsError):
     code = "protected_account"
 
 
+# Any number, the same for every request: the lock that lets one first-run setup in at a time.
+SETUP_LOCK = 4_242_001
+
+
 def needs_setup() -> bool:
     """Return whether the instance is brand new: nobody has an account yet."""
     return not User.objects.exists()
@@ -91,8 +95,11 @@ def complete_setup(*, email: str, password: str, display_name: str, household_na
         SetupAlreadyCompletedError: If any account exists already.
         django.core.exceptions.ValidationError: If the password is too weak.
     """
-    # Setup happens once, by one person, so a full table lock isn't worth it. (On SQLite,
-    # transactions are serialized anyway.)
+    # Two requests at the same moment mustn't both find no account and both make one. SQLite
+    # serializes transactions anyway; PostgreSQL waits here for the other to finish.
+    if connection.vendor == "postgresql":
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [SETUP_LOCK])
     if User.objects.exists():
         raise SetupAlreadyCompletedError("Sunfleck has already been set up.")
     user = _create_user(

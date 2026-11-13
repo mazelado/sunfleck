@@ -120,8 +120,9 @@ the server, so it needs a connection to it.)
 
 ## Email
 
-Without email, Sunfleck writes emails to its log, and Admins can copy invitation and
-password-reset links from the app. To send them, set in `.env`:
+Without email, Sunfleck doesn't send emails, and Admins copy invitation and password-reset
+links from the app instead. The log only notes that an email wasn't sent, without the link in
+it, since those links sign people in. To send them, set in `.env`:
 
 ```
 EMAIL_URL=smtp+tls://user:password@mail.example.com:587
