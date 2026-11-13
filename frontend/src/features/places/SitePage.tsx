@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
 import { useSite } from "../../api/places";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -30,32 +31,28 @@ export function SitePage() {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/places" size="sm">
-        ← {t("places.title")}
-      </Anchor>
-      <Group justify="space-between" align="flex-start">
-        <Stack gap={2}>
-          <Title order={1} fz="h2">
-            {data.name}
-          </Title>
-          {/* Its time zone, when it isn't this device's: times on its page are in it. */}
-          {data.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone && (
-            <Text size="sm" c="dimmed">
-              {t("places.timeZone", { zone: data.timezone.replace(/_/g, " ") })}
-            </Text>
-          )}
-        </Stack>
-        {canEdit && (
-          <Button
-            component={Link}
-            to={`${base}/edit`}
-            variant="default"
-            leftSection={<IconPencil size={16} />}
-          >
-            {t("common.edit")}
-          </Button>
-        )}
-      </Group>
+      <PageHeader
+        title={data.name}
+        back={{ to: "/places", label: t("places.title") }}
+        // Its time zone, when it isn't this device's: times on its page are in it.
+        subtitle={
+          data.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone
+            ? t("places.timeZone", { zone: data.timezone.replace(/_/g, " ") })
+            : undefined
+        }
+        action={
+          canEdit && (
+            <Button
+              component={Link}
+              to={`${base}/edit`}
+              variant="default"
+              leftSection={<IconPencil size={16} />}
+            >
+              {t("common.edit")}
+            </Button>
+          )
+        }
+      />
 
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="sm">

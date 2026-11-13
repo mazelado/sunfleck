@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Badge,
   Box,
   Button,
@@ -8,21 +7,22 @@ import {
   Center,
   Group,
   Loader,
+  Menu,
   Select,
   SimpleGrid,
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconHeart, IconPlus, IconSearch, IconSeeding } from "@tabler/icons-react";
+import { IconHeart, IconPlus, IconQrcode, IconSearch, IconSeeding } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 
 import { useSites } from "../../api/places";
 import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "../../api/plants";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { relativeDay } from "../../lib/relativeTime";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -57,34 +57,29 @@ export function PlantsPage() {
 
   return (
     <Stack gap="lg">
-      <Group justify="space-between">
-        <Title order={1} fz="h2">
-          {t("plants.title")}
-        </Title>
-        <Group gap="xs">
-          <Button
-            component={Link}
-            to="/seeds"
-            variant="default"
-            leftSection={<IconSeeding size={16} />}
-          >
-            {t("seeds.title")}
-          </Button>
-          <Button
-            component={Link}
-            to="/plants/wishlist"
-            variant="default"
-            leftSection={<IconHeart size={16} />}
-          >
-            {t("wishlist.title")}
-          </Button>
-          {canEdit && (
+      <PageHeader
+        title={t("plants.title")}
+        action={
+          canEdit && (
             <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>
               {t("plants.addPlant")}
             </Button>
-          )}
-        </Group>
-      </Group>
+          )
+        }
+        menu={
+          <>
+            <Menu.Item component={Link} to="/seeds" leftSection={<IconSeeding size={16} />}>
+              {t("seeds.title")}
+            </Menu.Item>
+            <Menu.Item component={Link} to="/plants/wishlist" leftSection={<IconHeart size={16} />}>
+              {t("wishlist.title")}
+            </Menu.Item>
+            <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
+              {t("labels.printQr")}
+            </Menu.Item>
+          </>
+        }
+      />
 
       <Stack gap="xs">
         <TextInput
@@ -177,9 +172,6 @@ export function PlantsPage() {
               </Button>
             </Center>
           )}
-          <Anchor component={Link} to="/plants/labels" size="sm">
-            {t("labels.printQr")}
-          </Anchor>
         </>
       )}
     </Stack>

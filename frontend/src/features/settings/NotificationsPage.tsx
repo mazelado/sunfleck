@@ -40,6 +40,7 @@ import {
   useUpdatePreferences,
 } from "../../api/notifications";
 import { useErrorMessage } from "../../api/useErrorMessage";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { CopyableLink } from "../../components/CopyableLink";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -65,12 +66,11 @@ export function NotificationsPage() {
   }
   return (
     <Stack gap="md">
-      <Stack gap={4}>
-        <Title order={1} fz="h2">
-          {t("notifications.title")}
-        </Title>
-        <Text c="dimmed">{t("notifications.intro")}</Text>
-      </Stack>
+      <PageHeader
+        title={t("notifications.title")}
+        back={{ to: "/settings", label: t("settings.title") }}
+        subtitle={t("notifications.intro")}
+      />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="sm">
           <Title order={2} fz="h4">

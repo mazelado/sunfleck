@@ -12,6 +12,52 @@
 }
 
 /*
+ * Touch targets are at least 44×44px on touch screens (docs/STYLE_GUIDE.md), set here once
+ * rather than at each call site. Buttons, menu items and choices grow to 44px tall. Icon
+ * buttons keep the size they're drawn at, with a larger invisible hit area around them (so
+ * Mantine's `overflow: hidden`, which would clip it, is lifted).
+ */
+@media (pointer: coarse) {
+  .mantine-Button-root,
+  .mantine-Menu-item,
+  .mantine-Chip-label,
+  .mantine-SegmentedControl-label {
+    min-height: 44px;
+  }
+
+  .mantine-Chip-label,
+  .mantine-SegmentedControl-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mantine-Checkbox-body,
+  .mantine-Radio-body,
+  .mantine-Switch-body {
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .mantine-ActionIcon-root,
+  .mantine-CloseButton-root {
+    overflow: visible;
+  }
+
+  /* A number field's tiny up and down arrows: on a touch screen the number is typed. */
+  .mantine-NumberInput-controls {
+    display: none;
+  }
+
+  .mantine-ActionIcon-root::after,
+  .mantine-CloseButton-root::after {
+    content: "";
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2));
+  }
+}
+
+/*
  * The main pages (AppLayout). NavLink marks the current one with aria-current="page": shown by
  * colour and weight in the tab bar, and by a background in the header.
  */
@@ -68,10 +114,17 @@ body,
 }
 
 /*
- * Card and section headings: small capitals, a step back from the content. Not for headings
+ * Headings inside a card: small capitals, a step back from the content. Not for headings
  * that are a name (a plugin, a care profile: `data-name`), which read worse in capitals.
+ * A heading on the page itself, between cards, stays in sentence case (its `fz="h4"` and
+ * weight 700), so it stands out from the labels inside the cards below it.
  */
 .sunfleck-title[data-order="2"]:not([data-name]) {
+  font-weight: 700;
+}
+
+/* `:is` gives the plain class the weight of the longer selector, so it wins over a Title's. */
+:is(.sunfleck-card .sunfleck-title[data-order="2"]:not([data-name]), .sunfleck-card-label) {
   font-size: 0.8125rem;
   line-height: 1.4;
   font-weight: 750;
@@ -125,6 +178,18 @@ body,
     opacity: 1;
     transform: none;
   }
+}
+
+/*
+ * A page's way back (PageHeader): a 44px tall target, though it reads as a small link.
+ */
+.sunfleck-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  margin-block: -12px -8px;
+  align-self: flex-start;
 }
 
 /* A button on a plant's cover photo stands out from whatever the photo shows. */

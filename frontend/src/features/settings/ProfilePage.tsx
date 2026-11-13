@@ -26,6 +26,7 @@ import {
   useSetAvatar,
   useUpdateMe,
 } from "../../api/accounts";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { type CropArea, PhotoCropper } from "../../components/PhotoCropper";
@@ -45,9 +46,10 @@ export function ProfilePage() {
   }
   return (
     <Stack gap="lg">
-      <Title order={1} fz="h2">
-        {t("profile.title")}
-      </Title>
+      <PageHeader
+        title={t("profile.title")}
+        back={{ to: "/settings", label: t("settings.title") }}
+      />
       <ProfilePicture me={me} />
       <ProfileForm me={me} />
       <ChangePasswordForm />

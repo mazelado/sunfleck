@@ -68,4 +68,18 @@ describe("navigation", () => {
       "page",
     );
   });
+
+  it.each(["/settings/profile", "/settings/notifications", "/settings/care-types"])(
+    "gives %s a way back to Settings",
+    async (path) => {
+      signInAs(ada);
+      renderApp(path);
+
+      const main = within(await screen.findByRole("main"));
+      expect(await main.findByRole("link", { name: "Settings" })).toHaveAttribute(
+        "href",
+        "/settings",
+      );
+    },
+  );
 });

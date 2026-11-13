@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EXPORT_URL, importExport, type ImportSummary, useImportStatus } from "../../api/dataio";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 
 /** Admins download the household's data, or import an export into a new household. */
@@ -13,9 +14,7 @@ export function DataPage() {
 
   return (
     <Stack gap="md">
-      <Title order={1} fz="h2">
-        {t("data.title")}
-      </Title>
+      <PageHeader title={t("data.title")} back={{ to: "/settings", label: t("settings.title") }} />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="sm">
           <Title order={2} fz="h4">

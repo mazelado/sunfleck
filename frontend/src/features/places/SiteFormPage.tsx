@@ -1,11 +1,12 @@
-import { Anchor, Button, Group, Paper, Select, Stack, TextInput, Title } from "@mantine/core";
+import { Button, Group, Paper, Select, Stack, TextInput } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 
 import { type Site, useCreateSite, useDeleteSite, useSite, useUpdateSite } from "../../api/places";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -84,12 +85,13 @@ function SiteForm({ site }: { site?: Site }) {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to={site ? `/places/${String(site.id)}` : "/places"} size="sm">
-        ← {site?.name ?? t("places.title")}
-      </Anchor>
-      <Title order={1} fz="h2">
-        {site ? t("places.editSite") : t("places.newSite")}
-      </Title>
+      <PageHeader
+        title={site ? t("places.editSite") : t("places.newSite")}
+        back={{
+          to: site ? `/places/${String(site.id)}` : "/places",
+          label: site?.name ?? t("places.title"),
+        }}
+      />
       <Paper withBorder radius="lg" p="lg">
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">

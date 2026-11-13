@@ -104,7 +104,8 @@ describe("seeds", () => {
     server.use(http.get("*/api/v1/seeds", () => HttpResponse.json([])));
     const { user, router } = renderApp("/plants");
 
-    await user.click(await screen.findByRole("link", { name: "Seeds" }));
+    await user.click(await screen.findByRole("button", { name: "More actions" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Seeds" }));
 
     expect(router.state.location.pathname).toBe("/seeds");
   });

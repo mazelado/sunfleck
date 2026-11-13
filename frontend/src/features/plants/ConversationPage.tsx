@@ -1,15 +1,4 @@
-import {
-  Alert,
-  Anchor,
-  Button,
-  Group,
-  Loader,
-  Paper,
-  Stack,
-  Text,
-  Textarea,
-  Title,
-} from "@mantine/core";
+import { Alert, Button, Group, Loader, Paper, Stack, Text, Textarea } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,6 +15,7 @@ import {
 import { usePlant } from "../../api/plants";
 import { useSuggestAvailable } from "../../api/taxonomy";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -57,9 +47,6 @@ export function ConversationPage() {
   const name = plant.data.nickname;
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to={`/plants/${String(plantId)}`} size="sm">
-        ← {name}
-      </Anchor>
       {conversation.data ? (
         <Thread key={conversation.data.id} conversation={conversation.data} plantName={name} />
       ) : (
@@ -76,9 +63,10 @@ function NewConversation({ plantId, plantName }: { plantId: number; plantName: s
   const canAsk = useCanAsk();
   return (
     <>
-      <Title order={1} fz="h2">
-        {t("conversations.ask", { name: plantName })}
-      </Title>
+      <PageHeader
+        title={t("conversations.ask", { name: plantName })}
+        back={{ to: `/plants/${String(plantId)}`, label: plantName }}
+      />
       {canAsk ? (
         <Composer
           label={t("conversations.question")}
@@ -120,19 +108,18 @@ function Thread({ conversation, plantName }: { conversation: Conversation; plant
 
   return (
     <>
-      <Stack gap={4}>
-        <Title order={1} fz="h3">
-          {conversation.title}
-        </Title>
-        <Text size="sm" c="dimmed">
-          {conversation.started_by
+      <PageHeader
+        title={conversation.title}
+        back={{ to: `/plants/${String(conversation.plant_id)}`, label: plantName }}
+        subtitle={
+          conversation.started_by
             ? t("conversations.startedBy", {
                 name: conversation.started_by,
                 date: formatDateTime(conversation.created_at, i18n.language),
               })
-            : formatDateTime(conversation.created_at, i18n.language)}
-        </Text>
-      </Stack>
+            : formatDateTime(conversation.created_at, i18n.language)
+        }
+      />
       <Stack gap="sm">
         {conversation.messages.map((message, index) => (
           <div key={message.id} ref={index === count - 2 ? latest : undefined}>

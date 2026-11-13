@@ -24,6 +24,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Easier to tap and to find your way** (UI plan, part 1): on phones and tablets, every
+  button, menu item and choice is at least 44×44 pixels, as the style guide asks. Every page
+  has the same header: a way back to the page it belongs to (Settings' pages now have one
+  too), the title, its main action, and rarer actions in a "⋯" menu. Headings between cards
+  are no longer small capitals, so they stand out from the labels inside the cards. Care
+  that's overdue is red and care due today orange everywhere, rings included.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

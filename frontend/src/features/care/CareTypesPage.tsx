@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { type CareType, useCareTypes } from "../../api/care";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
@@ -37,12 +38,11 @@ export function CareTypesPage() {
 
   return (
     <Stack gap="lg">
-      <Stack gap={4}>
-        <Title order={1} fz="h2">
-          {t("care.settings.title")}
-        </Title>
-        <Text c="dimmed">{t("care.settings.intro")}</Text>
-      </Stack>
+      <PageHeader
+        title={t("care.settings.title")}
+        back={{ to: "/settings", label: t("settings.title") }}
+        subtitle={t("care.settings.intro")}
+      />
       <ErrorAlert error={careTypes.error} />
 
       <Paper withBorder radius="lg" p="lg">

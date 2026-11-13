@@ -1,8 +1,9 @@
-import { Anchor, Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 
 import { type CareProfile, useCareProfile } from "../../api/taxonomy";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { CareProfileFacts } from "./CareProfileFacts";
@@ -23,21 +24,21 @@ export function CareProfilePage() {
   const data = profile.data;
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/guide" size="sm">
-        ← {t("guide.title")}
-      </Anchor>
-      <Stack gap={4}>
-        <Group gap="xs">
-          <Title order={1} fz="h2">
-            {data.name}
-          </Title>
+      <PageHeader
+        title={data.name}
+        back={{ to: "/guide", label: t("guide.title") }}
+        badge={
           <Badge variant="light" color="gray">
             {t(`guide.settings.${data.setting}`)}
           </Badge>
-        </Group>
-        <Text>{data.description}</Text>
-        {data.notes && <Text size="sm">{data.notes}</Text>}
-      </Stack>
+        }
+        subtitle={
+          <>
+            <Text>{data.description}</Text>
+            {data.notes && <Text size="sm">{data.notes}</Text>}
+          </>
+        }
+      />
       <Paper withBorder radius="lg" p="lg">
         <CareProfileFacts profile={data} />
       </Paper>

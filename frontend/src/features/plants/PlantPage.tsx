@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 
 import { type Photo, type Plant, usePhotos, usePlant, usePlantLight } from "../../api/plants";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { relativeDay } from "../../lib/relativeTime";
@@ -71,94 +72,93 @@ export function PlantPage() {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/plants" size="sm">
-        ← {t("plants.title")}
-      </Anchor>
-      <Box pos="relative">
-        {data.cover_photo ? (
-          <UnstyledButton
-            display="block"
-            w="100%"
-            aria-label={t("plants.openCover", { name: data.nickname })}
-            onClick={() => {
-              if (data.cover_photo) open(data.cover_photo);
-            }}
-          >
-            <PlantCover photo={data.cover_photo} alt="" height={260} />
-          </UnstyledButton>
-        ) : (
-          <PlantCover
-            photo={null}
-            alt={t("plants.photoOf", { name: data.nickname })}
-            height={260}
-          />
-        )}
-        {canEdit && (
-          <Box pos="absolute" bottom={12} right={12}>
-            <AddPhotoButton
-              plantId={data.id}
-              cover={{ plantName: data.nickname, hasPhoto: Boolean(data.cover_photo) }}
-              onCrop={(photo) => {
-                open(photo, true);
-              }}
-            />
-          </Box>
-        )}
-      </Box>
-      <Group justify="space-between" align="flex-start" wrap="nowrap">
-        <Stack gap={4} style={{ minWidth: 0 }}>
-          <Group gap="xs">
-            <Title order={1} fz="h2">
-              {data.nickname}
-            </Title>
-            <PlantStatusBadge status={data.status} />
-          </Group>
-          {data.species && (
-            <Anchor component={Link} to={`/guide/species/${String(data.species.id)}`} size="sm">
-              {/* The common name, unless the plant is already called that. */}
-              {data.species.common_name &&
-              data.species.common_name.toLowerCase() !== data.nickname.toLowerCase() ? (
-                <>{sentenceCase(data.species.common_name)} · </>
-              ) : null}
-              <Text span fs="italic" inherit>
-                {data.species.scientific_name}
-              </Text>
-            </Anchor>
-          )}
-          <Text size="sm" c="dimmed">
-            {data.last_watered_at
-              ? t("care.lastWatered", { when: relativeDay(data.last_watered_at, i18n.language) })
-              : t("care.neverWatered")}
-          </Text>
-          {location ? (
-            <Group gap="xs">
-              <Anchor
-                component={Link}
-                to={`/places/${String(location.site_id)}/locations/${String(location.id)}`}
-                size="sm"
+      <PageHeader
+        title={data.nickname}
+        back={{ to: "/plants", label: t("plants.title") }}
+        media={
+          <Box pos="relative">
+            {data.cover_photo ? (
+              <UnstyledButton
+                display="block"
+                w="100%"
+                aria-label={t("plants.openCover", { name: data.nickname })}
+                onClick={() => {
+                  if (data.cover_photo) open(data.cover_photo);
+                }}
               >
-                {location.site_name} · {location.name}
+                <PlantCover photo={data.cover_photo} alt="" height={260} />
+              </UnstyledButton>
+            ) : (
+              <PlantCover
+                photo={null}
+                alt={t("plants.photoOf", { name: data.nickname })}
+                height={260}
+              />
+            )}
+            {canEdit && (
+              <Box pos="absolute" bottom={12} right={12}>
+                <AddPhotoButton
+                  plantId={data.id}
+                  cover={{ plantName: data.nickname, hasPhoto: Boolean(data.cover_photo) }}
+                  onCrop={(photo) => {
+                    open(photo, true);
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+        }
+        badge={<PlantStatusBadge status={data.status} />}
+        subtitle={
+          <>
+            {data.species && (
+              <Anchor component={Link} to={`/guide/species/${String(data.species.id)}`} size="sm">
+                {/* The common name, unless the plant is already called that. */}
+                {data.species.common_name &&
+                data.species.common_name.toLowerCase() !== data.nickname.toLowerCase() ? (
+                  <>{sentenceCase(data.species.common_name)} · </>
+                ) : null}
+                <Text span fs="italic" inherit>
+                  {data.species.scientific_name}
+                </Text>
               </Anchor>
-              <LocationKindBadge kind={location.kind} />
-            </Group>
-          ) : (
+            )}
             <Text size="sm" c="dimmed">
-              {t("plants.noLocation")}
+              {data.last_watered_at
+                ? t("care.lastWatered", { when: relativeDay(data.last_watered_at, i18n.language) })
+                : t("care.neverWatered")}
             </Text>
-          )}
-        </Stack>
-        {canEdit && (
-          <Button
-            component={Link}
-            to={`/plants/${String(data.id)}/edit`}
-            variant="default"
-            leftSection={<IconPencil size={16} />}
-            style={{ flexShrink: 0 }}
-          >
-            {t("common.edit")}
-          </Button>
-        )}
-      </Group>
+            {location ? (
+              <Group gap="xs">
+                <Anchor
+                  component={Link}
+                  to={`/places/${String(location.site_id)}/locations/${String(location.id)}`}
+                  size="sm"
+                >
+                  {location.site_name} · {location.name}
+                </Anchor>
+                <LocationKindBadge kind={location.kind} />
+              </Group>
+            ) : (
+              <Text size="sm" c="dimmed">
+                {t("plants.noLocation")}
+              </Text>
+            )}
+          </>
+        }
+        action={
+          canEdit && (
+            <Button
+              component={Link}
+              to={`/plants/${String(data.id)}/edit`}
+              variant="default"
+              leftSection={<IconPencil size={16} />}
+            >
+              {t("common.edit")}
+            </Button>
+          )
+        }
+      />
 
       <ToxicityNotice toxicity={data.species?.toxicity} />
 
