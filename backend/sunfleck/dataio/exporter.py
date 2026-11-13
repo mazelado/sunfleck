@@ -3,6 +3,7 @@
 Account passwords and secrets (notification addresses, plugins' API keys) are left out.
 """
 
+import shutil
 import zipfile
 from pathlib import PurePosixPath
 from typing import IO
@@ -20,6 +21,8 @@ from sunfleck.places.models import Site
 from sunfleck.plants.models import Photo, Plant, Wish
 from sunfleck.plugins import services as plugin_services
 from sunfleck.taxonomy.models import CareDataset
+
+COPY_CHUNK_BYTES = 1024 * 1024
 
 
 def _care_type(care_type: CareType) -> schema.CareTypeRef:
@@ -128,9 +131,7 @@ def _plant(plant: Plant) -> schema.Plant:
                 skipped=event.skipped,
                 estimated=event.estimated,
             )
-            for event in CareEvent.objects.filter(plant=plant)
-            .select_related("care_type")
-            .order_by("performed_at", "pk")
+            for event in plant.care_events.all()  # prefetched by build()
         ],
         harvests=[
             schema.Harvest(
@@ -140,7 +141,7 @@ def _plant(plant: Plant) -> schema.Plant:
                 notes=harvest.notes,
                 logged_by=harvest.logged_by_id,
             )
-            for harvest in Harvest.objects.filter(plant=plant).order_by("harvested_on", "pk")
+            for harvest in plant.harvests.all()
         ],
         conversations=[
             schema.Conversation(
@@ -159,9 +160,7 @@ def _plant(plant: Plant) -> schema.Plant:
                     for message in conversation.messages.all()
                 ],
             )
-            for conversation in Conversation.objects.filter(plant=plant).order_by(
-                "created_at", "pk"
-            )
+            for conversation in plant.conversations.all()
         ],
         schedules=[
             schema.Schedule(
@@ -175,7 +174,7 @@ def _plant(plant: Plant) -> schema.Plant:
                 routine_multiplier=item.routine_multiplier,
                 routine_set_on=item.routine_set_on,
             )
-            for item in CareSchedule.objects.filter(plant=plant).select_related("care_type")
+            for item in plant.schedules.all()
         ],
     )
 
@@ -187,8 +186,24 @@ def build(household: Household) -> schema.Export:
         Plant.objects.filter(household=household)
         .select_related("taxon", "care_profile")
         # Oldest first, so that importing creates them in the same order.
+        # Everything of each plant in one query per kind, not per plant.
         .prefetch_related(
-            "light_links", Prefetch("photos", queryset=Photo.objects.order_by("taken_at", "pk"))
+            "light_links",
+            Prefetch("photos", queryset=Photo.objects.order_by("taken_at", "pk")),
+            Prefetch(
+                "care_events",
+                queryset=CareEvent.objects.select_related("care_type").order_by(
+                    "performed_at", "pk"
+                ),
+            ),
+            Prefetch("harvests", queryset=Harvest.objects.order_by("harvested_on", "pk")),
+            Prefetch(
+                "conversations",
+                queryset=Conversation.objects.order_by("created_at", "pk").prefetch_related(
+                    "messages"
+                ),
+            ),
+            Prefetch("schedules", queryset=CareSchedule.objects.select_related("care_type")),
         )
         .order_by("pk")
     )
@@ -265,7 +280,11 @@ def write(household: Household, out: IO[bytes]) -> schema.Export:
         )
         for photo in Photo.objects.filter(plant__household=household):
             for field in ("image", "thumbnail"):
-                with getattr(photo, field).open("rb") as file:
-                    # Photos are compressed already.
-                    archive.writestr(_photo_name(photo, field), file.read())
+                # Copied in chunks, so a large photo isn't held in memory whole. Photos are
+                # compressed already, so they're stored as they are.
+                with (
+                    getattr(photo, field).open("rb") as file,
+                    archive.open(_photo_name(photo, field), "w") as copy,
+                ):
+                    shutil.copyfileobj(file, copy, COPY_CHUNK_BYTES)
     return data
