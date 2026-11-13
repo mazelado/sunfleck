@@ -22,7 +22,8 @@
     "back": "Back",
     "optional": "optional",
     "notFound": "This doesn't exist, or it was deleted.",
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "backTo": "Back to {{page}}"
   },
   "roles": {
     "admin": "Admin",

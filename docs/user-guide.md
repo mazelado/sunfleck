@@ -36,6 +36,10 @@ at the bottom on a phone, and at the top on a wider screen. **Settings** (the ge
 right) has your household and inviting people, reminders, care types and, for Admins, plugins
 and export. Your profile and signing out are in the account menu, beside it.
 
+On a phone, a page inside another one (a plant, a room, one of the settings) has a back arrow
+at the top left, to the page it belongs to, and its rarer actions in the **⋯** at the top
+right. Every page also has a link back above its title on a wider screen.
+
 ## Places: homes, rooms and light
 
 - A **site** is a place with an address: home, an allotment, an office. Its position on the

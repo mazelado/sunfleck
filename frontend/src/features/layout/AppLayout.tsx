@@ -24,11 +24,12 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
-import { type ComponentType, useState } from "react";
+import { type ComponentType, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 
 import { useMe, useSignOut } from "../../api/accounts";
+import { PageBarContext } from "../../components/pageBar";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
 
@@ -61,6 +62,10 @@ export function AppLayout() {
   const [iosHelp, setIosHelp] = useState(false);
   // Mantine's "sm" breakpoint. Phones (and narrow windows) get the tab bar.
   const wide = useMediaQuery("(min-width: 48em)", false, { getInitialValueInEffect: false });
+  // On phones, a sub-page draws its way back, title and menu in the top bar (PageHeader).
+  const [barTarget, setBarTarget] = useState<HTMLElement | null>(null);
+  const [subPage, setSubPage] = useState(false);
+  const pageBar = useMemo(() => ({ target: barTarget, setActive: setSubPage }), [barTarget]);
 
   async function handleSignOut() {
     await signOut.mutateAsync();
@@ -73,7 +78,14 @@ export function AppLayout() {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between" wrap="nowrap">
+        {!wide && subPage && <div ref={setBarTarget} className="sunfleck-page-bar" />}
+        <Group
+          h="100%"
+          px="md"
+          justify="space-between"
+          wrap="nowrap"
+          display={!wide && subPage ? "none" : undefined}
+        >
           <Group gap="lg" wrap="nowrap">
             <Text
               component={Link}
@@ -186,7 +198,9 @@ export function AppLayout() {
         }}
       >
         <Container size="md" px={0}>
-          <Outlet />
+          <PageBarContext.Provider value={pageBar}>
+            <Outlet />
+          </PageBarContext.Provider>
         </Container>
       </AppShell.Main>
       {!wide && (

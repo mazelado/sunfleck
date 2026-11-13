@@ -205,3 +205,25 @@ body,
   position: sticky;
   top: calc(60px + var(--mantine-spacing-md));
 }
+
+/*
+ * A sub-page's title in the phone top bar (PageBarContent): hidden while the page's own title
+ * is in view, fading in once that has scrolled under the bar.
+ */
+.sunfleck-bar-title {
+  opacity: 0;
+}
+
+.sunfleck-bar-title[data-shown] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sunfleck-bar-title {
+    transition: opacity 150ms ease;
+  }
+}
+
+.sunfleck-page-bar {
+  height: 100%;
+}

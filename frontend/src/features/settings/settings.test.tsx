@@ -65,15 +65,16 @@ describe("profile", () => {
     server.use(
       http.delete("*/api/v1/me/avatar", () => HttpResponse.json({ ...ada, avatar_url: null })),
     );
-    const { user } = renderApp("/settings/profile");
+    const { user, router } = renderApp("/");
 
+    // In the header of the main pages, as decoration: the button says whose menu it is.
+    const accountButton = await screen.findByRole("button", { name: "Account menu: Ada" });
+    expect(accountButton.querySelector("img")).toHaveAttribute("alt", "");
+    await router.navigate("/settings/profile");
     expect(await screen.findByRole("img", { name: "Your profile picture" })).toHaveAttribute(
       "src",
       "/api/v1/people/1/avatar?v=abc",
     );
-    // In the header too, as decoration: the button says whose menu it is.
-    const accountButton = screen.getByRole("button", { name: "Account menu: Ada" });
-    expect(accountButton.querySelector("img")).toHaveAttribute("alt", "");
 
     await user.click(screen.getByRole("button", { name: "Remove" }));
 
