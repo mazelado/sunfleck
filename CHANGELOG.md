@@ -209,6 +209,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   own. Port 8000 is no longer open to the network by default, so nobody can bypass the proxy
   and claim another address, and the Nginx example now sets `X-Forwarded-For`, without which
   the proxy passed on whatever address a visitor claimed.
+- **With two AI plugins on, each question went to both**, with the plant's history and photos,
+  and both services billed for it, though only one answer was used. Now only the first AI
+  plugin that answers is asked; the next is asked only if it fails. The same holds for plant
+  identification and frost dates.
 - **Limits on how much work one request or member can cause**: requests over 25 MB are refused
   before they're read (they used to be read whole, without signing in, before any check), and
   so are photos over 50 megapixels, which took hundreds of MB of memory to decode. Each member
