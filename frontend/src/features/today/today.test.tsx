@@ -438,7 +438,7 @@ describe("today", () => {
     ).toBeVisible();
     expect(screen.getByRole("link", { name: "See the sowing calendar" })).toHaveAttribute(
       "href",
-      "/seeds",
+      "/plants/seeds",
     );
   });
 

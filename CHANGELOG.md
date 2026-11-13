@@ -34,8 +34,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   **Filter** button (room, status, without a care routine) in place of four rows of
   filters, with the filters in use shown as chips that remove them. Each card has a larger
   photo and says in words what the plant needs next ("Water today", "Fertilize in 5 days"),
-  in place of three unlabelled rings, plus "Low light" when its spot is too dark. Seeds,
-  Wishlist and Print QR labels are in the page's "⋯" menu.
+  in place of three unlabelled rings, plus "Low light" when its spot is too dark. Print QR
+  labels is in the page's "⋯" menu.
 - **A plant's care in one card** (UI plan, part 3): the rings, the care buttons and the care
   schedule were three places saying when to water; now one **Care** card has a row per
   schedule with its ring, when it's due in words, how often (tap to change it) and a button
@@ -70,6 +70,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   over 3 pages instead of 8 over 4. Rooms and plants are listed as full-width rows that say
   what they are ("Indoor · South window", "No light source yet") with an arrow, and a room's
   **Edit** and **Print QR labels** are at the top.
+- **Seeds and the wishlist are views of the Plants tab** (UI plan, part 9): "Plants · Seeds ·
+  Wishlist" at the top of each, and the Plants tab stays lit on all three. Seeds moved to
+  `/plants/seeds`; the old `/seeds` address still works.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

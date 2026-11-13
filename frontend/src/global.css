@@ -312,3 +312,33 @@ html:has(.sunfleck-form-actions) {
     background-color: var(--mantine-color-default-hover);
   }
 }
+
+/* The Plants tab's views (PlantsViews): links that look like a segmented control. */
+.sunfleck-views {
+  padding: 4px;
+  border-radius: var(--mantine-radius-xl);
+  background-color: var(--sunfleck-track);
+}
+
+.sunfleck-view {
+  flex: 1;
+  min-height: 36px;
+  padding: 4px var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-xl);
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-dimmed);
+}
+
+.sunfleck-view[aria-current="page"] {
+  background-color: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+  box-shadow: var(--mantine-shadow-xs);
+}
+
+@media (pointer: coarse) {
+  .sunfleck-view {
+    min-height: 44px;
+  }
+}

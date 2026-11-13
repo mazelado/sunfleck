@@ -47,7 +47,7 @@ describe("seeds", () => {
         HttpResponse.json([seed(), seed({ id: 2, name: "Basil", species: null, sow_by: 2020 })]),
       ),
     );
-    renderApp("/seeds");
+    renderApp("/plants/seeds");
 
     expect(await screen.findByText("Tomato 'Gardener's Delight'")).toBeVisible();
     expect(screen.getByText("Tomato · About 20 · Sow by 2030")).toBeVisible();
@@ -70,7 +70,7 @@ describe("seeds", () => {
         return HttpResponse.json(seeds[0], { status: 201 });
       }),
     );
-    const { user } = renderApp("/seeds");
+    const { user } = renderApp("/plants/seeds");
 
     expect(await screen.findByText("No seeds yet.")).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Add seeds" }));
@@ -99,15 +99,29 @@ describe("seeds", () => {
     expect(screen.getAllByText("Tomato")).toHaveLength(2);
   });
 
-  it("is a page away from the plant list", async () => {
+  it("is a view of the Plants tab, one tap from the plants", async () => {
     signInAs(viewer);
     server.use(http.get("*/api/v1/seeds", () => HttpResponse.json([])));
     const { user, router } = renderApp("/plants");
 
-    await user.click(await screen.findByRole("button", { name: "More actions" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Seeds" }));
+    const views = within(await screen.findByRole("navigation", { name: /^Plants, seeds/ }));
+    expect(views.getByRole("link", { name: "Plants" })).toHaveAttribute("aria-current", "page");
+    await user.click(views.getByRole("link", { name: "Seeds" }));
 
-    expect(router.state.location.pathname).toBe("/seeds");
+    expect(router.state.location.pathname).toBe("/plants/seeds");
+    expect(await screen.findByRole("heading", { name: "Seeds", level: 1 })).toBeVisible();
+    // The Plants tab stays lit.
+    const tabs = within(screen.getByRole("navigation", { name: "Main" }));
+    expect(tabs.getByRole("link", { name: "Plants" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("keeps the old address working", async () => {
+    signInAs(viewer);
+    server.use(http.get("*/api/v1/seeds", () => HttpResponse.json([])));
+    const { router } = renderApp("/seeds");
+
+    expect(await screen.findByRole("heading", { name: "Seeds", level: 1 })).toBeVisible();
+    expect(router.state.location.pathname).toBe("/plants/seeds");
   });
 });
 
@@ -187,7 +201,7 @@ describe("sowing calendar", () => {
       // The new plant's page, which it goes on to.
       http.get("*/api/v1/plants/7*", () => HttpResponse.json({}, { status: 404 })),
     );
-    const { user, router } = renderApp("/seeds");
+    const { user, router } = renderApp("/plants/seeds");
 
     expect(await screen.findByRole("heading", { name: "Sowing calendar" })).toBeVisible();
     expect(await screen.findByText("Now")).toBeVisible();
@@ -226,7 +240,7 @@ describe("sowing calendar", () => {
         HttpResponse.json(calendar({ frost: "unknown", entries: [] })),
       ),
     );
-    renderApp("/seeds");
+    renderApp("/plants/seeds");
 
     expect(await screen.findByText(/The frost dates at Home aren't known yet/)).toBeVisible();
     expect(screen.getByRole("link", { name: "Enter them on its page" })).toHaveAttribute(

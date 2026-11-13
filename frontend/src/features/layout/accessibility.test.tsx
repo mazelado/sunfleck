@@ -9,6 +9,8 @@ import { ada, server, signInAs } from "../../test/server";
 const pages: [string, string, string][] = [
   ["Today", "/", "Today"],
   ["Plants", "/plants", "Plants"],
+  ["Seeds", "/plants/seeds", "Seeds"],
+  ["Wishlist", "/plants/wishlist", "Wishlist"],
   ["New plant", "/plants/new", "New plant"],
   ["Places", "/places", "Places"],
   ["Care guide", "/guide", "Care guide"],
@@ -26,6 +28,7 @@ describe("accessibility", () => {
       http.get("*/api/v1/household/members", () => HttpResponse.json([])),
       http.get("*/api/v1/household/invitations", () => HttpResponse.json([])),
       http.get("*/api/v1/plugins", () => HttpResponse.json({ plugins: [], problems: [] })),
+      http.get("*/api/v1/wishlist", () => HttpResponse.json([])),
     );
     renderApp(path);
     await screen.findByRole("heading", { level: 1, name: heading });

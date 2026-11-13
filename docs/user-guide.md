@@ -141,7 +141,7 @@ right. Every page also has a link back above its title on a wider screen.
 
 ## Wishlist
 
-- **Wishlist** (in the Plants page's **⋯** menu) lists plants you'd like to have: a name, the species if
+- **Wishlist** (at the top of the Plants tab: Plants · Seeds · Wishlist) lists plants you'd like to have: a name, the species if
   you know it, where to get it (a link) and notes. On a species' page in the Care guide,
   **Add to the wishlist** adds it in one tap.
 - **Got it** opens the new plant's form with its name and species filled in; when you save
@@ -149,7 +149,7 @@ right. Every page also has a link back above its title on a wider screen.
 
 ## Seeds
 
-**Seeds** (in the Plants page's **⋯** menu) lists the seeds you have: their species, variety, how many,
+**Seeds** (at the top of the Plants tab: Plants · Seeds · Wishlist) lists the seeds you have: their species, variety, how many,
 and the year to sow them by. Seeds past that year are marked, since they may not come up.
 
 The **sowing calendar** on the same page turns them into dates: when to sow (indoors or

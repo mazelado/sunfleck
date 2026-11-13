@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { RouteObject } from "react-router";
+import { Navigate, type RouteObject } from "react-router";
 
 import { AcceptInvitationPage } from "./features/auth/AcceptInvitationPage";
 import { ForgotPasswordPage } from "./features/auth/ForgotPasswordPage";
@@ -109,9 +109,11 @@ export const routes: RouteObject[] = [
                 ...page(() => import("./features/places/LocationFormPage"), "LocationFormPage"),
               },
               {
-                path: "/seeds",
+                path: "/plants/seeds",
                 ...page(() => import("./features/garden/SeedsPage"), "SeedsPage"),
               },
+              // Seeds' address until they became a view of the Plants tab (1.0).
+              { path: "/seeds", element: <Navigate to="/plants/seeds" replace /> },
               {
                 path: "/about",
                 ...page(() => import("./features/about/AboutPage"), "AboutPage"),

@@ -26,7 +26,7 @@ export function GardenNote() {
       {t("calendar.todayNote", {
         tasks: now.map((entry) => t(`calendar.actions.${entry.action}`, { name: entry.name })),
       })}{" "}
-      <Anchor component={Link} to="/seeds" inherit>
+      <Anchor component={Link} to="/plants/seeds" inherit>
         {t("calendar.seeCalendar")}
       </Anchor>
     </Alert>
