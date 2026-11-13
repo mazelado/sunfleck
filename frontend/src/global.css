@@ -257,3 +257,41 @@ body,
     opacity: 0;
   }
 }
+
+/*
+ * A form's Save bar (FormActions): it stays at the bottom of the screen while its form is in
+ * view, above the tab bar on phones, and settles at the end of the card. The page leaves room
+ * under a focused field, so the bar never hides what's being typed.
+ */
+.sunfleck-form-actions {
+  position: sticky;
+  bottom: calc(var(--app-shell-footer-offset, 0rem) + env(safe-area-inset-bottom));
+  z-index: 2;
+  margin: 0 calc(var(--mantine-spacing-lg) * -1) calc(var(--mantine-spacing-lg) * -1);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-lg);
+  background-color: var(--mantine-color-body);
+  border-top: 1px solid var(--mantine-color-default-border);
+  border-radius: 0 0 var(--mantine-radius-lg) var(--mantine-radius-lg);
+}
+
+html:has(.sunfleck-form-actions) {
+  scroll-padding-bottom: calc(var(--app-shell-footer-offset, 0rem) + 6rem);
+}
+
+/* A photo field (PhotoField): a dashed tile to tap, with the photo once one is chosen. */
+.sunfleck-photo-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-xs);
+  width: 100%;
+  min-height: 7rem;
+  border: 2px dashed var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  color: var(--mantine-color-dimmed);
+}
+
+.sunfleck-photo-tile:hover {
+  border-color: var(--mantine-color-leaf-6);
+  color: var(--mantine-color-leaf-light-color);
+}

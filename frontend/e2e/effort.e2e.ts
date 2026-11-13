@@ -137,7 +137,7 @@ test("add a plant to a room, with its species", async () => {
     await effort.type(page.getByRole("textbox", { name: /^Name/ }), "Monty");
     await effort.choose(page.getByRole("combobox", { name: /^Room or spot/ }), /Kitchen/);
     await effort.type(page.getByRole("textbox", { name: /Pot diameter/ }), "15");
-    await effort.tap(page.getByRole("radio", { name: "A few days ago" }));
+    await effort.tap(page.getByText("A few days ago", { exact: true })); // a chip
     await effort.tap(page.getByRole("button", { name: "Save" }));
     await expect(page.getByRole("heading", { name: "Monty", level: 1 })).toBeVisible();
   });
