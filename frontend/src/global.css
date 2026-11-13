@@ -320,8 +320,12 @@ html:has(.sunfleck-form-actions) {
   background-color: var(--sunfleck-track);
 }
 
+/* A flex box, so the label stays centred at any height (36px, 44px on touch screens). */
 .sunfleck-view {
+  display: flex;
   flex: 1;
+  align-items: center;
+  justify-content: center;
   min-height: 36px;
   padding: 4px var(--mantine-spacing-md);
   border-radius: var(--mantine-radius-xl);
