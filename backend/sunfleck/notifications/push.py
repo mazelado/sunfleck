@@ -18,7 +18,7 @@ from py_vapid import Vapid02
 from pywebpush import WebPushException, webpush
 
 from sunfleck.core.crypto import decrypt, encrypt
-from sunfleck.notifications.delivery import MAX_ERROR_LENGTH, TIMEOUT_SECONDS, DeliveryError
+from sunfleck.notifications.delivery import TIMEOUT_SECONDS, DeliveryError
 from sunfleck.notifications.models import PushKey
 
 logger = logging.getLogger(__name__)
@@ -65,6 +65,20 @@ def public_key() -> str:
     return _key().public_key
 
 
+def is_push_service(endpoint: str) -> bool:
+    """Whether `endpoint` is an https address at one of the push services browsers use
+    (`PUSH_SERVICE_HOSTS`), rather than some other server."""
+    try:
+        url = urlsplit(endpoint)
+        host = (url.hostname or "").lower()
+        port = url.port
+    except ValueError:
+        return False
+    if url.scheme != "https" or url.username or url.password or port not in (None, 443):
+        return False
+    return any(host == known or host.endswith(f".{known}") for known in settings.PUSH_SERVICE_HOSTS)
+
+
 def check_subscription(subscription: dict[str, Any]) -> str:
     """The subscription as stored (JSON), if it's one a browser could have made.
 
@@ -75,6 +89,11 @@ def check_subscription(subscription: dict[str, Any]) -> str:
     keys = subscription.get("keys") or {}
     if not isinstance(endpoint, str) or not endpoint.startswith("https://"):
         raise ValueError("The subscription has no https endpoint.")
+    if not is_push_service(endpoint):
+        raise ValueError(
+            "The subscription's endpoint isn't a known push service. "
+            "The server's administrator can add it with SUNFLECK_PUSH_HOSTS."
+        )
     if not all(isinstance(keys.get(name), str) and keys[name] for name in ("p256dh", "auth")):
         raise ValueError("The subscription has no keys.")
     return json.dumps(
@@ -94,11 +113,18 @@ def send(stored: str, title: str, body: str) -> None:
         SubscriptionGoneError: If the device no longer accepts pushes.
         DeliveryError: If the push service refused it, or couldn't be reached.
     """
+    subscription = json.loads(stored)
+    # Devices added before push services were checked, or since removed from the setting.
+    if not is_push_service(subscription["endpoint"]):
+        raise DeliveryError(
+            "This device's push service isn't a known one. Turn notifications on again there, "
+            "or ask the server's administrator to add it with SUNFLECK_PUSH_HOSTS."
+        )
     payload = json.dumps({"title": title, "body": body, "url": "/"})
     claims: dict[str, str | int] = {"sub": contact()}
     try:
         webpush(
-            subscription_info=json.loads(stored),
+            subscription_info=subscription,
             data=payload,
             vapid_private_key=Vapid02.from_pem(decrypt(_key().private_key_encrypted).encode()),
             vapid_claims=claims,
@@ -111,8 +137,11 @@ def send(stored: str, title: str, body: str) -> None:
             raise SubscriptionGoneError(
                 "This device no longer accepts notifications. Turn them on again there."
             ) from exc
-        raise DeliveryError(f"The push service refused it: {exc}"[:MAX_ERROR_LENGTH]) from exc
+        # Never pass on what the push service answered (pywebpush puts its body in the
+        # exception): only the status. The rest is in the log for whoever runs the server.
+        logger.debug("The push service refused a push: %s", exc)
+        refused = "The push service refused it"
+        raise DeliveryError(f"{refused} (HTTP {status})." if status else f"{refused}.") from exc
     except OSError as exc:  # network errors, timeouts
-        raise DeliveryError(
-            f"The push service couldn't be reached: {exc}"[:MAX_ERROR_LENGTH]
-        ) from exc
+        logger.debug("A push service couldn't be reached: %s", exc)
+        raise DeliveryError("The push service couldn't be reached. Try again later.") from exc

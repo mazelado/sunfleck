@@ -169,6 +169,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **One household per person** is now enforced in the admin site, which refuses to add
   someone to a second household. Should someone already have two, they always get the
   older one, instead of whichever the database returned first.
+- **Web Push devices** can only use the push services browsers use (Google's, Mozilla's,
+  Apple's and Microsoft's; `SUNFLECK_PUSH_HOSTS` adds more), and a failed push shows only the
+  push service's status, not its answer. Before, any member could add a "device" at an
+  address on the server's network and read the start of its answer in the error message.
+  Devices already added at another address stop receiving pushes, with a message saying why.
 - **Plugins' API endpoints** need a signed-in member, and a CSRF token for changes, unless the
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
