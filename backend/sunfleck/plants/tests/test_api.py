@@ -617,14 +617,17 @@ def test_the_wishlist_lists_plants_wanted(client_as: ClientAs, household: Househ
         "Monstera deliciosa",
     )
     listed = client_as(Role.VIEWER).get("/api/v1/wishlist").json()
-    assert [item["name"] for item in listed] == ["Anthurium", "Variegated monstera"]
+    assert [item["name"] for item in listed["items"]] == ["Anthurium", "Variegated monstera"]
+    assert listed["count"] == 2
 
     changed = send(
         client, "PUT", f"/api/v1/wishlist/{wish['id']}", {"name": "Monstera", "notes": "Any"}
     )
     assert (changed.json()["name"], changed.json()["species"]) == ("Monstera", None)
     assert send(client, "DELETE", f"/api/v1/wishlist/{wish['id']}").status_code == 204
-    assert [item["name"] for item in client.get("/api/v1/wishlist").json()] == ["Anthurium"]
+    assert [item["name"] for item in client.get("/api/v1/wishlist").json()["items"]] == [
+        "Anthurium"
+    ]
 
 
 @pytest.mark.django_db

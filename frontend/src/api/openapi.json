@@ -1059,6 +1059,28 @@
         "title": "ConversationOut",
         "type": "object"
       },
+      "ConversationPage": {
+        "properties": {
+          "count": {
+            "description": "How many conversations there are, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ConversationSummaryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "ConversationPage",
+        "type": "object"
+      },
       "ConversationSummaryOut": {
         "properties": {
           "created_at": {
@@ -1601,6 +1623,11 @@
       },
       "HarvestsOut": {
         "properties": {
+          "count": {
+            "description": "How many harvests the plant has, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
           "items": {
             "description": "The latest first.",
             "items": {
@@ -1615,6 +1642,7 @@
         },
         "required": [
           "items",
+          "count",
           "this_year"
         ],
         "title": "HarvestsOut",
@@ -2278,6 +2306,27 @@
           "url"
         ],
         "title": "LinkOut",
+        "type": "object"
+      },
+      "ListQuery": {
+        "properties": {
+          "limit": {
+            "default": 500,
+            "description": "How many to return; everything up to 500 by default.",
+            "maximum": 500,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "How many to skip.",
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "ListQuery",
         "type": "object"
       },
       "LocationIn": {
@@ -4737,6 +4786,28 @@
         "title": "SeedOut",
         "type": "object"
       },
+      "SeedPage": {
+        "properties": {
+          "count": {
+            "description": "How many seed packets there are, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SeedOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "SeedPage",
+        "type": "object"
+      },
       "SettingsCheckOut": {
         "properties": {
           "details": {
@@ -5985,6 +6056,28 @@
           "created_at"
         ],
         "title": "WishOut",
+        "type": "object"
+      },
+      "WishPage": {
+        "properties": {
+          "count": {
+            "description": "How many wishes there are, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WishOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "WishPage",
         "type": "object"
       }
     },
@@ -8849,6 +8942,33 @@
               "title": "Plant Id",
               "type": "integer"
             }
+          },
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -8856,11 +8976,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ConversationSummaryOut"
-                  },
-                  "title": "Response",
-                  "type": "array"
+                  "$ref": "#/components/schemas/ConversationPage"
                 }
               }
             },
@@ -9043,7 +9159,7 @@
     },
     "/api/v1/plants/{plant_id}/harvests": {
       "get": {
-        "description": "A plant's harvests, the latest first (a few hundred at most), and this year's total.",
+        "description": "A plant's harvests, the latest first, and this year's total.",
         "operationId": "sunfleck_garden_api_list_harvests",
         "parameters": [
           {
@@ -9052,6 +9168,33 @@
             "required": true,
             "schema": {
               "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
               "type": "integer"
             }
           }
@@ -9729,19 +9872,43 @@
     },
     "/api/v1/seeds": {
       "get": {
-        "description": "The household's seeds, by name. A household has a few dozen at most.",
+        "description": "The household's seeds, by name.",
         "operationId": "sunfleck_garden_api_list_seeds",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/SeedOut"
-                  },
-                  "title": "Response",
-                  "type": "array"
+                  "$ref": "#/components/schemas/SeedPage"
                 }
               }
             },
@@ -10382,17 +10549,41 @@
       "get": {
         "description": "The plants the household would like to have, by name.",
         "operationId": "sunfleck_plants_api_list_wishlist",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/WishOut"
-                  },
-                  "title": "Response",
-                  "type": "array"
+                  "$ref": "#/components/schemas/WishPage"
                 }
               }
             },

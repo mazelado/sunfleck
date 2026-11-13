@@ -138,6 +138,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **The light check says first** whether a plant gets enough light now, and what to do
   about it, before the numbers.
 
+- **API: four lists can be paged** before the API is frozen in 1.0: `GET /api/v1/wishlist`,
+  `/api/v1/seeds` and `/api/v1/plants/{id}/conversations` now answer
+  `{"items": [...], "count": n}` instead of a plain list, and `/api/v1/plants/{id}/harvests`
+  gains `count`. All four take `limit` (at most 500, the default) and `offset`. Clients that
+  read these lists must read `items`; the app does.
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first

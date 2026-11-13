@@ -120,7 +120,8 @@ def test_the_household_can_read_them_the_latest_first(
 
     listed = viewer.get(f"/api/v1/plants/{plant.pk}/conversations").json()
 
-    assert [(c["title"], c["questions"]) for c in listed] == [
+    assert listed["count"] == 2
+    assert [(c["title"], c["questions"]) for c in listed["items"]] == [
         ("How often?", 2),
         ("Where should it go?", 1),
     ]

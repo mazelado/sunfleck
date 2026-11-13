@@ -9,13 +9,14 @@ from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
 from django.utils import timezone
-from ninja import Router, Schema, Status
+from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.accounts.permissions import require_role
 from sunfleck.core.errors import ApiError
+from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.garden import calendar, services
 from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
@@ -107,13 +108,23 @@ def _garden_error(exc: services.GardenError) -> ApiError:
     return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
 
 
-@router.get("/seeds", response=list[SeedOut])
-def list_seeds(request: HttpRequest) -> list[SeedOut]:
-    """The household's seeds, by name. A household has a few dozen at most."""
+class SeedPage(Schema):
+    items: list[SeedOut]
+    count: int = Field(description="How many seed packets there are, across all pages.")
+
+
+@router.get("/seeds", response=SeedPage)
+def list_seeds(request: HttpRequest, query: Query[ListQuery]) -> SeedPage:
+    """The household's seeds, by name."""
     household = require_role(request, Role.VIEWER).household
     lang = language(request)
-    packets = SeedPacket.objects.filter(household=household).select_related("taxon__archetype")
-    return [_seed_out(packet, lang) for packet in packets]
+    packets = (
+        SeedPacket.objects.filter(household=household)
+        .select_related("taxon__archetype")
+        .order_by("name", "variety", "id")  # the id too, so pages don't overlap
+    )
+    items, count = paginate(packets, query)
+    return SeedPage(items=[_seed_out(packet, lang) for packet in items], count=count)
 
 
 @router.post("/seeds", response={201: SeedOut})
@@ -217,6 +228,7 @@ class HarvestTotalsOut(Schema):
 
 class HarvestsOut(Schema):
     items: list[HarvestOut] = Field(description="The latest first.")
+    count: int = Field(description="How many harvests the plant has, across all pages.")
     this_year: HarvestTotalsOut
 
 
@@ -244,13 +256,19 @@ def _plant_today(plant: Plant) -> date:
 
 
 @router.get("/plants/{plant_id}/harvests", response=HarvestsOut)
-def list_harvests(request: HttpRequest, plant_id: int) -> HarvestsOut:
-    """A plant's harvests, the latest first (a few hundred at most), and this year's total."""
+def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) -> HarvestsOut:
+    """A plant's harvests, the latest first, and this year's total."""
     household = require_role(request, Role.VIEWER).household
     plant = _get_plant(household, plant_id)
     totals = services.harvest_totals(plant, _plant_today(plant).year)
+    harvests, count = paginate(
+        # The id too, so pages don't overlap.
+        plant.harvests.select_related("logged_by").order_by("-harvested_on", "-created_at", "-id"),
+        query,
+    )
     return HarvestsOut(
-        items=[_harvest_out(harvest) for harvest in plant.harvests.select_related("logged_by")],
+        items=[_harvest_out(harvest) for harvest in harvests],
+        count=count,
         this_year=HarvestTotalsOut(
             year=totals.year,
             grams=totals.grams,

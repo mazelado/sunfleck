@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
-import { ada, server, signInAs } from "../../test/server";
+import { ada, listOf, server, signInAs } from "../../test/server";
 
 // Leaflet can't draw maps in the test environment.
 vi.mock("../places/MapPicker", () => ({ default: () => null }));
@@ -32,7 +32,7 @@ describe("accessibility", () => {
       http.get("*/api/v1/household/members", () => HttpResponse.json([])),
       http.get("*/api/v1/household/invitations", () => HttpResponse.json([])),
       http.get("*/api/v1/plugins", () => HttpResponse.json({ plugins: [], problems: [] })),
-      http.get("*/api/v1/wishlist", () => HttpResponse.json([])),
+      http.get("*/api/v1/wishlist", () => HttpResponse.json(listOf([]))),
     );
     renderApp(path);
     await screen.findByRole("heading", { level: 1, name: heading });

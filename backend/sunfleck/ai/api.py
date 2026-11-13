@@ -9,7 +9,7 @@ from datetime import datetime
 
 from django.db.models import Count, Q
 from django.http import HttpRequest
-from ninja import Router, Schema, Status
+from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
 
@@ -18,6 +18,7 @@ from sunfleck.accounts.permissions import require_role
 from sunfleck.ai import chat
 from sunfleck.ai.models import Conversation, Message, MessageRole
 from sunfleck.core.errors import ApiError
+from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.api import language
 
@@ -119,25 +120,36 @@ def _chat_error(exc: chat.ChatError) -> ApiError:
     return ApiError(status, exc.code, str(exc), details)
 
 
-@router.get("/plants/{plant_id}/conversations", response=list[ConversationSummaryOut])
-def list_conversations(request: HttpRequest, plant_id: int) -> list[ConversationSummaryOut]:
+class ConversationPage(Schema):
+    items: list[ConversationSummaryOut]
+    count: int = Field(description="How many conversations there are, across all pages.")
+
+
+@router.get("/plants/{plant_id}/conversations", response=ConversationPage)
+def list_conversations(
+    request: HttpRequest, plant_id: int, query: Query[ListQuery]
+) -> ConversationPage:
     """The plant's conversations, the latest first."""
     household = require_role(request, Role.VIEWER).household
     plant = _get_plant(household, plant_id)
-    conversations = plant.conversations.select_related("started_by").annotate(
-        questions=Count("messages", filter=Q(messages__role=MessageRole.QUESTION))
+    conversations, count = paginate(
+        plant.conversations.select_related("started_by").annotate(
+            questions=Count("messages", filter=Q(messages__role=MessageRole.QUESTION))
+        ),
+        query,
     )
-    return [
+    items = [
         ConversationSummaryOut(
             id=conversation.pk,
             title=conversation.title,
             started_by=_name(conversation.started_by),
-            questions=conversation.questions,
+            questions=getattr(conversation, "questions", 0),  # annotated above
             created_at=conversation.created_at,
             updated_at=conversation.updated_at,
         )
         for conversation in conversations
     ]
+    return ConversationPage(items=items, count=count)
 
 
 @router.post("/plants/{plant_id}/conversations", response={201: ConversationOut})

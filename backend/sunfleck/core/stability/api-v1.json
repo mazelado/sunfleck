@@ -781,26 +781,9 @@
   "GET /api/v1/plants/{plant_id}/conversations": {
     "request": {
       "fields": {
-        "path:plant_id": "integer"
-      },
-      "required": [
-        "path:plant_id"
-      ]
-    },
-    "response": {
-      "(body)": "array",
-      "[].created_at": "string",
-      "[].id": "integer",
-      "[].questions": "integer",
-      "[].started_by": "null|string",
-      "[].title": "string",
-      "[].updated_at": "string"
-    }
-  },
-  "GET /api/v1/plants/{plant_id}/harvests": {
-    "request": {
-      "fields": {
-        "path:plant_id": "integer"
+        "path:plant_id": "integer",
+        "query:limit": "integer",
+        "query:offset": "integer"
       },
       "required": [
         "path:plant_id"
@@ -808,6 +791,30 @@
     },
     "response": {
       "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].created_at": "string",
+      "items[].id": "integer",
+      "items[].questions": "integer",
+      "items[].started_by": "null|string",
+      "items[].title": "string",
+      "items[].updated_at": "string"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/harvests": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
       "items": "array",
       "items[].amount": "null|number",
       "items[].harvested_on": "string",
@@ -1031,41 +1038,46 @@
   },
   "GET /api/v1/seeds": {
     "request": {
-      "fields": {},
+      "fields": {
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
       "required": []
     },
     "response": {
-      "(body)": "array",
-      "[].id": "integer",
-      "[].name": "string",
-      "[].notes": "string",
-      "[].quantity": "string",
-      "[].sow_by": "integer|null",
-      "[].species": "null|object",
-      "[].species.care_profile": "null|object",
-      "[].species.care_profile.key": "string",
-      "[].species.care_profile.name": "string",
-      "[].species.common_name": "null|string",
-      "[].species.common_names": "array",
-      "[].species.crop": "null|object",
-      "[].species.crop.harvest_days": "array|null",
-      "[].species.crop.note": "null|string",
-      "[].species.crop.steps": "array",
-      "[].species.crop.steps[].action": "string",
-      "[].species.crop.steps[].after": "string",
-      "[].species.crop.steps[].weeks": "array",
-      "[].species.family": "string",
-      "[].species.id": "integer",
-      "[].species.note": "null|string",
-      "[].species.rank": "string",
-      "[].species.scientific_name": "string",
-      "[].species.synonyms": "array",
-      "[].species.toxicity": "null|object",
-      "[].species.toxicity.cats": "boolean",
-      "[].species.toxicity.dogs": "boolean",
-      "[].species.toxicity.note": "null|string",
-      "[].species.toxicity.sources": "array",
-      "[].variety": "string"
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].id": "integer",
+      "items[].name": "string",
+      "items[].notes": "string",
+      "items[].quantity": "string",
+      "items[].sow_by": "integer|null",
+      "items[].species": "null|object",
+      "items[].species.care_profile": "null|object",
+      "items[].species.care_profile.key": "string",
+      "items[].species.care_profile.name": "string",
+      "items[].species.common_name": "null|string",
+      "items[].species.common_names": "array",
+      "items[].species.crop": "null|object",
+      "items[].species.crop.harvest_days": "array|null",
+      "items[].species.crop.note": "null|string",
+      "items[].species.crop.steps": "array",
+      "items[].species.crop.steps[].action": "string",
+      "items[].species.crop.steps[].after": "string",
+      "items[].species.crop.steps[].weeks": "array",
+      "items[].species.family": "string",
+      "items[].species.id": "integer",
+      "items[].species.note": "null|string",
+      "items[].species.rank": "string",
+      "items[].species.scientific_name": "string",
+      "items[].species.synonyms": "array",
+      "items[].species.toxicity": "null|object",
+      "items[].species.toxicity.cats": "boolean",
+      "items[].species.toxicity.dogs": "boolean",
+      "items[].species.toxicity.note": "null|string",
+      "items[].species.toxicity.sources": "array",
+      "items[].variety": "string"
     }
   },
   "GET /api/v1/setup": {
@@ -1298,25 +1310,30 @@
   },
   "GET /api/v1/wishlist": {
     "request": {
-      "fields": {},
+      "fields": {
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
       "required": []
     },
     "response": {
-      "(body)": "array",
-      "[].created_at": "string",
-      "[].id": "integer",
-      "[].link": "string",
-      "[].name": "string",
-      "[].notes": "string",
-      "[].species": "null|object",
-      "[].species.common_name": "null|string",
-      "[].species.id": "integer",
-      "[].species.scientific_name": "string",
-      "[].species.toxicity": "null|object",
-      "[].species.toxicity.cats": "boolean",
-      "[].species.toxicity.dogs": "boolean",
-      "[].species.toxicity.note": "null|string",
-      "[].species.toxicity.sources": "array"
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].created_at": "string",
+      "items[].id": "integer",
+      "items[].link": "string",
+      "items[].name": "string",
+      "items[].notes": "string",
+      "items[].species": "null|object",
+      "items[].species.common_name": "null|string",
+      "items[].species.id": "integer",
+      "items[].species.scientific_name": "string",
+      "items[].species.toxicity": "null|object",
+      "items[].species.toxicity.cats": "boolean",
+      "items[].species.toxicity.dogs": "boolean",
+      "items[].species.toxicity.note": "null|string",
+      "items[].species.toxicity.sources": "array"
     }
   },
   "PATCH /api/v1/household": {

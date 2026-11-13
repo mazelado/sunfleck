@@ -50,7 +50,7 @@ def test_a_gardener_adds_changes_and_deletes_seeds(client_as: ClientAs) -> None:
     assert seed["species"]["crop"]["steps"][0]["action"] == "sow_indoors"
     assert (updated.json()["quantity"], updated.json()["notes"]) == ("about 10", "From Ana")
     assert updated.json()["variety"] == ""
-    assert [item["name"] for item in client.get("/api/v1/seeds").json()] == ["Tomato"]
+    assert [item["name"] for item in client.get("/api/v1/seeds").json()["items"]] == ["Tomato"]
     assert send(client, "DELETE", f"/api/v1/seeds/{seed['id']}").status_code == 204
     assert not SeedPacket.objects.exists()
 
@@ -59,7 +59,7 @@ def test_viewers_see_seeds_but_cant_change_them(client_as: ClientAs, household: 
     packet = SeedPacket.objects.create(household=household, name="Basil")
     client = client_as(Role.VIEWER)
 
-    assert [item["name"] for item in client.get("/api/v1/seeds").json()] == ["Basil"]
+    assert [item["name"] for item in client.get("/api/v1/seeds").json()["items"]] == ["Basil"]
     assert send(client, "POST", "/api/v1/seeds", {"name": "Dill"}).status_code == 403
     assert send(client, "PUT", f"/api/v1/seeds/{packet.pk}", {"name": "Dill"}).status_code == 403
     assert send(client, "DELETE", f"/api/v1/seeds/{packet.pk}").status_code == 403
@@ -72,7 +72,7 @@ def test_other_households_seeds_and_unknown_species_are_refused(client_as: Clien
     unknown = send(client, "POST", "/api/v1/seeds", {"name": "Mystery", "taxon_id": 999999})
     too_old = send(client, "POST", "/api/v1/seeds", {"name": "Old", "sow_by": 1990})
 
-    assert client.get("/api/v1/seeds").json() == []
+    assert client.get("/api/v1/seeds").json() == {"items": [], "count": 0}
     assert send(client, "PUT", f"/api/v1/seeds/{other.pk}", {"name": "Mine"}).status_code == 404
     assert unknown.json()["error"] == {
         "code": "species_not_found",

@@ -8,7 +8,7 @@ import type { Site } from "../../api/places";
 import type { SpeciesHit } from "../../api/taxonomy";
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
-import { ada, server, signInAs } from "../../test/server";
+import { ada, listOf, server, signInAs } from "../../test/server";
 
 const gardener: Me = { ...ada, role: "gardener" };
 const viewer: Me = { ...ada, role: "viewer" };
@@ -44,7 +44,9 @@ describe("seeds", () => {
     signInAs(viewer);
     server.use(
       http.get("*/api/v1/seeds", () =>
-        HttpResponse.json([seed(), seed({ id: 2, name: "Basil", species: null, sow_by: 2020 })]),
+        HttpResponse.json(
+          listOf([seed(), seed({ id: 2, name: "Basil", species: null, sow_by: 2020 })]),
+        ),
       ),
     );
     renderApp("/plants/seeds");
@@ -62,7 +64,7 @@ describe("seeds", () => {
     let seeds: Seed[] = [];
     let sent: unknown;
     server.use(
-      http.get("*/api/v1/seeds", () => HttpResponse.json(seeds)),
+      http.get("*/api/v1/seeds", () => HttpResponse.json(listOf(seeds))),
       http.get("*/api/v1/species", () => HttpResponse.json([tomato])),
       http.post("*/api/v1/seeds", async ({ request }) => {
         sent = await request.json();
@@ -101,7 +103,7 @@ describe("seeds", () => {
 
   it("is a view of the Plants tab, one tap from the plants", async () => {
     signInAs(viewer);
-    server.use(http.get("*/api/v1/seeds", () => HttpResponse.json([])));
+    server.use(http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([]))));
     const { user, router } = renderApp("/plants");
 
     const views = within(await screen.findByRole("navigation", { name: /^Plants, seeds/ }));
@@ -117,7 +119,7 @@ describe("seeds", () => {
 
   it("keeps the old address working", async () => {
     signInAs(viewer);
-    server.use(http.get("*/api/v1/seeds", () => HttpResponse.json([])));
+    server.use(http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([]))));
     const { router } = renderApp("/seeds");
 
     expect(await screen.findByRole("heading", { name: "Seeds", level: 1 })).toBeVisible();
@@ -191,7 +193,7 @@ describe("sowing calendar", () => {
     signInAs(gardener);
     let sent: unknown;
     server.use(
-      http.get("*/api/v1/seeds", () => HttpResponse.json([seed()])),
+      http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([seed()]))),
       http.get("*/api/v1/sites", () => HttpResponse.json([home])),
       http.get("*/api/v1/calendar", () => HttpResponse.json(calendar())),
       http.post("*/api/v1/seeds/1/sown", async ({ request }) => {
@@ -234,7 +236,7 @@ describe("sowing calendar", () => {
   it("asks for the frost dates when they aren't known", async () => {
     signInAs(viewer);
     server.use(
-      http.get("*/api/v1/seeds", () => HttpResponse.json([seed()])),
+      http.get("*/api/v1/seeds", () => HttpResponse.json(listOf([seed()]))),
       http.get("*/api/v1/sites", () => HttpResponse.json([home])),
       http.get("*/api/v1/calendar", () =>
         HttpResponse.json(calendar({ frost: "unknown", entries: [] })),
