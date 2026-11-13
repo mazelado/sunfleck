@@ -5,7 +5,7 @@ grows, its schedules and its recent care. Never people's names or the site's add
 """
 
 from sunfleck.care.models import CareEvent
-from sunfleck.care.schedules import local_today, schedules_for
+from sunfleck.care.schedules import local_today, plant_zone, schedules_for
 from sunfleck.places.models import LocationKind
 from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.models import FALLBACK_LANGUAGE, translated, translated_names
@@ -109,5 +109,7 @@ def _recent_care(plant: Plant) -> list[str]:
         if event.notes:
             details.append(f'notes: "{event.notes[:200]}"')
         extra = f" ({'; '.join(details)})" if details else ""
-        lines.append(f"- {event.performed_at.date().isoformat()}: {name}{extra}")
+        # The site's day, like "Today is" above, not the UTC one.
+        day = event.performed_at.astimezone(plant_zone(plant)).date()
+        lines.append(f"- {day.isoformat()}: {name}{extra}")
     return ["Recent care, newest first:", *lines] if lines else ["Recent care: none logged"]

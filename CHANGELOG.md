@@ -182,6 +182,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   It now asks every model, and asks again without an option a model doesn't take. It also
   leaves room for the thinking that the newest models always do, which could cut off the
   answer to a photo diagnosis.
+- **When the AI plugin fails, the app says so**, instead of saying that no AI plugin is turned
+  on. A diagnosis is shown even if its photo can't be kept.
+- **The AI is told on which day care was given in the place's own time zone**: in Sydney, a
+  plant watered on Monday morning was described as watered on Sunday.
+- **Mistakes that ended in "Unexpected response (500)"** now say what's wrong: care dated
+  before the year 2000, the same schedule added twice at the same moment, and an import with
+  an overlong household name. An unexpected error says that something went wrong, in your
+  language.
 
 ### Security
 

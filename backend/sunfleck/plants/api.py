@@ -4,6 +4,7 @@ Everyone in the household can see plants; Gardeners and Admins can change them.
 """
 
 import io
+import logging
 from dataclasses import asdict
 from datetime import date, datetime
 from pathlib import PurePosixPath
@@ -50,6 +51,8 @@ from sunfleck.plants.models import (
 )
 from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
 from sunfleck.taxonomy.models import Taxon, translated_names
+
+logger = logging.getLogger(__name__)
 
 router = Router(tags=["plants"], auth=django_auth)
 
@@ -769,8 +772,9 @@ def diagnose_plant(
         caption = description.strip()[: services.MAX_CAPTION_LENGTH]
         try:
             photo = services.add_photo(plant, io.BytesIO(data), len(data), caption)
-        except services.PlantsError as exc:
-            raise _plants_error(exc) from exc
+        except services.PlantsError:
+            # The diagnosis is already paid for: return it, without the photo.
+            logger.warning("A diagnosis photo for plant %s couldn't be kept", plant.pk)
     return DiagnosisOut(
         summary=found.summary,
         causes=[CauseOut(**vars(cause)) for cause in found.causes],
