@@ -269,6 +269,8 @@ Project conventions (on top of PEP 8):
     page inside another one a `back`, to the page it belongs to (not the browser's history).
   - Touch targets are 44×44px on touch screens, set once in `global.css`
     (`@media (pointer: coarse)`); don't resize buttons at call sites for it.
+  - Reading and form pages are `Container size="reading"` (about 640px, set in `theme.ts`);
+    list and grid pages keep the app's 960px.
   - Urgency has one colour rule (`features/care/urgency.ts`): overdue is red, due today
     orange, later the ordinary text colour, for rings, words and badges alike.
   - A page's cards are `Paper withBorder radius="lg"`: white (dark grey in dark mode) on the

@@ -201,7 +201,9 @@ lists the latest harvests. Exports include them.
 
 ## The Today page
 
-Today lists what's due or overdue, grouped by room, then what's coming up this week. Each
+Today lists what's due or overdue, grouped by room (and by place too, once you have more than
+one home or garden), then what's coming up this week. The check mark marks care done; **Later**
+skips it this time or snoozes it. A row you've finished fades away, so the list doesn't jump. Each
 site's weather is shown at the top, with frost warnings, when the weather plugin is on. If
 some plants have no schedules yet, Today says so and links to them: to the plant when there's
 one, or to the plant list showing only those. In the plant list, they're marked **No routine

@@ -55,6 +55,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   "⋯" menu, and the page's name once you've scrolled past it, as in a native app. The back
   arrow goes to the page it belongs to, also when a plant was opened from a QR label.
   Today, Plants, Places, the Care guide and Settings keep the logo bar.
+- **Today** (UI plan, part 6): the done button and **Later** are 44 pixels, easy to hit; on a
+  wide screen the list is narrower, so a plant's name and its buttons sit together; groups
+  are named by room alone when you have one place ("Kitchen", not "Home · Kitchen"); and a
+  finished row fades and folds away instead of the list jumping under your thumb (not when
+  your system asks for less motion).
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
