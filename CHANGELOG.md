@@ -199,6 +199,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **Photos in an imported export** are stored as uploads are: as WebP files without their
+  metadata (such as where a phone photo was taken), named by Sunfleck. Before, they were
+  stored as they came, with the archive's file names, and a photo with too many pixels ended
+  the import with an error instead of saying what was wrong. Sunfleck's own exports still
+  import byte for byte.
 
 ## [0.9.0] - 2026-11-06
 
