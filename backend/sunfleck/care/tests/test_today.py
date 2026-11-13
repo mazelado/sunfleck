@@ -9,7 +9,7 @@ from django.test import Client
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.care import schedules
-from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
+from sunfleck.care.models import CareEvent, CareSchedule, CareType, Feedback, ScheduleMode
 from sunfleck.care.schedules import ScheduleData
 from sunfleck.care.services import CareError, CareEventData, log_care_for_plants
 from sunfleck.care.tests.factories import CareEventFactory, builtin
@@ -160,6 +160,69 @@ def test_logging_the_care_ends_the_snooze(living_room: Location) -> None:
     [schedule] = schedules.schedules_for(plant)
 
     assert (schedule.snoozed_until, schedule.due_on) == (None, date(2026, 4, 22))
+
+
+def test_a_snooze_survives_the_prediction_moving(living_room: Location) -> None:
+    plant = plant_in(living_room)
+    CareEventFactory.create(
+        plant=plant, care_type=builtin("water"), performed_at=datetime(2026, 4, 1, 12, tzinfo=UTC)
+    )
+    schedule = schedules.create_schedule(
+        plant, ScheduleData(builtin("water").pk, ScheduleMode.PREDICTED)
+    )
+    assert schedule.next_due is not None
+    assert schedule.next_due <= TODAY
+    until = date(2026, 4, 22)
+    schedules.snooze(schedule, until)
+
+    # Someone corrects the pot's size: the prediction moves, the care is still put off.
+    plant.container_diameter_cm = plant.container_height_cm = 40
+    plant.save()
+    [schedule] = schedules.schedules_for(plant)
+
+    assert schedule.snoozed_until == until
+    assert schedule.next_due is not None
+    assert schedule.due_on == max(until, schedule.next_due)
+    assert [task.schedule for task in schedules.due_tasks(plant.household, days_ahead=6)] == []
+
+
+def test_logging_another_kind_of_watering_ends_a_watering_snooze(living_room: Location) -> None:
+    plant = plant_in(living_room)
+    schedule = every(plant, "water", 7, last_done=date(2026, 4, 5))
+    schedules.snooze(schedule, date(2026, 4, 17))
+    bottom_water = CareType.objects.create(
+        household=plant.household, name="Bottom water", counts_as_watering=True
+    )
+
+    CareEventFactory.create(plant=plant, care_type=bottom_water, performed_at=NOW)
+    schedule.refresh_from_db()
+
+    assert schedule.snoozed_until is None
+
+
+def test_logging_older_care_keeps_the_snooze(living_room: Location) -> None:
+    plant = plant_in(living_room)
+    schedule = every(plant, "rotate", 7, last_done=date(2026, 4, 5))
+    schedules.snooze(schedule, date(2026, 4, 17))
+
+    # Remembered care from before the last time it was logged.
+    CareEventFactory.create(
+        plant=plant, care_type=builtin("rotate"), performed_at=datetime(2026, 3, 29, tzinfo=UTC)
+    )
+    schedule.refresh_from_db()
+
+    assert schedule.snoozed_until == date(2026, 4, 17)
+
+
+def test_logging_other_care_keeps_the_snooze(living_room: Location) -> None:
+    plant = plant_in(living_room)
+    schedule = every(plant, "rotate", 7, last_done=date(2026, 4, 5))
+    schedules.snooze(schedule, date(2026, 4, 17))
+
+    CareEventFactory.create(plant=plant, care_type=builtin("water"), performed_at=NOW)
+    [schedule] = schedules.schedules_for(plant)
+
+    assert schedule.snoozed_until == date(2026, 4, 17)
 
 
 def test_a_snooze_ends_on_the_day_it_was_put_off_to(living_room: Location) -> None:

@@ -138,7 +138,7 @@ class CareSchedule(models.Model):
     factors = models.JSONField(default=list, blank=True)
     # Empty when something the prediction depends on changed: it's recalculated when next read.
     calculated_on = models.DateField(null=True, blank=True)
-    # Put off until this day. A new due date (e.g. after the care is logged) ends the snooze.
+    # Put off until this day. Logging the care ends the snooze (see schedules.end_snoozes).
     snoozed_until = models.DateField(_("snoozed until"), null=True, blank=True)
     # Predicted watering, matched to how often the person actually waters: accepted from a
     # suggestion (see learning.py), it multiplies the prediction until it's reset.

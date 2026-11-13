@@ -30,6 +30,13 @@ def _by_plant_id(sender: type[Model], instance: PlantLight | CareEvent, **kwargs
     mark_out_of_date(pk=instance.plant_id)
 
 
+def _care_logged(sender: type[Model], instance: CareEvent, created: bool, **kwargs: Any) -> None:
+    if created:
+        from sunfleck.care.schedules import end_snoozes
+
+        end_snoozes(instance)
+
+
 def _location(sender: type[Model], instance: Location, **kwargs: Any) -> None:
     mark_out_of_date(location=instance.pk)
 
@@ -56,6 +63,7 @@ def connect() -> None:
     for model in (PlantLight, CareEvent):
         for signal in (post_save, post_delete):
             signal.connect(_by_plant_id, sender=model, dispatch_uid=f"care_schedules_{model}")
+    post_save.connect(_care_logged, sender=CareEvent, dispatch_uid="care_schedules_snoozes")
     post_save.connect(_location, sender=Location, dispatch_uid="care_schedules_location")
     # Before deleting: afterwards, its plants no longer point at it.
     pre_delete.connect(_location, sender=Location, dispatch_uid="care_schedules_location_del")
