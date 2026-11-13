@@ -142,7 +142,11 @@ encryption. Special characters in the user name or password must be URL-encoded 
     (see above): browsers only allow it on secure sites. Set `SUNFLECK_PUBLIC_URL` to that
     https address, which push services are given as the contact for your server. The keys
     are made the first time someone turns it on. On iPhone and iPad it works in the app added
-    to the Home Screen (iOS 16.4 or later).
+    to the Home Screen (iOS 16.4 or later). Pushes only go to the push services browsers use:
+    Google's (Chrome, Edge, Samsung Internet, Opera), Mozilla's (Firefox), Apple's (Safari)
+    and Microsoft's (Windows). If a browser's device is refused with "isn't a known push
+    service", add its push service's host to `SUNFLECK_PUSH_HOSTS` (and please open an issue
+    so it can be added for everyone).
 - **Plugins** are turned on by an Admin under **Plugins**. They're off by default, since they
   send data to outside services; the page says exactly what each sends.
   - **Weather (Open-Meteo)**: each site's weather on Today, frost warnings and frost dates,
@@ -228,6 +232,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `HUEY_REDIS_URL` | *(file in the volume)* | Redis for the job queue |
 | `LOG_LEVEL` | `INFO` | How much to log: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
 | `SUNFLECK_ACCESS_LOG` | `false` | `true` logs every request the web server answers, for tracking down a problem |
+| `SUNFLECK_PUSH_HOSTS` | *(none)* | More push services Web Push may send to, comma-separated ([below](#notifications-and-plugins)) |
 | `WEB_TIMEOUT` | `250` | Seconds a request may take before it's stopped. Long enough for an AI model that has to load first; lower it if you don't use AI plugins |
 
 ## Troubleshooting

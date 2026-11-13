@@ -5,12 +5,13 @@ from typing import Any
 
 import pytest
 from cryptography.hazmat.primitives import serialization
+from django.conf import settings
 from django.test import Client, override_settings
 from py_vapid import _check_sub
 from pywebpush import WebPushException
 
 from sunfleck.accounts.models import Membership, Role, User
-from sunfleck.core.crypto import decrypt
+from sunfleck.core.crypto import decrypt, encrypt
 from sunfleck.notifications import push, services
 from sunfleck.notifications.models import NotificationChannel, PushKey
 
@@ -34,11 +35,18 @@ class FakePushService:
     def __init__(self) -> None:
         self.pushes: list[dict[str, Any]] = []
         self.status: int | None = None
+        self.answer = ""
+        self.unreachable = False
 
     def __call__(self, **kwargs: Any) -> None:
+        if self.unreachable:
+            raise ConnectionRefusedError("[Errno 111] Connection refused by 10.0.0.5:443")
         if self.status is not None:
-            response = type("Response", (), {"status_code": self.status})()
-            raise WebPushException(f"Push failed: {self.status}", response=response)
+            response = type("Response", (), {"status_code": self.status, "text": self.answer})()
+            # As pywebpush does: the answer's body is part of the exception's message.
+            raise WebPushException(
+                f"Push failed: {self.status}\nResponse body:{self.answer}", response=response
+            )
         self.pushes.append(kwargs)
 
 
@@ -199,3 +207,95 @@ def test_push_services_get_a_contact_they_accept(public_url: str, contact: str) 
         assert push.contact() == contact
     # py_vapid refuses anything else (e.g. an https address with a path).
     assert _check_sub(contact)
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "https://192.168.1.1/admin/status",
+        "https://nas.home.example/api/status",
+        "https://fcm.googleapis.com.attacker.example/x",
+        "https://not-fcm.googleapis.com/x",
+        "https://fcm.googleapis.com:8443/x",
+        "https://someone@fcm.googleapis.com/x",
+    ],
+)
+def test_push_endpoints_must_be_a_known_push_service(client_as: ClientAs, endpoint: str) -> None:
+    client = client_as(Role.VIEWER)
+
+    response = client.post(
+        "/api/v1/notifications/push/devices",
+        {"label": "Odd", "subscription": {**SUBSCRIPTION, "endpoint": endpoint}},
+        content_type="application/json",
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_subscription"
+    assert not NotificationChannel.objects.exists()
+
+
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "https://fcm.googleapis.com/fcm/send/abc",
+        "https://updates.push.services.mozilla.com/wpush/v2/abc",
+        "https://web.push.apple.com/abc",
+        "https://wns2-par02p.notify.windows.com/w/?token=abc",
+        "https://push.example.org/abc",  # added with SUNFLECK_PUSH_HOSTS
+    ],
+)
+def test_the_push_services_browsers_use_are_accepted(ada: User, endpoint: str) -> None:
+    with override_settings(PUSH_SERVICE_HOSTS=[*settings.PUSH_SERVICE_HOSTS, "push.example.org"]):
+        services.add_push_device(ada, "Device", {**SUBSCRIPTION, "endpoint": endpoint})
+
+    assert NotificationChannel.objects.count() == 1
+
+
+def test_a_push_services_answer_is_never_shown(
+    client_as: ClientAs, service: FakePushService
+) -> None:
+    client = client_as(Role.VIEWER)
+    channel_id = client.post(
+        "/api/v1/notifications/push/devices",
+        {"label": "Pixel", "subscription": SUBSCRIPTION},
+        content_type="application/json",
+    ).json()["id"]
+    service.status, service.answer = 403, "INTERNAL-SECRET: the answer's body"
+
+    response = client.post(f"/api/v1/notifications/channels/{channel_id}/test")
+
+    assert response.status_code == 422
+    assert "INTERNAL-SECRET" not in response.content.decode()
+    assert "(HTTP 403)" in response.json()["error"]["message"]
+    last_error = NotificationChannel.objects.get().last_error
+    assert "INTERNAL-SECRET" not in last_error
+    assert "(HTTP 403)" in last_error
+
+
+def test_connection_errors_dont_say_what_answered(ada: User, service: FakePushService) -> None:
+    channel = services.add_push_device(ada, "Phone", SUBSCRIPTION)
+    service.unreachable = True
+
+    with pytest.raises(services.NotificationError):
+        services.send_test(channel)
+
+    channel.refresh_from_db()
+    assert channel.last_error == "The push service couldn't be reached. Try again later."
+
+
+def test_a_device_stored_with_an_unknown_push_service_isnt_sent_to(
+    ada: User, service: FakePushService
+) -> None:
+    channel = services.add_push_device(ada, "Phone", SUBSCRIPTION)
+    # A device from before endpoints were checked.
+    channel.url_encrypted = encrypt(
+        json.dumps({**SUBSCRIPTION, "endpoint": "https://192.168.1.1/admin/status"})
+    )
+    channel.save()
+
+    with pytest.raises(services.NotificationError):
+        services.send_test(channel)
+
+    assert service.pushes == []
+    channel.refresh_from_db()
+    assert "isn't a known one" in channel.last_error
