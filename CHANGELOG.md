@@ -213,6 +213,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and both services billed for it, though only one answer was used. Now only the first AI
   plugin that answers is asked; the next is asked only if it fails. The same holds for plant
   identification and frost dates.
+- **A stored API key is only sent to the server it was saved for**: in the OpenAI-compatible
+  plugin, changing the server address asks for the key again, also for **Test**. Before, an
+  Admin could have another Admin's key sent to an address of their choice. Plugins can bind
+  a secret to their own settings the same way (`bound_to`).
+- **The OpenAI-compatible plugin only accepts `http://` and `https://` addresses**, and no
+  longer writes what a failing server answered to the log, which could repeat parts of a
+  question (or of a local file, with a `file:` address).
 - **A few slow requests no longer stop the app for everyone**: each of the 2 web server
   processes now answers 4 requests at once (`WEB_THREADS`), so two questions to a slow AI
   model, or two tests of a notification server that doesn't answer, leave room for everyone
