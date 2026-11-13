@@ -11,6 +11,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Added
 
+- **Step-by-step setup** (UI plan, part 12): a new household's **Getting started** button opens
+  a short flow, one question per screen: where your plants live, the room or spot (with its
+  window, on the same screen), which plant it is, and when it was last watered. Finishing adds
+  the plant with its suggested routine and opens its page. Each step is saved as you go, and
+  coming back starts at the first step not done. It takes 2 page changes, where adding a room
+  with a window and then a plant took 7. Adding plants and places the usual way is unchanged.
+
 - **Cropping photos** (#67): frame a new profile picture in a circle before saving it. Open
   a plant photo and choose **Crop** to pick the part its thumbnails and the plant's cover
   show. The whole photo is kept, so the crop can be changed later. Exports include crops,

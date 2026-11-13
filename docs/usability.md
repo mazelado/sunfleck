@@ -48,6 +48,7 @@ why in the pull request; when one gets cheaper, lower it.
 | Give a plant a grow light its room doesn't have yet | Plants | 6 | 0 | 3 |
 | Invite someone to the household | Today | 3 | 1 | 2 |
 | Put care in a calendar app | Today | 4 | 0 | 2 |
+| Set up a place, a room with a window and a first plant (first-run flow; in `journeys.e2e.ts`, on an empty household) | Today | 9 | 4 | 2 |
 
 Measured on 2026-11-05, for 0.7. After the 1.0 usability test, settings moved from the account
 menu to a Settings page (the gear at the top), which said what each setting is for: inviting

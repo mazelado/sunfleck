@@ -41,6 +41,10 @@ export const routes: RouteObject[] = [
             children: [
               { path: "/", element: <TodayPage /> },
               {
+                path: "/welcome",
+                ...page(() => import("./features/welcome/WelcomePage"), "WelcomePage"),
+              },
+              {
                 path: "/plants",
                 ...page(() => import("./features/plants/PlantsPage"), "PlantsPage"),
               },
