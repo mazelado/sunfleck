@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import F, QuerySet
+from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 
 from sunfleck.accounts.models import Household
@@ -232,8 +232,8 @@ def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedu
     )
     if not changed and schedule.calculated_on == today:
         return schedule
-    if prediction.next_due != schedule.next_due:
-        schedule.snoozed_until = None  # a snooze puts off one due date, not the next
+    # The snooze is kept: the due date also moves when the plant is edited or the weather
+    # changes, and the care was still put off. Logging the care ends it (`end_snoozes`).
     schedule.interval_days = prediction.interval_days
     schedule.next_due = prediction.next_due
     schedule.factors = factors
@@ -244,7 +244,6 @@ def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedu
             "next_due",
             "factors",
             "calculated_on",
-            "snoozed_until",
             "updated_at",
         ]
     )
@@ -352,6 +351,28 @@ def unscheduled_plants(household: Household) -> QuerySet[Plant]:
 
 
 MAX_SNOOZE_DAYS = 60
+
+
+def end_snoozes(event: CareEvent) -> None:
+    """Care was logged: stop putting off the schedules it counts for. A snooze puts off one
+    due date, not the next. Care logged for an earlier day than the latest already logged
+    leaves the snooze alone."""
+    care_type = event.care_type
+    same_care = (
+        Q(care_type__counts_as_watering=True)
+        if care_type.counts_as_watering
+        else Q(care_type=care_type)
+    )
+    later = (
+        CareEvent.objects.filter(same_care, plant_id=event.plant_id)
+        .filter(performed_at__gt=event.performed_at)
+        .exclude(pk=event.pk)
+    )
+    if later.exists():
+        return
+    CareSchedule.objects.filter(same_care, plant_id=event.plant_id).exclude(
+        snoozed_until=None
+    ).update(snoozed_until=None, updated_at=timezone.now())
 
 
 def snooze(schedule: CareSchedule, until: date | None) -> CareSchedule:
