@@ -76,6 +76,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **The Care guide** (UI plan, part 10) lists care profiles as compact cards, two side by side
   on wider screens, each with its description in two lines, and **All · Indoor · Outdoor**
   above them in place of headings far apart.
+- **Settings** (UI plan, part 11): each Settings card is one link with an arrow, to the page
+  it describes. **Notifications** starts with **This device**, the whole answer for most
+  people; ntfy, Telegram, email and the rest are folded under **Other ways**, and the page no
+  longer opens by explaining Apprise. A plugin's switch says **Off** when it's off (it said
+  **On** either way), and its version moved into its details.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

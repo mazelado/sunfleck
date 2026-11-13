@@ -1,6 +1,7 @@
 import { Anchor, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon } from "@mantine/core";
 import {
   IconBell,
+  IconChevronRight,
   IconDatabaseExport,
   IconDroplet,
   IconPuzzle,
@@ -81,24 +82,45 @@ export function SettingsPage() {
         {areas
           .filter((area) => !area.adminOnly || isAdmin)
           .map((area) => (
-            <Paper key={area.to} withBorder radius="lg" p="lg">
+            // The whole card opens the area (its title's link covers it); a shortcut sits
+            // above that.
+            <Paper key={area.to} withBorder radius="lg" p="lg" pos="relative">
               <Group gap="md" wrap="nowrap" align="flex-start">
                 <ThemeIcon variant="light" size="lg" radius="md" aria-hidden>
                   <area.icon size={20} />
                 </ThemeIcon>
-                <Stack gap={4} style={{ minWidth: 0 }}>
-                  <Anchor component={Link} to={area.to} fw={600} c="inherit">
+                <Stack gap={4} style={{ minWidth: 0, flex: 1 }}>
+                  <Anchor
+                    component={Link}
+                    to={area.to}
+                    fw={600}
+                    c="inherit"
+                    underline="never"
+                    className="sunfleck-stretched"
+                  >
                     {area.name}
                   </Anchor>
                   <Text size="sm" c="dimmed">
                     {area.about}
                   </Text>
                   {area.shortcut && (
-                    <Anchor component={Link} to={area.shortcut.to} size="sm">
+                    <Anchor
+                      component={Link}
+                      to={area.shortcut.to}
+                      size="sm"
+                      pos="relative"
+                      style={{ zIndex: 1, alignSelf: "flex-start" }}
+                    >
                       {area.shortcut.label}
                     </Anchor>
                   )}
                 </Stack>
+                <IconChevronRight
+                  size={18}
+                  aria-hidden
+                  color="var(--mantine-color-dimmed)"
+                  style={{ flexShrink: 0, alignSelf: "center" }}
+                />
               </Group>
             </Paper>
           ))}
