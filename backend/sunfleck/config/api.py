@@ -1,6 +1,7 @@
 """The root of the JSON API, served under /api/v1/."""
 
 from ninja import NinjaAPI, Router
+from ninja.security import django_auth
 
 from sunfleck import __version__
 from sunfleck.accounts.api import router as accounts_router
@@ -31,8 +32,17 @@ api.add_router("/", dataio_router)
 api.add_router("/", garden_router)
 api.add_router("/", ai_router)
 
+
+def plugin_router(plugin_id: str) -> Router:
+    """The router a plugin adds its endpoints to. Like Sunfleck's own, its endpoints need a
+    signed-in person, and a CSRF token for changes; an endpoint that must be public says so
+    with `auth=None`. Whether the plugin is on for the household is `require_enabled`'s check.
+    """
+    return Router(auth=django_auth, tags=[f"plugin: {plugin_id}"])
+
+
 # Each plugin's own endpoints, under /api/v1/plugins/<plugin id>/.
 for plugin_id in registry.implementers("register_api"):
-    plugin_router = Router(tags=[f"plugin: {plugin_id}"])
-    registry.call_at_startup("register_api", plugin_id, router=plugin_router)
-    api.add_router(f"/plugins/{plugin_id}/", plugin_router)
+    router = plugin_router(plugin_id)
+    registry.call_at_startup("register_api", plugin_id, router=router)
+    api.add_router(f"/plugins/{plugin_id}/", router)

@@ -174,6 +174,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   push service's status, not its answer. Before, any member could add a "device" at an
   address on the server's network and read the start of its answer in the error message.
   Devices already added at another address stop receiving pushes, with a message saying why.
+- **Plugins' API endpoints** need a signed-in member, and a CSRF token for changes, unless the
+  plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
+  plugin checked, and had no CSRF protection even when it did. No built-in plugin has
+  endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
 
 ## [0.9.0] - 2026-11-06
 
