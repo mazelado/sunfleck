@@ -643,3 +643,16 @@ def test_only_admins_test_plugins(client_as: ClientAs, checked: CheckedHooks) ->
 
     assert response.status_code == 403
     assert checked.checked == []
+
+
+def test_plugin_states_can_be_read_once_for_many_hook_calls(
+    household: Household, rain: RainHooks, django_assert_num_queries: Any
+) -> None:
+    turn_on(household)
+
+    with django_assert_num_queries(1), services.remembered_states():
+        for _ in range(3):
+            assert services.states(household, ["rain"])["rain"].enabled
+    with django_assert_num_queries(2):
+        services.states(household, ["rain"])
+        services.states(household, ["rain"])

@@ -11,13 +11,15 @@ so reading them rarely has to; `manage.py recalculate_schedules` recalculates th
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Max, Prefetch, Q, QuerySet
+from django.db.models import Window as OverWindow
+from django.db.models.functions import RowNumber
 from django.utils import timezone
 
 from sunfleck.accounts.models import Household
@@ -33,7 +35,7 @@ from sunfleck.care.services import CareError, care_types_for
 from sunfleck.places.humidity import location_humidity
 from sunfleck.places.light import grow_light_dli, ppfd_at
 from sunfleck.places.models import BedType, LightSourceKind, LocationKind, Site
-from sunfleck.plants.models import CARED_FOR, Plant, PlantStatus
+from sunfleck.plants.models import CARED_FOR, Plant, PlantLight, PlantStatus
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import CareContext
@@ -154,14 +156,80 @@ def history_for(plant: Plant, care_type: CareType, started_on: date) -> History:
     )
 
 
+@dataclass
+class Histories:
+    """The care history of many plants, read at once (see `load_histories`): what
+    `history_for` reads for one plant and care type, in two queries for all of them."""
+
+    # The latest care of each type for each plant, and of any kind of watering.
+    last: dict[tuple[int, int], datetime]
+    last_watering: dict[int, datetime]
+    # Each plant's latest soil feedback on watering, oldest first.
+    feedback: dict[int, list[str]]
+
+    def history(self, plant: Plant, care_type: CareType, started_on: date) -> History:
+        if care_type.counts_as_watering:
+            last = self.last_watering.get(plant.pk)
+            feedback = self.feedback.get(plant.pk, [])
+        else:
+            last = self.last.get((plant.pk, care_type.pk))
+            feedback = []
+        return History(
+            last_done=last.astimezone(plant_zone(plant)).date() if last else None,
+            started_on=started_on,
+            feedback=feedback,
+        )
+
+
+def load_histories(plant_ids: Iterable[int]) -> Histories:
+    """The care history of these plants, for recalculating many schedules at once."""
+    ids = set(plant_ids)
+    last: dict[tuple[int, int], datetime] = {}
+    last_watering: dict[int, datetime] = {}
+    latest = (
+        CareEvent.objects.filter(plant_id__in=ids)
+        .values_list("plant_id", "care_type_id", "care_type__counts_as_watering")
+        .annotate(latest=Max("performed_at"))
+        .order_by()
+    )
+    for plant_id, care_type_id, counts_as_watering, performed_at in latest:
+        last[plant_id, care_type_id] = performed_at
+        if counts_as_watering and performed_at > last_watering.get(
+            plant_id, datetime.min.replace(tzinfo=UTC)
+        ):
+            last_watering[plant_id] = performed_at
+    recent = (
+        CareEvent.objects.filter(plant_id__in=ids, care_type__counts_as_watering=True)
+        .exclude(feedback="")
+        .annotate(
+            rank=OverWindow(
+                RowNumber(),
+                partition_by=F("plant_id"),
+                order_by=[F("performed_at").desc(), F("id").desc()],
+            )
+        )
+        .filter(rank__lte=FEEDBACK_MEMORY)
+        .order_by("plant_id", "-rank")
+        .values_list("plant_id", "feedback")
+    )
+    feedback: dict[int, list[str]] = {}
+    for plant_id, value in recent:
+        feedback.setdefault(plant_id, []).append(value)
+    return Histories(last, last_watering, feedback)
+
+
 # --- Predictions ------------------------------------------------------------------------------
 
 
-def predict(schedule: CareSchedule, today: date) -> Prediction:
-    """The schedule's prediction for `today` (whether or not it's saved)."""
+def predict(schedule: CareSchedule, today: date, histories: Histories | None = None) -> Prediction:
+    """The schedule's prediction for `today` (whether or not it's saved). With `histories`,
+    the care history is taken from there instead of read."""
     if not schedule.enabled:
         return Prediction(None, None, (Factor("not_in_use"),))
-    history = history_for(schedule.plant, schedule.care_type, schedule.started_on)
+    if histories is not None:
+        history = histories.history(schedule.plant, schedule.care_type, schedule.started_on)
+    else:
+        history = history_for(schedule.plant, schedule.care_type, schedule.started_on)
     if schedule.mode == ScheduleMode.FIXED:
         return predict_fixed(schedule.fixed_interval_days or 1, history)
     archetype = schedule.plant.effective_care_profile
@@ -221,10 +289,12 @@ def factors_json(factors: Iterable[Factor]) -> list[dict[str, Any]]:
     ]
 
 
-def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedule:
+def recalculate(
+    schedule: CareSchedule, today: date | None = None, histories: Histories | None = None
+) -> CareSchedule:
     """Bring the schedule's prediction up to date, recording it if it changed."""
     today = today or local_today(schedule.plant)
-    prediction = predict(schedule, today)
+    prediction = predict(schedule, today, histories)
     factors = factors_json(prediction.factors)
     changed = (schedule.interval_days, schedule.next_due, schedule.factors) != (
         prediction.interval_days,
@@ -259,11 +329,39 @@ def recalculate(schedule: CareSchedule, today: date | None = None) -> CareSchedu
     return schedule
 
 
-def refresh(schedule: CareSchedule, today: date) -> CareSchedule:
+def refresh(
+    schedule: CareSchedule, today: date, histories: Histories | None = None
+) -> CareSchedule:
     """Recalculate the schedule if it's out of date."""
     if schedule.calculated_on != today:
-        recalculate(schedule, today)
+        recalculate(schedule, today, histories)
     return schedule
+
+
+# What predictions read from a schedule's plant: load it with the schedules when recalculating
+# many (`plant__` in front for a CareSchedule query).
+PLANT_RELATED = ("household", "location__site__household", "taxon__archetype", "care_profile")
+
+
+def plant_lights_prefetch(prefix: str = "") -> Prefetch[Any]:
+    """Prefetch the lights reaching the plant (`prefix`: e.g. "plant__" from a schedule)."""
+    return Prefetch(
+        f"{prefix}light_links", queryset=PlantLight.objects.select_related("light_source")
+    )
+
+
+def refresh_all(schedules: list[CareSchedule], todays: dict[int, date]) -> None:
+    """Recalculate those of the schedules that are out of date (`todays`: each plant's today,
+    by plant id), reading what they share once: the plants' care history, and the
+    households' plugin settings. Load the schedules with PLANT_RELATED and the lights
+    (`plant_lights_prefetch("plant__")`)."""
+    stale = [s for s in schedules if s.calculated_on != todays[s.plant_id]]
+    if not stale:
+        return
+    histories = load_histories(s.plant_id for s in stale)
+    with plugin_services.remembered_states():
+        for schedule in stale:
+            recalculate(schedule, todays[schedule.plant_id], histories)
 
 
 def schedules_for(plant: Plant) -> list[CareSchedule]:
@@ -276,7 +374,7 @@ def schedules_for(plant: Plant) -> list[CareSchedule]:
     )
     for schedule in schedules:
         schedule.plant = plant  # already loaded, with its location and profile
-        refresh(schedule, today)
+    refresh_all(schedules, {plant.pk: today})
     return schedules
 
 
@@ -311,18 +409,39 @@ def out_of_date() -> QuerySet[CareSchedule]:
     return CareSchedule.objects.filter(stale)
 
 
+# Schedules recalculated together by the worker, so their plants' history fits in memory.
+BATCH_SIZE = 500
+
+
 def recalculate_out_of_date() -> int:
     """Recalculate the schedules whose site has begun a new day since they were last
     calculated, or that were marked out of date; return how many. Run every hour by the
     worker, so the day's first request (e.g. Today) finds them done."""
-    stale = out_of_date()
-    count = stale.count()
-    plants = Plant.objects.filter(pk__in=stale.values("plant_id"))
-    for plant in plants.select_related(
-        "location__site", "taxon__archetype", "care_profile"
-    ).iterator():
-        schedules_for(plant)
+    stale = (
+        out_of_date()
+        .select_related("care_type", *(f"plant__{field}" for field in PLANT_RELATED))
+        .prefetch_related(plant_lights_prefetch("plant__"))
+        .order_by("plant_id", "care_type_id")
+    )
+    count = 0
+    for batch in _batches(stale.iterator(chunk_size=BATCH_SIZE), BATCH_SIZE):
+        todays: dict[int, date] = {}
+        for schedule in batch:
+            todays.setdefault(schedule.plant_id, local_today(schedule.plant))
+        refresh_all(batch, todays)
+        count += len(batch)
     return count
+
+
+def _batches(items: Iterable[CareSchedule], size: int) -> Iterable[list[CareSchedule]]:
+    batch: list[CareSchedule] = []
+    for item in items:
+        batch.append(item)
+        if len(batch) == size:
+            yield batch
+            batch = []
+    if batch:
+        yield batch
 
 
 # --- Due care ---------------------------------------------------------------------------------
@@ -344,25 +463,26 @@ def due_tasks(household: Household, days_ahead: int = 7) -> list[Task]:
 
     "Today" is each plant's own, in its site's time zone.
     """
-    schedules = (
+    schedules = list(
         CareSchedule.objects.filter(
             plant__household=household, plant__status__in=CARED_FOR, enabled=True
         )
         .select_related(
             "care_type",
-            "plant__location__site",
-            "plant__taxon__archetype",
-            "plant__care_profile",
             "plant__cover_photo",
+            *(f"plant__{field}" for field in PLANT_RELATED),
         )
+        .prefetch_related(plant_lights_prefetch("plant__"))
         .order_by("plant_id", "care_type_id")
     )
     tasks = []
     todays: dict[int, date] = {}
     for schedule in schedules:
-        plant = schedule.plant
-        today = todays.setdefault(plant.pk, local_today(plant))
-        refresh(schedule, today)
+        todays.setdefault(schedule.plant_id, local_today(schedule.plant))
+    # Usually none is out of date: the worker recalculates them as each site's day begins.
+    refresh_all(schedules, todays)
+    for schedule in schedules:
+        today = todays[schedule.plant_id]
         due_on = schedule.due_on
         if due_on is None:
             continue
