@@ -5,7 +5,9 @@ from typing import Any
 
 import pytest
 import time_machine
+from django.db import connection
 from django.test import Client
+from django.test.utils import CaptureQueriesContext
 
 from sunfleck.accounts.models import Household, Role
 from sunfleck.care import schedules, tasks
@@ -478,3 +480,65 @@ def test_the_first_today_of_the_day_makes_a_bounded_number_of_queries(
             response = client.get("/api/v1/today")
 
     assert response.status_code == 200
+
+
+def test_care_history_read_for_many_plants_matches_one_at_a_time(
+    living_room: Location, household: Household
+) -> None:
+    monty, fern, bare = (plant_in(living_room, name) for name in ("Monty", "Fern", "Bare"))
+    bottom_water = CareType.objects.create(
+        household=household, name="Bottom water", counts_as_watering=True
+    )
+    for day in range(1, 15):  # more soil feedback than predictions remember
+        CareEventFactory.create(
+            plant=monty,
+            care_type=builtin("water") if day % 2 else bottom_water,
+            performed_at=datetime(2026, 4, day, 8, tzinfo=UTC),
+            feedback=list(Feedback)[day % 3] if day % 4 else "",  # varied, so order shows
+        )
+    CareEventFactory.create(
+        plant=monty, care_type=builtin("fertilize"), performed_at=datetime(2026, 3, 30, tzinfo=UTC)
+    )
+    CareEventFactory.create(
+        plant=fern,
+        care_type=builtin("water"),
+        performed_at=datetime(2026, 4, 14, 23, 30, tzinfo=UTC),  # the 15th in Amsterdam
+        skipped=True,
+    )
+    started_on = date(2026, 3, 1)
+
+    histories = schedules.load_histories([monty.pk, fern.pk, bare.pk])
+
+    for plant in (monty, fern, bare):
+        for care_type in (builtin("water"), bottom_water, builtin("fertilize"), builtin("rotate")):
+            assert histories.history(plant, care_type, started_on) == schedules.history_for(
+                plant, care_type, started_on
+            ), (plant.nickname, care_type.name)
+
+
+@pytest.mark.parametrize("plants", [5, 25])
+def test_recalculating_reads_what_plants_share_once(
+    living_room: Location, plants: int, household: Household
+) -> None:
+    window = WindowFactory.create(location=living_room)
+    for number in range(plants):
+        plant = plant_in(living_room, f"Plant {number}")
+        PlantLight.objects.create(plant=plant, light_source=window)
+        CareEventFactory.create(plant=plant, care_type=builtin("water"), feedback=Feedback.TOO_DRY)
+        for key in ("water", "fertilize"):
+            schedules.create_schedule(plant, ScheduleData(builtin(key).pk, ScheduleMode.PREDICTED))
+
+    # The worker didn't run: the day's first Today recalculates them itself.
+    with (
+        time_machine.travel(datetime(2026, 4, 16, 10, tzinfo=UTC), tick=False),
+        CaptureQueriesContext(connection) as queries,
+    ):
+        tasks_due = schedules.due_tasks(household)
+
+    writes = [q for q in queries.captured_queries if not q["sql"].startswith("SELECT")]
+    assert len(writes) <= 2 * plants * 2  # saving each schedule (and a change, if any)
+    assert len(queries) - len(writes) <= 6  # everything else, whatever the number of plants
+    assert {task.schedule.plant.nickname for task in tasks_due} <= {
+        f"Plant {number}" for number in range(plants)
+    }
+    assert not CareSchedule.objects.exclude(calculated_on=date(2026, 4, 16)).exists()

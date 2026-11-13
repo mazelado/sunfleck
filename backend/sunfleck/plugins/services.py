@@ -6,7 +6,9 @@ are never sent back to the browser: an empty value keeps the stored one.
 
 import logging
 import typing
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Any
 
@@ -93,9 +95,36 @@ def _state(info: PluginInfo, row: PluginSetting | None) -> State:
     )
 
 
+# Within `remembered_states()`: each household's plugin states, read once.
+_remembered: ContextVar[dict[int, dict[str, State]] | None] = ContextVar(
+    "plugin_states", default=None
+)
+
+
+@contextmanager
+def remembered_states() -> Iterator[None]:
+    """Read each household's plugin states once inside the block, rather than on every hook
+    call: for work that calls hooks for many plants at once, such as recalculating schedules.
+    Changes to plugin settings made inside the block aren't seen by it."""
+    token = _remembered.set({})
+    try:
+        yield
+    finally:
+        _remembered.reset(token)
+
+
 def states(household: Household, plugin_ids: Iterable[str] | None = None) -> dict[str, State]:
     """The state of each loaded plugin (or just `plugin_ids`) for the household."""
     ids = list(plugin_ids) if plugin_ids is not None else list(registry.plugins)
+    remembered = _remembered.get()
+    if remembered is not None:
+        if household.pk not in remembered:
+            remembered[household.pk] = _read_states(household, list(registry.plugins))
+        return {plugin_id: remembered[household.pk][plugin_id] for plugin_id in ids}
+    return _read_states(household, ids)
+
+
+def _read_states(household: Household, ids: list[str]) -> dict[str, State]:
     rows = {
         row.plugin_id: row
         for row in PluginSetting.objects.filter(household=household, plugin_id__in=ids)

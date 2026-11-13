@@ -162,7 +162,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   request, about 15 database queries per plant (332 for 25 plants, where it's otherwise 7).
   The worker did it once a night at 02:23 UTC, which for sites far from UTC was the evening
   before or the late morning. It now runs every hour and recalculates the schedules of each
-  site whose day has begun, so Today finds them done.
+  site whose day has begun, so Today finds them done. When it hasn't (the worker is down),
+  Today now reads what the plants share once instead of for each plant: 61 queries for those
+  25 plants instead of 332, nearly all of them saving the new due dates.
 
 ### Security
 
