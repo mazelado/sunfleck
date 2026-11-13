@@ -406,6 +406,25 @@ def test_admins_see_the_installed_plugins(client_as: ClientAs, rain: RainHooks) 
     }
 
 
+def test_plugins_are_listed_by_name(client_as: ClientAs) -> None:
+    # Added out of order, and in different cases: the list is by name, ignoring case.
+    for plugin_id, name in [("zinnia", "Zinnia"), ("aster", "aster"), ("bluebell", "Bluebell")]:
+        registry.add(PluginInfo(id=plugin_id, name=name, version="1.0", api_version="1"))
+    try:
+        response = client_as(Role.ADMIN).get("/api/v1/plugins")
+    finally:
+        for plugin_id in ("zinnia", "aster", "bluebell"):
+            registry.remove(plugin_id)
+
+    names = [p["name"] for p in response.json()["plugins"]]
+    assert names == sorted(names, key=str.casefold)
+    assert [n for n in names if n in {"Zinnia", "aster", "Bluebell"}] == [
+        "aster",
+        "Bluebell",
+        "Zinnia",
+    ]
+
+
 def test_admins_turn_plugins_on(client_as: ClientAs, rain: RainHooks) -> None:
     admin = client_as(Role.ADMIN)
 
