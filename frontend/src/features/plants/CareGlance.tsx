@@ -13,6 +13,7 @@ import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { components } from "../../api/schema";
+import { urgency, URGENCY_COLOR } from "../care/urgency";
 import { formatDate } from "./dates";
 
 type Glance = components["schemas"]["GlanceOut"];
@@ -129,9 +130,12 @@ function careBar(care: CareLevel, color: string): { value: number; color: string
   if (care.level === null) {
     return { value: 100, color: "gray.4" }; // resting
   }
-  // Due or overdue: a sliver in red, so the colour shows even though it's empty.
-  const due = (care.due_in_days ?? 0) <= 0;
-  return { value: Math.max(care.level * 100, 6), color: due ? "red" : color };
+  // Due or overdue: a sliver in the urgency's colour, so it shows even though it's empty.
+  const level = urgency(care.due_in_days ?? 0);
+  return {
+    value: Math.max(care.level * 100, 6),
+    color: level === "later" ? color : URGENCY_COLOR[level],
+  };
 }
 
 function careText(

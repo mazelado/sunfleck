@@ -1,4 +1,4 @@
-import { Anchor, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconHeart } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { Link, useParams } from "react-router";
 import { useCareProfile, useSpecies } from "../../api/taxonomy";
 import { useSaveWish } from "../../api/wishlist";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { sentenceCase } from "../../lib/text";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -41,19 +42,17 @@ export function SpeciesPage() {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/guide" size="sm">
-        ← {t("guide.title")}
-      </Anchor>
-      <Stack gap={2}>
-        <Title order={1} fz="h2">
-          {data.common_name ? sentenceCase(data.common_name) : data.scientific_name}
-        </Title>
-        {data.common_name && (
-          <Text c="dimmed" fs="italic">
-            {data.scientific_name}
-          </Text>
-        )}
-      </Stack>
+      <PageHeader
+        title={data.common_name ? sentenceCase(data.common_name) : data.scientific_name}
+        back={{ to: "/guide", label: t("guide.title") }}
+        subtitle={
+          data.common_name && (
+            <Text c="dimmed" fs="italic">
+              {data.scientific_name}
+            </Text>
+          )
+        }
+      />
       {canEdit && (
         <Button
           variant="light"

@@ -29,6 +29,7 @@ import {
   usePlugins,
   useUpdatePlugin,
 } from "../../api/plugins";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { formatDateAndTime } from "../../lib/relativeTime";
@@ -50,12 +51,11 @@ export function PluginsPage() {
   }
   return (
     <Stack gap="md">
-      <Stack gap={4}>
-        <Title order={1} fz="h2">
-          {t("plugins.title")}
-        </Title>
-        <Text c="dimmed">{t("plugins.intro")}</Text>
-      </Stack>
+      <PageHeader
+        title={t("plugins.title")}
+        back={{ to: "/settings", label: t("settings.title") }}
+        subtitle={t("plugins.intro")}
+      />
       {plugins.data.problems.length > 0 && (
         <Alert color="orange" icon={<IconAlertTriangle />} title={t("plugins.problems")}>
           <List size="sm">

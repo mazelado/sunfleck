@@ -8,7 +8,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { useDeleteWish, useSaveWish, useWishlist, type Wish } from "../../api/wishlist";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -40,27 +40,23 @@ export function WishlistPage() {
   const items = wishlist.data ?? [];
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/plants" size="sm">
-        ← {t("plants.title")}
-      </Anchor>
-      <Group justify="space-between">
-        <Title order={1} fz="h2">
-          {t("wishlist.title")}
-        </Title>
-        {canEdit && (
-          <Button
-            leftSection={<IconPlus size={16} />}
-            onClick={() => {
-              setEditing("new");
-            }}
-          >
-            {t("wishlist.add")}
-          </Button>
-        )}
-      </Group>
-      <Text c="dimmed" size="sm">
-        {t("wishlist.intro")}
-      </Text>
+      <PageHeader
+        title={t("wishlist.title")}
+        back={{ to: "/plants", label: t("plants.title") }}
+        subtitle={t("wishlist.intro")}
+        action={
+          canEdit && (
+            <Button
+              leftSection={<IconPlus size={16} />}
+              onClick={() => {
+                setEditing("new");
+              }}
+            >
+              {t("wishlist.add")}
+            </Button>
+          )
+        }
+      />
       <ErrorAlert error={wishlist.error} />
       {items.length === 0 && !wishlist.error && (
         <EmptyState illustration="plant">{t("wishlist.empty")}</EmptyState>

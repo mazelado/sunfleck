@@ -21,6 +21,7 @@ import {
   useCareProfiles,
   useSpeciesSearch,
 } from "../../api/taxonomy";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { SpeciesName } from "./SpeciesName";
 
@@ -37,12 +38,7 @@ export function GuidePage() {
 
   return (
     <Stack gap="lg">
-      <Stack gap={4}>
-        <Title order={1} fz="h2">
-          {t("guide.title")}
-        </Title>
-        <Text c="dimmed">{t("guide.intro")}</Text>
-      </Stack>
+      <PageHeader title={t("guide.title")} subtitle={t("guide.intro")} />
 
       <Stack gap="xs">
         <TextInput

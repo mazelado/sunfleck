@@ -1,9 +1,10 @@
-import { Anchor, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Button, Group, Paper, Stack, Text } from "@mantine/core";
 import { IconMapPin, IconPlus } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { type Site, useSites } from "../../api/places";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
@@ -18,21 +19,17 @@ export function PlacesPage() {
 
   return (
     <Stack gap="lg">
-      <Group justify="space-between" align="flex-start">
-        <Stack gap={4}>
-          <Title order={1} fz="h2">
-            {t("places.title")}
-          </Title>
-          <Text c="dimmed" size="sm">
-            {t("places.intro")}
-          </Text>
-        </Stack>
-        {canEdit && (
-          <Button component={Link} to="/places/new" leftSection={<IconPlus size={16} />}>
-            {t("places.addSite")}
-          </Button>
-        )}
-      </Group>
+      <PageHeader
+        title={t("places.title")}
+        subtitle={t("places.intro")}
+        action={
+          canEdit && (
+            <Button component={Link} to="/places/new" leftSection={<IconPlus size={16} />}>
+              {t("places.addSite")}
+            </Button>
+          )
+        }
+      />
       <ErrorAlert error={sites.error} />
       {sites.data?.length === 0 && (
         <EmptyState illustration="place">{t("places.empty")}</EmptyState>

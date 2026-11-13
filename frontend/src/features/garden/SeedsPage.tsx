@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Badge,
   Button,
   Group,
@@ -10,16 +9,15 @@ import {
   Text,
   Textarea,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 import { type Seed, useDeleteSeed, useSaveSeed, useSeeds } from "../../api/garden";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -44,27 +42,23 @@ export function SeedsPage() {
   const items = seeds.data ?? [];
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/plants" size="sm">
-        ← {t("plants.title")}
-      </Anchor>
-      <Group justify="space-between">
-        <Title order={1} fz="h2">
-          {t("seeds.title")}
-        </Title>
-        {canEdit && (
-          <Button
-            leftSection={<IconPlus size={16} />}
-            onClick={() => {
-              setEditing("new");
-            }}
-          >
-            {t("seeds.add")}
-          </Button>
-        )}
-      </Group>
-      <Text c="dimmed" size="sm">
-        {t("seeds.intro")}
-      </Text>
+      <PageHeader
+        title={t("seeds.title")}
+        back={{ to: "/plants", label: t("plants.title") }}
+        subtitle={t("seeds.intro")}
+        action={
+          canEdit && (
+            <Button
+              leftSection={<IconPlus size={16} />}
+              onClick={() => {
+                setEditing("new");
+              }}
+            >
+              {t("seeds.add")}
+            </Button>
+          )
+        }
+      />
       <ErrorAlert error={seeds.error} />
       {items.length > 0 && <SowingCalendar />}
       {items.length === 0 && !seeds.error && (

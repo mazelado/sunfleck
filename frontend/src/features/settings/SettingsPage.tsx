@@ -1,4 +1,4 @@
-import { Anchor, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Anchor, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon } from "@mantine/core";
 import {
   IconBell,
   IconDatabaseExport,
@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { useMe } from "../../api/accounts";
+import { PageHeader } from "../../components/PageHeader";
 
 interface Area {
   to: string;
@@ -75,9 +76,7 @@ export function SettingsPage() {
 
   return (
     <Stack gap="lg">
-      <Title order={1} fz="h2">
-        {t("settings.title")}
-      </Title>
+      <PageHeader title={t("settings.title")} />
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
         {areas
           .filter((area) => !area.adminOnly || isAdmin)

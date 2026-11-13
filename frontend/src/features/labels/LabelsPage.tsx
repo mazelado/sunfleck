@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Button,
   Checkbox,
   Group,
@@ -9,14 +8,14 @@ import {
   Stack,
   Switch,
   Text,
-  Title,
 } from "@mantine/core";
 import { IconPrinter } from "@tabler/icons-react";
 import { useEffect, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 
 import { type PlantSummary, usePlants } from "../../api/plants";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { QrCode } from "../../components/QrCode";
 import { usePlantUrl } from "./plantUrl";
@@ -72,15 +71,11 @@ export function LabelsPage() {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to="/plants" size="sm">
-        ← {t("plants.title")}
-      </Anchor>
-      <Stack gap={4}>
-        <Title order={1} fz="h2">
-          {t("labels.title")}
-        </Title>
-        <Text c="dimmed">{t("labels.intro")}</Text>
-      </Stack>
+      <PageHeader
+        title={t("labels.title")}
+        back={{ to: "/plants", label: t("plants.title") }}
+        subtitle={t("labels.intro")}
+      />
       <ErrorAlert error={plants.error} />
 
       <Paper withBorder radius="lg" p="lg">

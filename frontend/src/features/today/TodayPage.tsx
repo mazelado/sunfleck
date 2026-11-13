@@ -29,6 +29,7 @@ import { Link } from "react-router";
 import { type CareType, useLogCare } from "../../api/care";
 import { type Task, useLogCareForPlants, useSnooze, useToday } from "../../api/today";
 import { useErrorMessage } from "../../api/useErrorMessage";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useSites } from "../../api/places";
@@ -40,6 +41,7 @@ import { CareIcon } from "../care/icons";
 import { GardenNote } from "../garden/GardenNote";
 import { PutOffDialog } from "../care/PutOffDialog";
 import { useCareTypeName } from "../care/useCareTypeName";
+import { urgency, URGENCY_TEXT } from "../care/urgency";
 import { useUndoable } from "../care/useUndoable";
 import { GettingStarted } from "../home/GettingStarted";
 import { formatDate } from "../plants/dates";
@@ -80,21 +82,19 @@ export function TodayPage() {
 
   return (
     <Stack gap="lg">
-      <Group justify="space-between" align="flex-end" wrap="nowrap">
-        <Stack gap={0}>
-          <Text size="xs" fw={700} tt="uppercase" lts="0.06em" c="dimmed">
+      <PageHeader
+        title={t("today.title")}
+        eyebrow={
+          <Text className="sunfleck-card-label" size="xs">
             {new Intl.DateTimeFormat(i18n.language, {
               weekday: "long",
               month: "long",
               day: "numeric",
             }).format(new Date())}
           </Text>
-          <Title order={1} fz="h1">
-            {t("today.title")}
-          </Title>
-        </Stack>
-        {due.length > 0 && <DueCount count={due.length} />}
-      </Group>
+        }
+        action={due.length > 0 && <DueCount count={due.length} />}
+      />
 
       {isNew && <GettingStarted sites={places} canEdit={canEdit} />}
 
@@ -207,9 +207,9 @@ function TaskGroup({ title, tasks, canEdit, bulk, place }: TaskGroupProps) {
     <Paper withBorder radius="lg" p="md">
       <Stack gap="sm">
         <Group justify="space-between" gap="xs">
-          <Text fw={700} size="xs" tt="uppercase" lts="0.06em" c="dimmed">
+          <Title order={3} className="sunfleck-card-label">
             {title}
-          </Text>
+          </Title>
           {shared.map((group) => (
             <DoAllButton key={group[0]?.care_type.id} tasks={group} place={place} />
           ))}
@@ -321,16 +321,12 @@ function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
         {t("today.snoozed")}
       </Badge>
     );
-  } else if (task.days_until < 0) {
+  } else if (task.days_until <= 0) {
     status = (
-      <Text span size="sm" fw={600} c="var(--mantine-color-red-light-color)">
-        {t("today.overdue", { count: -task.days_until })}
-      </Text>
-    );
-  } else if (task.days_until === 0) {
-    status = (
-      <Text span size="sm" fw={600} c="var(--mantine-color-orange-light-color)">
-        {t("today.dueToday")}
+      <Text span size="sm" fw={600} c={URGENCY_TEXT[urgency(task.days_until)]}>
+        {task.days_until < 0
+          ? t("today.overdue", { count: -task.days_until })
+          : t("today.dueToday")}
       </Text>
     );
   }

@@ -1,5 +1,5 @@
-import { ActionIcon, Anchor, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { IconBulb, IconPencil, IconWindow } from "@tabler/icons-react";
+import { ActionIcon, Button, Group, Menu, Paper, Stack, Text, Title } from "@mantine/core";
+import { IconBulb, IconPencil, IconQrcode, IconWindow } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
@@ -12,6 +12,7 @@ import {
   useLocation,
   useLocationLight,
 } from "../../api/places";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
@@ -51,40 +52,47 @@ export function LocationPage() {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to={`/places/${String(site.id)}`} size="sm">
-        ← {site.name}
-      </Anchor>
-      <Group justify="space-between" align="flex-start">
-        <Stack gap={4}>
-          <Group gap="xs">
-            <Title order={1} fz="h2">
-              {location.name}
-            </Title>
-            <LocationKindBadge kind={location.kind} />
-          </Group>
-          {conditions.length > 0 && (
-            <Text size="sm" c="dimmed">
-              {conditions.join(" · ")}
-            </Text>
-          )}
-          {estimate != null && (
-            <Text size="sm" c="dimmed">
-              {t("places.humidityEstimate", { percent: estimate })}
-              {location.humidity && ` ${t("places.humiditySettingWins")}`}
-            </Text>
-          )}
-        </Stack>
-        {canEdit && (
-          <Button
+      <PageHeader
+        title={location.name}
+        back={{ to: `/places/${String(site.id)}`, label: site.name }}
+        badge={<LocationKindBadge kind={location.kind} />}
+        subtitle={
+          <>
+            {conditions.length > 0 && (
+              <Text size="sm" c="dimmed">
+                {conditions.join(" · ")}
+              </Text>
+            )}
+            {estimate != null && (
+              <Text size="sm" c="dimmed">
+                {t("places.humidityEstimate", { percent: estimate })}
+                {location.humidity && ` ${t("places.humiditySettingWins")}`}
+              </Text>
+            )}
+          </>
+        }
+        action={
+          canEdit && (
+            <Button
+              component={Link}
+              to={`${path}/edit`}
+              variant="default"
+              leftSection={<IconPencil size={16} />}
+            >
+              {t("common.edit")}
+            </Button>
+          )
+        }
+        menu={
+          <Menu.Item
             component={Link}
-            to={`${path}/edit`}
-            variant="default"
-            leftSection={<IconPencil size={16} />}
+            to={`/plants/labels?location=${String(location.id)}`}
+            leftSection={<IconQrcode size={16} />}
           >
-            {t("common.edit")}
-          </Button>
-        )}
-      </Group>
+            {t("labels.printQrHere")}
+          </Menu.Item>
+        }
+      />
 
       {location.kind === "indoor" && (
         <Paper withBorder radius="lg" p="lg">
@@ -181,9 +189,6 @@ export function LocationPage() {
       )}
 
       <LocationPlants location={location} />
-      <Anchor component={Link} to={`/plants/labels?location=${String(location.id)}`} size="sm">
-        {t("labels.printQrHere")}
-      </Anchor>
 
       {dialog && (
         <LightSourceForm

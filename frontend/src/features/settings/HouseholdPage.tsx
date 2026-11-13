@@ -35,6 +35,7 @@ import {
   useUpdateHousehold,
 } from "../../api/accounts";
 import { useErrorMessage } from "../../api/useErrorMessage";
+import { PageHeader } from "../../components/PageHeader";
 import { CopyableLink } from "../../components/CopyableLink";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PersonAvatar } from "../../components/PersonAvatar";
@@ -64,10 +65,11 @@ export function HouseholdPage() {
   const isAdmin = me.role === "admin";
   return (
     <Stack gap="lg">
-      <Title order={1} fz="h2">
-        {t("household.title")}
-      </Title>
-      {!isAdmin && <Text fz="lg">{me.household.name}</Text>}
+      <PageHeader
+        title={t("household.title")}
+        back={{ to: "/settings", label: t("settings.title") }}
+        subtitle={isAdmin ? undefined : me.household.name}
+      />
       {/* Inviting someone first, in a card of its own: it's what people come here to do, and
           the household's name has its own Save. */}
       {isAdmin && (

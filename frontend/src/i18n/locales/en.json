@@ -21,7 +21,8 @@
     "add": "Add",
     "back": "Back",
     "optional": "optional",
-    "notFound": "This doesn't exist, or it was deleted."
+    "notFound": "This doesn't exist, or it was deleted.",
+    "moreActions": "More actions"
   },
   "roles": {
     "admin": "Admin",

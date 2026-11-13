@@ -259,8 +259,16 @@ Project conventions (on top of PEP 8):
 - **Look and feel** (since 1.0, "crisp modern"; set up in `theme.ts` and `global.css`):
   - Plus Jakarta Sans, bundled with the app (never loaded from a font service), with heavy
     page titles (`Title order={1}`).
-  - Card and section headings (`Title order={2}`) appear as small capitals in the dimmed
-    colour. Keep them short.
+  - Headings inside a card (`Title order={2}` in a card, or the `sunfleck-card-label` class)
+    appear as small capitals in the dimmed colour. Keep them short. A heading that sits on
+    the page between cards is sentence case, `fz="h4"`, weight 700, in the text colour.
+  - Every page inside the app starts with `PageHeader` (`components/PageHeader.tsx`): a way
+    back (`back`), the `h1`, one main `action`, and rarer actions as `Menu.Item`s in its "⋯"
+    `menu`. Don't build page headers by hand.
+  - Touch targets are 44×44px on touch screens, set once in `global.css`
+    (`@media (pointer: coarse)`); don't resize buttons at call sites for it.
+  - Urgency has one colour rule (`features/care/urgency.ts`): overdue is red, due today
+    orange, later the ordinary text colour, for rings, words and badges alike.
   - A page's cards are `Paper withBorder radius="lg"`: white (dark grey in dark mode) on the
     soft grey-green page, shown without a border and with a soft shadow. A smaller bordered
     `Paper` (`radius="md"`) inside a card keeps its border.

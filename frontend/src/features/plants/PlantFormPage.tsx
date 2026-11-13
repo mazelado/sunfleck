@@ -1,6 +1,5 @@
 import {
   Alert,
-  Anchor,
   Button,
   Checkbox,
   Collapse,
@@ -14,7 +13,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -29,7 +27,7 @@ import {
 } from "@tabler/icons-react";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router";
 
 import { useErrorMessage } from "../../api/useErrorMessage";
 import { type Location, type Site, useSites } from "../../api/places";
@@ -48,6 +46,7 @@ import {
   useUpdatePlant,
 } from "../../api/plants";
 import { uploadPhoto } from "../../api/photoUpload";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -292,12 +291,10 @@ function PlantForm({ sites, plant, wish }: { sites: Site[]; plant?: Plant; wish?
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to={backPath} size="sm">
-        ← {plant ? plant.nickname : t("plants.title")}
-      </Anchor>
-      <Title order={1} fz="h2">
-        {plant ? t("plants.editPlant") : t("plants.newPlant")}
-      </Title>
+      <PageHeader
+        title={plant ? t("plants.editPlant") : t("plants.newPlant")}
+        back={{ to: backPath, label: plant ? plant.nickname : t("plants.title") }}
+      />
       <Paper withBorder radius="lg" p="lg">
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">

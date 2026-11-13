@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Button,
   Group,
   NumberInput,
@@ -9,12 +8,11 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 
 import {
   type BedType,
@@ -27,6 +25,7 @@ import {
   useLocation,
   useUpdateLocation,
 } from "../../api/places";
+import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -139,12 +138,10 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
 
   return (
     <Stack gap="lg">
-      <Anchor component={Link} to={sitePath} size="sm">
-        ← {site.name}
-      </Anchor>
-      <Title order={1} fz="h2">
-        {location ? t("places.editLocation") : t("places.newLocation")}
-      </Title>
+      <PageHeader
+        title={location ? t("places.editLocation") : t("places.newLocation")}
+        back={{ to: sitePath, label: site.name }}
+      />
       <Paper withBorder radius="lg" p="lg">
         <form onSubmit={handleSubmit} noValidate>
           <Stack gap="md">

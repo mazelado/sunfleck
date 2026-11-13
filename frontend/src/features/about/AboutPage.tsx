@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAbout } from "../../api/about";
+import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 
@@ -21,9 +22,7 @@ export function AboutPage() {
 
   return (
     <Stack gap="md">
-      <Title order={1} fz="h2">
-        {t("about.title")}
-      </Title>
+      <PageHeader title={t("about.title")} />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="xs">
           <Title order={2} fz="h4">
