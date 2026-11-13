@@ -221,3 +221,63 @@ def test_testing_without_a_model_asks_for_one(server: FakeServer) -> None:
 
     assert found.problem == "missing_settings"
     assert server.requests == []
+
+
+# --- Keys and addresses (security review 1.0, S8 and S9) --------------------------------------
+
+
+@pytest.mark.django_db
+def test_a_stored_key_is_not_sent_to_a_changed_address(
+    server: FakeServer, household: Household
+) -> None:
+    turn_on(household, model="m", api_key="sk-FIRST-ADMINS-KEY")
+
+    with pytest.raises(plugin_services.PluginError) as error:
+        plugin_services.check(
+            household,
+            "ai_openai",
+            {"base_url": "https://attacker.example/v1", "model": "m", "api_key": ""},
+        )
+
+    assert (error.value.code, error.value.field) == ("invalid_plugin_setting", "api_key")
+    assert server.requests == []
+    with pytest.raises(plugin_services.PluginError):  # nor saved with it
+        plugin_services.update(
+            household, "ai_openai", True, {"base_url": "https://attacker.example/v1"}
+        )
+
+
+@pytest.mark.django_db
+def test_a_stored_key_stays_for_the_same_address(server: FakeServer, household: Household) -> None:
+    turn_on(household, model="m", api_key="sk-KEPT")
+    server.responses = [ok('{"greeting": "Hello"}')]
+
+    # Another model on the same server: the key needn't be entered again.
+    plugin_services.check(household, "ai_openai", {"model": "other", "api_key": ""})
+
+    [(url, _, api_key)] = server.requests
+    assert (url, api_key) == ("https://api.openai.com/v1/chat/completions", "sk-KEPT")
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("address", ["file:///etc/passwd#", "ftp://host/v1", "api.openai.com"])
+def test_the_server_address_must_be_http(household: Household, address: str) -> None:
+    with pytest.raises(plugin_services.PluginError) as error:
+        turn_on(household, base_url=address, model="m")
+
+    assert (error.value.code, error.value.field) == ("invalid_plugin_setting", "base_url")
+
+
+def test_a_failed_answer_isnt_logged(server: FakeServer, caplog: pytest.LogCaptureFixture) -> None:
+    server.responses = [client.Response(500, b"PRIVATE: the question repeated back")]
+
+    assert client.complete(TASK, "https://api.openai.com/v1", "sk", "m").problem == "unavailable"
+    assert "PRIVATE" not in caplog.text
+    assert "HTTP 500" in caplog.text
+
+
+def test_only_http_addresses_are_opened(server: FakeServer) -> None:
+    answer = client.complete(TASK, "file:///etc/passwd#", "", "m")
+
+    assert answer.problem == "missing_settings"
+    assert server.requests == []

@@ -42,11 +42,12 @@ def test_pages_say_what_they_may_load() -> None:
     assert "https://tile.openstreetmap.org" in directives["img-src"]
 
 
-def test_behind_an_https_proxy_cookies_are_https_only() -> None:
+def test_behind_an_https_proxy_cookies_and_browsers_stay_on_https() -> None:
     # Settings are read once at start-up, so in a fresh Python with the setting on.
     script = (
         "import django; django.setup(); from django.conf import settings as s; "
-        "print(s.SESSION_COOKIE_SECURE, s.CSRF_COOKIE_SECURE, s.ALLAUTH_TRUSTED_PROXY_COUNT)"
+        "print(s.SESSION_COOKIE_SECURE, s.CSRF_COOKIE_SECURE, s.ALLAUTH_TRUSTED_PROXY_COUNT, "
+        "s.SECURE_HSTS_SECONDS)"
     )
     env = {
         **os.environ,
@@ -59,4 +60,4 @@ def test_behind_an_https_proxy_cookies_are_https_only() -> None:
         [sys.executable, "-c", script], env=env, capture_output=True, text=True, check=True
     ).stdout
 
-    assert output.split() == ["True", "True", "1"]
+    assert output.split() == ["True", "True", "1", str(365 * 24 * 60 * 60)]

@@ -8,9 +8,9 @@ notification channels and plugins' API keys have to be set up again.
 
 import io
 import uuid
+import warnings
 import zipfile
 from dataclasses import dataclass, field
-from pathlib import PurePosixPath
 from typing import IO, Any
 from zoneinfo import available_timezones
 
@@ -23,7 +23,15 @@ from pydantic import ValidationError as SchemaError
 from sunfleck.accounts.models import Household, User
 from sunfleck.ai.models import Conversation, Message
 from sunfleck.care.models import CareEvent, CareSchedule, CareType
-from sunfleck.core.images import MAX_UPLOAD_BYTES
+from sunfleck.core.images import (
+    IMAGE_MAX_EDGE,
+    IMAGE_QUALITY,
+    MAX_UPLOAD_BYTES,
+    THUMBNAIL_MAX_EDGE,
+    THUMBNAIL_QUALITY,
+    ImageError,
+    clean_webp,
+)
 from sunfleck.dataio import schema
 from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import LightSource, Location, Site
@@ -187,12 +195,16 @@ class _Importer:
         if self.archive.getinfo(name).file_size > MAX_UPLOAD_BYTES:
             raise _invalid(where, f"{name} is too large")
         content = self.archive.read(name)
-        try:
-            with Image.open(io.BytesIO(content)) as image:
-                image_format = image.format
-                image.verify()
-        except (UnidentifiedImageError, OSError) as exc:
-            raise _invalid(where, f"{name} isn't an image") from exc
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", Image.DecompressionBombWarning)
+            try:
+                with Image.open(io.BytesIO(content)) as image:
+                    image_format = image.format
+                    image.verify()
+            except (Image.DecompressionBombWarning, Image.DecompressionBombError) as exc:
+                raise _invalid(where, f"{name} has too many pixels") from exc
+            except (UnidentifiedImageError, OSError) as exc:
+                raise _invalid(where, f"{name} isn't an image") from exc
         if image_format not in PHOTO_FORMATS:
             raise _invalid(where, f"{name} isn't a WebP, JPEG or PNG image")
         return content
@@ -221,13 +233,25 @@ class _Importer:
                 crop_height=photo_item.crop_height,
             )
             name = uuid.uuid4().hex
-            for field_name, path, suffix in (
-                ("image", photo_item.image, ""),
-                ("thumbnail", photo_item.thumbnail, "-thumbnail"),
+            for field_name, path, suffix, max_edge, quality in (
+                ("image", photo_item.image, "", IMAGE_MAX_EDGE, IMAGE_QUALITY),
+                (
+                    "thumbnail",
+                    photo_item.thumbnail,
+                    "-thumbnail",
+                    THUMBNAIL_MAX_EDGE,
+                    THUMBNAIL_QUALITY,
+                ),
             ):
-                content = self.read_photo(path, where)
-                extension = PurePosixPath(path).suffix.lower() or ".webp"
-                self.save_file(getattr(photo, field_name), f"{name}{suffix}{extension}", content)
+                # Stored as uploads are: a WebP without metadata (such as where it was taken),
+                # named by Sunfleck, whatever the archive called it.
+                try:
+                    stored = clean_webp(self.read_photo(path, where), max_edge, quality)
+                except ImageError as exc:
+                    raise _invalid(where, f"{path}: {exc}") from exc
+                self.save_file(getattr(photo, field_name), f"{name}{suffix}.webp", stored.data)
+                if field_name == "image":
+                    photo.width, photo.height = stored.width, stored.height
             photo.save()
             self.summary.photos += 1
             if photo_item.ref == item.cover_photo:

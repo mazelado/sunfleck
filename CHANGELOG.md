@@ -224,6 +224,34 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   same moment could both make an account with the admin site.
 - **The Docker image's base images are pinned by digest**, so a release can be rebuilt
   exactly; Dependabot keeps them up to date.
+- **A stored API key is only sent to the server it was saved for**: in the OpenAI-compatible
+  plugin, changing the server address asks for the key again, also for **Test**. Before, an
+  Admin could have another Admin's key sent to an address of their choice. Plugins can bind
+  a secret to their own settings the same way (`bound_to`).
+- **The OpenAI-compatible plugin only accepts `http://` and `https://` addresses**, and no
+  longer writes what a failing server answered to the log, which could repeat parts of a
+  question (or of a local file, with a `file:` address).
+- **A few slow requests no longer stop the app for everyone**: each of the 2 web server
+  processes now answers 4 requests at once (`WEB_THREADS`), so two questions to a slow AI
+  model, or two tests of a notification server that doesn't answer, leave room for everyone
+  else.
+- **Limits on how much work one request or member can cause**: requests over 25 MB are refused
+  before they're read (they used to be read whole, without signing in, before any check), and
+  so are photos over 50 megapixels, which took hundreds of MB of memory to decode. Each member
+  may ask the AI 10 times a minute, identify a plant 10 times, and test a notification
+  channel 5 times; each of these is slow, and may cost money. The Caddy example now limits
+  request sizes too.
+- **Behind an HTTPS proxy, browsers are told to use only HTTPS for a year** (HSTS), so a
+  first visit over `http://` can't be intercepted. **Only turn on `SUNFLECK_BEHIND_PROXY`
+  with HTTPS that you'll keep**: browsers that visited won't open the site over `http://`
+  for a year.
+- **The health check no longer tells strangers the exact version**, which says which known
+  problems apply. Members, and the server itself, still see it.
+- **Photos in an imported export** are stored as uploads are: as WebP files without their
+  metadata (such as where a phone photo was taken), named by Sunfleck. Before, they were
+  stored as they came, with the archive's file names, and a photo with too many pixels ended
+  the import with an error instead of saying what was wrong. Sunfleck's own exports still
+  import byte for byte.
 
 ## [0.9.0] - 2026-11-06
 

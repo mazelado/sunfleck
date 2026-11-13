@@ -6964,7 +6964,7 @@
     },
     "/api/v1/health": {
       "get": {
-        "description": "Report whether the app is running and can reach its database.\n\nUsed by Docker health checks and uptime monitors, so it needs no sign-in.",
+        "description": "Report whether the app is running and can reach its database.\n\nUsed by Docker health checks and uptime monitors, so it needs no sign-in. `version` is\nempty unless signed in, or asked from the server itself.",
         "operationId": "sunfleck_core_api_health",
         "parameters": [],
         "responses": {

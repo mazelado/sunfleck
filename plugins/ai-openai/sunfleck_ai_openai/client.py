@@ -51,6 +51,10 @@ def post(url: str, body: dict[str, Any], api_key: str) -> Response:
 def complete(task: AiTask, base_url: str, api_key: str, model: str) -> AiAnswer:
     url = base_url.rstrip("/") + "/chat/completions"
     credit = attribution(model)
+    if not url.startswith(("http://", "https://")):
+        # urlopen also opens file: and ftp: addresses; the settings refuse them, this is a
+        # second check.
+        return AiAnswer(credit, problem="missing_settings")
     request = _request(task, model, structured=True)
     try:
         response = post(url, request, api_key)
@@ -72,7 +76,10 @@ def complete(task: AiTask, base_url: str, api_key: str, model: str) -> AiAnswer:
     if response.status == 429:
         return AiAnswer(credit, problem="quota_exceeded")
     if response.status != 200:
-        logger.warning("The AI service answered HTTP %s: %r", response.status, response.body[:200])
+        # Not the body: it can repeat parts of the question.
+        logger.warning(
+            "The AI service answered HTTP %s (%d bytes)", response.status, len(response.body)
+        )
         return AiAnswer(credit, problem="unavailable")
     data = _content(response.body)
     if data is None:

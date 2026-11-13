@@ -84,6 +84,9 @@ and run `docker compose up -d` again.
 
 ```
 plants.example.com {
+	request_body {
+		max_size 25MB  # photos can be up to 20 MB
+	}
 	reverse_proxy localhost:8000
 }
 ```
@@ -210,8 +213,9 @@ You can upgrade from any earlier release with the same major version in one step
 0.1 straight to 1.4. Going back to an older version isn't supported: restore the backup
 instead. What stays the same between versions is in [stability.md](stability.md).
 
-To check which version is running, open **About Sunfleck** in the account menu, or
-`curl http://localhost:8000/api/v1/health`.
+To check which version is running, open **About Sunfleck** in the account menu. (The health
+check at `/api/v1/health` only says which version to people signed in, and to the server
+itself, so strangers can't tell which known problems apply.)
 
 ## PostgreSQL and Redis (optional)
 
@@ -262,7 +266,8 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `LOG_LEVEL` | `INFO` | How much to log: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
 | `SUNFLECK_ACCESS_LOG` | `false` | `true` logs every request the web server answers, for tracking down a problem |
 | `SUNFLECK_PUSH_HOSTS` | *(none)* | More push services Web Push may send to, comma-separated ([below](#notifications-and-plugins)) |
-| `WEB_TIMEOUT` | `250` | Seconds a request may take before it's stopped. Long enough for an AI model that has to load first; lower it if you don't use AI plugins |
+| `WEB_CONCURRENCY`, `WEB_THREADS` | `2`, `4` | Web server processes, and requests each answers at once. More threads let more slow requests (AI answers) wait without holding up the app; more processes use more memory |
+| `WEB_TIMEOUT` | `250` | Seconds a web server process may stop answering before it's restarted. Long enough for an AI model that has to load first |
 
 ## Troubleshooting
 
@@ -272,6 +277,9 @@ Set in `.env`; run `docker compose up -d` after changing them.
   `docker compose logs sunfleck` says why, for example a setting that's wrong or a data folder
   that isn't writable (see below).
 - **"Bad Request (400)"**: the address you use isn't in `ALLOWED_HOSTS`.
+- **"Request Entity Too Large" (413)**: the reverse proxy, or Sunfleck, refuses anything over
+  25 MB. Photos are up to 20 MB. To import an export larger than the proxy allows, use the
+  `import_household` command.
 - **"CSRF verification failed" or signing in fails**: add the address, with `https://`, to
   `CSRF_TRUSTED_ORIGINS`; behind a reverse proxy, also set `SUNFLECK_BEHIND_PROXY=true`.
 - **"Sunfleck can't be reached"** in the installed app: the server isn't running or the phone

@@ -145,6 +145,22 @@ def _plugin(plugin_id: str) -> PluginInfo:
     return info
 
 
+def bound_settings(schema: type[BaseModel], secret: str) -> list[str]:
+    """The settings a secret is bound to (`json_schema_extra={"bound_to": [...]}` on its
+    field): changing one of them needs the secret to be entered again."""
+    extra = schema.model_fields[secret].json_schema_extra
+    bound = extra.get("bound_to", []) if isinstance(extra, dict) else []
+    return [str(name) for name in bound] if isinstance(bound, list) else []
+
+
+def _value(schema: type[BaseModel], name: str, settings: dict[str, Any]) -> Any:
+    """A setting's value in `settings`, or its default when it isn't there."""
+    if name in settings:
+        return settings[name]
+    field = schema.model_fields.get(name)
+    return field.get_default(call_default_factory=True) if field else None
+
+
 def _validated(
     household: Household, info: PluginInfo, settings: dict[str, Any]
 ) -> BaseModel | None:
@@ -156,12 +172,28 @@ def _validated(
     if info.settings_schema is None:
         return None
     settings = {**settings}
-    # A secret left empty keeps its stored value, since the browser never gets it.
+    # A secret left empty keeps its stored value, since the browser never gets it, unless a
+    # setting it's bound to (e.g. the server it's sent to) changed: then it must be typed
+    # again, so nobody can have a stored key sent to an address of their choosing.
     existing = PluginSetting.objects.filter(household=household, plugin_id=info.id).first()
     stored = _decrypted(info, existing.secrets) if existing else {}
+    saved = existing.settings if existing else {}
     for name in secret_fields(info.settings_schema):
-        if not settings.get(name) and stored.get(name):
-            settings[name] = stored[name]
+        if settings.get(name) or not stored.get(name):
+            continue
+        changed = [
+            bound
+            for bound in bound_settings(info.settings_schema, name)
+            if _value(info.settings_schema, bound, settings)
+            != _value(info.settings_schema, bound, saved)
+        ]
+        if changed:
+            raise PluginError(
+                "invalid_plugin_setting",
+                "Enter it again: the saved one is only sent where it was saved for.",
+                name,
+            )
+        settings[name] = stored[name]
     try:
         return info.settings_schema.model_validate(settings)
     except ValidationError as exc:
