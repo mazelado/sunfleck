@@ -88,6 +88,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   people; ntfy, Telegram, email and the rest are folded under **Other ways**, and the page no
   longer opens by explaining Apprise. A plugin's switch says **Off** when it's off (it said
   **On** either way), and its version moved into its details.
+- **Loading looks like the page** (UI plan, part 13): Today, Plants and a plant's page show
+  their shape while they load, instead of a spinner. The sign-in and setup pages show
+  Sunfleck's mark larger, with a line saying what it is. The README's screenshots are new.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

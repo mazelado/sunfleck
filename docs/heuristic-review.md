@@ -64,6 +64,8 @@ those headings are names rather than labels, and read worse in capitals:
 
 ### H4. Light in mol/m²/day (severity 2)
 
+**Fixed** (UI plan, part 4): a plant's Light card and a room's page lead with words (dim, medium, bright, very bright), with mol/m²/day dimmed beside them.
+
 **Heuristic:** match between the system and the real world.
 
 A room's page lists each window's light by season as numbers in mol/m²/day (the daily light
@@ -84,6 +86,8 @@ A place's page shows its time zone and coordinates under its name ("Europe/Amste
 and keep the time zone only where it matters.
 
 ### H6. Notification channels ask for an "Apprise URL" (severity 2)
+
+**Fixed** (UI plan, part 11): **This device** comes first, and the Apprise form is folded under "Other ways: ntfy, Telegram, email…". Offering the common services by name is still to do.
 
 **Heuristic:** match between the system and the real world.
 
@@ -120,6 +124,8 @@ idea of a care profile isn't explained on the form, and it looks like something 
 
 ### H9. A plant's page is long (severity 2)
 
+**Fixed** (UI plan, parts 3 and 4): propagate, print a label and write an NFC tag are in the "⋯" menu by **Edit**; care is one card, light another, and the page is about 2,800px on a phone instead of 3,400.
+
 **Heuristic:** aesthetic and minimalist design.
 
 A plant's page has about twelve cards. Daily things come first (care rings, the care
@@ -130,6 +136,8 @@ the plant's details and its photos and history.
 menu by **Edit**, so photos and history come sooner.
 
 ### H10. Plant cards' bars have no labels (severity 1)
+
+**Fixed** (UI plan, part 2): each card says in words what the plant needs next ("Water today"), and "Low light" when its spot is too dark; the bars are gone.
 
 **Heuristic:** recognition rather than recall.
 

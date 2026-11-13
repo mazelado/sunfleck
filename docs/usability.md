@@ -50,7 +50,9 @@ why in the pull request; when one gets cheaper, lower it.
 | Put care in a calendar app | Today | 4 | 0 | 2 |
 | Set up a place, a room with a window and a first plant (first-run flow; in `journeys.e2e.ts`, on an empty household) | Today | 9 | 4 | 2 |
 
-Measured on 2026-11-05, for 0.7. After the 1.0 usability test, settings moved from the account
+Measured on 2026-11-05, for 0.7, and all again on 2026-11-13 after the 1.0 UI plan, which lowered
+putting care off from a plant's page (5 taps to 3) and adding a room with a window (8 taps over
+4 pages to 7 over 3), and added the first-run flow. No budget went up. After the 1.0 usability test, settings moved from the account
 menu to a Settings page (the gear at the top), which said what each setting is for: inviting
 someone and the calendar now pass through it, one page change more for the same taps.
 

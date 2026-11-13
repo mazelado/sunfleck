@@ -8,7 +8,6 @@ import { usePlants } from "../../api/plants";
 import { useToday } from "../../api/today";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { FullPageLoader } from "../../components/FullPageLoader";
 import { PageHeader } from "../../components/PageHeader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { GardenNote } from "../garden/GardenNote";
@@ -16,6 +15,7 @@ import { GettingStarted } from "../home/GettingStarted";
 import { DueCount } from "./DueCount";
 import { groupBy } from "./grouping";
 import { TaskGroup } from "./TaskGroup";
+import { TodaySkeleton } from "./TodaySkeleton";
 import { WeatherCard } from "./WeatherCard";
 
 /** The household's care for today: what's overdue or due, by location, then what's coming up. */
@@ -27,7 +27,7 @@ export function TodayPage() {
   const plantCount = usePlants().data?.pages[0]?.count;
 
   if (today.isPending) {
-    return <FullPageLoader />;
+    return <TodaySkeleton />;
   }
   if (!today.data) {
     return <ErrorAlert error={today.error} />;
