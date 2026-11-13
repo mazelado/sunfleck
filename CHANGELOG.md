@@ -150,6 +150,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Searching for "bromeliad" found nothing** when adding a plant: each bromeliad genus
   (*Guzmania*, *Vriesea*, *Aechmea* and others) now has "bromeliad" as a common name, so it's
   found and gets the Bromeliad care profile.
+- **Snoozed care came back early** whenever its due date moved: after editing the plant
+  (its pot, light or room), or with every new forecast from the weather plugin. A snooze now
+  lasts until the day it was put off to, or until the care is logged.
 
 ### Security
 
