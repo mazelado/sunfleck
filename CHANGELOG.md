@@ -176,6 +176,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   site whose day has begun, so Today finds them done. When it hasn't (the worker is down),
   Today now reads what the plants share once instead of for each plant: 61 queries for those
   25 plants instead of 332, nearly all of them saving the new due dates.
+- **The Claude plugin works with models released after it**: it used to ask only the models on
+  its own list to think briefly and to retry declined questions on Anthropic's fallback
+  model, so a newer model (such as Claude Fable 5.2) was slower, dearer and less reliable.
+  It now asks every model, and asks again without an option a model doesn't take. It also
+  leaves room for the thinking that the newest models always do, which could cut off the
+  answer to a photo diagnosis.
 
 ### Security
 

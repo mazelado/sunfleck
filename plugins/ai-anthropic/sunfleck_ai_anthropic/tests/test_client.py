@@ -76,6 +76,8 @@ class FakeApi:
 def api(monkeypatch: pytest.MonkeyPatch) -> FakeApi:
     fake = FakeApi()
     monkeypatch.setattr(client, "new_client", fake.client)
+    # Each test starts without remembered refusals.
+    monkeypatch.setattr(client, "_refused", {})
     return fake
 
 
@@ -93,7 +95,7 @@ def test_it_asks_claude_for_json_in_the_tasks_shape(api: FakeApi) -> None:
     assert "server-side-fallback-2026-07-01" in request.headers["anthropic-beta"]
     assert api.body() == {
         "model": "claude-sonnet-5-5",
-        "max_tokens": 4096,
+        "max_tokens": 16_000,
         "system": "Greet the gardener.",
         "messages": [{"role": "user", "content": "Say hello to Ada."}],
         "output_config": {
@@ -115,24 +117,57 @@ def test_the_model_that_answered_is_credited(api: FakeApi) -> None:
     assert answer.attribution == "Suggested by AI (claude-sonnet-5)"
 
 
-def test_older_models_are_asked_without_newer_options(api: FakeApi) -> None:
-    api.responses = [httpx2.Response(200, json=message('{"greeting": "Hi"}'))]
+@pytest.mark.parametrize("model", ["claude-fable-5-2", "claude-haiku-5-5", "claude-next-6"])
+def test_a_model_the_plugin_doesnt_know_still_gets_effort_and_fallbacks(
+    api: FakeApi, model: str
+) -> None:
+    api.responses = [httpx2.Response(200, json=message('{"greeting": "Hi"}', model=model))]
 
-    client.complete(TASK, "sk-ant-test", "claude-sonnet-4-6")
-
-    body = api.body()
-    assert "fallbacks" not in body
-    assert "effort" not in body["output_config"]
-    assert "anthropic-beta" not in api.requests[0].headers
-
-
-def test_haiku_gets_effort_but_no_fallback(api: FakeApi) -> None:
-    api.responses = [httpx2.Response(200, json=message('{"greeting": "Hi"}'))]
-
-    client.complete(TASK, "sk-ant-test", "claude-haiku-5-5")
+    client.complete(TASK, "sk-ant-test", model)
 
     assert api.body()["output_config"]["effort"] == "low"
-    assert "fallbacks" not in api.body()
+    assert api.body()["fallbacks"] == "default"
+
+
+def test_a_model_that_refuses_fallbacks_is_asked_again_without_them(api: FakeApi) -> None:
+    refused = error(400, "invalid_request_error", '"fallbacks" is not supported for this model.')
+    api.responses = [
+        refused,
+        httpx2.Response(200, json=message('{"greeting": "Hi"}')),
+        httpx2.Response(200, json=message('{"greeting": "Hi again"}')),
+    ]
+
+    first = client.complete(TASK, "sk-ant-test", "claude-fable-5")
+    second = client.complete(TASK, "sk-ant-test", "claude-fable-5")
+
+    assert (first.data, second.data) == ({"greeting": "Hi"}, {"greeting": "Hi again"})
+    assert "fallbacks" in api.body(0)
+    # Asked again without them, and from then on without them, with effort still.
+    for index in (1, 2):
+        assert "fallbacks" not in api.body(index)
+        assert "anthropic-beta" not in api.requests[index].headers
+        assert api.body(index)["output_config"]["effort"] == "low"
+
+
+def test_an_older_model_that_refuses_both_is_asked_with_neither(api: FakeApi) -> None:
+    api.responses = [
+        error(400, "invalid_request_error", "output_config.effort: not supported for this model"),
+        error(400, "invalid_request_error", "fallbacks: Extra inputs are not allowed"),
+        httpx2.Response(200, json=message('{"greeting": "Hi"}')),
+    ]
+
+    answer = client.complete(TASK, "sk-ant-test", "claude-haiku-4-5")
+
+    assert answer.data == {"greeting": "Hi"}
+    assert "effort" not in api.body(2)["output_config"]
+    assert "fallbacks" not in api.body(2)
+
+
+def test_a_refusal_naming_nothing_it_can_drop_is_reported_once(api: FakeApi) -> None:
+    api.responses = [error(400, "invalid_request_error", "messages: too long")]
+
+    assert client.complete(TASK, "sk-ant-test", "claude-sonnet-5-5").problem == "unavailable"
+    assert len(api.requests) == 1
 
 
 @pytest.mark.parametrize(
