@@ -24,13 +24,17 @@ def available(household: Household) -> bool:
 
 
 def ask(household: Household, task: AiTask) -> AiAnswer | None:
-    """The household's AI plugin's answer to `task`, or None if no AI plugin is on (or it
-    failed: the error is recorded for the Admin, as for any plugin)."""
+    """The household's AI plugin's answer to `task`, or None if no AI plugin is on.
+
+    When every AI plugin that's on failed (the error is recorded for the Admin, as for any
+    plugin), the answer has the problem `failed`."""
     # Only the first plugin that answers is asked: the question (with the plant's history and
     # photos) goes to one outside service, not to every AI plugin that's on.
     answer = registry.call_first(HOOK, household, AiAnswer, task=task)
     if answer is None:
-        return None
+        # None only when no AI plugin is on. One that's on but failed (its error is shown to
+        # Admins on the Plugins page) is a problem of its own, not "turned off".
+        return AiAnswer("", problem="failed") if available(household) else None
     result: AiAnswer = answer.result
     if result.data is not None and not _matches(task, result):
         return AiAnswer(result.attribution, problem="invalid_answer")

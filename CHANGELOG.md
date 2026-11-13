@@ -176,6 +176,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   site whose day has begun, so Today finds them done. When it hasn't (the worker is down),
   Today now reads what the plants share once instead of for each plant: 61 queries for those
   25 plants instead of 332, nearly all of them saving the new due dates.
+- **When the AI plugin fails, the app says so**, instead of saying that no AI plugin is turned
+  on. A diagnosis is shown even if its photo can't be kept.
+- **The AI is told on which day care was given in the place's own time zone**: in Sydney, a
+  plant watered on Monday morning was described as watered on Sunday.
+- **Mistakes that ended in "Unexpected response (500)"** now say what's wrong: care dated
+  before the year 2000, the same schedule added twice at the same moment, and an import with
+  an overlong household name. An unexpected error says that something went wrong, in your
+  language.
 
 ### Security
 

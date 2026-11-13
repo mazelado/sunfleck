@@ -170,3 +170,63 @@ def test_it_needs_a_photo_and_a_gardener(client_as: ClientAs, doctor: Doctor, pl
     )
     assert client_as(Role.VIEWER).post(url, {"file": photo()}).status_code == 403
     assert doctor.seen == []
+
+
+# --- A failing plugin, and a photo that can't be kept (code review 1.0, Q8) --------------------
+
+
+class Broken:
+    """An AI plugin that's on, but crashes."""
+
+    @hookimpl
+    def complete_json(self, task: AiTask) -> AiAnswer:
+        raise RuntimeError("unexpected answer from the model")
+
+
+@pytest.fixture
+def broken(household: Household) -> Iterator[None]:
+    registry.add(PluginInfo("broken_ai", "Broken AI", "1", "1"), Broken())
+    services.update(household, "broken_ai", True, {})
+    yield
+    registry.remove("broken_ai")
+
+
+@pytest.mark.usefixtures("broken")
+@pytest.mark.parametrize("feature", ["diagnosis", "question", "suggestion"])
+def test_a_crashing_ai_plugin_is_reported_as_failed_not_as_off(
+    client_as: ClientAs, plant: Plant, feature: str
+) -> None:
+    gardener = client_as(Role.GARDENER)
+    if feature == "diagnosis":
+        response = diagnose(gardener, plant)
+    elif feature == "question":
+        response = gardener.post(
+            f"/api/v1/plants/{plant.pk}/conversations",
+            {"question": "How often?"},
+            content_type="application/json",
+        )
+    else:
+        response = gardener.post(
+            "/api/v1/care-profile-suggestions",
+            {"name": "Monstera", "indoor": True},
+            content_type="application/json",
+        )
+
+    assert (response.status_code, response.json()["error"]["code"]) == (502, "ai_failed")
+
+
+def test_a_diagnosis_is_returned_even_if_its_photo_cant_be_kept(
+    client_as: ClientAs, doctor: Doctor, plant: Plant, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from sunfleck.plants import services as plant_services
+
+    def full_disk(*args: Any, **kwargs: Any) -> None:
+        raise plant_services.PlantsError("storage_full", "The photo couldn't be saved.")
+
+    monkeypatch.setattr(plant_services, "add_photo", full_disk)
+
+    response = diagnose(client_as(Role.GARDENER), plant, keep_photo="true")
+
+    assert response.status_code == 200
+    assert response.json()["summary"] == ANSWER["summary"]
+    assert response.json()["photo"] is None
