@@ -214,6 +214,27 @@ background job queue (instead of a file in the volume), set
 `HUEY_REDIS_URL=redis://host:6379/0`. Changing the database starts empty: use an export to
 move your data.
 
+## Replacing the encryption key
+
+Setting `SUNFLECK_ENCRYPTION_KEY` on a Sunfleck that ran without it is safe: secrets stored
+before stay readable, as long as `SECRET_KEY` doesn't change. To move them to the new key (and
+to replace a key later):
+
+1. Make a new key with `docker compose run --rm sunfleck manage encryption_key`, and put it
+   first in `SUNFLECK_ENCRYPTION_KEY`, keeping any old key after a comma. Run
+   `docker compose up -d`.
+2. Encrypt every stored secret again with the new key:
+
+   ```bash
+   docker compose run --rm sunfleck manage reencrypt_secrets
+   ```
+
+3. Remove the old key from `SUNFLECK_ENCRYPTION_KEY` and run `docker compose up -d`. From now
+   on, `SECRET_KEY` can change without losing secrets.
+
+Secrets the command can't read (from a key that's already gone) are listed and left as they
+are: enter those notification addresses and API keys again in the app.
+
 ## All settings
 
 Set in `.env`; run `docker compose up -d` after changing them.
@@ -221,7 +242,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | Setting | Default | What it does |
 |---|---|---|
 | `SECRET_KEY` | *(required)* | Signs sessions and links. Keep it secret |
-| `SUNFLECK_ENCRYPTION_KEY` | *(made from `SECRET_KEY`)* | Encrypts stored secrets; recommended. Several, comma-separated, to replace a key: the first encrypts, all decrypt |
+| `SUNFLECK_ENCRYPTION_KEY` | *(made from `SECRET_KEY`)* | Encrypts stored secrets; recommended. Several, comma-separated, to replace a key: the first encrypts, all decrypt ([replacing a key](#replacing-the-encryption-key)) |
 | `ALLOWED_HOSTS` | `localhost` | The host names you reach Sunfleck at, comma-separated |
 | `CSRF_TRUSTED_ORIGINS` | *(none)* | Those addresses with `https://`, needed for signing in through them |
 | `SUNFLECK_PUBLIC_URL` | *(none)* | The address notifications, calendar entries, QR labels and NFC tags link to |
@@ -257,7 +278,9 @@ Set in `.env`; run `docker compose up -d` after changing them.
 - **The first account's password is forgotten** and email isn't set up: other Admins can't
   make a reset link for that account, so set a new password on the server with
   `docker compose run --rm sunfleck manage changepassword <email>`.
-- **Stored secrets can't be read** after changing `SECRET_KEY`: set `SUNFLECK_ENCRYPTION_KEY`
-  (and keep it), then enter notification addresses and API keys again.
+- **Stored secrets can't be read** after changing `SECRET_KEY`: if you still have the old
+  `SECRET_KEY`, put it back, then follow [Replacing the encryption key](#replacing-the-encryption-key)
+  before changing it again. Otherwise set `SUNFLECK_ENCRYPTION_KEY` (and keep it), then enter
+  notification addresses and API keys again.
 - Anything else: `docker compose logs` usually says what's wrong. Please
   [open an issue](https://github.com/mazelado/sunfleck/issues) if it doesn't.

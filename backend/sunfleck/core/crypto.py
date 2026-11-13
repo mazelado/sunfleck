@@ -5,6 +5,10 @@ Uses Fernet (from `cryptography`) with the keys in SUNFLECK_ENCRYPTION_KEY: comm
 the first one encrypts and all of them decrypt, so a key can be replaced without losing
 anything. Without it, a key is derived from SECRET_KEY; changing SECRET_KEY then makes stored
 secrets unreadable, so setting SUNFLECK_ENCRYPTION_KEY is recommended.
+
+The key derived from SECRET_KEY always decrypts too, so setting SUNFLECK_ENCRYPTION_KEY on an
+instance that ran without it keeps what's stored readable. `manage.py reencrypt_secrets`
+moves every stored secret to the first key, after which old keys can be removed.
 """
 
 import base64
@@ -40,7 +44,9 @@ def _fernet() -> MultiFernet:
             "derived from SECRET_KEY. Set it to keep them readable if SECRET_KEY changes."
         )
         return MultiFernet([Fernet(derived_key(settings.SECRET_KEY))])
-    return MultiFernet([Fernet(key.encode()) for key in keys])
+    # The derived key last, to decrypt only: secrets stored before a key was set.
+    fernets = [Fernet(key.encode()) for key in keys]
+    return MultiFernet([*fernets, Fernet(derived_key(settings.SECRET_KEY))])
 
 
 def encrypt(text: str) -> str:
@@ -54,6 +60,18 @@ def decrypt(token: str) -> str:
     """
     try:
         return _fernet().decrypt(token.encode()).decode()
+    except InvalidToken as exc:
+        raise DecryptionError("This secret was encrypted with a key that's no longer set.") from exc
+
+
+def reencrypt(token: str) -> str:
+    """The same secret, encrypted with the first key.
+
+    Raises:
+        DecryptionError: If none of the keys can decrypt it.
+    """
+    try:
+        return _fernet().rotate(token.encode()).decode()
     except InvalidToken as exc:
         raise DecryptionError("This secret was encrypted with a key that's no longer set.") from exc
 

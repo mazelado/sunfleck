@@ -150,6 +150,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Searching for "bromeliad" found nothing** when adding a plant: each bromeliad genus
   (*Guzmania*, *Vriesea*, *Aechmea* and others) now has "bromeliad" as a common name, so it's
   found and gets the Bromeliad care profile.
+- **Setting `SUNFLECK_ENCRYPTION_KEY` on a Sunfleck that ran without it** made every stored
+  secret unreadable: notification addresses, plugins' API keys, and the Web Push key, which
+  broke every device's notifications. Secrets stored before the key was set now stay
+  readable, and the new `manage.py reencrypt_secrets` moves them all to the first key, so an
+  old key can be removed ([how to replace a key](docs/install.md#replacing-the-encryption-key)).
 
 ### Security
 
