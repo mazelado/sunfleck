@@ -163,6 +163,27 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# --- Cache ------------------------------------------------------------------------------------
+# Holds the counts of failed sign-ins (allauth's limits), which every web worker must share and
+# a restart mustn't reset: Redis when it's set up for the job queue, otherwise a table in the
+# database (made by the core app's migration).
+
+if env_str("HUEY_REDIS_URL", ""):
+    CACHES: dict[str, Any] = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": env_str("HUEY_REDIS_URL", ""),
+            "KEY_PREFIX": "sunfleck",
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "sunfleck_cache",
+        }
+    }
+
 # --- Accounts ---------------------------------------------------------------------------------
 
 AUTH_USER_MODEL = "accounts.User"

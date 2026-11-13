@@ -11,7 +11,11 @@ services:
     image: ghcr.io/mazelado/sunfleck:${SUNFLECK_VERSION:-latest}
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      # Only this computer can reach port 8000, so the reverse proxy in front of it is the
+      # only way in, and nobody can bypass it to claim another address in X-Forwarded-For.
+      # Without a proxy, to open it from other devices on your network, set
+      # SUNFLECK_LISTEN_ADDRESS=0.0.0.0 in .env (and keep SUNFLECK_BEHIND_PROXY off).
+      - "${SUNFLECK_LISTEN_ADDRESS:-127.0.0.1}:8000:8000"
     volumes:
       # A named volume, managed by Docker, holds the database and uploaded photos.
       # To use a folder instead (e.g. ./data), create it first and give it to user ID 1000,
