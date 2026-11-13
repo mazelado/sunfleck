@@ -153,6 +153,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Snoozed care came back early** whenever its due date moved: after editing the plant
   (its pot, light or room), or with every new forecast from the weather plugin. A snooze now
   lasts until the day it was put off to, or until the care is logged.
+- **Setting `SUNFLECK_ENCRYPTION_KEY` on a Sunfleck that ran without it** made every stored
+  secret unreadable: notification addresses, plugins' API keys, and the Web Push key, which
+  broke every device's notifications. Secrets stored before the key was set now stay
+  readable, and the new `manage.py reencrypt_secrets` moves them all to the first key, so an
+  old key can be removed ([how to replace a key](docs/install.md#replacing-the-encryption-key)).
 
 ### Security
 
