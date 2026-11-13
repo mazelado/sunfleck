@@ -5,7 +5,6 @@ import { useParams } from "react-router";
 
 import { type Photo, usePlant } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { CareCard } from "../care/CareCard";
 import { PlantTimeline } from "../care/PlantTimeline";
@@ -18,6 +17,7 @@ import { PlantAbout } from "./PlantAbout";
 import { PlantConversations } from "./PlantConversations";
 import { PlantHeader } from "./PlantHeader";
 import { PlantPhotos } from "./PlantPhotos";
+import { PlantSkeleton } from "./PlantSkeleton";
 
 /**
  * A plant: on phones one column (its care first, what there is to know about it last); on
@@ -39,7 +39,7 @@ export function PlantPage() {
   };
 
   if (plant.isPending) {
-    return <FullPageLoader />;
+    return <PlantSkeleton />;
   }
   if (!plant.data) {
     return <ErrorAlert error={plant.error} />;

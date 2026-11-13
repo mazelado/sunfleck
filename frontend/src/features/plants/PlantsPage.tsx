@@ -1,14 +1,4 @@
-import {
-  Button,
-  Center,
-  Group,
-  Loader,
-  Menu,
-  SimpleGrid,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Button, Center, Group, Menu, SimpleGrid, Stack, Text, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconPlus, IconQrcode, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
@@ -23,6 +13,7 @@ import { PageHeader } from "../../components/PageHeader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { ActiveFilters } from "./ActiveFilters";
 import { PlantCard } from "./PlantCard";
+import { PlantsSkeleton } from "./PlantsSkeleton";
 import { PlantsViews } from "./PlantsViews";
 import { type PlantFilterValues, PlantFilters } from "./PlantFilters";
 
@@ -102,9 +93,7 @@ export function PlantsPage() {
 
       <ErrorAlert error={plants.error} />
       {plants.isPending ? (
-        <Center py="xl">
-          <Loader />
-        </Center>
+        <PlantsSkeleton />
       ) : items.length === 0 ? (
         <EmptyState
           illustration={filtered ? "search" : "plant"}
