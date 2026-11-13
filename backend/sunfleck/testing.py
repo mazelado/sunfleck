@@ -3,6 +3,8 @@
 from collections.abc import Callable
 
 import pytest
+from django.core.cache import caches
+from django.core.cache.backends.db import DatabaseCache
 from django.test import Client
 from hypothesis import settings
 
@@ -12,6 +14,15 @@ from sunfleck.accounts.tests.factories import HouseholdFactory, MembershipFactor
 # Property-based tests try 100 random cases each by default; `pytest
 # --hypothesis-profile=thorough` tries many more, e.g. after changing the prediction engine.
 settings.register_profile("thorough", max_examples=5000)
+
+
+@pytest.fixture(autouse=True)
+def empty_cache() -> None:
+    """Each test starts with an empty cache: counts of failed sign-ins and of requests
+    (sunfleck.core.limits) don't carry over from earlier tests. A cache in the database is
+    emptied with the rest of it after each test; one in memory is emptied here."""
+    if not isinstance(caches["default"], DatabaseCache):
+        caches["default"].clear()
 
 
 @pytest.fixture

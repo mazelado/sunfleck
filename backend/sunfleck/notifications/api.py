@@ -15,6 +15,7 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Role, User
 from sunfleck.accounts.permissions import require_role
+from sunfleck.core import limits
 from sunfleck.core.errors import ApiError
 from sunfleck.notifications import calendar, push, services
 from sunfleck.notifications.models import CalendarFeed, NotificationChannel, NotificationPreferences
@@ -151,6 +152,7 @@ def delete_channel(request: HttpRequest, channel_id: int) -> Status[None]:
 def test_channel(request: HttpRequest, channel_id: int) -> ChannelOut:
     """Send a test message now."""
     channel = _get_channel(_user(request), channel_id)
+    limits.per_member(request, "channel_test", limits.CHANNEL_TESTS_PER_MINUTE)
     try:
         services.send_test(channel)
     except services.NotificationError as exc:

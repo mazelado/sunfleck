@@ -362,7 +362,8 @@ export interface paths {
          * Health
          * @description Report whether the app is running and can reach its database.
          *
-         *     Used by Docker health checks and uptime monitors, so it needs no sign-in.
+         *     Used by Docker health checks and uptime monitors, so it needs no sign-in. `version` is
+         *     empty unless signed in, or asked from the server itself.
          */
         get: operations["sunfleck_core_api_health"];
         put?: never;
