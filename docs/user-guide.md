@@ -79,7 +79,8 @@ right. Every page also has a link back above its title on a wider screen.
 
 - A plant has a **name**, a **species** (search by common, scientific or older names) and a
   **care profile**, which comes with its species. Choose another care profile if it needs
-  different care, or if you don't know the species. The **Care guide** describes each profile.
+  different care, or if you don't know the species. The **Care guide** describes each profile;
+  **Indoor** or **Outdoor** above the list shows only those.
 - **No care profile for its species?** If an Admin turned on an AI plugin, **Suggest with AI**
   asks which of the built-in care profiles fits it best, and why. It only suggests: check the
   profile in the Care guide, then use it or choose another.

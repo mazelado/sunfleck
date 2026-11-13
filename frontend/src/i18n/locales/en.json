@@ -899,7 +899,13 @@
     "commonNames": "Also called",
     "genus": "Genus",
     "notFound": "This plant or care profile doesn't exist.",
-    "careFromSpecies": "Its care comes from its species: {{name}}."
+    "careFromSpecies": "Its care comes from its species: {{name}}.",
+    "showProfiles": "Show care profiles for",
+    "filters": {
+      "all": "All",
+      "indoor": "Indoor",
+      "outdoor": "Outdoor"
+    }
   },
   "schedules": {
     "none": "No care schedule yet.",

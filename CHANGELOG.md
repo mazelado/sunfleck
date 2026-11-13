@@ -73,6 +73,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Seeds and the wishlist are views of the Plants tab** (UI plan, part 9): "Plants · Seeds ·
   Wishlist" at the top of each, and the Plants tab stays lit on all three. Seeds moved to
   `/plants/seeds`; the old `/seeds` address still works.
+- **The Care guide** (UI plan, part 10) lists care profiles as compact cards, two side by side
+  on wider screens, each with its description in two lines, and **All · Indoor · Outdoor**
+  above them in place of headings far apart.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
