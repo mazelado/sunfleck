@@ -631,6 +631,10 @@ describe("light sources", () => {
     renderApp("/places/1/locations/10");
 
     expect(await screen.findByText("100 cm from the glass, through the year:")).toBeVisible();
+    // In words first, the numbers after.
+    expect(
+      screen.getByText("Spring: Medium · Summer: Medium · Autumn: Medium · Winter: Dim"),
+    ).toBeVisible();
     expect(
       screen.getByText("Spring 6.6 · Summer 9.4 · Autumn 6.6 · Winter 3.2 mol/m²/day"),
     ).toBeVisible();

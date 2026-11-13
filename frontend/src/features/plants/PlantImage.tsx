@@ -1,4 +1,4 @@
-import { Box, Center, Image } from "@mantine/core";
+import { AspectRatio, Box, Center, Image } from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
 import { IconPlant2 } from "@tabler/icons-react";
 
@@ -28,22 +28,18 @@ export function PlantImage({ src, alt, height, radius }: PlantImageProps) {
 }
 
 /**
- * A plant's cover: its photo at full size, showing the part chosen for it (its crop), or the
- * middle of it. The photo stays whole on the server, so the crop is applied here: the photo is
- * scaled so the crop fills the box, centred on the crop where the box's shape allows.
+ * A plant's cover, at 4:3: its photo at full size, showing the part chosen for it (its crop), or
+ * the middle of it. The photo stays whole on the server, so the crop is applied here: the photo
+ * is scaled so the crop fills the box, centred on the crop where the box's shape allows.
  */
-export function PlantCover({
-  photo,
-  alt,
-  height,
-}: {
-  photo: Photo | null | undefined;
-  alt: string;
-  height: number;
-}) {
-  const { ref, width } = useElementSize();
+export function PlantCover({ photo, alt }: { photo: Photo | null | undefined; alt: string }) {
+  const { ref, width, height } = useElementSize();
   if (!photo?.crop) {
-    return <PlantImage src={photo?.image_url} alt={alt} height={height} radius="lg" />;
+    return (
+      <AspectRatio ratio={4 / 3}>
+        <PlantImage src={photo?.image_url} alt={alt} height="100%" radius="lg" />
+      </AspectRatio>
+    );
   }
   const crop = photo.crop;
   // The crop in pixels of the photo, and the scale at which it covers the box.
@@ -57,19 +53,20 @@ export function PlantCover({
   const left = Math.min(0, Math.max(width - shownWidth, width / 2 - centreX));
   const top = Math.min(0, Math.max(height - shownHeight, height / 2 - centreY));
   return (
-    <Box
-      ref={ref}
-      h={height}
-      pos="relative"
-      style={{ overflow: "hidden", borderRadius: "var(--mantine-radius-lg)" }}
-    >
-      {scale > 0 && (
-        <img
-          src={photo.image_url}
-          alt={alt}
-          style={{ position: "absolute", left, top, width: shownWidth, height: shownHeight }}
-        />
-      )}
-    </Box>
+    <AspectRatio ratio={4 / 3}>
+      <Box
+        ref={ref}
+        pos="relative"
+        style={{ overflow: "hidden", borderRadius: "var(--mantine-radius-lg)" }}
+      >
+        {scale > 0 && (
+          <img
+            src={photo.image_url}
+            alt={alt}
+            style={{ position: "absolute", left, top, width: shownWidth, height: shownHeight }}
+          />
+        )}
+      </Box>
+    </AspectRatio>
   );
 }

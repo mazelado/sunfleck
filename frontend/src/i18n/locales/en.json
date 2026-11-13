@@ -525,8 +525,6 @@
     "print_other": "Print {{count}} labels",
     "preview": "Labels to print",
     "codeFor": "QR code for {{name}}",
-    "cardTitle": "Label",
-    "cardHelp": "Scan it to open this page. Print it as a label, or write it to an NFC tag.",
     "printOne": "Print a label",
     "writeNfc": "Write to an NFC tag",
     "nfcHold": "Hold an NFC tag to the back of your phone…",
@@ -571,11 +569,9 @@
       "deceased": "Died"
     },
     "lineage": {
-      "title": "Propagation",
       "grownFrom": "Grown from",
       "grownBy": "Grown by {{method}}; the plant it came from was deleted.",
       "offspring": "Grown from it",
-      "none": "Take cuttings, divide it or sow its seeds, and they're added as plants of their own.",
       "propagate": "Propagate",
       "dialogTitle": "Propagate {{name}}",
       "method": "How",
@@ -628,7 +624,6 @@
     "acquiredOn": "Got it on",
     "startedOn": "Started on",
     "notes": "Notes",
-    "light": "Light",
     "whichLights": "Which lights reach this plant?",
     "whichLightsHelp": "Tick the windows and grow lights it gets light from.",
     "noLightsInLocation": "This room has no windows or grow lights yet.",
@@ -641,7 +636,6 @@
     "noLightReaches": "No windows or grow lights reach it.",
     "choosePhoto": "Photo",
     "choosePhotoHelp": "Optional. You can add more later.",
-    "details": "Details",
     "deletePlant": "Delete plant",
     "deletePlantTitle": "Delete {{name}}?",
     "deletePlantConfirm": "Its photos will be deleted too. If it died or you gave it away, you can change its status instead and keep its history.",
@@ -682,7 +676,8 @@
     "showPlants": "Show plants",
     "withoutRoutine": "Without a care routine",
     "activeFilters": "Filters in use",
-    "removeFilter": "Remove filter: {{name}}"
+    "removeFilter": "Remove filter: {{name}}",
+    "about": "About"
   },
   "care": {
     "addCareType": "Add a care type",
@@ -714,7 +709,6 @@
     "soil": "Soil: {{feedback}}",
     "howWasSoil": "How was the soil?",
     "howWasSoilHelp": "Before watering. This helps Sunfleck learn when this plant needs water.",
-    "quickActions": "Log care",
     "more": "More care",
     "logWithDetails": "Add details or another day…",
     "logCare": "Log care",
@@ -783,7 +777,6 @@
     "wateredToday": "today",
     "wateredYesterday": "yesterday",
     "wateredOn": "on {{date}}",
-    "putOff": "Put off care…",
     "title": "Care"
   },
   "crop": {
@@ -899,7 +892,6 @@
     "careFromSpecies": "Its care comes from its species: {{name}}."
   },
   "schedules": {
-    "title": "Care schedule",
     "none": "No care schedule yet.",
     "suggestedTitle": "Suggested routine",
     "suggestedIntro": "Based on its care profile, where it grows and its pot. Pick what you'd like reminders for; you can change it any time.",
@@ -1239,7 +1231,7 @@
     "lowLight": "Low light"
   },
   "light": {
-    "title": "Light check",
+    "title": "Light",
     "season": "Season",
     "here": "Here",
     "likes": "It likes",
@@ -1251,13 +1243,13 @@
       "good": "Good",
       "bright": "Very bright"
     },
-    "unit": "Light is the day's total, in mol/m²/day (the daily light integral, DLI). These are estimates for a typical day.",
+    "unit": "Light is the day's total, in mol/m²/day (the daily light integral, DLI): about 5 is dim, 10 medium, 20 bright and more very bright. These are estimates for a typical day.",
     "tipDim": "Too little light {{seasons}}: moving it closer to a window, or a grow light, would help.",
     "tipBright": "More light than it likes {{seasons}}: some shade from the strongest sun may help.",
     "throughYear": "{{distance}} from the glass, through the year:",
     "seasonValues": "Spring {{spring}} · Summer {{summer}} · Autumn {{autumn}} · Winter {{winter}} mol/m²/day",
-    "givesNow": "About {{dli}} mol/m²/day of light here now",
-    "growLightAllYear": "About {{dli}} mol/m²/day, all year",
+    "givesNow": "{{light}} here now (about {{dli}} mol/m²/day)",
+    "growLightAllYear": "{{light}} all year (about {{dli}} mol/m²/day)",
     "allYear": "all year",
     "inSeasons": "in {{seasons}}",
     "missingIndoor": "To see whether {{name}} gets enough light, tell Sunfleck which windows or grow lights reach it, and how far it is from each window.",
@@ -1269,7 +1261,15 @@
       "a_bit_low": "A little too dark here for {{name}} now.",
       "good": "Enough light here for {{name}} now.",
       "bright": "Brighter here than {{name}} likes now."
-    }
+    },
+    "words": {
+      "dim": "Dim",
+      "medium": "Medium",
+      "bright": "Bright",
+      "veryBright": "Very bright"
+    },
+    "throughTheYear": "Through the year",
+    "seasonWords": "Spring: {{spring}} · Summer: {{summer}} · Autumn: {{autumn}} · Winter: {{winter}}"
   },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",
@@ -1370,7 +1370,6 @@
     "save": "Put off",
     "done": "{{care}} for {{plant}} put off until {{date}}.",
     "nothing": "Nothing is due for this plant yet, so there's nothing to put off.",
-    "schedule": "Put off {{care}}",
     "label": "Put off until",
     "anotherDay": "Another day…",
     "later_one": "{{count}} day later",

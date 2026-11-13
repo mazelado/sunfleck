@@ -21,7 +21,7 @@ import { cmToDisplay, lengthUnit } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { LocationPlants } from "../plants/LocationPlants";
 import { LocationKindBadge } from "./LocationKindBadge";
-import { describeConditions, describeLight } from "./describe";
+import { describeConditions, describeLight, lightWord } from "./describe";
 import { LightSourceForm } from "./LightSourceForm";
 
 type Dialog = { kind: "window" | "grow_light"; light?: LightSource } | null;
@@ -213,10 +213,11 @@ function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
   if (!source) {
     return null;
   }
+  const word = (dli: number) => t(`light.words.${lightWord(dli)}`);
   if (source.kind !== "window") {
     return (
       <Text size="sm" c="dimmed">
-        {t("light.growLightAllYear", { dli: source.dli.spring })}
+        {t("light.growLightAllYear", { light: word(source.dli.spring), dli: source.dli.spring })}
       </Text>
     );
   }
@@ -227,7 +228,15 @@ function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
           distance: `${String(cmToDisplay(source.distance_cm, units))} ${lengthUnit(units)}`,
         })}
       </Text>
-      <Text size="sm" c="dimmed">
+      <Text size="sm">
+        {t("light.seasonWords", {
+          spring: word(source.dli.spring),
+          summer: word(source.dli.summer),
+          autumn: word(source.dli.autumn),
+          winter: word(source.dli.winter),
+        })}
+      </Text>
+      <Text size="xs" c="dimmed">
         {t("light.seasonValues", { ...source.dli })}
       </Text>
     </>

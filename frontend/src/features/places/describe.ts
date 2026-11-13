@@ -80,3 +80,16 @@ function pascal(value: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("");
 }
+
+export type LightWord = "dim" | "medium" | "bright" | "veryBright";
+
+/**
+ * A day's light (DLI, mol/m²/day) in a word, as houseplant guides describe light: dim under 5,
+ * medium to 10, bright to 20, very bright above.
+ */
+export function lightWord(dli: number): LightWord {
+  if (dli < 5) return "dim";
+  if (dli < 10) return "medium";
+  if (dli < 20) return "bright";
+  return "veryBright";
+}

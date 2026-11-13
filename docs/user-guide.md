@@ -104,19 +104,24 @@ and export. Your profile and signing out are in the account menu, beside it.
   you can change the crop later, or choose **Show the whole photo**.
 - **Status**: Active, Dormant, Propagating, Given away, or Died. Only active, dormant and
   propagating plants need care.
-- **Propagation**: **Propagate** on a plant's page adds the cuttings, divisions, offsets or
+- **Propagation**: **Propagate**, in the **⋯** menu at the top of a plant's page, adds the cuttings, divisions, offsets or
   seedlings you've taken as plants of their own: with its species, care profile and (unless
   you choose another) its room and lights, named after it ("Monty (cutting 2)"). They're
   marked **Propagating**: watered as usual, but not fertilized until they've taken. Then set
-  each one's status to Active. Each shows the plant it was grown from, and the parent lists
-  them.
-- **Labels**: each plant's page shows its QR code. Scanning it with a phone opens that page
-  (after signing in). **Print a label** there, or **Print QR labels** in the Plants page's **⋯** menu (or
+  each one's status to Active. Each one's **About** card shows the plant it was grown from,
+  and the parent's lists them.
+- **Labels**: each plant has a QR code; scanning it with a phone opens the plant's page
+  (after signing in). **Print a label** in the **⋯** menu at the top of a plant's page, or **Print QR labels** in the Plants page's **⋯** menu (or
   on a room's page, for the plants there), prints a sheet of them in three sizes, with
-  or without the species. On Chrome for Android, **Write to an NFC tag** puts the plant's
+  or without the species. On Chrome for Android, **Write to an NFC tag** (in the same menu) puts the plant's
   address on a tag, so tapping it opens the page. Labels link to `SUNFLECK_PUBLIC_URL` if
   it's set, else to the address you're using: print them from an address your phone can
   reach.
+- **A plant's page**: its photo, name and room at the top, then its **Care**, its **Light**
+  (whether it gets enough now and what would help, the windows and lamps that reach it, and
+  **Through the year** for each season, in words: dim, medium, bright, very bright), photos
+  and history. **About** comes last: its care profile, pot, soil, notes and where it was grown
+  from. On a computer, the photo and About stay on the left beside the rest.
 - **Finding a plant**: the Plants page shows every plant as a card that says in words what it
   needs next ("Water today", "Fertilize in 5 days"), in red when it's overdue and orange when
   it's due today, and "Low light" when its spot is too dark for it. Search by name above the

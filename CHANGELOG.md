@@ -42,6 +42,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   named for the care. Its **⋯** menu puts care off in one tap (tomorrow, in 3 days, in a
   week), so putting care off from a plant's page takes 3 taps instead of 5. Other care,
   earlier care and a new schedule are under the rows.
+- **A plant's page is shorter and calmer** (UI plan, part 4): light is one **Light** card
+  (whether it gets enough now and what would help, then the windows and lamps that reach it,
+  then each season under **Through the year**, in words such as "Bright" with the
+  mol/m²/day dimmed beside them, also on a room's page). The care profile, pot, soil and
+  notes are one **About** card, which also shows where a plant was grown from. Propagate,
+  Print a label and Write to an NFC tag moved to the **⋯** menu at the top, so the
+  Propagation and Label cards are gone. On wide screens the page has two columns, and the
+  photo is shown at 4:3 instead of cropped to a strip.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
