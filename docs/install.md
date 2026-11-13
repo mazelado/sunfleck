@@ -1,7 +1,7 @@
 # Installing Sunfleck
 
 Sunfleck runs as two containers from one Docker image: the app, and a worker for background
-jobs (reminders, weather updates, the nightly recalculation). Everything it stores, the
+jobs (reminders, weather updates, the daily recalculation of due dates). Everything it stores, the
 database and plant photos, is in one volume. It runs fine on a Raspberry Pi 4 or 5.
 
 - [What you need](#what-you-need)

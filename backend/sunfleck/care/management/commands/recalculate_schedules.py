@@ -1,7 +1,7 @@
 """`manage.py recalculate_schedules`: bring every care schedule's prediction up to date.
 
-Schedules are also recalculated whenever they're read; run this daily (the nightly job will)
-so due dates follow the seasons even for plants nobody has looked at.
+Schedules are also recalculated whenever they're read, and the worker recalculates each site's
+schedules shortly after its day begins; this does them all now.
 """
 
 from typing import Any
