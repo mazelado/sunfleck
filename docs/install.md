@@ -64,10 +64,11 @@ follows what it's doing (Ctrl+C stops following, not Sunfleck).
 
 ## Reach it from your phone (HTTPS)
 
-Sunfleck listens on port 8000 without HTTPS. Phones on your home network can open
-`http://<your-computer>:8000` (add that address to `ALLOWED_HOSTS` and, with `http://`, to
-`CSRF_TRUSTED_ORIGINS`), but browsers only let you install it as an app over HTTPS, and it
-should never be reachable from the internet without it. The usual way is a **reverse proxy**
+Sunfleck listens on port 8000 without HTTPS, reachable only from the computer it runs on.
+Phones on your home network can open `http://<your-computer>:8000` once you set
+`SUNFLECK_LISTEN_ADDRESS=0.0.0.0` in `.env` (and add that address to `ALLOWED_HOSTS` and, with
+`http://`, to `CSRF_TRUSTED_ORIGINS`), but browsers only let you install it as an app over
+HTTPS, and it should never be reachable from the internet without it. The usual way is a **reverse proxy**
 in front of it that provides HTTPS. Then set, in `.env` (with your own address):
 
 ```
@@ -100,12 +101,17 @@ server {
         proxy_pass http://localhost:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
+        # The visitor's own address, replacing any they sent: limits on failed sign-ins
+        # count each person by it.
+        proxy_set_header X-Forwarded-For $remote_addr;
     }
 }
 ```
 
 **Nginx Proxy Manager, Traefik** and the like work the same way: forward to port 8000, keep
-the `Host` header, and allow uploads of at least 25 MB.
+the `Host` header, set `X-Forwarded-For` to the visitor's address, and allow uploads of at
+least 25 MB. With the proxy in its own container, leave `SUNFLECK_LISTEN_ADDRESS` as it is and
+have the proxy reach Sunfleck over a shared Docker network (`http://sunfleck:8000`).
 
 **Only at home, without a domain?** [Tailscale](https://tailscale.com/) gives your server an
 HTTPS address only your own devices can reach: `tailscale serve --bg 8000`. Use the address it
@@ -246,6 +252,7 @@ Set in `.env`; run `docker compose up -d` after changing them.
 | `ALLOWED_HOSTS` | `localhost` | The host names you reach Sunfleck at, comma-separated |
 | `CSRF_TRUSTED_ORIGINS` | *(none)* | Those addresses with `https://`, needed for signing in through them |
 | `SUNFLECK_PUBLIC_URL` | *(none)* | The address notifications, calendar entries, QR labels and NFC tags link to |
+| `SUNFLECK_LISTEN_ADDRESS` | `127.0.0.1` | Who can reach port 8000: only this computer, or `0.0.0.0` for every network it's on. Read by Compose |
 | `SUNFLECK_BEHIND_PROXY` | `false` | `true` behind a reverse proxy with HTTPS. Cookies are then only sent over HTTPS, so plain `http://` addresses can't be used to sign in |
 | `TIME_ZONE` | `UTC` | The server's time zone; each site has its own |
 | `EMAIL_URL`, `EMAIL_FROM` | *(log only)* | Sending emails ([above](#email)) |
