@@ -1,5 +1,4 @@
 import {
-  Button,
   Group,
   NumberInput,
   Paper,
@@ -8,6 +7,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Container,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -25,6 +25,7 @@ import {
   useLocation,
   useUpdateLocation,
 } from "../../api/places";
+import { FormActions } from "../../components/FormActions";
 import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
@@ -137,143 +138,146 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
   });
 
   return (
-    <Stack gap="lg">
-      <PageHeader
-        title={location ? t("places.editLocation") : t("places.newLocation")}
-        back={{ to: sitePath, label: site.name }}
-      />
-      <Paper withBorder radius="lg" p="lg">
-        <form onSubmit={handleSubmit} noValidate>
-          <Stack gap="md">
-            <ErrorAlert error={save.error} />
-            <TextInput
-              label={t("places.locationName")}
-              placeholder={t("places.locationNamePlaceholder")}
-              required
-              {...form.getInputProps("name")}
-            />
-            <Stack gap={4}>
-              <Text size="sm" fw={500} id="kind-label">
-                {t("places.kind")}
-              </Text>
-              <SegmentedControl
-                aria-labelledby="kind-label"
-                fullWidth
-                data={[
-                  { value: "indoor", label: t("places.indoor") },
-                  { value: "outdoor", label: t("places.outdoor") },
-                ]}
-                {...form.getInputProps("kind")}
+    <Container size="reading" px={0}>
+      <Stack gap="lg">
+        <PageHeader
+          title={location ? t("places.editLocation") : t("places.newLocation")}
+          back={{ to: sitePath, label: site.name }}
+        />
+        <Paper withBorder radius="lg" p="lg">
+          <form onSubmit={handleSubmit} noValidate>
+            <Stack gap="md">
+              <ErrorAlert error={save.error} />
+              <TextInput
+                label={t("places.locationName")}
+                placeholder={t("places.locationNamePlaceholder")}
+                required
+                {...form.getInputProps("name")}
               />
-              {form.errors.kind && (
-                <Text size="xs" c="red">
-                  {form.errors.kind}
+              <Stack gap={4}>
+                <Text size="sm" fw={500} id="kind-label">
+                  {t("places.kind")}
                 </Text>
-              )}
-            </Stack>
-            {indoor ? (
-              <>
-                <Stack gap={4}>
-                  <Text size="sm" fw={500}>
-                    {t("places.temperature")} ({unit}){" "}
-                    <Text span c="dimmed" size="xs">
-                      {t("common.optional")}
-                    </Text>
+                <SegmentedControl
+                  aria-labelledby="kind-label"
+                  fullWidth
+                  data={[
+                    { value: "indoor", label: t("places.indoor") },
+                    { value: "outdoor", label: t("places.outdoor") },
+                  ]}
+                  {...form.getInputProps("kind")}
+                />
+                {form.errors.kind && (
+                  <Text size="xs" c="red">
+                    {form.errors.kind}
                   </Text>
-                  <Group grow align="flex-start">
-                    <NumberInput
-                      label={t("places.temperatureMin")}
-                      suffix={unit}
-                      {...form.getInputProps("temperature_min")}
-                    />
-                    <NumberInput
-                      label={t("places.temperatureMax")}
-                      suffix={unit}
-                      {...form.getInputProps("temperature_max")}
-                    />
-                  </Group>
-                </Stack>
+                )}
+              </Stack>
+              {indoor ? (
+                <>
+                  <Stack gap={4}>
+                    <Text size="sm" fw={500}>
+                      {t("places.temperature")} ({unit}){" "}
+                      <Text span c="dimmed" size="xs">
+                        {t("common.optional")}
+                      </Text>
+                    </Text>
+                    <Group grow align="flex-start">
+                      <NumberInput
+                        label={t("places.temperatureMin")}
+                        suffix={unit}
+                        {...form.getInputProps("temperature_min")}
+                      />
+                      <NumberInput
+                        label={t("places.temperatureMax")}
+                        suffix={unit}
+                        {...form.getInputProps("temperature_max")}
+                      />
+                    </Group>
+                  </Stack>
+                  <Select
+                    label={t("places.humidity")}
+                    placeholder={t("common.optional")}
+                    clearable
+                    data={[
+                      { value: "low", label: t("places.humidityLow") },
+                      { value: "medium", label: t("places.humidityMedium") },
+                      { value: "high", label: t("places.humidityHigh") },
+                    ]}
+                    {...form.getInputProps("humidity")}
+                  />
+                </>
+              ) : (
                 <Select
-                  label={t("places.humidity")}
+                  label={t("places.exposure")}
                   placeholder={t("common.optional")}
                   clearable
                   data={[
-                    { value: "low", label: t("places.humidityLow") },
-                    { value: "medium", label: t("places.humidityMedium") },
-                    { value: "high", label: t("places.humidityHigh") },
+                    { value: "full_sun", label: t("places.exposureFullSun") },
+                    { value: "part_shade", label: t("places.exposurePartShade") },
+                    { value: "shade", label: t("places.exposureShade") },
                   ]}
-                  {...form.getInputProps("humidity")}
-                />
-              </>
-            ) : (
-              <Select
-                label={t("places.exposure")}
-                placeholder={t("common.optional")}
-                clearable
-                data={[
-                  { value: "full_sun", label: t("places.exposureFullSun") },
-                  { value: "part_shade", label: t("places.exposurePartShade") },
-                  { value: "shade", label: t("places.exposureShade") },
-                ]}
-                {...form.getInputProps("exposure")}
-              />
-            )}
-            {!indoor && (
-              <Select
-                label={t("places.bedType")}
-                description={t("places.bedTypeHelp")}
-                placeholder={t("places.notABed")}
-                clearable
-                data={[
-                  { value: "raised", label: t("places.bedRaised") },
-                  { value: "in_ground", label: t("places.bedInGround") },
-                ]}
-                {...form.getInputProps("bed_type")}
-              />
-            )}
-            {isBed && (
-              <Stack gap={4}>
-                <Group grow align="flex-start">
-                  <NumberInput
-                    label={`${t("places.bedWidth")} (${lengthUnit(units)})`}
-                    min={1}
-                    {...form.getInputProps("bed_width")}
-                  />
-                  <NumberInput
-                    label={`${t("places.bedLength")} (${lengthUnit(units)})`}
-                    min={1}
-                    {...form.getInputProps("bed_length")}
-                  />
-                </Group>
-                <Text size="xs" c="dimmed">
-                  {t("places.bedSizeHelp")}
-                </Text>
-              </Stack>
-            )}
-            <Group justify="space-between">
-              <Button type="submit" loading={save.isPending}>
-                {t("common.save")}
-              </Button>
-              {location && (
-                <ConfirmDeleteButton
-                  label={t("places.deleteLocation")}
-                  title={t("places.deleteLocationTitle", { name: location.name })}
-                  message={t("places.deleteLocationConfirm")}
-                  onConfirm={async () => {
-                    await deleteLocation.mutateAsync(location.id);
-                    notifications.show({
-                      message: t("places.locationDeleted", { name: location.name }),
-                    });
-                    leaveGuard.allowLeave();
-                    await navigate(sitePath);
-                  }}
+                  {...form.getInputProps("exposure")}
                 />
               )}
-            </Group>
-          </Stack>
-        </form>
-      </Paper>
-      <LeaveDialog blocker={leaveGuard.blocker} />
-    </Stack>
+              {!indoor && (
+                <Select
+                  label={t("places.bedType")}
+                  description={t("places.bedTypeHelp")}
+                  placeholder={t("places.notABed")}
+                  clearable
+                  data={[
+                    { value: "raised", label: t("places.bedRaised") },
+                    { value: "in_ground", label: t("places.bedInGround") },
+                  ]}
+                  {...form.getInputProps("bed_type")}
+                />
+              )}
+              {isBed && (
+                <Stack gap={4}>
+                  <Group grow align="flex-start">
+                    <NumberInput
+                      label={`${t("places.bedWidth")} (${lengthUnit(units)})`}
+                      min={1}
+                      {...form.getInputProps("bed_width")}
+                    />
+                    <NumberInput
+                      label={`${t("places.bedLength")} (${lengthUnit(units)})`}
+                      min={1}
+                      {...form.getInputProps("bed_length")}
+                    />
+                  </Group>
+                  <Text size="xs" c="dimmed">
+                    {t("places.bedSizeHelp")}
+                  </Text>
+                </Stack>
+              )}
+              <FormActions
+                saving={save.isPending}
+                cancelTo={location ? `${sitePath}/locations/${String(location.id)}` : sitePath}
+                extra={
+                  location && (
+                    <ConfirmDeleteButton
+                      label={t("places.deleteLocation")}
+                      title={t("places.deleteLocationTitle", { name: location.name })}
+                      message={t("places.deleteLocationConfirm")}
+                      onConfirm={async () => {
+                        await deleteLocation.mutateAsync(location.id);
+                        notifications.show({
+                          message: t("places.locationDeleted", { name: location.name }),
+                        });
+                        leaveGuard.allowLeave();
+                        await navigate(sitePath);
+                      }}
+                    />
+                  )
+                }
+              />
+            </Stack>
+          </form>
+        </Paper>
+        <LeaveDialog blocker={leaveGuard.blocker} />
+      </Stack>
+    </Container>
   );
 }

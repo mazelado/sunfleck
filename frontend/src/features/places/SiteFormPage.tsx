@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Select, Stack, TextInput } from "@mantine/core";
+import { Paper, Select, Stack, TextInput, Container } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useMemo } from "react";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useParams } from "react-router";
 
 import { type Site, useCreateSite, useDeleteSite, useSite, useUpdateSite } from "../../api/places";
+import { FormActions } from "../../components/FormActions";
 import { PageHeader } from "../../components/PageHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
@@ -84,65 +85,70 @@ function SiteForm({ site }: { site?: Site }) {
   });
 
   return (
-    <Stack gap="lg">
-      <PageHeader
-        title={site ? t("places.editSite") : t("places.newSite")}
-        back={{
-          to: site ? `/places/${String(site.id)}` : "/places",
-          label: site?.name ?? t("places.title"),
-        }}
-      />
-      <Paper withBorder radius="lg" p="lg">
-        <form onSubmit={handleSubmit} noValidate>
-          <Stack gap="md">
-            <ErrorAlert error={save.error} />
-            <TextInput
-              label={t("places.siteName")}
-              placeholder={t("places.siteNamePlaceholder")}
-              required
-              {...form.getInputProps("name")}
-            />
-            <SitePositionFields
-              latitude={latitude}
-              longitude={longitude}
-              onPick={(lat, lng) => {
-                form.setFieldValue("latitude", lat);
-                form.setFieldValue("longitude", lng);
-              }}
-              latitudeProps={form.getInputProps("latitude")}
-              longitudeProps={form.getInputProps("longitude")}
-            />
-            <Select
-              label={t("places.timezone")}
-              description={t("places.timezoneHelp")}
-              data={timezones}
-              searchable
-              allowDeselect={false}
-              required
-              {...form.getInputProps("timezone")}
-            />
-            <Group justify="space-between">
-              <Button type="submit" loading={save.isPending}>
-                {t("common.save")}
-              </Button>
-              {site && (
-                <ConfirmDeleteButton
-                  label={t("places.deleteSite")}
-                  title={t("places.deleteSiteTitle", { name: site.name })}
-                  message={t("places.deleteSiteConfirm")}
-                  onConfirm={async () => {
-                    await deleteSite.mutateAsync(site.id);
-                    notifications.show({ message: t("places.siteDeleted", { name: site.name }) });
-                    leaveGuard.allowLeave();
-                    await navigate("/places");
-                  }}
-                />
-              )}
-            </Group>
-          </Stack>
-        </form>
-      </Paper>
-      <LeaveDialog blocker={leaveGuard.blocker} />
-    </Stack>
+    <Container size="reading" px={0}>
+      <Stack gap="lg">
+        <PageHeader
+          title={site ? t("places.editSite") : t("places.newSite")}
+          back={{
+            to: site ? `/places/${String(site.id)}` : "/places",
+            label: site?.name ?? t("places.title"),
+          }}
+        />
+        <Paper withBorder radius="lg" p="lg">
+          <form onSubmit={handleSubmit} noValidate>
+            <Stack gap="md">
+              <ErrorAlert error={save.error} />
+              <TextInput
+                label={t("places.siteName")}
+                placeholder={t("places.siteNamePlaceholder")}
+                required
+                {...form.getInputProps("name")}
+              />
+              <SitePositionFields
+                latitude={latitude}
+                longitude={longitude}
+                onPick={(lat, lng) => {
+                  form.setFieldValue("latitude", lat);
+                  form.setFieldValue("longitude", lng);
+                }}
+                latitudeProps={form.getInputProps("latitude")}
+                longitudeProps={form.getInputProps("longitude")}
+              />
+              <Select
+                label={t("places.timezone")}
+                description={t("places.timezoneHelp")}
+                data={timezones}
+                searchable
+                allowDeselect={false}
+                required
+                {...form.getInputProps("timezone")}
+              />
+              <FormActions
+                saving={save.isPending}
+                cancelTo={site ? `/places/${String(site.id)}` : "/places"}
+                extra={
+                  site && (
+                    <ConfirmDeleteButton
+                      label={t("places.deleteSite")}
+                      title={t("places.deleteSiteTitle", { name: site.name })}
+                      message={t("places.deleteSiteConfirm")}
+                      onConfirm={async () => {
+                        await deleteSite.mutateAsync(site.id);
+                        notifications.show({
+                          message: t("places.siteDeleted", { name: site.name }),
+                        });
+                        leaveGuard.allowLeave();
+                        await navigate("/places");
+                      }}
+                    />
+                  )
+                }
+              />
+            </Stack>
+          </form>
+        </Paper>
+        <LeaveDialog blocker={leaveGuard.blocker} />
+      </Stack>
+    </Container>
   );
 }

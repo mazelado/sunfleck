@@ -60,6 +60,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   are named by room alone when you have one place ("Kitchen", not "Home · Kitchen"); and a
   finished row fades and folds away instead of the list jumping under your thumb (not when
   your system asks for less motion).
+- **Forms** (UI plan, part 7): in the plant, room and place forms, **Save** and **Cancel**
+  stay at the bottom of the screen (above the tab bar on phones) while you fill them in, so
+  it's clear the form goes on. A plant's photo is a large "Add a photo" tile that shows the
+  photo once chosen, and "When was it last watered?" is a row of one-tap choices. Forms are
+  narrower on wide screens.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
