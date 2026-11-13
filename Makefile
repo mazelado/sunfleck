@@ -71,6 +71,7 @@ lint-frontend: ## Check frontend formatting, lint rules, and types
 	$(FRONTEND) npm run format:check
 	$(FRONTEND) npm run lint
 	$(FRONTEND) npm run typecheck
+	$(FRONTEND) npm run check:unused
 
 format: ## Fix formatting and auto-fixable lint problems
 	$(BACKEND) uv run ruff format . ../plugins

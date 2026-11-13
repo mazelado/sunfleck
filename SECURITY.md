@@ -18,7 +18,7 @@ install up to date: see [upgrading](docs/install.md#upgrading).
 
 | Version | Gets security fixes |
 |---|---|
-| The latest minor release (now 0.9) | Yes |
+| The latest minor release | Yes |
 | Older releases | No |
 
 ## What's in scope

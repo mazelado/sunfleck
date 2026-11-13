@@ -60,7 +60,6 @@ export function useCareProfile(key: string | null) {
   });
 }
 
-export type CareProfileSuggestion = components["schemas"]["CareProfileSuggestionOut"];
 export type SuggestionRequest = components["schemas"]["CareProfileSuggestionIn"];
 
 /** Whether care profiles can be suggested with AI (an AI plugin is on). */

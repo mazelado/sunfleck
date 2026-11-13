@@ -11,7 +11,7 @@ import { addDays } from "../today/grouping";
 import { useCareTypeName } from "./useCareTypeName";
 
 /** Care that can be put off: a schedule, from a plant's page or from Today. */
-export interface PutOffCare {
+interface PutOffCare {
   /** The schedule's id. */
   id: number;
   care_type: CareType;

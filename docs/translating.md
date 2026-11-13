@@ -42,7 +42,8 @@ browser's language if Sunfleck has it.
 ## Keeping a translation up to date
 
 When English texts change, the app's file may have keys that no longer exist (the tests say
-which) and is missing new ones (shown in English). For the server, run `make messages`: it
+which) and is missing new ones (shown in English). English itself has no keys the app doesn't
+use: `make lint` checks, so nobody translates a text that's never shown. For the server, run `make messages`: it
 updates every `.po` file, marking changed texts as "fuzzy" for review.
 
 ## Not translated (yet)

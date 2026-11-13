@@ -381,4 +381,7 @@ Project conventions (on top of PEP 8):
 | Pre-commit hooks | pre-commit (runs all of the above on changed files) | |
 | CI | GitHub Actions: lint, type-check, test on SQLite + PostgreSQL, build Docker image | |
 
-These tools will be configured when the codebase is created. Until then, this table is the plan.
+They're configured in `backend/pyproject.toml`, `frontend/package.json`,
+`.pre-commit-config.yaml` and `.github/workflows/`; `make lint` runs every check CI runs, except
+tests. The frontend's also include knip (unused files, exports and dependencies) and
+`frontend/scripts/check-translation-keys.mjs` (translation keys nothing uses).

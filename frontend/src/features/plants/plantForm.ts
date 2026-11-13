@@ -31,10 +31,7 @@ export interface PlantFormValues {
 }
 
 /** The lights that reach a plant, as the form shows them. */
-export function initialLights(
-  plant: Plant | undefined,
-  units: UnitSystem,
-): Record<string, LightChoice> {
+function initialLights(plant: Plant | undefined, units: UnitSystem): Record<string, LightChoice> {
   const lights: Record<string, LightChoice> = {};
   for (const link of plant?.light_sources ?? []) {
     lights[String(link.light_source.id)] = {
