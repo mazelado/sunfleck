@@ -144,6 +144,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   gains `count`. All four take `limit` (at most 500, the default) and `offset`. Clients that
   read these lists must read `items`; the app does.
 
+- **Port 8000 is only reachable from the computer Sunfleck runs on**, in the Compose file: a
+  reverse proxy on the same computer is then the only way in. **If you open
+  `http://<server>:8000` from other devices**, set `SUNFLECK_LISTEN_ADDRESS=0.0.0.0` in `.env`
+  and download the new `compose.yaml`.
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first
@@ -199,6 +204,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **The limits on failed sign-ins hold**: they're counted in the database (or Redis), so the
+  web workers share them and a restart doesn't reset them; before, each worker counted on its
+  own. Port 8000 is no longer open to the network by default, so nobody can bypass the proxy
+  and claim another address, and the Nginx example now sets `X-Forwarded-For`, without which
+  the proxy passed on whatever address a visitor claimed.
 
 ## [0.9.0] - 2026-11-06
 
