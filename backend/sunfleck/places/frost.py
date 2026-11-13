@@ -45,14 +45,15 @@ def set_frost_dates(site: Site, last_frost: date | None, first_frost: date | Non
 def estimate(site: Site) -> bool:
     """Ask the plugins that are on for an estimate of the site's frost dates, and keep the
     first. Whether one was found."""
-    for answer in registry.call(HOOK, site.household, FrostDates, site=site):
-        dates: FrostDates = answer.result
-        site.last_frost, site.first_frost = _day(dates.last_frost), _day(dates.first_frost)
-        site.frost_years = dates.years
-        site.frost_source = FrostSource.ESTIMATED
-        site.save(update_fields=["last_frost", "first_frost", "frost_years", "frost_source"])
-        return True
-    return False
+    answer = registry.call_first(HOOK, site.household, FrostDates, site=site)
+    if answer is None:
+        return False
+    dates: FrostDates = answer.result
+    site.last_frost, site.first_frost = _day(dates.last_frost), _day(dates.first_frost)
+    site.frost_years = dates.years
+    site.frost_source = FrostSource.ESTIMATED
+    site.save(update_fields=["last_frost", "first_frost", "frost_years", "frost_source"])
+    return True
 
 
 def estimate_missing(batch: int = BATCH) -> int:
