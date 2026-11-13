@@ -1,4 +1,6 @@
 import {
+  SegmentedControl,
+  SimpleGrid,
   Badge,
   Group,
   Loader,
@@ -25,9 +27,11 @@ import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { SpeciesName } from "./SpeciesName";
 
-const SETTINGS = ["indoor", "either", "outdoor"] as const;
+// Profiles for "either" setting show under both Indoor and Outdoor.
+const FILTERS = ["all", "indoor", "outdoor"] as const;
+type Filter = (typeof FILTERS)[number];
 
-/** The care guide: search plants by name, or browse the care profiles. */
+/** The care guide: search plants by name, or browse the care profiles (indoor or outdoor). */
 export function GuidePage() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
@@ -35,6 +39,10 @@ export function GuidePage() {
   const results = useSpeciesSearch(query);
   const profiles = useCareProfiles();
   const searching = query.trim().length >= MIN_SEARCH_LENGTH;
+  const [setting, setSetting] = useState<Filter>("all");
+  const shown = (profiles.data ?? []).filter(
+    (profile) => setting === "all" || profile.setting === setting || profile.setting === "either",
+  );
 
   return (
     <Stack gap="lg">
@@ -91,24 +99,25 @@ export function GuidePage() {
       </Stack>
 
       <Stack gap="sm">
-        <Title order={2} fz="h4">
-          {t("guide.profiles")}
-        </Title>
+        <Group justify="space-between" gap="sm">
+          <Title order={2} fz="h4">
+            {t("guide.profiles")}
+          </Title>
+          <SegmentedControl
+            aria-label={t("guide.showProfiles")}
+            value={setting}
+            onChange={(value) => {
+              setSetting(value);
+            }}
+            data={FILTERS.map((value) => ({ value, label: t(`guide.filters.${value}`) }))}
+          />
+        </Group>
         <ErrorAlert error={profiles.error} />
-        {SETTINGS.map((setting) => {
-          const group = (profiles.data ?? []).filter((profile) => profile.setting === setting);
-          if (group.length === 0) return null;
-          return (
-            <Stack key={setting} gap="xs">
-              <Text size="sm" fw={600} c="dimmed">
-                {t(`guide.settings.${setting}`)}
-              </Text>
-              {group.map((profile) => (
-                <ProfileLink key={profile.key} profile={profile} />
-              ))}
-            </Stack>
-          );
-        })}
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs">
+          {shown.map((profile) => (
+            <ProfileLink key={profile.key} profile={profile} />
+          ))}
+        </SimpleGrid>
       </Stack>
     </Stack>
   );
@@ -121,22 +130,25 @@ function ProfileLink({ profile }: { profile: CareProfileSummary }) {
       component={Link}
       to={`/guide/profiles/${profile.key}`}
       withBorder
-      radius="md"
-      p="sm"
+      radius="lg"
+      px="md"
+      py="sm"
       c="var(--mantine-color-text)"
       td="none"
     >
-      <Group justify="space-between" wrap="nowrap" align="flex-start">
-        <Stack gap={2} style={{ minWidth: 0 }}>
-          <Text fw={600}>{profile.name}</Text>
-          <Text size="sm" c="dimmed">
-            {profile.description}
+      <Stack gap={2}>
+        <Group justify="space-between" wrap="nowrap" align="baseline" gap="xs">
+          <Text fw={600} truncate>
+            {profile.name}
           </Text>
-        </Stack>
-        <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
-          {t("guide.genusCount", { count: profile.genus_count })}
+          <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+            {t("guide.genusCount", { count: profile.genus_count })}
+          </Text>
+        </Group>
+        <Text size="sm" c="dimmed" lineClamp={2} lh={1.4}>
+          {profile.description}
         </Text>
-      </Group>
+      </Stack>
     </Paper>
   );
 }

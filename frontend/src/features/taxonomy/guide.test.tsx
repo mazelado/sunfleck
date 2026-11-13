@@ -95,13 +95,23 @@ function withReferenceData() {
 }
 
 describe("care guide", () => {
+  it("shows indoor or outdoor care profiles at a tap", async () => {
+    signInAs(gardener);
+    withReferenceData();
+    const { user } = renderApp("/guide");
+
+    expect(await screen.findByRole("link", { name: /^Tropical aroid/ })).toBeVisible();
+    await user.click(screen.getByRole("radio", { name: "Outdoor" }));
+
+    expect(screen.queryByRole("link", { name: /^Tropical aroid/ })).not.toBeInTheDocument();
+  });
+
   it("finds plants by older names and lists care profiles by setting", async () => {
     signInAs(gardener);
     withReferenceData();
     const { user } = renderApp("/guide");
 
     expect(await screen.findByRole("link", { name: /^Tropical aroid/ })).toBeVisible();
-    expect(screen.getByText("Outdoor")).toBeVisible();
     await user.type(screen.getByRole("searchbox", { name: "Search plants" }), "sansevieria");
 
     const result = await screen.findByRole("link", { name: /Snake plant/ });
