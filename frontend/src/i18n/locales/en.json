@@ -117,7 +117,8 @@
     "stepAction": {
       "place": "Add a home or garden",
       "location": "Add a room or spot",
-      "plant": "Add a plant"
+      "plant": "Add a plant",
+      "start": "Set it up step by step"
     }
   },
   "profile": {
@@ -1409,5 +1410,36 @@
     "profileAbout": "Your name, picture, language and units.",
     "pluginsAbout": "Extras an Admin can turn on: the weather, plant identification and AI.",
     "dataAbout": "Download your household's plants and history, or bring them into another Sunfleck."
+  },
+  "welcome": {
+    "stepOf": "Step {{step}} of {{of}}",
+    "homeName": "Home",
+    "whereNeeded": "Choose where it is: on the map, from your device's location, or by its coordinates.",
+    "finished": "{{name}} is added, with its care routine.",
+    "place": {
+      "question": "Where do your plants live?",
+      "why": "Its position gives Sunfleck the seasons, the daylight and the weather there. It isn't shared.",
+      "nameHelp": "Your home, a garden or an allotment. You can add more later.",
+      "next": "Next: the room"
+    },
+    "room": {
+      "question": "Which room or spot is the plant in?",
+      "why": "A room, shelf, bed or balcony at {{place}}. Its light shapes how often the plant needs water.",
+      "kind": "Indoor or outdoor",
+      "window": "Is there a window?",
+      "windowYes": "Yes",
+      "windowNo": "No window",
+      "directionNeeded": "Choose which way the window faces.",
+      "next": "Next: the plant"
+    },
+    "plant": {
+      "question": "Which plant is it?",
+      "why": "With its species, Sunfleck knows what care it needs.",
+      "next": "Next: its last watering"
+    },
+    "water": {
+      "question": "When was {{name}} last watered?",
+      "next": "Finish"
+    }
   }
 }

@@ -18,8 +18,13 @@ the weather, and they get better as you tell it how the soil was.
 
 ## Getting started
 
-Until your household has a plant, **Today** shows these steps, ticks off each one that's done,
-and has a button for the next.
+Until your household has a plant, **Today** shows these steps and ticks off each one that's
+done. Its button opens a step-by-step setup, one question per screen ("Step 2 of 4"): where
+your plants live, which room or spot the plant is in (and, indoors, whether a window lights it
+and which way it faces), which plant it is, and when it was last watered. **Finish** adds the
+plant with its suggested routine and opens its page. Each step is saved as you go, so you can
+leave and come back where you left off. The steps below can also be done one by one, from
+Places and Plants.
 
 1. **Add your home or garden** (Places → Add a home or garden), with where it is on a map.
    That sets its time zone, seasons and, with the weather plugin, its weather.

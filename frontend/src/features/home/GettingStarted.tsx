@@ -9,14 +9,12 @@ import type { Site } from "../../api/places";
 interface Step {
   key: "place" | "location" | "plant";
   done: boolean;
-  /** Where to do it; only the next step has a button. */
-  to: string;
 }
 
 /**
  * The first steps in a new household, in order: a place, a location in it, and a plant there.
  * Shown on Today until the household has a plant; each step is ticked off once it's done, and
- * the next one has a button.
+ * the next one has a button into the step-by-step flow (/welcome), which starts there.
  */
 export function GettingStarted({ sites, canEdit }: { sites: Site[]; canEdit: boolean }) {
   const { t } = useTranslation();
@@ -24,17 +22,9 @@ export function GettingStarted({ sites, canEdit }: { sites: Site[]; canEdit: boo
   const firstSite = sites[0];
   const firstLocation = sites.flatMap((site) => site.locations)[0];
   const steps: Step[] = [
-    { key: "place", done: firstSite !== undefined, to: "/places/new" },
-    {
-      key: "location",
-      done: firstLocation !== undefined,
-      to: firstSite ? `/places/${String(firstSite.id)}/locations/new` : "/places",
-    },
-    {
-      key: "plant",
-      done: false,
-      to: firstLocation ? `/plants/new?location=${String(firstLocation.id)}` : "/plants/new",
-    },
+    { key: "place", done: firstSite !== undefined },
+    { key: "location", done: firstLocation !== undefined },
+    { key: "plant", done: false },
   ];
   const next = steps.find((step) => !step.done);
 
@@ -71,7 +61,8 @@ export function GettingStarted({ sites, canEdit }: { sites: Site[]; canEdit: boo
                       {t(`home.stepHelp.${step.key}`)}
                     </Text>
                     {canEdit && (
-                      <Button component={Link} to={step.to} size="sm">
+                      // The step-by-step flow, which starts at the first step not done.
+                      <Button component={Link} to="/welcome" size="sm">
                         {t(`home.stepAction.${step.key}`)}
                       </Button>
                     )}

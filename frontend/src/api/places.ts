@@ -213,3 +213,37 @@ export function useDeleteLightSource() {
     onSuccess: invalidate,
   });
 }
+
+/** Add a room or spot to a site, with a window facing `direction` when there's one. */
+export function useAddRoom(siteId: number) {
+  const invalidate = useInvalidateSites();
+  return useMutation({
+    mutationFn: async ({ room, window }: { room: LocationInput; window: Direction | null }) => {
+      const location = unwrap(
+        await api.POST("/api/v1/sites/{site_id}/locations", {
+          params: { path: { site_id: siteId } },
+          body: room,
+        }),
+      );
+      const light = window
+        ? unwrap(
+            await api.POST("/api/v1/locations/{location_id}/light-sources", {
+              params: { path: { location_id: location.id } },
+              body: {
+                kind: "window",
+                name: "",
+                direction: window,
+                ppfd: null,
+                ppfd_distance_cm: 30,
+                on_time: null,
+                off_time: null,
+                enabled: true,
+              },
+            }),
+          )
+        : null;
+      return { location, light };
+    },
+    onSuccess: invalidate,
+  });
+}

@@ -1,12 +1,16 @@
 import { screen } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { accessibilityProblems } from "../../test/axe";
 import { renderApp } from "../../test/render";
 import { ada, server, signInAs } from "../../test/server";
 
+// Leaflet can't draw maps in the test environment.
+vi.mock("../places/MapPicker", () => ({ default: () => null }));
+
 const pages: [string, string, string][] = [
+  ["First-run flow", "/welcome", "Where do your plants live?"],
   ["Today", "/", "Today"],
   ["Plants", "/plants", "Plants"],
   ["Seeds", "/plants/seeds", "Seeds"],

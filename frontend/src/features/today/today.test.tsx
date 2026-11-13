@@ -452,9 +452,10 @@ describe("today", () => {
     const steps = await screen.findByRole("region", { name: "Getting started" });
     expect(await accessibilityProblems(steps)).toEqual([]);
     expect(within(steps).getAllByRole("listitem")).toHaveLength(3);
+    // Into the step-by-step flow, which starts where the household is.
     expect(within(steps).getByRole("link", { name: "Add a home or garden" })).toHaveAttribute(
       "href",
-      "/places/new",
+      "/welcome",
     );
     // Only the next step has a button, and there's no empty list of care.
     expect(within(steps).getAllByRole("link")).toHaveLength(1);
@@ -466,17 +467,17 @@ describe("today", () => {
     const second = renderApp("/");
     expect(await screen.findByRole("link", { name: "Add a room or spot" })).toHaveAttribute(
       "href",
-      "/places/3/locations/new",
+      "/welcome",
     );
     expect(screen.getByText(/Add your home or garden/)).toHaveTextContent("(done)");
     second.unmount();
 
-    // Then a plant, in that location.
+    // Then a plant.
     sites = [{ ...home, id: 3, locations: [{ ...kitchen, id: 30 }] }];
     renderApp("/");
     expect(await screen.findByRole("link", { name: "Add a plant" })).toHaveAttribute(
       "href",
-      "/plants/new?location=30",
+      "/welcome",
     );
   });
 

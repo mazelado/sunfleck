@@ -132,3 +132,28 @@ export function useRoutine(plantId: number) {
     }),
   };
 }
+
+/** Give a new plant the routine suggested for it: the care it recommends, as suggested. */
+export async function acceptSuggestedRoutine(plantId: number): Promise<void> {
+  const suggestions = unwrap(
+    await api.GET("/api/v1/plants/{plant_id}/routine-suggestion", {
+      params: { path: { plant_id: plantId } },
+    }),
+  );
+  const items = suggestions
+    .filter((item) => item.recommended)
+    .map((item) => ({
+      care_type_id: item.care_type.id,
+      mode: item.mode,
+      fixed_interval_days: item.mode === "fixed" ? item.fixed_interval_days : null,
+      enabled: true,
+    }));
+  if (items.length > 0) {
+    unwrap(
+      await api.POST("/api/v1/plants/{plant_id}/routine", {
+        params: { path: { plant_id: plantId } },
+        body: { items },
+      }),
+    );
+  }
+}
