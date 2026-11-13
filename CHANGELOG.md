@@ -213,6 +213,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and both services billed for it, though only one answer was used. Now only the first AI
   plugin that answers is asked; the next is asked only if it fails. The same holds for plant
   identification and frost dates.
+- **A few slow requests no longer stop the app for everyone**: each of the 2 web server
+  processes now answers 4 requests at once (`WEB_THREADS`), so two questions to a slow AI
+  model, or two tests of a notification server that doesn't answer, leave room for everyone
+  else.
 - **Limits on how much work one request or member can cause**: requests over 25 MB are refused
   before they're read (they used to be read whole, without signing in, before any check), and
   so are photos over 50 megapixels, which took hundreds of MB of memory to decode. Each member
