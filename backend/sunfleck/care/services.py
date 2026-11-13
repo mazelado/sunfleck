@@ -8,7 +8,7 @@ from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
@@ -58,7 +58,15 @@ def _apply_care_type(care_type: CareType, household: Household, data: CareTypeDa
     care_type.name = name
     care_type.icon = data.icon
     care_type.counts_as_watering = data.counts_as_watering
-    care_type.save()
+    try:
+        # In a savepoint: a second request that got past the check above at the same moment
+        # gets the same error, not a crash.
+        with transaction.atomic():
+            care_type.save()
+    except IntegrityError as exc:
+        raise CareError(
+            "care_type_exists", "There's already a care type with this name.", "name"
+        ) from exc
 
 
 def create_care_type(household: Household, data: CareTypeData) -> CareType:

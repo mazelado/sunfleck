@@ -248,7 +248,9 @@ def _send_once(user: User, kind: NotificationKind, day: date) -> int:
     if membership is None:
         return 0
     try:
-        # Claim the day first, so two workers can't both send it.
+        # Claim the day first, so two workers can't both send it. If the worker is killed
+        # between claiming and sending, that day's message is lost rather than retried: on
+        # purpose, since a message lost to a crash is better than one sent twice.
         with transaction.atomic():
             log, created = NotificationLog.objects.get_or_create(
                 user=user,

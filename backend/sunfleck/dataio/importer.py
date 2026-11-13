@@ -505,15 +505,21 @@ def import_into(household: Household, file: IO[bytes]) -> Summary:
     Raises:
         DataImportError: If the household isn't empty, or the file isn't a valid export.
     """
-    if not is_empty(household):
-        raise DataImportError(
-            "household_not_empty",
-            "Exports can only be imported into a household without places or plants yet.",
-        )
+    not_empty = DataImportError(
+        "household_not_empty",
+        "Exports can only be imported into a household without places or plants yet.",
+    )
+    if not is_empty(household):  # before reading the file, to say so at once
+        raise not_empty
     archive, data = read(file)
     importer = _Importer(household, archive)
     try:
         with transaction.atomic():
+            # Again, with the household locked: of two imports started together, the second
+            # waits here for the first, and then finds the household no longer empty.
+            Household.objects.select_for_update().filter(pk=household.pk).first()
+            if not is_empty(household):
+                raise not_empty
             return importer.run(data)
     except IntegrityError as exc:
         importer.delete_saved_files()

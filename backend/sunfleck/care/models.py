@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 
 from sunfleck.accounts.models import Household
@@ -47,6 +48,14 @@ class CareType(models.Model):
                 condition=Q(household__isnull=True) | Q(key=""),
                 name="care_type_custom_has_no_key",
             ),
+            # A household's own types have different names, whatever the case. The service
+            # checks first, with a clear error; this holds when two requests arrive at once.
+            models.UniqueConstraint(
+                "household",
+                Lower("name"),
+                condition=Q(household__isnull=False),
+                name="care_type_name_unique_per_household",
+            ),
         ]
 
     def __str__(self) -> str:
@@ -69,7 +78,9 @@ class CareEvent(models.Model):
     """Care given to a plant (or skipped on purpose, e.g. the soil was still wet)."""
 
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name="care_events")
-    care_type = models.ForeignKey(CareType, on_delete=models.PROTECT, related_name="events")
+    # RESTRICT: a care type can't be deleted while care of that type is logged, but a household
+    # (or plant) can be deleted with its care types and their events together.
+    care_type = models.ForeignKey(CareType, on_delete=models.RESTRICT, related_name="events")
     performed_at = models.DateTimeField(_("done at"))
     performed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

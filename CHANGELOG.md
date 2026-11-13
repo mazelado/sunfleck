@@ -176,6 +176,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   site whose day has begun, so Today finds them done. When it hasn't (the worker is down),
   Today now reads what the plants share once instead of for each plant: 61 queries for those
   25 plants instead of 332, nearly all of them saving the new due dates.
+- **A household that used a care type of its own couldn't be deleted** in the admin site. It
+  now can; a care type that's in use still can't be deleted on its own.
+- **Two care types with the same name** can no longer be made by two people at the same
+  moment. Upgrading numbers any that already exist ("Bottom water (2)").
+- **Two imports started at the same moment** can no longer both fill a household.
+- **Exporting is quicker for large households**: a handful of database queries in all, rather
+  than five for each plant, and photos are copied into the file without being held in memory
+  whole.
 - **The Claude plugin works with models released after it**: it used to ask only the models on
   its own list to think briefly and to retry declined questions on Anthropic's fallback
   model, so a newer model (such as Claude Fable 5.2) was slower, dearer and less reliable.
