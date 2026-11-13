@@ -206,6 +206,19 @@ MAILERS = {
 }
 DEFAULT_FROM_EMAIL = env_str("EMAIL_FROM", "Sunfleck <sunfleck@localhost>")
 
+# --- Notifications ----------------------------------------------------------------------------
+# Web Push only sends to the push services browsers use (see sunfleck.notifications.push), so
+# a member can't point a "device" at another server. More can be added, comma-separated, for
+# a browser whose service isn't known yet; a host also allows its subdomains.
+
+PUSH_SERVICE_HOSTS = [
+    "fcm.googleapis.com",  # Chrome, Edge, Samsung Internet, Opera and other Chromium browsers
+    "updates.push.services.mozilla.com",  # Firefox
+    "push.apple.com",  # Safari (web.push.apple.com)
+    "notify.windows.com",  # Windows (wns2-….notify.windows.com)
+    *(host.lower() for host in env_list("SUNFLECK_PUSH_HOSTS")),
+]
+
 # --- Internationalization ---------------------------------------------------------------------
 
 LANGUAGE_CODE = "en"
