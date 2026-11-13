@@ -390,7 +390,9 @@ def remove_member(request: HttpRequest, member_id: int) -> Status[None]:
     household = require_role(request, Role.ADMIN).household
     membership = _get_member(household, member_id)
     try:
-        services.remove_member(membership)
+        services.remove_member(membership, acting_user=_user(request))
+    except services.ProtectedAccountError as exc:
+        raise _accounts_error(exc, 403) from exc
     except services.LastAdminError as exc:
         raise _accounts_error(exc) from exc
     return Status(204, None)
@@ -401,7 +403,11 @@ def create_password_reset_link(request: HttpRequest, member_id: int) -> LinkOut:
     """Create a link that lets a member choose a new password, for when email isn't set up."""
     household = require_role(request, Role.ADMIN).household
     membership = _get_member(household, member_id)
-    return LinkOut(url=services.password_reset_url(request, membership.user))
+    try:
+        url = services.password_reset_url(request, membership.user, acting_user=_user(request))
+    except services.ProtectedAccountError as exc:
+        raise _accounts_error(exc, 403) from exc
+    return LinkOut(url=url)
 
 
 # --- Invitations ------------------------------------------------------------------------------

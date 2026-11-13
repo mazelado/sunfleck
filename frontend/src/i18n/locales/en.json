@@ -183,6 +183,7 @@
     "invitation_invalid": "This invitation link is invalid, already used, or expired.",
     "last_admin": "A household needs at least one Admin.",
     "permission_denied": "Your role doesn't allow this.",
+    "protected_account": "This account manages the whole Sunfleck server. Only its owner can reset its password or remove it.",
     "csrf_failed": "Your session expired. Reload the page and try again.",
     "email_password_mismatch": "The email address or password is incorrect.",
     "invalid_password_reset": "This password reset link is invalid or has already been used.",

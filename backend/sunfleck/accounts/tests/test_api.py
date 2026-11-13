@@ -379,6 +379,50 @@ def test_admin_can_remove_a_member(
 
 
 @pytest.mark.django_db
+def test_an_admin_cannot_reset_or_remove_the_instance_superuser(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    owner = member_of(Role.ADMIN)
+    owner.user.is_staff = owner.user.is_superuser = True
+    owner.user.save()
+    co_admin = member_of(Role.ADMIN)
+    client = Client()
+    client.force_login(co_admin.user)
+
+    reset = post(client, f"/api/v1/household/members/{owner.pk}/password-reset-link")
+    removal = client.delete(f"/api/v1/household/members/{owner.pk}")
+
+    for response in (reset, removal):
+        assert response.status_code == 403
+        assert response.json()["error"]["code"] == "protected_account"
+    owner.user.refresh_from_db()
+    assert owner.user.check_password(DEFAULT_PASSWORD)
+    assert client.get("/admin/").status_code != 200
+
+
+@pytest.mark.django_db
+def test_admins_still_make_reset_links_for_other_admins_and_for_themselves(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    owner = member_of(Role.ADMIN)
+    owner.user.is_staff = owner.user.is_superuser = True
+    owner.user.save()
+    co_admin = member_of(Role.ADMIN)
+    owners_client = Client()
+    owners_client.force_login(owner.user)
+    co_admins_client = Client()
+    co_admins_client.force_login(co_admin.user)
+
+    for client, target in (
+        (owners_client, owner),
+        (owners_client, co_admin),
+        (co_admins_client, co_admin),
+    ):
+        url = f"/api/v1/household/members/{target.pk}/password-reset-link"
+        assert post(client, url).status_code == 200
+
+
+@pytest.mark.django_db
 def test_admins_cannot_touch_other_households(client_as: ClientAs) -> None:
     client = client_as(Role.ADMIN)
     stranger = MembershipFactory.create(household=HouseholdFactory.create(name="Elsewhere"))

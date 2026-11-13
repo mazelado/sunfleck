@@ -259,6 +259,10 @@ Everyone in a household shares its places and plants. Admins invite people from
 | **Gardener** | Also add and change places, plants, schedules and care |
 | **Admin** | Also invite people, change roles, and manage plugins and exports |
 
+Admins can also make a password-reset link for someone who forgot their password, and remove
+people. Neither works for the account that set Sunfleck up, which can also manage the server
+itself: only its owner can reset its password or remove it.
+
 Under **Profile**, everyone sets their name, a profile picture (only their household sees it),
 language, units (metric, or imperial: inches and °F), and password. After choosing a picture,
 move and zoom it to frame it in the circle, then save.

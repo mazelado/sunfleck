@@ -216,7 +216,7 @@ def test_the_last_admin_cannot_be_demoted_or_removed(admin: Membership) -> None:
     with pytest.raises(services.LastAdminError):
         services.change_role(admin, Role.VIEWER)
     with pytest.raises(services.LastAdminError):
-        services.remove_member(admin)
+        services.remove_member(admin, acting_user=admin.user)
 
 
 @pytest.mark.django_db
@@ -225,7 +225,7 @@ def test_removing_a_member_deletes_their_account(
 ) -> None:
     gardener = member_of(Role.GARDENER)
 
-    services.remove_member(gardener)
+    services.remove_member(gardener, acting_user=admin.user)
 
     assert not User.objects.filter(pk=gardener.user.pk).exists()
     assert Household.objects.filter(pk=admin.household.pk).exists()
@@ -235,7 +235,25 @@ def test_removing_a_member_deletes_their_account(
 def test_password_reset_url_points_to_the_frontend(admin: Membership) -> None:
     request = RequestFactory().get("/")
 
-    url = services.password_reset_url(request, admin.user)
+    url = services.password_reset_url(request, admin.user, acting_user=admin.user)
 
     assert url.startswith("http://testserver/reset-password/")
     assert admin.user.check_password(DEFAULT_PASSWORD)
+
+
+@pytest.mark.django_db
+def test_only_its_owner_can_reset_or_remove_an_account_that_can_use_the_admin_site(
+    admin: Membership, member_of: Callable[[Role], Membership]
+) -> None:
+    admin.user.is_staff = admin.user.is_superuser = True
+    admin.user.save()
+    other_admin = member_of(Role.ADMIN)
+    request = RequestFactory().get("/")
+
+    with pytest.raises(services.ProtectedAccountError):
+        services.password_reset_url(request, admin.user, acting_user=other_admin.user)
+    with pytest.raises(services.ProtectedAccountError):
+        services.remove_member(admin, acting_user=other_admin.user)
+
+    assert services.password_reset_url(request, admin.user, acting_user=admin.user)
+    assert User.objects.filter(pk=admin.user.pk).exists()
