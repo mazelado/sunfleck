@@ -264,7 +264,9 @@ Project conventions (on top of PEP 8):
     the page between cards is sentence case, `fz="h4"`, weight 700, in the text colour.
   - Every page inside the app starts with `PageHeader` (`components/PageHeader.tsx`): a way
     back (`back`), the `h1`, one main `action`, and rarer actions as `Menu.Item`s in its "⋯"
-    `menu`. Don't build page headers by hand.
+    `menu`. Don't build page headers by hand. On phones, a page with `back` shows its back
+    arrow, title and menu in the top bar instead (`components/pageBar.ts`): give every
+    page inside another one a `back`, to the page it belongs to (not the browser's history).
   - Touch targets are 44×44px on touch screens, set once in `global.css`
     (`@media (pointer: coarse)`); don't resize buttons at call sites for it.
   - Urgency has one colour rule (`features/care/urgency.ts`): overdue is red, due today

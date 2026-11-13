@@ -70,16 +70,43 @@ describe("navigation", () => {
   });
 
   it.each(["/settings/profile", "/settings/notifications", "/settings/care-types"])(
-    "gives %s a way back to Settings",
+    "gives %s a way back to Settings, in the top bar on phones",
     async (path) => {
       signInAs(ada);
       renderApp(path);
 
-      const main = within(await screen.findByRole("main"));
-      expect(await main.findByRole("link", { name: "Settings" })).toHaveAttribute(
+      const header = within(await screen.findByRole("banner"));
+      expect(await header.findByRole("link", { name: "Back to Settings" })).toHaveAttribute(
         "href",
         "/settings",
       );
+      // The bar is the page's: no gear or account menu there, and no second way back below.
+      expect(header.queryByRole("link", { name: "Settings" })).not.toBeInTheDocument();
+      expect(header.queryByRole("button", { name: /^Account menu/ })).not.toBeInTheDocument();
+      expect(within(screen.getByRole("main")).queryByRole("link", { name: "Settings" })).toBeNull();
     },
   );
+
+  it("keeps the logo, gear and account menu on the main pages", async () => {
+    signInAs(ada);
+    renderApp("/plants");
+
+    const header = within(await screen.findByRole("banner"));
+    expect(await header.findByRole("link", { name: "Sunfleck" })).toBeVisible();
+    expect(header.getByRole("link", { name: "Settings" })).toBeVisible();
+    expect(header.queryByRole("link", { name: /^Back to/ })).not.toBeInTheDocument();
+  });
+
+  it("keeps the way back in the page on wide screens", async () => {
+    wideScreen();
+    signInAs(ada);
+    renderApp("/settings/profile");
+
+    const main = within(await screen.findByRole("main"));
+    expect(await main.findByRole("link", { name: "Settings" })).toHaveAttribute(
+      "href",
+      "/settings",
+    );
+    expect(screen.queryByRole("link", { name: "Back to Settings" })).not.toBeInTheDocument();
+  });
 });

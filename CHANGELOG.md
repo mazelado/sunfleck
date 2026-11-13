@@ -50,6 +50,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   Print a label and Write to an NFC tag moved to the **⋯** menu at the top, so the
   Propagation and Label cards are gone. On wide screens the page has two columns, and the
   photo is shown at 4:3 instead of cropped to a strip.
+- **A way back that stays in reach on phones** (UI plan, part 5): on a page inside another
+  (a plant, a room, a setting), the top bar shows a back arrow to that page and the page's
+  "⋯" menu, and the page's name once you've scrolled past it, as in a native app. The back
+  arrow goes to the page it belongs to, also when a plant was opened from a QR label.
+  Today, Plants, Places, the Care guide and Settings keep the logo bar.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The
