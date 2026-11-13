@@ -1,14 +1,9 @@
 import {
-  Badge,
-  Box,
   Button,
-  Card,
-  Checkbox,
   Center,
   Group,
   Loader,
   Menu,
-  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -21,18 +16,16 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 
 import { useSites } from "../../api/places";
-import { PLANT_STATUSES, type PlantStatus, type PlantSummary, usePlants } from "../../api/plants";
-import { PageHeader } from "../../components/PageHeader";
-import { ErrorAlert } from "../../components/ErrorAlert";
-import { relativeDay } from "../../lib/relativeTime";
-import { useCanEdit } from "../../lib/useCanEdit";
+import { usePlants } from "../../api/plants";
 import { EmptyState } from "../../components/EmptyState";
-import { CareGlance } from "./CareGlance";
-import { PlantImage } from "./PlantImage";
-import { PlantStatusBadge } from "./PlantStatusBadge";
-import { locationOptions } from "./locationOptions";
+import { ErrorAlert } from "../../components/ErrorAlert";
+import { PageHeader } from "../../components/PageHeader";
+import { useCanEdit } from "../../lib/useCanEdit";
+import { ActiveFilters } from "./ActiveFilters";
+import { PlantCard } from "./PlantCard";
+import { type PlantFilterValues, PlantFilters } from "./PlantFilters";
 
-/** All plants, as a grid of photo cards, with search and filters. */
+/** All plants, as a grid of photo cards, with search and (folded away) filters. */
 export function PlantsPage() {
   const { t } = useTranslation();
   const canEdit = useCanEdit();
@@ -40,23 +33,37 @@ export function PlantsPage() {
   const [search, setSearch] = useState("");
   const [q] = useDebouncedValue(search.trim(), 250);
   const [locationId, setLocationId] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<PlantFilterValues["status"]>(null);
   // In the address, so Today can link to the plants that need a routine.
   const [searchParams, setSearchParams] = useSearchParams();
   const needsRoutine = searchParams.get("needs_routine") === "true";
-  const filters = {
+  const values: PlantFilterValues = { locationId, status, needsRoutine };
+  const changeFilters = (changed: Partial<PlantFilterValues>) => {
+    if ("locationId" in changed) setLocationId(changed.locationId ?? null);
+    if ("status" in changed) setStatus(changed.status ?? null);
+    if ("needsRoutine" in changed) {
+      setSearchParams(
+        (params) => {
+          if (changed.needsRoutine) params.set("needs_routine", "true");
+          else params.delete("needs_routine");
+          return params;
+        },
+        { replace: true },
+      );
+    }
+  };
+  const plants = usePlants({
     q,
     locationId: locationId ? Number(locationId) : null,
-    status: status as PlantStatus | null,
+    status,
     needsRoutine,
-  };
-  const plants = usePlants(filters);
+  });
   const items = plants.data?.pages.flatMap((page) => page.items) ?? [];
   const count = plants.data?.pages[0]?.count ?? 0;
-  const filtered = Boolean(filters.q || filters.locationId || filters.status || needsRoutine);
+  const filtered = Boolean(q || locationId || status || needsRoutine);
 
   return (
-    <Stack gap="lg">
+    <Stack gap="md">
       <PageHeader
         title={t("plants.title")}
         action={
@@ -82,54 +89,21 @@ export function PlantsPage() {
       />
 
       <Stack gap="xs">
-        <TextInput
-          aria-label={t("plants.search")}
-          placeholder={t("plants.searchPlaceholder")}
-          leftSection={<IconSearch size={16} />}
-          type="search"
-          value={search}
-          onChange={(event) => {
-            setSearch(event.currentTarget.value);
-          }}
-        />
-        <Group grow gap="xs">
-          {sites.length > 0 && (
-            <Select
-              aria-label={t("plants.filterLocation")}
-              placeholder={t("plants.allLocations")}
-              clearable
-              data={locationOptions(sites)}
-              value={locationId}
-              onChange={setLocationId}
-            />
-          )}
-          <Select
-            aria-label={t("plants.filterStatus")}
-            placeholder={t("plants.allStatuses")}
-            clearable
-            data={PLANT_STATUSES.map((value) => ({
-              value,
-              label: t(`plants.statuses.${value}`),
-            }))}
-            value={status}
-            onChange={setStatus}
+        <Group gap="xs" wrap="nowrap">
+          <TextInput
+            aria-label={t("plants.search")}
+            placeholder={t("plants.searchPlaceholder")}
+            leftSection={<IconSearch size={16} />}
+            type="search"
+            value={search}
+            style={{ flexGrow: 1 }}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+            }}
           />
+          <PlantFilters sites={sites} values={values} onChange={changeFilters} />
         </Group>
-        <Checkbox
-          label={t("plants.onlyNeedsRoutine")}
-          checked={needsRoutine}
-          onChange={(event) => {
-            const checked = event.currentTarget.checked;
-            setSearchParams(
-              (params) => {
-                if (checked) params.set("needs_routine", "true");
-                else params.delete("needs_routine");
-                return params;
-              },
-              { replace: true },
-            );
-          }}
-        />
+        <ActiveFilters sites={sites} values={values} onChange={changeFilters} />
       </Stack>
 
       <ErrorAlert error={plants.error} />
@@ -153,14 +127,14 @@ export function PlantsPage() {
         </EmptyState>
       ) : (
         <>
-          <Text size="sm" c="dimmed">
-            {t("plants.count", { count })}
-          </Text>
           <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="sm">
             {items.map((plant) => (
               <PlantCard key={plant.id} plant={plant} />
             ))}
           </SimpleGrid>
+          <Text size="sm" c="dimmed" ta="center">
+            {t("plants.count", { count })}
+          </Text>
           {plants.hasNextPage && (
             <Center>
               <Button
@@ -175,38 +149,5 @@ export function PlantsPage() {
         </>
       )}
     </Stack>
-  );
-}
-
-function PlantCard({ plant }: { plant: PlantSummary }) {
-  const { t, i18n } = useTranslation();
-  return (
-    <Card component={Link} to={`/plants/${String(plant.id)}`} withBorder radius="lg" padding={0}>
-      <PlantImage src={plant.cover_thumbnail_url} alt="" height={140} />
-      <Stack gap={2} p="sm">
-        <Group gap={6} wrap="nowrap" justify="space-between">
-          <Text fw={600} truncate>
-            {plant.nickname}
-          </Text>
-          <PlantStatusBadge status={plant.status} />
-        </Group>
-        <Text size="xs" c="dimmed" truncate>
-          {plant.location ? plant.location.name : t("plants.noLocation")}
-        </Text>
-        {plant.needs_routine && (
-          <Badge variant="light" color="yellow" size="sm" tt="none" w="fit-content">
-            {t("plants.needsRoutine")}
-          </Badge>
-        )}
-        <Text size="xs" c="dimmed" truncate>
-          {plant.last_watered_at
-            ? t("care.lastWatered", { when: relativeDay(plant.last_watered_at, i18n.language) })
-            : t("care.neverWatered")}
-        </Text>
-        <Box mt={4}>
-          <CareGlance glance={plant.glance} compact />
-        </Box>
-      </Stack>
-    </Card>
   );
 }

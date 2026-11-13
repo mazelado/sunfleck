@@ -111,19 +111,24 @@ and export. Your profile and signing out are in the account menu, beside it.
   each one's status to Active. Each shows the plant it was grown from, and the parent lists
   them.
 - **Labels**: each plant's page shows its QR code. Scanning it with a phone opens that page
-  (after signing in). **Print a label** there, or **Print QR labels** under the plant list (or
+  (after signing in). **Print a label** there, or **Print QR labels** in the Plants page's **⋯** menu (or
   on a room's page, for the plants there), prints a sheet of them in three sizes, with
   or without the species. On Chrome for Android, **Write to an NFC tag** puts the plant's
   address on a tag, so tapping it opens the page. Labels link to `SUNFLECK_PUBLIC_URL` if
   it's set, else to the address you're using: print them from an address your phone can
   reach.
+- **Finding a plant**: the Plants page shows every plant as a card that says in words what it
+  needs next ("Water today", "Fertilize in 5 days"), in red when it's overdue and orange when
+  it's due today, and "Low light" when its spot is too dark for it. Search by name above the
+  cards. **Filter** narrows them down by room, status, or plants without a care routine;
+  the filters in use show as chips under the search field, and tapping a chip removes it.
 - **Moving plants**: on a room's page, **Move plants here** moves plants from elsewhere
   (those without a room are listed first). Then choose, on each plant's page, which of
   the new room's windows and grow lights reach it; its schedules adjust.
 
 ## Wishlist
 
-- **Wishlist** (from the Plants page) lists plants you'd like to have: a name, the species if
+- **Wishlist** (in the Plants page's **⋯** menu) lists plants you'd like to have: a name, the species if
   you know it, where to get it (a link) and notes. On a species' page in the Care guide,
   **Add to the wishlist** adds it in one tap.
 - **Got it** opens the new plant's form with its name and species filled in; when you save
@@ -131,7 +136,7 @@ and export. Your profile and signing out are in the account menu, beside it.
 
 ## Seeds
 
-**Seeds** (from the Plants page) lists the seeds you have: their species, variety, how many,
+**Seeds** (in the Plants page's **⋯** menu) lists the seeds you have: their species, variety, how many,
 and the year to sow them by. Seeds past that year are marked, since they may not come up.
 
 The **sowing calendar** on the same page turns them into dates: when to sow (indoors or
@@ -151,9 +156,10 @@ lists the latest harvests. Exports include them.
 
 ## Care, and when it's due
 
-- **At a glance**: each plant's card and page show slim bars for water, fertilizer and
-  light. Water and fertilizer run down until the care is due, and turn red when it's due;
-  light is full when the spot gets what the plant likes at this time of year.
+- **At a glance**: each plant's card says what it needs next, in words. A plant's page shows
+  rings for water, fertilizer and light. Water and fertilizer run down until the care is
+  due, and turn orange when it's due today and red when it's overdue; light is full when the
+  spot gets what the plant likes at this time of year.
 - **Logging care**: tap **Water**, **Fertilize** or **More care** on a plant's page, or the
   check mark on Today. To add notes or log care you did earlier, use **Log with details**.
   The **timeline** on the plant's page shows everything, with its photos.

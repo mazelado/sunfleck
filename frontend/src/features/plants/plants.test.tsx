@@ -171,7 +171,7 @@ function withPlant(data: Plant, photos: Photo[] = []) {
 }
 
 describe("plant list", () => {
-  it("shows care bars on each card, described for screen readers", async () => {
+  it("says on each card, in words, what the plant needs next", async () => {
     signInAs(viewer);
     server.use(
       http.get("*/api/v1/plants", () =>
@@ -193,8 +193,36 @@ describe("plant list", () => {
     renderApp("/plants");
 
     const card = await screen.findByRole("link", { name: /Monty/ });
-    expect(card).toHaveAccessibleName(/Water tomorrow/);
-    expect(card).toHaveAccessibleName(/Light: what this plant likes/);
+    expect(within(card).getByText("Water tomorrow")).toBeVisible();
+    // The light is only mentioned when it's too low.
+    expect(within(card).queryByText("Low light")).not.toBeInTheDocument();
+  });
+
+  it("names the sooner care, and mentions low light", async () => {
+    signInAs(viewer);
+    server.use(
+      http.get("*/api/v1/plants", () =>
+        HttpResponse.json({
+          items: [
+            summary({
+              glance: {
+                water: { level: 0.5, due_in_days: 4, resting_until: null },
+                fertilizer: { level: 0, due_in_days: -2, resting_until: null },
+                light: { dli: 3, ideal: 10 },
+              },
+            }),
+          ],
+          count: 1,
+        }),
+      ),
+    );
+
+    renderApp("/plants");
+
+    const card = await screen.findByRole("link", { name: /Monty/ });
+    expect(within(card).getByText("Fertilizing overdue by 2 days")).toBeVisible();
+    expect(within(card).queryByText(/Water in/)).not.toBeInTheDocument();
+    expect(within(card).getByText("Low light")).toBeVisible();
   });
 
   it("invites gardeners to add their first plant", async () => {
@@ -258,13 +286,41 @@ describe("plant list", () => {
     const monty = await screen.findByRole("link", { name: /^Monty/ });
     expect(within(monty).getByText("No routine yet")).toBeVisible();
     expect(screen.queryByRole("link", { name: /^Basil/ })).not.toBeInTheDocument();
-    const onlyThose = screen.getByRole("checkbox", { name: "Only plants without a care routine" });
-    expect(onlyThose).toBeChecked();
-
-    await user.click(onlyThose);
+    // Shown as a chip under the search field, which removes the filter.
+    const chips = screen.getByRole("group", { name: "Filters in use" });
+    await user.click(
+      within(chips).getByRole("button", { name: "Remove filter: Without a care routine" }),
+    );
 
     expect(await screen.findByRole("link", { name: /^Basil/ })).toBeVisible();
     expect(router.state.location.search).toBe("");
+    expect(screen.queryByRole("group", { name: "Filters in use" })).not.toBeInTheDocument();
+  });
+
+  it("keeps the filters behind one button, and filters by room", async () => {
+    signInAs(viewer);
+    withSites([home]);
+    const rooms: (string | null)[] = [];
+    server.use(
+      http.get("*/api/v1/plants", ({ request }) => {
+        rooms.push(new URL(request.url).searchParams.get("location_id"));
+        return HttpResponse.json({ items: [summary()], count: 1 });
+      }),
+    );
+    const { user } = renderApp("/plants");
+    await screen.findByRole("link", { name: /^Monty/ });
+    expect(screen.queryByRole("combobox", { name: "Room or spot" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Filter" }));
+    await user.click(await screen.findByRole("combobox", { name: "Room or spot" }));
+    await user.click(await screen.findByRole("option", { name: "Living room" }));
+    await user.click(screen.getByRole("button", { name: "Show plants" }));
+
+    const chips = await screen.findByRole("group", { name: "Filters in use" });
+    expect(within(chips).getByText("Living room")).toBeVisible();
+    await waitFor(() => {
+      expect(rooms).toContain("10");
+    });
   });
 });
 

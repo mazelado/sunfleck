@@ -676,7 +676,13 @@
       "neverOrUnknown": "Never or don't know"
     },
     "moreDetails": "More details: pot material, soil, notes",
-    "openCover": "Open the photo of {{name}}"
+    "openCover": "Open the photo of {{name}}",
+    "filter": "Filter",
+    "filterTitle": "Filter plants",
+    "showPlants": "Show plants",
+    "withoutRoutine": "Without a care routine",
+    "activeFilters": "Filters in use",
+    "removeFilter": "Remove filter: {{name}}"
   },
   "care": {
     "addCareType": "Add a care type",
@@ -1227,7 +1233,8 @@
       "aBitLow": "Light: a bit low for this plant",
       "good": "Light: what this plant likes",
       "bright": "Light: brighter than this plant likes"
-    }
+    },
+    "lowLight": "Low light"
   },
   "light": {
     "title": "Light check",
