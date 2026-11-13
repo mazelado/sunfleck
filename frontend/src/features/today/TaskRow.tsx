@@ -85,7 +85,7 @@ export function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
             <Anchor component={Link} to={`/plants/${String(task.plant.id)}`} fw={500} c="inherit">
               {task.plant.nickname}
             </Anchor>
-            <Group gap={6} rowGap={0} wrap="wrap">
+            <Group gap={6} wrap="wrap" style={{ rowGap: 0 }}>
               <CareIcon icon={task.care_type.icon} size={14} />
               <Text span size="sm">
                 {care}
