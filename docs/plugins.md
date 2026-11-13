@@ -125,7 +125,10 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | `complete_json(task, settings)` | When Sunfleck needs an AI answer, only when someone asks for one (e.g. a care profile suggestion, a diagnosis from a photo, or a question about a plant, with the conversation so far in the task's `prompt`); the first enabled plugin answers | An `AiAnswer`: `data` (a JSON object matching the `AiTask`'s `schema`, which Sunfleck checks again) and an `attribution`, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`, or `unsupported` for a task with `images` the model can't look at). A task's `images` are `AiImage`s: JPEGs at most 1568 px on their long edge, without metadata |
 
 - Hooks are only called for households that turned the plugin on, with that household's
-  `settings` (None if the plugin has no settings). `register_api` and `register_periodic_jobs`
+  `settings` (None if the plugin has no settings). For `complete_json`, `identify_plant` and
+  `frost_dates`, where one answer is used, the plugins are asked in turn and the others aren't
+  called once one answers: a question or photo goes to one outside service. A plugin that
+  raises, or answers nothing, passes the question on to the next. `register_api` and `register_periodic_jobs`
   run once for everyone.
 - **Endpoints need a signed-in member** by default, like Sunfleck's own: anyone else gets 401,
   and changes (`POST`, `PUT`, `PATCH`, `DELETE`) also need the CSRF token, which the app

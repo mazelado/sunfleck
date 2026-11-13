@@ -209,6 +209,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   own. Port 8000 is no longer open to the network by default, so nobody can bypass the proxy
   and claim another address, and the Nginx example now sets `X-Forwarded-For`, without which
   the proxy passed on whatever address a visitor claimed.
+- **With two AI plugins on, each question went to both**, with the plant's history and photos,
+  and both services billed for it, though only one answer was used. Now only the first AI
+  plugin that answers is asked; the next is asked only if it fails. The same holds for plant
+  identification and frost dates.
 - **A stored API key is only sent to the server it was saved for**: in the OpenAI-compatible
   plugin, changing the server address asks for the key again, also for **Test**. Before, an
   Admin could have another Admin's key sent to an address of their choice. Plugins can bind
