@@ -209,6 +209,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   own. Port 8000 is no longer open to the network by default, so nobody can bypass the proxy
   and claim another address, and the Nginx example now sets `X-Forwarded-For`, without which
   the proxy passed on whatever address a visitor claimed.
+- **With two AI plugins on, each question went to both**, with the plant's history and photos,
+  and both services billed for it, though only one answer was used. Now only the first AI
+  plugin that answers is asked; the next is asked only if it fails. The same holds for plant
+  identification and frost dates.
 - **Photos in an imported export** are stored as uploads are: as WebP files without their
   metadata (such as where a phone photo was taken), named by Sunfleck. Before, they were
   stored as they came, with the archive's file names, and a photo with too many pixels ended
