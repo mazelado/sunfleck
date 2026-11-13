@@ -1,7 +1,7 @@
 """Views that serve the frontend application."""
 
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_safe
 
@@ -26,3 +26,8 @@ def frontend_index(request: HttpRequest) -> HttpResponse:
     response = HttpResponse(index_file.read_bytes(), content_type="text/html; charset=utf-8")
     response["Cache-Control"] = "no-cache"
     return response
+
+
+def not_found(request: HttpRequest) -> HttpResponse:
+    """404 for addresses that exist in a library but aren't part of Sunfleck."""
+    return JsonResponse({"status": 404}, status=404)

@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
+# Base images are pinned by digest, so a release can be rebuilt exactly and doesn't trust
+# whatever a tag points at that day. Dependabot opens pull requests to update them.
+
 # --- Stage 1: build the React frontend ---------------------------------------------------------
-FROM node:26-alpine AS frontend
+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS frontend
 WORKDIR /src/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
@@ -9,8 +12,8 @@ COPY frontend/ ./
 RUN npm run build
 
 # --- Stage 2: install Python dependencies (uv isn't needed in the final image) -----------------
-FROM python:3.13-slim AS python-deps
-COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /usr/local/bin/uv
+FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90 AS python-deps
+COPY --from=ghcr.io/astral-sh/uv:0.11.32@sha256:df4cae8f3a96d175e2e5f992e597550000edbe78fdc2594d5cd8de1a217f504c /uv /usr/local/bin/uv
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never \
@@ -29,7 +32,7 @@ COPY backend/ ./
 RUN SECRET_KEY=build-only /app/.venv/bin/python manage.py compilemessages --ignore=.venv
 
 # --- Stage 4: the application image ------------------------------------------------------------
-FROM python:3.13-slim AS app
+FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90 AS app
 WORKDIR /app/backend
 COPY --from=python-deps /app/.venv /app/.venv
 COPY backend/ ./

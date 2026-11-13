@@ -213,6 +213,17 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and both services billed for it, though only one answer was used. Now only the first AI
   plugin that answers is asked; the next is asked only if it fails. The same holds for plant
   identification and frost dates.
+- **Without email set up, invitation and password-reset links no longer go to the log**,
+  where anyone who can read the logs could use them; anyone could ask for a reset email. The
+  log only notes that an email wasn't sent. Admins copy the links in the app, as before; if
+  you're the only Admin and locked out, use `manage.py changepassword`.
+- **Only the sign-in endpoints the app uses are reachable** under `/_allauth/`; the others
+  (sign-up, email addresses, phone numbers) answer 404. Adding an email address there ended
+  in a server error and left a stray row behind.
+- **First-run setup can't be completed twice at once on PostgreSQL**: two requests in the
+  same moment could both make an account with the admin site.
+- **The Docker image's base images are pinned by digest**, so a release can be rebuilt
+  exactly; Dependabot keeps them up to date.
 - **A stored API key is only sent to the server it was saved for**: in the OpenAI-compatible
   plugin, changing the server address asks for the key again, also for **Test**. Before, an
   Admin could have another Admin's key sent to an address of their choice. Plugins can bind

@@ -5,7 +5,19 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 
 from sunfleck.config.api import api
-from sunfleck.core.views import frontend_index
+from sunfleck.core.views import frontend_index, not_found
+
+# The allauth endpoints the app uses, under /_allauth/browser/v1/.
+ALLAUTH_IN_USE = "|".join(
+    [
+        "config",
+        "auth/session",  # who's signed in; signing out
+        "auth/login",
+        "auth/password/request",
+        "auth/password/reset",
+        "account/password/change",
+    ]
+)
 
 # The admin site has no sign-in form of its own: people sign in to Sunfleck (where failed
 # attempts are rate-limited), and it's open to the first account, which can use it.
@@ -15,6 +27,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", api.urls),
     # Sign-in, sign-out, and password resets (django-allauth's JSON API for the React app).
+    # Only the endpoints the app uses: the rest (sign-up, email addresses, phone numbers...)
+    # isn't set up, and isn't reviewed.
+    re_path(rf"^_allauth/(?!browser/v1/(?:{ALLAUTH_IN_USE})$)", not_found),
     path("_allauth/", include("allauth.headless.urls")),
     # Everything else belongs to the React app, which handles its own routes. Not its files
     # (assets/): one that's gone, like a page's script from before an update, must be a 404,

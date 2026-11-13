@@ -218,8 +218,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # --- Email ------------------------------------------------------------------------------------
-# Optional. Without EMAIL_URL, emails (password resets, invitations) are written to the log
-# instead, and Admins can share links themselves.
+# Optional. Without EMAIL_URL, emails (password resets, invitations) aren't sent, and Admins
+# share the links in them themselves. They're only noted in the log, without their links, which
+# sign people in; in development (DEBUG), they're printed whole.
 
 EMAIL_URL = env_str("EMAIL_URL")
 SUNFLECK_EMAIL_CONFIGURED = bool(EMAIL_URL)
@@ -227,7 +228,11 @@ MAILERS = {
     "default": (
         parse_email_url(EMAIL_URL)
         if EMAIL_URL
-        else {"BACKEND": "django.core.mail.backends.console.EmailBackend"}
+        else {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend"
+            if DEBUG
+            else "sunfleck.core.mail.UnsentEmailBackend"
+        }
     )
 }
 DEFAULT_FROM_EMAIL = env_str("EMAIL_FROM", "Sunfleck <sunfleck@localhost>")

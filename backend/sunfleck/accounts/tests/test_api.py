@@ -173,7 +173,7 @@ def test_nobody_can_sign_up_on_their_own() -> None:
         {"email": "stranger@example.com", "password": STRONG_PASSWORD},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404  # not even routed (security review 1.0, S10)
     assert not User.objects.exists()
 
 
