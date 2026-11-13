@@ -5,7 +5,9 @@ your network then), or other services that offer the same API. Sunfleck only ask
 ask it to, e.g. to suggest a care profile for a plant.
 """
 
-from pydantic import BaseModel, Field, SecretStr
+from urllib.parse import urlsplit
+
+from pydantic import BaseModel, Field, SecretStr, field_validator
 from sunfleck.plugins import PluginInfo
 
 
@@ -26,8 +28,21 @@ class Settings(BaseModel):
     api_key: SecretStr = Field(
         default=SecretStr(""),
         title="API key",
-        description="Needed for OpenAI and most hosted services. Leave empty for Ollama.",
+        description=(
+            "Needed for OpenAI and most hosted services. Leave empty for Ollama. "
+            "After changing the server address, enter it again."
+        ),
+        # Only ever sent to the server it was saved with.
+        json_schema_extra={"bound_to": ["base_url"]},
     )
+
+    @field_validator("base_url")
+    @classmethod
+    def _http(cls, value: str) -> str:
+        url = urlsplit(value.strip())
+        if url.scheme not in ("http", "https") or not url.hostname:
+            raise ValueError("Enter an http:// or https:// address, such as the examples.")
+        return value.strip()
 
 
 plugin = PluginInfo(

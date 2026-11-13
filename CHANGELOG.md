@@ -199,6 +199,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **A stored API key is only sent to the server it was saved for**: in the OpenAI-compatible
+  plugin, changing the server address asks for the key again, also for **Test**. Before, an
+  Admin could have another Admin's key sent to an address of their choice. Plugins can bind
+  a secret to their own settings the same way (`bound_to`).
+- **The OpenAI-compatible plugin only accepts `http://` and `https://` addresses**, and no
+  longer writes what a failing server answered to the log, which could repeat parts of a
+  question (or of a local file, with a `file:` address).
 
 ## [0.9.0] - 2026-11-06
 

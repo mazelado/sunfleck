@@ -76,6 +76,10 @@ plugin = PluginInfo(
 - **Secrets** such as API keys are typed `SecretStr` (from Pydantic). They're stored encrypted,
   shown as a password field, and never sent back to the browser: the field stays empty, and
   saving it empty keeps the stored key. Read one with `settings.api_key.get_secret_value()`.
+  If the secret is sent to an address the Admin sets, bind it to that setting, so that
+  changing the address asks for the secret again rather than sending the stored one there:
+  `Field(..., json_schema_extra={"bound_to": ["base_url"]})`. Check that addresses are
+  `http://` or `https://`, since Python's `urlopen` also opens `file:` addresses.
 - **`sends_data_to`** must list every outside service the plugin contacts, and exactly what
   it sends. Admins see this before turning the plugin on.
 - **Plugins are off until an Admin turns them on**, for each household. Only set
