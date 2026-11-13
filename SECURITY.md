@@ -48,7 +48,8 @@ runs. What it does to keep that safe, and what the people running it should know
 - **Secrets** (notification addresses, plugins' API keys) are stored encrypted with
   `SUNFLECK_ENCRYPTION_KEY`, are never shown again, and aren't exported.
 - **Uploads** are checked to be images, limited to 20 MB, and stored again without their
-  metadata (such as where a photo was taken).
+  metadata (such as where a photo was taken). Photos in an imported export are treated the
+  same way.
 - **Sunfleck contacts the addresses people give it,** as it's meant to:
   - every member can add notification addresses (Apprise URLs), and Sunfleck sends to
     them, including addresses on your own network (a ntfy or Gotify server, say). Devices

@@ -213,6 +213,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and both services billed for it, though only one answer was used. Now only the first AI
   plugin that answers is asked; the next is asked only if it fails. The same holds for plant
   identification and frost dates.
+- **Photos in an imported export** are stored as uploads are: as WebP files without their
+  metadata (such as where a phone photo was taken), named by Sunfleck. Before, they were
+  stored as they came, with the archive's file names, and a photo with too many pixels ended
+  the import with an error instead of saying what was wrong. Sunfleck's own exports still
+  import byte for byte.
 
 ## [0.9.0] - 2026-11-06
 
