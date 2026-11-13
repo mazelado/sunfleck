@@ -225,6 +225,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   for a year.
 - **The health check no longer tells strangers the exact version**, which says which known
   problems apply. Members, and the server itself, still see it.
+- **Photos in an imported export** are stored as uploads are: as WebP files without their
+  metadata (such as where a phone photo was taken), named by Sunfleck. Before, they were
+  stored as they came, with the archive's file names, and a photo with too many pixels ended
+  the import with an error instead of saying what was wrong. Sunfleck's own exports still
+  import byte for byte.
 
 ## [0.9.0] - 2026-11-06
 

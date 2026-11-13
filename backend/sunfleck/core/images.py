@@ -118,6 +118,51 @@ def process_photo(file: IO[bytes]) -> ProcessedPhoto:
     )
 
 
+@dataclass(frozen=True)
+class StoredImage:
+    data: bytes
+    width: int
+    height: int
+
+
+def clean_webp(content: bytes, max_edge: int, quality: int) -> StoredImage:
+    """An image as Sunfleck stores it: a WebP, upright, at most `max_edge` pixels on its long
+    edge, without EXIF or XMP metadata (which can hold where a photo was taken).
+
+    One that's like that already (as in Sunfleck's own exports) is kept byte for byte, so it
+    loses no quality; anything else is encoded again.
+
+    Raises:
+        ImageError: If it isn't a supported image, or has too many pixels.
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", Image.DecompressionBombWarning)
+        try:
+            with Image.open(io.BytesIO(content)) as image:
+                clean = (
+                    image.format == "WEBP"
+                    and not image.info.get("exif")
+                    and not image.info.get("xmp")
+                    and not image.getexif()
+                    and max(image.size) <= max_edge
+                )
+                if clean:
+                    return StoredImage(content, image.width, image.height)
+        except (Image.DecompressionBombWarning, Image.DecompressionBombError) as exc:
+            raise ImageError("image_too_large", "This photo has too many pixels.") from exc
+        except (UnidentifiedImageError, OSError) as exc:
+            raise ImageError("invalid_image", "This file isn't a photo we can read.") from exc
+    source, upright, _ = _open(io.BytesIO(content), max_edge)
+    has_alpha = upright.mode in ("RGBA", "LA", "PA") or "transparency" in upright.info
+    converted = upright.convert("RGBA" if has_alpha else "RGB")
+    converted.thumbnail((max_edge, max_edge), Image.Resampling.LANCZOS)
+    return StoredImage(
+        _webp(converted, quality, source.info.get("icc_profile")),
+        converted.width,
+        converted.height,
+    )
+
+
 def thumbnail(file: IO[bytes], crop: Crop | None) -> bytes:
     """A new thumbnail for a stored photo: the part of it in `crop` (all of it without one), at
     most THUMBNAIL_MAX_EDGE pixels on its long edge.

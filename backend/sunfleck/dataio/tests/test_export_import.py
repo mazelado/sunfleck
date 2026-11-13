@@ -11,6 +11,7 @@ import time_machine
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import Client
+from PIL import Image
 
 from sunfleck.accounts.models import Household, Membership, Role
 from sunfleck.accounts.tests.factories import HouseholdFactory, MembershipFactory, UserFactory
@@ -617,3 +618,64 @@ def test_the_commands_export_and_import(
     assert "Enter the API keys again for: Plant identification (Pl@ntNet)" in output
     target.refresh_from_db()
     assert comparable(target) == before
+
+
+GPS_IFD = 0x8825
+
+
+def jpeg_with_gps() -> bytes:
+    """A phone photo that says where it was taken."""
+    exif = Image.Exif()
+    gps = exif.get_ifd(GPS_IFD)
+    gps[1], gps[2] = "N", (52.0, 22.0, 30.0)
+    buffer = io.BytesIO()
+    Image.new("RGB", (640, 480), "green").save(buffer, "JPEG", exif=exif)
+    assert Image.open(io.BytesIO(buffer.getvalue())).getexif().get_ifd(GPS_IFD)
+    return buffer.getvalue()
+
+
+def with_photo(data: bytes, name: str, content: bytes) -> bytes:
+    """The export with the cover photo of Monty replaced by `content`, stored as `name`."""
+    exported = json.loads(zipfile.ZipFile(io.BytesIO(data)).read(schema.DATA_FILE))
+    photo = first_plant(exported)["photos"][0]
+    old = photo["image"]
+    photo["image"] = name
+    out = io.BytesIO()
+    with zipfile.ZipFile(io.BytesIO(data)) as source, zipfile.ZipFile(out, "w") as archive:
+        archive.writestr(schema.DATA_FILE, json.dumps(exported))
+        for entry in source.namelist():
+            if entry not in (schema.DATA_FILE, old):
+                archive.writestr(entry, source.read(entry))
+        archive.writestr(name, content)
+    return out.getvalue()
+
+
+def test_imported_photos_lose_their_metadata_and_become_webp(filled: Household) -> None:
+    target = new_household()
+    data = with_photo(export_bytes(filled), "photos/1.html", jpeg_with_gps())
+
+    importer.import_into(target, io.BytesIO(data))
+
+    photo = Photo.objects.get(plant__household=target, plant__nickname="Monty", caption="New leaf")
+    assert str(photo.image.name).endswith(".webp")
+    with photo.image.open("rb") as stored, Image.open(stored) as image:
+        assert image.format == "WEBP"
+        assert not image.getexif().get_ifd(GPS_IFD)
+        assert (photo.width, photo.height) == image.size == (640, 480)
+
+
+def test_an_oversized_photo_is_an_invalid_export(
+    filled: Household, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = new_household()
+    data = with_photo(export_bytes(filled), "photos/huge.jpg", jpeg_with_gps())
+    # Stands in for a photo with more pixels than Pillow will open.
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 640 * 480 // 4)
+
+    with pytest.raises(importer.DataImportError) as error:
+        importer.import_into(target, io.BytesIO(data))
+
+    assert error.value.code == "invalid_export"
+    assert "too many pixels" in str(error.value)
+    assert importer.is_empty(target)
+    assert not Photo.objects.filter(plant__household=target).exists()
