@@ -85,10 +85,11 @@ def identify(household: Household, files: list[tuple[IO[bytes], int]], language:
         except ImageError as exc:
             raise IdentifyError(exc.code, str(exc)) from exc
 
-    answers = registry.call(HOOK, household, Identification, photos=photos, language=language)
-    if not answers:  # the plugin failed; its error is shown to Admins on the Plugins page
+    # Only the first plugin that answers gets the photos.
+    first = registry.call_first(HOOK, household, Identification, photos=photos, language=language)
+    if first is None:  # the plugin failed; its error is shown to Admins on the Plugins page
         raise IdentifyError("identification_failed", "The plant couldn't be identified.")
-    answer: Identification = answers[0].result
+    answer: Identification = first.result
     if answer.problem:
         message = PROBLEMS.get(answer.problem, "The plant couldn't be identified.")
         raise IdentifyError(answer.problem, message)

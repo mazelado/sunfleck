@@ -5,6 +5,7 @@ from running: it's logged, recorded for the Admin, and that plugin's answer is l
 """
 
 import logging
+from collections.abc import Iterator
 from dataclasses import dataclass
 from importlib import import_module
 from typing import Any
@@ -86,13 +87,30 @@ class Registry:
 
         With `expect`, answers of another type are left out and reported as the plugin's error.
         """
+        return list(self._answers(hook, household, expect, **kwargs))
+
+    def call_first(
+        self, hook: str, household: Household, expect: type | None = None, **kwargs: Any
+    ) -> Answer | None:
+        """Call a hook of the plugins that are on for the household, in order, until one
+        answers; the others aren't called. For hooks where one answer is used (an AI answer,
+        an identification), so the question goes to one outside service, not to every one.
+
+        As for `call`, a plugin that fails or answers the wrong type is skipped (and its error
+        reported), and the next one is asked.
+        """
+        return next(self._answers(hook, household, expect, **kwargs), None)
+
+    def _answers(
+        self, hook: str, household: Household, expect: type | None, **kwargs: Any
+    ) -> Iterator[Answer]:
+        """The plugins' answers, calling each plugin only when the previous answers are used."""
         from sunfleck.plugins import services  # services imports this module
 
         implementers = self.implementers(hook)
         if not implementers:
-            return []
+            return
         states = services.states(household, implementers)
-        answers: list[Answer] = []
         for plugin_id in implementers:
             state = states[plugin_id]
             if not state.enabled:
@@ -108,8 +126,7 @@ class Registry:
                     error = TypeError(f"expected {expect.__name__}, got {type(result).__name__}")
                     services.record_error(household, plugin_id, hook, error)
                 elif result:
-                    answers.append(Answer(plugin_id, result))
-        return answers
+                    yield Answer(plugin_id, result)
 
     def call_at_startup(self, hook: str, plugin_id: str, **kwargs: Any) -> list[Any]:
         """Call one plugin's hook regardless of households, e.g. `register_api` at startup.
