@@ -168,6 +168,8 @@ encryption. Special characters in the user name or password must be URL-encoded 
     someone asks. Claude needs an API key from
     [console.anthropic.com](https://console.anthropic.com), billed per use, and reaches
     `api.anthropic.com`.
+  - **Other plugins** are installed into the image: see
+    [Installing a plugin](plugins.md#5-installing).
 
 ## Backups
 

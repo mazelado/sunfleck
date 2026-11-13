@@ -7,8 +7,8 @@ Sunfleck's built-in plugins are packaged and installed exactly the same way as y
 > The built-in weather plugin, [`plugins/weather-openmeteo`](../plugins/weather-openmeteo), is a
 > complete example: settings, its own table, `site_conditions`, `care_factors`, and tests.
 
-> Status: the plugin API arrived in milestone M8. It may still change before v1.0, but changes
-> that break plugins will raise its version (see [Versions](#versions)).
+> Status: the plugin API is stable from 1.0 (see [stability.md](stability.md)). Changes that
+> break plugins raise its version (see [Versions](#versions)).
 
 ## 1. The package
 
@@ -119,7 +119,7 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | `on_care_event_logged(event, settings)` | After care is logged | Nothing |
 | `on_plant_created(plant, settings)` | After a plant is added | Nothing |
 | `register_api(router)` | Once, at startup | Nothing: add endpoints to the Django Ninja `router`, served under `/api/v1/plugins/<id>/` |
-| `register_periodic_jobs()` | Once, at startup (from M9) | `PeriodicJob`s to run in the background |
+| `register_periodic_jobs()` | Once, at startup | `PeriodicJob`s to run in the background |
 | `identify_plant(photos, language, settings)` | When someone identifies a plant from photos (1 to 5, of the same plant) | An `Identification`: `Candidate`s by scientific name with a score from 0 to 1, or a `problem` (`missing_api_key`, `invalid_api_key`, `quota_exceeded`, `unavailable`) to tell the person about |
 | `check_settings(settings)` | When an Admin clicks **Test** on the Plugins page, with the settings in the form (maybe not saved yet), whether or not the plugin is on. Without this hook, the plugin has no Test button | A `SettingsCheck`: no `problem` if it works, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`), and `details` shown as they are (e.g. which model answered). If it raises, the Admin sees `failed` with the error. Keep it quick and cheap |
 | `complete_json(task, settings)` | When Sunfleck needs an AI answer, only when someone asks for one (e.g. a care profile suggestion, a diagnosis from a photo, or a question about a plant, with the conversation so far in the task's `prompt`); the first enabled plugin answers | An `AiAnswer`: `data` (a JSON object matching the `AiTask`'s `schema`, which Sunfleck checks again) and an `attribution`, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`, or `unsupported` for a task with `images` the model can't look at). A task's `images` are `AiImage`s: JPEGs at most 1568 px on their long edge, without metadata |
@@ -164,9 +164,26 @@ uv pip install sunfleck-plugin-example   # or pip install
 python manage.py migrate                 # if it has models
 ```
 
-Docker images will document a two-line `Dockerfile` for this. If a plugin can't be loaded (it
-fails to import, or was built for another plugin API version), Sunfleck starts without it and
-shows the reason on the Plugins page.
+With Docker, build an image of your own on top of Sunfleck's, with the plugin in it. Next to
+`compose.yaml`, a `Dockerfile`:
+
+```dockerfile
+FROM ghcr.io/mazelado/sunfleck:latest
+# The image's Python environment was made with uv, which isn't in the image: borrow it.
+COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /usr/local/bin/uv
+USER root
+RUN uv pip install --python /app/.venv/bin/python --no-cache sunfleck-plugin-example
+USER sunfleck
+```
+
+Then use it for both services in `compose.yaml`: replace each
+`image: ghcr.io/mazelado/sunfleck:...` line with `build: .` and `image: sunfleck-with-plugins`,
+and run `docker compose up -d --build`. Rebuild after each Sunfleck upgrade
+(`docker compose build --pull`). The app's start runs `migrate`, which also sets up the
+plugin's tables.
+
+If a plugin can't be loaded (it fails to import, or was built for another plugin API version),
+Sunfleck starts without it and shows the reason on the Plugins page.
 
 ## 6. Testing
 

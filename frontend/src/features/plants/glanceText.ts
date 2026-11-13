@@ -7,10 +7,10 @@ import { formatDate } from "./dates";
 export type Glance = components["schemas"]["GlanceOut"];
 export type CareLevel = components["schemas"]["CareLevelOut"];
 export type LightLevel = components["schemas"]["LightLevelOut"];
-export type GlanceCare = "water" | "fertilizer";
+type GlanceCare = "water" | "fertilizer";
 
 /** When care is next due, in words: "Water today", "Fertilize in 5 days", "Resting until…". */
-export function careText(care: CareLevel, kind: GlanceCare, t: TFunction, locale: string): string {
+function careText(care: CareLevel, kind: GlanceCare, t: TFunction, locale: string): string {
   if (care.level === null || care.due_in_days === null) {
     return care.resting_until
       ? t(`glance.${kind}.restingUntil`, { date: formatDate(care.resting_until, locale) })

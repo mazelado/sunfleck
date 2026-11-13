@@ -18,6 +18,12 @@ export default defineConfig(
   },
   // Plain JavaScript config files aren't part of the TypeScript project.
   { files: ["**/*.js"], extends: [tseslint.configs.disableTypeChecked] },
+  // Nor are the Node scripts, which run on their own.
+  {
+    files: ["scripts/**/*.mjs"],
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: { globals: globals.node },
+  },
   reactHooks.configs.flat.recommended,
   reactRefresh.configs.vite,
   prettier,

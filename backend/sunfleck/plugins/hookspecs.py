@@ -46,7 +46,7 @@ def register_api(router: "Router") -> None:
 
 @hookspec
 def register_periodic_jobs() -> list[PeriodicJob]:  # type: ignore[empty-body]
-    """Background jobs to run on a schedule (from M9, when the worker exists)."""
+    """Background jobs to run on a schedule, in the worker."""
 
 
 @hookspec

@@ -91,7 +91,7 @@ class SiteConditions:
 
 @dataclass(frozen=True)
 class PeriodicJob:
-    """A background job and when to run it (a cron expression, in UTC). Run from M9 on."""
+    """A background job and when to run it (a cron expression, in UTC). The worker runs it."""
 
     name: str
     cron: str

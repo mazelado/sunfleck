@@ -9,7 +9,6 @@ export type Me = components["schemas"]["MeOut"];
 export type MeUpdate = components["schemas"]["MeUpdate"];
 export type Role = components["schemas"]["Role"];
 export type Member = components["schemas"]["MemberOut"];
-export type Invitation = components["schemas"]["InvitationOut"];
 export type InvitationCreated = components["schemas"]["InvitationCreatedOut"];
 export type SetupInput = components["schemas"]["SetupIn"];
 

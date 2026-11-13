@@ -149,6 +149,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   `http://<server>:8000` from other devices**, set `SUNFLECK_LISTEN_ADDRESS=0.0.0.0` in `.env`
   and download the new `compose.yaml`.
 
+- **Installing a plugin with Docker is documented**: a short `Dockerfile` that builds on
+  Sunfleck's image ([plugins.md](docs/plugins.md#5-installing)).
+
 ### Fixed
 
 - **On Today, a care row's ⋯ menu was hidden behind the rows below it**, so only its first
