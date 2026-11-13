@@ -30,6 +30,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   too), the title, its main action, and rarer actions in a "⋯" menu. Headings between cards
   are no longer small capitals, so they stand out from the labels inside the cards. Care
   that's overdue is red and care due today orange everywhere, rings included.
+- **The Plants page** (UI plan, part 2) starts with the plants: the search field and one
+  **Filter** button (room, status, without a care routine) in place of four rows of
+  filters, with the filters in use shown as chips that remove them. Each card has a larger
+  photo and says in words what the plant needs next ("Water today", "Fertilize in 5 days"),
+  in place of three unlabelled rings, plus "Low light" when its spot is too dark. Seeds,
+  Wishlist and Print QR labels are in the page's "⋯" menu.
 - **A new look**: a cleaner, more modern design across the whole app, in light and dark mode.
   It uses the Plus Jakarta Sans typeface, which is bundled with Sunfleck, so no font service
   is contacted. Pages are soft grey-green with white cards, and headings are clearer. The

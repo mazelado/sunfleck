@@ -162,6 +162,8 @@ describe("settings page", () => {
     await waitFor(() => {
       expect(screen.getByRole("textbox", { name: /Their email address/ })).toHaveFocus();
     });
+    // The page has loaded its members too, so no request is left for the next test.
+    expect(await screen.findByText(ada.email)).toBeVisible();
   });
 
   it("leaves the account menu for things about you", async () => {
