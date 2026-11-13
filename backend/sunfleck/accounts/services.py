@@ -55,6 +55,10 @@ class LastAdminError(AccountsError):
     code = "last_admin"
 
 
+class ProtectedAccountError(AccountsError):
+    code = "protected_account"
+
+
 def needs_setup() -> bool:
     """Return whether the instance is brand new: nobody has an account yet."""
     return not User.objects.exists()
@@ -202,27 +206,47 @@ def change_role(membership: Membership, role: Role) -> Membership:
     return membership
 
 
+def _check_not_protected(user: User, acting_user: User) -> None:
+    """Refuse to let someone else take over or remove an account that can use the admin site.
+
+    Such an account (the first one, made at setup) can reach every household on the instance,
+    which is more than an Admin of one household may. Only its owner manages it; they can
+    reset their own password by email or with `manage.py changepassword`.
+    """
+    if (user.is_staff or user.is_superuser) and user.pk != acting_user.pk:
+        raise ProtectedAccountError(
+            "This account manages the whole Sunfleck server. "
+            "Only its owner can reset its password or remove it."
+        )
+
+
 @transaction.atomic
-def remove_member(membership: Membership) -> None:
+def remove_member(membership: Membership, *, acting_user: User) -> None:
     """Remove someone from the household and delete their account.
 
     Each account belongs to exactly one household for now, so an account without a household
     would be useless. Their data (care events etc.) stays, without their name.
 
     Raises:
+        ProtectedAccountError: If the account can use the admin site and isn't `acting_user`'s.
         LastAdminError: If this would leave the household without an Admin.
     """
+    _check_not_protected(membership.user, acting_user)
     if _is_last_admin(membership):
         raise LastAdminError("A household needs at least one Admin.")
     membership.user.delete()
 
 
-def password_reset_url(request: HttpRequest, user: User) -> str:
+def password_reset_url(request: HttpRequest, user: User, *, acting_user: User) -> str:
     """Return a link that lets `user` choose a new password, for an Admin to pass on.
 
     Works without email being configured. The link stops working once it's used or the user's
     password changes.
+
+    Raises:
+        ProtectedAccountError: If the account can use the admin site and isn't `acting_user`'s.
     """
+    _check_not_protected(user, acting_user)
     token = allauth_settings.PASSWORD_RESET_TOKEN_GENERATOR().make_token(user)
     key = f"{user_pk_to_url_str(user)}-{token}"
     # allauth builds the URL from the request it's handling; make sure it knows this one.
