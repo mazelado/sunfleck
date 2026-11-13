@@ -245,10 +245,6 @@ def _site_out(site: Site) -> SiteOut:
     )
 
 
-def _places_error(exc: services.PlacesError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 # --- Lookups (always within the user's household) ---------------------------------------------
 
 
@@ -295,10 +291,7 @@ def list_sites(request: HttpRequest) -> list[SiteOut]:
 @router.post("/sites", response={201: SiteOut})
 def create_site(request: HttpRequest, data: SiteIn) -> Status[SiteOut]:
     household = require_role(request, Role.GARDENER).household
-    try:
-        site = services.create_site(household, services.SiteData(**data.model_dump()))
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    site = services.create_site(household, services.SiteData(**data.model_dump()))
     return Status(201, _site_out(_get_site(household, site.pk)))
 
 
@@ -312,10 +305,7 @@ def get_site(request: HttpRequest, site_id: int) -> SiteOut:
 def update_site(request: HttpRequest, site_id: int, data: SiteIn) -> SiteOut:
     household = require_role(request, Role.GARDENER).household
     site = _get_site(household, site_id)
-    try:
-        services.update_site(site, services.SiteData(**data.model_dump()))
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    services.update_site(site, services.SiteData(**data.model_dump()))
     return _site_out(_get_site(household, site_id))
 
 
@@ -356,10 +346,7 @@ def delete_site(request: HttpRequest, site_id: int) -> Status[None]:
 def create_location(request: HttpRequest, site_id: int, data: LocationIn) -> Status[LocationOut]:
     household = require_role(request, Role.GARDENER).household
     site = _get_site(household, site_id)
-    try:
-        location = services.create_location(site, services.LocationData(**data.model_dump()))
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    location = services.create_location(site, services.LocationData(**data.model_dump()))
     return Status(201, _location_out(location))
 
 
@@ -381,10 +368,7 @@ def location_light(request: HttpRequest, location_id: int) -> list[SourceLightOu
 def update_location(request: HttpRequest, location_id: int, data: LocationIn) -> LocationOut:
     household = require_role(request, Role.GARDENER).household
     location = _get_location(household, location_id)
-    try:
-        services.update_location(location, services.LocationData(**data.model_dump()))
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    services.update_location(location, services.LocationData(**data.model_dump()))
     return _location_out(_get_location(household, location_id))
 
 
@@ -404,12 +388,7 @@ def create_light_source(
 ) -> Status[LightSourceOut]:
     household = require_role(request, Role.GARDENER).household
     location = _get_location(household, location_id)
-    try:
-        light = services.create_light_source(
-            location, services.LightSourceData(**data.model_dump())
-        )
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    light = services.create_light_source(location, services.LightSourceData(**data.model_dump()))
     return Status(201, light_source_out(light))
 
 
@@ -417,10 +396,7 @@ def create_light_source(
 def update_light_source(request: HttpRequest, light_id: int, data: LightSourceIn) -> LightSourceOut:
     household = require_role(request, Role.GARDENER).household
     light = _get_light_source(household, light_id)
-    try:
-        services.update_light_source(light, services.LightSourceData(**data.model_dump()))
-    except services.PlacesError as exc:
-        raise _places_error(exc) from exc
+    services.update_light_source(light, services.LightSourceData(**data.model_dump()))
     return light_source_out(light)
 
 

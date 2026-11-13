@@ -10,6 +10,7 @@ from zoneinfo import available_timezones
 from django.db import transaction
 
 from sunfleck.accounts.models import Household
+from sunfleck.core.errors import ServiceError
 from sunfleck.places.light import DEFAULT_PPFD_DISTANCE_CM
 from sunfleck.places.models import (
     BedType,
@@ -25,14 +26,9 @@ from sunfleck.places.models import (
 )
 
 
-class PlacesError(Exception):
+class PlacesError(ServiceError):
     """A places rule was broken. `code` is stable and shown to API clients; `field` names the
     form field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 # --- Sites ------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@ from django.utils import timezone
 
 from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareType, Feedback
+from sunfleck.core.errors import ServiceError
 from sunfleck.plants.models import Plant
 from sunfleck.plugins.registry import registry
 
@@ -23,14 +24,9 @@ CLOCK_TOLERANCE = timedelta(minutes=5)
 EARLIEST_CARE_YEAR = 2000
 
 
-class CareError(Exception):
+class CareError(ServiceError):
     """A care rule was broken. `code` is stable and shown to API clients; `field` names the
     form field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 def care_types_for(household: Household) -> QuerySet[CareType]:

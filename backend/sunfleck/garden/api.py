@@ -20,7 +20,6 @@ from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.garden import calendar, services
 from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
-from sunfleck.plants import services as plant_services
 from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.api import SpeciesOut, language, species_out
 
@@ -104,10 +103,6 @@ def _get_seed(household: Household, seed_id: int) -> SeedPacket:
     return packet
 
 
-def _garden_error(exc: services.GardenError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 class SeedPage(Schema):
     items: list[SeedOut]
     count: int = Field(description="How many seed packets there are, across all pages.")
@@ -130,10 +125,7 @@ def list_seeds(request: HttpRequest, query: Query[ListQuery]) -> SeedPage:
 @router.post("/seeds", response={201: SeedOut})
 def create_seed(request: HttpRequest, data: SeedIn) -> Status[SeedOut]:
     household = require_role(request, Role.GARDENER).household
-    try:
-        packet = services.create_seed(household, services.SeedData(**data.model_dump()))
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    packet = services.create_seed(household, services.SeedData(**data.model_dump()))
     return Status(201, _seed_out(packet, language(request)))
 
 
@@ -141,10 +133,7 @@ def create_seed(request: HttpRequest, data: SeedIn) -> Status[SeedOut]:
 def update_seed(request: HttpRequest, seed_id: int, data: SeedIn) -> SeedOut:
     household = require_role(request, Role.GARDENER).household
     packet = _get_seed(household, seed_id)
-    try:
-        services.update_seed(packet, services.SeedData(**data.model_dump()))
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    services.update_seed(packet, services.SeedData(**data.model_dump()))
     return _seed_out(packet, language(request))
 
 
@@ -193,10 +182,7 @@ def seeds_sown(request: HttpRequest, seed_id: int, data: SownIn) -> Status[SownO
     packet = _get_seed(household, seed_id)
     site = Site.objects.filter(household=household).order_by("pk").first()
     zone = ZoneInfo(site.timezone) if site else timezone.get_current_timezone()
-    try:
-        plant = services.sown(packet, data.location_id, timezone.now().astimezone(zone).date())
-    except plant_services.PlantsError as exc:
-        raise ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {}) from exc
+    plant = services.sown(packet, data.location_id, timezone.now().astimezone(zone).date())
     return Status(201, SownOut(plant_id=plant.pk))
 
 
@@ -286,12 +272,9 @@ def log_harvest(request: HttpRequest, plant_id: int, data: HarvestIn) -> Status[
         raise ApiError(
             422, "harvest_in_future", "A harvest can't be in the future.", {"field": "harvested_on"}
         )
-    try:
-        harvest = services.log_harvest(
-            plant, services.HarvestData(**data.model_dump()), membership.user
-        )
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    harvest = services.log_harvest(
+        plant, services.HarvestData(**data.model_dump()), membership.user
+    )
     return Status(201, _harvest_out(harvest))
 
 

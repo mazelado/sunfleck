@@ -5,19 +5,15 @@ from datetime import date
 from decimal import Decimal
 
 from sunfleck.accounts.models import Household, User
+from sunfleck.core.errors import ServiceError
 from sunfleck.garden.models import GRAMS_PER_UNIT, Harvest, HarvestUnit, SeedPacket
 from sunfleck.plants import services as plants
 from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.models import Taxon
 
 
-class GardenError(Exception):
+class GardenError(ServiceError):
     """A change was refused. `field` names the field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 @dataclass(frozen=True)

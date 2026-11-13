@@ -14,6 +14,7 @@ from django.utils.translation import gettext
 from sunfleck.accounts.models import User
 from sunfleck.accounts.permissions import get_membership
 from sunfleck.core.crypto import DecryptionError, decrypt, encrypt
+from sunfleck.core.errors import ServiceError
 from sunfleck.notifications import delivery, push
 from sunfleck.notifications.digest import Message, compose
 from sunfleck.notifications.models import (
@@ -34,14 +35,9 @@ SEND_WINDOW = timedelta(hours=3)
 RUN_INTERVAL = timedelta(minutes=15)
 
 
-class NotificationError(Exception):
+class NotificationError(ServiceError):
     """A notification setting was refused, or a test message failed. `field` names the form
     field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 # --- Preferences ------------------------------------------------------------------------------

@@ -86,10 +86,6 @@ def _preferences_out(preferences: NotificationPreferences) -> PreferencesSchema:
     )
 
 
-def _error(exc: services.NotificationError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 def _user(request: HttpRequest) -> User:
     return require_role(request, Role.VIEWER).user
 
@@ -113,32 +109,23 @@ def get_notifications(request: HttpRequest) -> NotificationsOut:
 
 @router.put("/notifications/preferences", response=PreferencesSchema)
 def update_preferences(request: HttpRequest, data: PreferencesSchema) -> PreferencesSchema:
-    try:
-        preferences = services.update_preferences(
-            _user(request), services.PreferencesData(**data.model_dump())
-        )
-    except services.NotificationError as exc:
-        raise _error(exc) from exc
+    preferences = services.update_preferences(
+        _user(request), services.PreferencesData(**data.model_dump())
+    )
     return _preferences_out(preferences)
 
 
 @router.post("/notifications/channels", response={201: ChannelOut})
 def add_channel(request: HttpRequest, data: ChannelIn) -> Status[ChannelOut]:
     """Add somewhere to send notifications, as an Apprise URL."""
-    try:
-        channel = services.add_channel(_user(request), data.label, data.url)
-    except services.NotificationError as exc:
-        raise _error(exc) from exc
+    channel = services.add_channel(_user(request), data.label, data.url)
     return Status(201, _channel_out(channel))
 
 
 @router.put("/notifications/channels/{channel_id}", response=ChannelOut)
 def update_channel(request: HttpRequest, channel_id: int, data: ChannelUpdateIn) -> ChannelOut:
     channel = _get_channel(_user(request), channel_id)
-    try:
-        services.update_channel(channel, data.label, data.enabled, data.url)
-    except services.NotificationError as exc:
-        raise _error(exc) from exc
+    services.update_channel(channel, data.label, data.enabled, data.url)
     return _channel_out(channel)
 
 
@@ -153,10 +140,7 @@ def test_channel(request: HttpRequest, channel_id: int) -> ChannelOut:
     """Send a test message now."""
     channel = _get_channel(_user(request), channel_id)
     limits.per_member(request, "channel_test", limits.CHANNEL_TESTS_PER_MINUTE)
-    try:
-        services.send_test(channel)
-    except services.NotificationError as exc:
-        raise _error(exc) from exc
+    services.send_test(channel)
     return _channel_out(channel)
 
 
@@ -193,10 +177,7 @@ def push_key(request: HttpRequest) -> PushKeyOut:
 @router.post("/notifications/push/devices", response={201: ChannelOut})
 def add_push_device(request: HttpRequest, data: PushDeviceIn) -> Status[ChannelOut]:
     """Get notifications on this device: it becomes a channel like the others."""
-    try:
-        channel = services.add_push_device(_user(request), data.label, data.subscription)
-    except services.NotificationError as exc:
-        raise _error(exc) from exc
+    channel = services.add_push_device(_user(request), data.label, data.subscription)
     return Status(201, _channel_out(channel))
 
 
