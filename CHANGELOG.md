@@ -31,6 +31,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Plugins are listed by name** in Settings, so the two AI plugins sit together. Before,
+  the order depended on how the plugins happened to be installed.
 - **Easier to tap and to find your way** (UI plan, part 1): on phones and tablets, every
   button, menu item and choice is at least 44×44 pixels, as the style guide asks. Every page
   has the same header: a way back to the page it belongs to (Settings' pages now have one

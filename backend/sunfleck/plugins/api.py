@@ -108,8 +108,11 @@ def _api_error(exc: services.PluginError) -> ApiError:
 @router.get("/plugins", response=PluginsOut)
 def list_plugins(request: HttpRequest) -> PluginsOut:
     household = require_role(request, Role.ADMIN).household
+    # By name, so related plugins ("AI (Claude)", "AI (OpenAI-compatible)") sit together. The
+    # registry's own order, which decides which plugin answers first, is left as it is.
+    states = sorted(services.states(household).values(), key=lambda s: s.info.name.casefold())
     return PluginsOut(
-        plugins=[_plugin_out(state) for state in services.states(household).values()],
+        plugins=[_plugin_out(state) for state in states],
         problems=[ProblemOut(source=p.source, message=p.message) for p in registry.problems],
     )
 
