@@ -889,8 +889,9 @@ describe("plant page", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    expect(await screen.findByText(/Take cuttings, divide it or sow its seeds/)).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Propagate" }));
+    // A rare action: in the page's "⋯" menu.
+    await user.click(await screen.findByRole("button", { name: "More actions" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Propagate" }));
     const dialog = await screen.findByRole("dialog", { name: "Propagate Monty" });
     expect(await accessibilityProblems(dialog)).toEqual([]);
     // Named as the server will name them, and where the parent is.
@@ -911,7 +912,7 @@ describe("plant page", () => {
     expect(sent).toEqual({ method: "cutting", count: 2, nickname: "", location_id: 10 });
   });
 
-  it("has a QR label to print, and writes NFC tags where the browser can", async () => {
+  it("prints a label, and writes NFC tags where the browser can, from the menu", async () => {
     signInAs(viewer);
     withPlant(plant());
     const write = vi.fn().mockResolvedValue(undefined);
@@ -922,12 +923,12 @@ describe("plant page", () => {
     try {
       const { user } = renderApp("/plants/7");
 
-      expect(await screen.findByRole("img", { name: "QR code for Monty" })).toBeVisible();
-      expect(screen.getByRole("link", { name: "Print a label" })).toHaveAttribute(
+      await user.click(await screen.findByRole("button", { name: "More actions" }));
+      expect(await screen.findByRole("menuitem", { name: "Print a label" })).toHaveAttribute(
         "href",
         "/plants/labels?plant=7",
       );
-      await user.click(screen.getByRole("button", { name: "Write to an NFC tag" }));
+      await user.click(screen.getByRole("menuitem", { name: "Write to an NFC tag" }));
 
       expect(await screen.findByText("The tag now opens Monty.")).toBeVisible();
       expect(write).toHaveBeenCalledWith({
@@ -946,16 +947,18 @@ describe("plant page", () => {
     };
     try {
       const { user, unmount } = renderApp("/plants/7");
-      await user.click(await screen.findByRole("button", { name: "Write to an NFC tag" }));
+      await user.click(await screen.findByRole("button", { name: "More actions" }));
+      await user.click(await screen.findByRole("menuitem", { name: "Write to an NFC tag" }));
       expect(await screen.findByText(/The tag couldn't be written/)).toBeVisible();
       unmount();
     } finally {
       delete window.NDEFReader;
     }
 
-    renderApp("/plants/7");
-    expect(await screen.findByRole("img", { name: "QR code for Monty" })).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Write to an NFC tag" })).not.toBeInTheDocument();
+    const { user } = renderApp("/plants/7");
+    await user.click(await screen.findByRole("button", { name: "More actions" }));
+    expect(await screen.findByRole("menuitem", { name: "Print a label" })).toBeVisible();
+    expect(screen.queryByRole("menuitem", { name: "Write to an NFC tag" })).not.toBeInTheDocument();
   });
 
   it("shows where a plant came from and what was grown from it", async () => {
@@ -1042,39 +1045,24 @@ describe("plant page", () => {
       ),
     );
 
-    renderApp("/plants/7");
+    const { user } = renderApp("/plants/7");
 
-    expect(await screen.findByRole("heading", { name: "Light check" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Light" })).toBeVisible();
     // The answer for now comes first, in words.
-    expect(screen.getByText("Enough light here for Monty now.")).toBeVisible();
-    const now = screen.getByRole("row", { name: /Spring \(now\)/ });
-    expect(now).toHaveTextContent("Spring (now)810Good");
-    expect(screen.getByRole("row", { name: /Winter/ })).toHaveTextContent("Winter3.55.5A bit low");
+    expect(await screen.findByText("Enough light here for Monty now.")).toBeVisible();
+    // The seasons are a tap away, in words first and numbers after.
+    await user.click(screen.getByRole("button", { name: "Through the year" }));
+    const now = await screen.findByRole("row", { name: /Spring \(now\)/ });
+    expect(now).toHaveTextContent("Spring (now)Medium 8Bright 10Good");
+    expect(screen.getByRole("row", { name: /Winter/ })).toHaveTextContent(
+      "WinterDim 3.5Medium 5.5A bit low",
+    );
     expect(
       screen.getByText(
         "Too little light in winter: moving it closer to a window, or a grow light, would help.",
       ),
     ).toBeVisible();
-    expect(screen.getByText("About 8 mol/m²/day of light here now")).toBeVisible();
-  });
-
-  it("says how the light compares with what the plant likes", async () => {
-    signInAs(viewer);
-    withPlant(
-      plant({
-        glance: {
-          water: { level: 0, due_in_days: -3, resting_until: null },
-          fertilizer: null,
-          light: { dli: 30, ideal: 10 },
-        },
-      }),
-    );
-
-    renderApp("/plants/7");
-
-    expect(await screen.findByText("Light: brighter than this plant likes")).toBeVisible();
-    // Water is in the Care card, from its schedule, not repeated as a ring.
-    expect(screen.queryByText("Watering overdue by 3 days")).not.toBeInTheDocument();
+    expect(screen.getByText("Medium here now (about 8 mol/m²/day)")).toBeVisible();
   });
 
   it("shows the plant's details and light in the person's units", async () => {

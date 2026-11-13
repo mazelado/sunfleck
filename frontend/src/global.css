@@ -196,3 +196,12 @@ body,
 .sunfleck-cover-button {
   box-shadow: var(--mantine-shadow-md);
 }
+
+/*
+ * A column that stays in view while the one beside it scrolls (a plant's photo and About, on
+ * wide screens), below the header. Taller than the screen, it scrolls with the page instead.
+ */
+.sunfleck-sticky {
+  position: sticky;
+  top: calc(60px + var(--mantine-spacing-md));
+}
