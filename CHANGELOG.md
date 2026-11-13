@@ -199,6 +199,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   plugin makes an endpoint public with `auth=None`. Before, they were open to anyone unless the
   plugin checked, and had no CSRF protection even when it did. No built-in plugin has
   endpoints, so nothing was exposed; it's fixed before the plugin interface is frozen in 1.0.
+- **With two AI plugins on, each question went to both**, with the plant's history and photos,
+  and both services billed for it, though only one answer was used. Now only the first AI
+  plugin that answers is asked; the next is asked only if it fails. The same holds for plant
+  identification and frost dates.
 
 ## [0.9.0] - 2026-11-06
 
