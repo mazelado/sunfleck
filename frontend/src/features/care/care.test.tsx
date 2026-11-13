@@ -152,8 +152,7 @@ describe("logging care", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     expect(within(dialog).getByRole("combobox", { name: "What did you do?" })).toHaveValue("Water");
     await user.click(within(dialog).getByText("Still wet"));
@@ -200,8 +199,7 @@ describe("logging care", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     await user.type(within(dialog).getByLabelText(/Notes/), "Both sides");
     await user.click(within(dialog).getByRole("button", { name: "Add a care type" }));
@@ -233,8 +231,7 @@ describe("logging care", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
@@ -254,8 +251,7 @@ describe("custom watering types", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "More care" }));
-    await user.click(await screen.findByRole("menuitem", { name: "Add details or another day…" }));
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
     const dialog = await screen.findByRole("dialog", { name: "Log care" });
     const careType = within(dialog).getByRole("combobox", { name: "What did you do?" });
     await user.click(careType);

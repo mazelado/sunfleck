@@ -783,7 +783,8 @@
     "wateredToday": "today",
     "wateredYesterday": "yesterday",
     "wateredOn": "on {{date}}",
-    "putOff": "Put off care…"
+    "putOff": "Put off care…",
+    "title": "Care"
   },
   "crop": {
     "title": "Growing from seed",
@@ -995,7 +996,8 @@
       "groundGuess": "About {{depth}} of water each time if it's in the ground, as if that much rain fell. In a pot, add the pot's size to see how much",
       "bed": "About {{depth}} of water each time, as if that much rain fell: {{amount}} for the whole bed",
       "noPotSize": "Add the pot's size to see how much water to give"
-    }
+    },
+    "change": "Change schedule…"
   },
   "today": {
     "title": "Today",
@@ -1368,7 +1370,12 @@
     "save": "Put off",
     "done": "{{care}} for {{plant}} put off until {{date}}.",
     "nothing": "Nothing is due for this plant yet, so there's nothing to put off.",
-    "schedule": "Put off {{care}}"
+    "schedule": "Put off {{care}}",
+    "label": "Put off until",
+    "anotherDay": "Another day…",
+    "later_one": "{{count}} day later",
+    "later_other": "{{count}} days later",
+    "weekLater": "A week later"
   },
   "leave": {
     "title": "Leave without saving?",

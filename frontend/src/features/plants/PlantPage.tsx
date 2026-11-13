@@ -26,11 +26,10 @@ import { sentenceCase } from "../../lib/text";
 import { cmToDisplay, lengthUnit, type UnitSystem } from "../../lib/units";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useUnits } from "../../lib/useUnits";
-import { PlantSchedules } from "../care/PlantSchedules";
+import { CareCard } from "../care/CareCard";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { PlantHarvests } from "../garden/PlantHarvests";
 import { PlantLabelCard } from "../labels/PlantLabelCard";
-import { QuickCare } from "../care/QuickCare";
 import { PlantCareCard } from "../taxonomy/PlantCareCard";
 import { describeLight } from "../places/describe";
 import { LocationKindBadge } from "../places/LocationKindBadge";
@@ -162,12 +161,10 @@ export function PlantPage() {
 
       <ToxicityNotice toxicity={data.species?.toxicity} />
 
-      <CareGlance glance={data.glance} />
-
-      {canEdit && <QuickCare plantId={data.id} plantName={data.nickname} />}
+      <CareCard plant={data} />
       {canEdit && <DiagnosePlant plantId={data.id} plantName={data.nickname} />}
-
-      <PlantSchedules plant={data} />
+      {/* Only the light's ring: water and fertilizer are in the Care card. */}
+      <CareGlance glance={{ ...data.glance, water: null, fertilizer: null }} />
       <PlantCareCard plant={data} />
       <PlantDetails plant={data} units={units} />
       <PlantLineage plant={data} canEdit={canEdit} />

@@ -15,7 +15,7 @@ const BUDGETS = {
   waterFromToday: { taps: 1, fields: 0, pages: 0 },
   waterAllDue: { taps: 1, fields: 0, pages: 0 },
   snooze: { taps: 2, fields: 0, pages: 0 },
-  putOffFromPlantPage: { taps: 5, fields: 0, pages: 1 },
+  putOffFromPlantPage: { taps: 3, fields: 0, pages: 1 },
   careFromPlantPage: { taps: 3, fields: 0, pages: 1 },
   findPlant: { taps: 2, fields: 1, pages: 2 },
   addPlant: { taps: 7, fields: 3, pages: 3 },
@@ -85,12 +85,8 @@ test("put a plant's care off from its page", async () => {
   await startOn("/plants", "Plants");
   await withinBudget(page, BUDGETS.putOffFromPlantPage, async (effort) => {
     await effort.tap(page.getByRole("link", { name: /^Dragon tree/ }));
-    await effort.tap(page.getByRole("button", { name: "More care" }));
-    await effort.tap(page.getByRole("menuitem", { name: "Put off care…" }));
-    await effort.tap(page.getByRole("dialog").getByText("In 3 days"));
-    await effort.tap(
-      page.getByRole("dialog").getByRole("button", { name: "Put off", exact: true }),
-    );
+    await effort.tap(page.getByRole("button", { name: "Options for Water", exact: true }));
+    await effort.tap(page.getByRole("menuitem", { name: "3 days later" }));
     await expect(page.getByText(/^Water for Dragon tree put off until/)).toBeVisible();
   });
 });
@@ -151,7 +147,7 @@ test("accept a new plant's suggested routine", async () => {
   // On the new plant's page, where the last task left off.
   await withinBudget(page, BUDGETS.acceptRoutine, async (effort) => {
     await effort.tap(page.getByRole("button", { name: "Add to the schedule" }));
-    await expect(page.getByRole("button", { name: "Water schedule" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Water schedule: / })).toBeVisible();
   });
 });
 
@@ -170,7 +166,7 @@ test("water a plant every 5 days instead of the predicted interval", async () =>
   await startOn("/plants", "Plants");
   await withinBudget(page, BUDGETS.changeInterval, async (effort) => {
     await effort.tap(page.getByRole("link", { name: /^Monty/ }));
-    await effort.tap(page.getByRole("button", { name: "Water schedule" }));
+    await effort.tap(page.getByRole("button", { name: /^Water schedule: / }));
     await effort.tap(page.getByRole("dialog").getByText("Every few days"));
     await effort.type(page.getByRole("textbox", { name: /Every how many days/ }), "5");
     await effort.tap(page.getByRole("button", { name: "Save" }));
