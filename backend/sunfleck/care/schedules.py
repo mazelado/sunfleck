@@ -16,7 +16,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import F, Max, Prefetch, Q, QuerySet
 from django.db.models import Window as OverWindow
 from django.db.models.functions import RowNumber
@@ -654,7 +654,15 @@ def _apply(schedule: CareSchedule, data: ScheduleData) -> None:
         data.fixed_interval_days if data.mode == ScheduleMode.FIXED else None
     )
     schedule.enabled = data.enabled
-    schedule.save()
+    try:
+        # In a savepoint, so a second request that got past the checks above at the same time
+        # gets the same error as one that didn't, not a crash.
+        with transaction.atomic():
+            schedule.save()
+    except IntegrityError as exc:
+        raise CareError(
+            "schedule_exists", "This plant already has a schedule for this.", "care_type_id"
+        ) from exc
     recalculate(schedule)
 
 

@@ -19,6 +19,8 @@ from sunfleck.plugins.registry import registry
 
 # Phones' and servers' clocks differ a little; allow for it before calling a time "future".
 CLOCK_TOLERANCE = timedelta(minutes=5)
+# Care from before this year is a typing mistake, not a plant's history.
+EARLIEST_CARE_YEAR = 2000
 
 
 class CareError(Exception):
@@ -135,6 +137,13 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
     care_type = care_types_for(household).filter(pk=data.care_type_id).first()
     if care_type is None:
         raise CareError("care_type_not_found", "This care type doesn't exist.", "care_type_id")
+    if data.performed_at and data.performed_at.year < EARLIEST_CARE_YEAR:
+        # Checked before converting time zones, which fails in the year 1.
+        raise CareError(
+            "care_too_long_ago",
+            f"Care can't be logged before {EARLIEST_CARE_YEAR}.",
+            "performed_at",
+        )
     performed_at = _aware(event.plant, data.performed_at) if data.performed_at else timezone.now()
     if performed_at > timezone.now() + CLOCK_TOLERANCE:
         raise CareError("care_in_future", "Care can't be logged in the future.", "performed_at")

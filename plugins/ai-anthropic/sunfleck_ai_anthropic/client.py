@@ -1,9 +1,14 @@
 """Calling Anthropic's Messages API with the official SDK.
 
 The answer is asked for as JSON that matches the task's schema (structured outputs:
-`output_config.format`); Sunfleck checks it against the schema again. On the current models,
-a request a safety classifier declines is retried on Anthropic's recommended fallback model
+`output_config.format`); Sunfleck checks it against the schema again. A request a safety
+classifier declines is retried on Anthropic's recommended fallback model
 (`fallbacks: "default"`).
+
+Every model is asked with `effort` and `fallbacks`, rather than only the models on a list,
+which would be out of date with the next release. A model that doesn't take one of them
+answers 400 naming it: the request is sent again without it, and the model is asked without
+it from then on (until Sunfleck restarts).
 """
 
 import base64
@@ -18,16 +23,13 @@ from sunfleck.plugins import AiAnswer, AiTask
 logger = logging.getLogger(__name__)
 
 TIMEOUT_SECONDS = 120
-# Enough for any of Sunfleck's JSON answers; it's a ceiling, not what's used.
-MAX_TOKENS = 4096
+# A ceiling, not what's used. On the current models thinking can't be turned off, and it
+# counts towards it: a diagnosis from a photo can think more than a short answer needs.
+MAX_TOKENS = 16_000
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
-# Models that take `effort` and `fallbacks: "default"`. Others (older ones someone sets) are
-# asked without them, so they still work.
-CURRENT_MODELS = frozenset(
-    {"claude-sonnet-5-5", "claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-fable-5"}
-)
-# Claude Haiku 5.5 takes `effort`, but has no server-side fallback.
-EFFORT_MODELS = CURRENT_MODELS | {"claude-haiku-5-5"}
+# The options a model refused (it answered 400 naming them), by model: it's asked without them.
+OPTIONS = ("effort", "fallbacks")
+_refused: dict[str, set[str]] = {}
 
 
 def attribution(model: str) -> str:
@@ -39,7 +41,8 @@ def new_client(api_key: str) -> anthropic.Anthropic:
     return anthropic.Anthropic(api_key=api_key, timeout=TIMEOUT_SECONDS, max_retries=2)
 
 
-def request(task: AiTask, model: str) -> dict[str, Any]:
+def request(task: AiTask, model: str, without: frozenset[str] = frozenset()) -> dict[str, Any]:
+    """The request for `task`, without the options in `without` (which `model` refused)."""
     output_config: dict[str, Any] = {
         "format": {"type": "json_schema", "schema": _plain(task.schema)}
     }
@@ -50,20 +53,40 @@ def request(task: AiTask, model: str) -> dict[str, Any]:
         "messages": [{"role": "user", "content": _content(task)}],
         "output_config": output_config,
     }
-    if model in EFFORT_MODELS:
+    if "effort" not in without:
         # Sunfleck's questions are short and well-defined: little thinking is needed, except
         # to make sense of a photo.
         output_config["effort"] = "medium" if task.images else "low"
-    if model in CURRENT_MODELS:
+    if "fallbacks" not in without:
         body["betas"] = [FALLBACK_BETA]
         body["fallbacks"] = "default"
     return body
 
 
+def _refused_option(message: str) -> str | None:
+    """The option a 400 says the model doesn't take, e.g. `"fallbacks" is not supported for
+    this model.`, if it names one."""
+    text = message.lower()
+    if "not supported" not in text and "unsupported" not in text and "not allowed" not in text:
+        return None
+    return next((option for option in OPTIONS if option.rstrip("s") in text), None)
+
+
 def complete(task: AiTask, api_key: str, model: str) -> AiAnswer:
     credit = attribution(model)
+    api = new_client(api_key)
     try:
-        message = new_client(api_key).beta.messages.create(**request(task, model))
+        while True:
+            refused = _refused.setdefault(model, set())
+            try:
+                message = api.beta.messages.create(**request(task, model, frozenset(refused)))
+                break
+            except anthropic.BadRequestError as exc:
+                option = _refused_option(str(exc.message))
+                if option is None or option in refused:
+                    raise
+                logger.info("%s doesn't take %s: asking without it", model, option)
+                refused.add(option)
     except (anthropic.AuthenticationError, anthropic.PermissionDeniedError):
         return AiAnswer(credit, problem="invalid_api_key")
     except anthropic.NotFoundError:
@@ -85,8 +108,13 @@ def complete(task: AiTask, api_key: str, model: str) -> AiAnswer:
         return AiAnswer(credit, problem="unavailable")
 
     if message.stop_reason != "end_turn":
-        # "refusal" (declined, also by the fallback model), or "max_tokens".
-        logger.warning("Claude stopped without an answer: %s", message.stop_reason)
+        # "refusal" (declined, also by the fallback model), or "max_tokens" (thought and
+        # answered for longer than MAX_TOKENS: the answer is cut off).
+        logger.warning(
+            "Claude stopped without an answer: %s after %s tokens",
+            message.stop_reason,
+            message.usage.output_tokens,
+        )
         return AiAnswer(credit, problem="invalid_answer")
     text = next((block.text for block in message.content if block.type == "text"), None)
     data = _json_object(text)

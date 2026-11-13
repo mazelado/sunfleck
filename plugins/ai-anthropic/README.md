@@ -48,10 +48,12 @@ it.
 
 - Sunfleck's questions are short, so it asks the current models to think little
   (`effort: low`), which keeps them quick and cheap; a little more (`medium`) for a photo.
-- On the current models, a question one of Anthropic's safety classifiers declines is
-  retried on Anthropic's recommended fallback model (`fallbacks: "default"`); the
-  suggestion then says which model answered.
-- Older models you set yourself are asked without either option, so they still work.
+- A question one of Anthropic's safety classifiers declines is retried on Anthropic's
+  recommended fallback model (`fallbacks: "default"`); the suggestion then says which model
+  answered.
+- Every model is asked with both options, including models released after this plugin.
+  A model that doesn't take one (an older one you set yourself) is asked again without it,
+  and without it from then on, so it still works.
 
 ## Development
 

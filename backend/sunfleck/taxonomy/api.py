@@ -347,6 +347,7 @@ SUGGEST_ERROR_STATUS = {
     "ai_invalid_api_key": 502,
     "ai_unavailable": 502,
     "ai_invalid_answer": 502,
+    "ai_failed": 502,
 }
 
 

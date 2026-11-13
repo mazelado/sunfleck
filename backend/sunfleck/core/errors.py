@@ -3,11 +3,14 @@
 {"error": {"code": "plant_not_found", "message": "...", "details": {}}}
 """
 
+import logging
 from typing import Any
 
 from django.http import HttpRequest, HttpResponse
 from ninja import NinjaAPI
 from ninja.errors import AuthenticationError, HttpError, ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class ApiError(Exception):
@@ -60,3 +63,12 @@ def register_error_handlers(api: NinjaAPI) -> None:
     @api.exception_handler(HttpError)
     def handle_http_error(request: HttpRequest, exc: HttpError) -> HttpResponse:
         return _error_response(api, request, exc.status_code, "http_error", str(exc))
+
+    @api.exception_handler(Exception)
+    def handle_unexpected_error(request: HttpRequest, exc: Exception) -> HttpResponse:
+        # A bug: logged with its traceback, and answered in the standard shape, so the app can
+        # say something went wrong in the person's language. Nothing about it is shown.
+        logger.exception("Unexpected error in %s %s", request.method, request.path)
+        return _error_response(
+            api, request, 500, "unexpected", "Something went wrong. Please try again."
+        )

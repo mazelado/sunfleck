@@ -199,7 +199,9 @@ Project conventions (on top of PEP 8):
   conversation's messages (at most 100 questions). Adding another exception, or paging one
   of these, needs a new API version after 1.0.
 - Every endpoint checks **permissions**. Write tests proving that an unauthorized user is
-  refused.
+  refused. Besides, `core/tests/test_isolation.py` sweeps every endpoint: with another
+  household's ids, and as a Viewer. A new endpoint that takes a body needs an example body
+  there, and one that takes a new kind of id needs a way to make one.
 
 ## 5. Database and data
 
