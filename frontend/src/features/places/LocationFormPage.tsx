@@ -27,6 +27,7 @@ import {
 } from "../../api/places";
 import { FormActions } from "../../components/FormActions";
 import { PageHeader } from "../../components/PageHeader";
+import { useSiteHome } from "./useSiteHome";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -87,6 +88,8 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
   const deleteLocation = useDeleteLocation();
   const save = location ? updateLocation : createLocation;
   const sitePath = `/places/${String(site.id)}`;
+  // The place's page: the Places tab itself when it's the only place.
+  const siteHome = useSiteHome(site.id);
   const toDisplay = (celsius: number | null | undefined) =>
     celsius === null || celsius === undefined ? "" : celsiusToDisplay(celsius, units);
 
@@ -142,7 +145,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
       <Stack gap="lg">
         <PageHeader
           title={location ? t("places.editLocation") : t("places.newLocation")}
-          back={{ to: sitePath, label: site.name }}
+          back={{ to: siteHome, label: site.name }}
         />
         <Paper withBorder radius="lg" p="lg">
           <form onSubmit={handleSubmit} noValidate>
@@ -254,7 +257,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
               )}
               <FormActions
                 saving={save.isPending}
-                cancelTo={location ? `${sitePath}/locations/${String(location.id)}` : sitePath}
+                cancelTo={location ? `${sitePath}/locations/${String(location.id)}` : siteHome}
                 extra={
                   location && (
                     <ConfirmDeleteButton
@@ -267,7 +270,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
                           message: t("places.locationDeleted", { name: location.name }),
                         });
                         leaveGuard.allowLeave();
-                        await navigate(sitePath);
+                        await navigate(siteHome);
                       }}
                     />
                   )

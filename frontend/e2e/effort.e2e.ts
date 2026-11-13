@@ -25,7 +25,7 @@ const BUDGETS = {
   editPot: { taps: 3, fields: 1, pages: 3 },
   addLightFromPlant: { taps: 6, fields: 0, pages: 3 },
   movePlant: { taps: 4, fields: 0, pages: 1 },
-  addRoomWithWindow: { taps: 8, fields: 1, pages: 4 },
+  addRoomWithWindow: { taps: 7, fields: 1, pages: 3 },
   invite: { taps: 3, fields: 1, pages: 2 },
   calendar: { taps: 4, fields: 0, pages: 2 },
 } satisfies Record<string, Cost>;
@@ -189,7 +189,7 @@ test("add a room, with a window", async () => {
   await startOn("/", "Today");
   await withinBudget(page, BUDGETS.addRoomWithWindow, async (effort) => {
     await effort.tap(nav().getByRole("link", { name: "Places" }));
-    await effort.tap(page.getByRole("link", { name: "Home", exact: true }));
+    // One place: the Places tab shows its rooms, and adding one, itself.
     await effort.tap(page.getByRole("link", { name: "Add a room or spot" }).first());
     await effort.type(page.getByRole("textbox", { name: /^Name/ }), "Bedroom");
     await effort.tap(page.getByRole("button", { name: "Save" }));
@@ -201,9 +201,9 @@ test("add a room, with a window", async () => {
 });
 
 test("move a plant to another room", async () => {
-  await startOn("/places", "Places");
+  await startOn("/places", "Home");
   await withinBudget(page, BUDGETS.movePlant, async (effort) => {
-    await effort.tap(page.getByRole("link", { name: "Bedroom" }));
+    await effort.tap(page.getByRole("link", { name: /^Bedroom/ }));
     await effort.tap(page.getByRole("button", { name: "Move plants here" }));
     await effort.tap(page.getByRole("checkbox", { name: "Monty" }));
     await effort.tap(page.getByRole("button", { name: "Move here" }));

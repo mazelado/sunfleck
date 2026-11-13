@@ -43,7 +43,7 @@ why in the pull request; when one gets cheaper, lower it.
 | Add a photo of a plant | Plants | 2 | 1 | 1 |
 | Water a plant every 5 days instead of the predicted interval | Plants | 4 | 1 | 1 |
 | Change a plant's pot size | Plants | 3 | 1 | 3 |
-| Add a room, with a window | Today | 8 | 1 | 4 |
+| Add a room, with a window | Today | 7 | 1 | 3 |
 | Move a plant to another room | Places | 4 | 0 | 1 |
 | Give a plant a grow light its room doesn't have yet | Plants | 6 | 0 | 3 |
 | Invite someone to the household | Today | 3 | 1 | 2 |
@@ -59,8 +59,9 @@ someone and the calendar now pass through it, one page change more for the same 
   taps from Today, without leaving it.
 - **Giving a plant a light its room doesn't have** took leaving the plant form for the room's
   page and coming back; with #98 it's 6 taps without losing the form.
-- **Adding a room with a window** is the costliest task: 8 taps over 4 pages, since the
-  window is added on the room's page after the room is saved. Adding windows in the room's
+- **Adding a room with a window** is the costliest task: 7 taps over 3 pages (8 over 4 until
+  the Places tab showed a household's only place itself), since the window is added on the
+  room's page after the room is saved. Adding windows in the room's
   form would save a page and a tap or two.
 - **A new plant's routine is a second step** on its page after saving. Offering it in the
   plant form, or accepting it by default, would make adding a plant one step.

@@ -8,6 +8,7 @@ import { Navigate, useNavigate, useParams } from "react-router";
 import { type Site, useCreateSite, useDeleteSite, useSite, useUpdateSite } from "../../api/places";
 import { FormActions } from "../../components/FormActions";
 import { PageHeader } from "../../components/PageHeader";
+import { useSiteHome } from "./useSiteHome";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { LeaveDialog } from "../../components/LeaveDialog";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -43,6 +44,7 @@ interface SiteFormValues {
 }
 
 function SiteForm({ site }: { site?: Site }) {
+  const siteHome = useSiteHome(site?.id ?? 0);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const applyFieldErrors = useApplyFieldErrors();
@@ -90,7 +92,7 @@ function SiteForm({ site }: { site?: Site }) {
         <PageHeader
           title={site ? t("places.editSite") : t("places.newSite")}
           back={{
-            to: site ? `/places/${String(site.id)}` : "/places",
+            to: site ? siteHome : "/places",
             label: site?.name ?? t("places.title"),
           }}
         />
@@ -125,7 +127,7 @@ function SiteForm({ site }: { site?: Site }) {
               />
               <FormActions
                 saving={save.isPending}
-                cancelTo={site ? `/places/${String(site.id)}` : "/places"}
+                cancelTo={site ? siteHome : "/places"}
                 extra={
                   site && (
                     <ConfirmDeleteButton

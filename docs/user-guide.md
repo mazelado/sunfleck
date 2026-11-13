@@ -23,8 +23,8 @@ and has a button for the next.
 
 1. **Add your home or garden** (Places → Add a home or garden), with where it is on a map.
    That sets its time zone, seasons and, with the weather plugin, its weather.
-2. **Add rooms and spots** to it: rooms, shelves or garden beds, with their windows and grow
-   lights.
+2. **Add rooms and spots** to it (Places → Add a room or spot): rooms, shelves or garden
+   beds, with their windows and grow lights.
 3. **Add plants** (Plants → Add a plant): a photo, the species, and where it lives. A place,
    a room, or a window or grow light that isn't there yet can be added from the plant's
    form, without losing what you've typed.
@@ -47,6 +47,9 @@ right. Every page also has a link back above its title on a wider screen.
   sent elsewhere by plugins an Admin turns on. (The map itself is loaded from
   OpenStreetMap, which sees the area shown while you pick the spot; you can type the
   coordinates instead.)
+- **The Places tab**: with one home, it is that home's page: its rooms and spots, **Add a room
+  or spot**, and its frost dates. Rename it, or add another home or garden, from its **⋯**
+  menu. With several, the tab lists them, each with its rooms.
 - A **room or spot** is where plants live in a site: a room, a shelf, a bed or a balcony,
   **indoor** or **outdoor**. Indoors, give its
   temperature range and humidity if you know them; outdoors, how much sun it gets.
@@ -65,11 +68,12 @@ right. Every page also has a link back above its title on a wider screen.
   measured too, as on its box or spec sheet ("600 at 45 cm"). A plant nearer the light gets
   more, and one further away less. Without a distance, a plant is taken to be where the
   brightness was measured.
-- **Is it bright enough?** A plant's page says, under **Light check**, whether it gets enough
-  light now, and suggests moving it or adding a grow light when it's too dim. Below, it
-  compares the light at its spot with what it likes in each season. A
-  room's page shows each window's light through the year. Light is the day's total
-  (DLI, in mol/m²/day), estimated for a typical day.
+- **Is it bright enough?** A plant's **Light** card says whether it gets enough light now,
+  and suggests moving it or adding a grow light when it's too dim. **Through the year**
+  compares the light at its spot with what it likes in each season, in words (dim, medium,
+  bright, very bright) with the numbers beside them. A room's page shows each window's light
+  through the year the same way. Light is the day's total (DLI, in mol/m²/day), estimated for
+  a typical day: about 5 is dim, 10 medium, 20 bright.
 
 ## Plants
 
