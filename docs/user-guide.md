@@ -113,9 +113,10 @@ right. Every page also has a link back above its title on a wider screen.
   its last watering with **Log with details** and set the date.
 - **Photos**: add as many as you like; the first becomes the plant's cover, and so does one
   added with the camera button on the cover. Photos are made smaller and stripped of their
-  location data when uploaded. Open a photo and choose **Crop** to pick the part its thumbnails and the plant's cover show: drag the photo under the frame
-  and zoom with the slider (or pinch, or the arrow keys). The whole photo is always kept, so
-  you can change the crop later, or choose **Show the whole photo**.
+  location data when uploaded. Open a photo and choose **Crop** to pick the part its
+  thumbnails and the plant's cover show: drag the photo under the frame and zoom with the
+  slider (or pinch, or the arrow keys). The whole photo is always kept, so you can change the
+  crop later, or choose **Show the whole photo**.
 - **Status**: Active, Dormant, Propagating, Given away, or Died. Only active, dormant and
   propagating plants need care.
 - **Propagation**: **Propagate**, in the **⋯** menu at the top of a plant's page, adds the cuttings, divisions, offsets or
