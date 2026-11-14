@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <path d="M32 58C18 50 10 38 12 22c10 2 18 8 20 18 2-10 10-16 20-18 2 16-6 28-20 36z" fill="#2f9e44"/>
-  <circle cx="44" cy="14" r="8" fill="#fab005"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#12a150" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Tabler Icons' "leaf" (MIT), as beside "Sunfleck" in the app, in shade 6 of its green. -->
+  <path d="M5 21c.5 -4.5 2.5 -8 7 -10" />
+  <path d="M9 18c6.218 0 10.5 -3.288 11 -12v-2h-4.014c-9 0 -11.986 4 -12 9c0 1 0 3 2 5h3l.014 0" />
 </svg>

@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "e2e": "playwright test -c e2e/playwright.config.ts",
     "screenshots": "playwright test -c e2e/screenshots.config.ts",
+    "icons": "node scripts/render-icons.mjs",
     "api-types": "openapi-typescript src/api/openapi.json --output src/api/schema.d.ts"
   },
   "dependencies": {
