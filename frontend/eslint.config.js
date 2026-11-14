@@ -24,6 +24,13 @@ export default defineConfig(
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
   },
+  // A component file stays small enough to read: split one past this (docs/STYLE_GUIDE.md).
+  // Tests are left out, one file per feature.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/**/*.test.{ts,tsx}", "src/test/**", "src/api/schema.d.ts"],
+    rules: { "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }] },
+  },
   reactHooks.configs.flat.recommended,
   reactRefresh.configs.vite,
   prettier,

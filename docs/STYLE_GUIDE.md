@@ -228,8 +228,12 @@ Project conventions (on top of PEP 8):
 
 ### Components
 - Function components and hooks only.
-- One component per file. Filename matches the component name: `PlantCard.tsx`.
-- Keep components small. If a component exceeds ~150 lines, split it.
+- One exported component per file. Filename matches the component name: `PlantCard.tsx`.
+  The small private parts only it uses (a row, a dialog) may live in the same file.
+- Keep files small. Split a component once it's more than ~150 lines, and a file before it
+  passes 300 lines of code (blank lines and comments not counted): ESLint's `max-lines` holds
+  that line. Constants and helpers that several components share go in a module of their own
+  (fast refresh only works for files that export nothing but components).
 - Props are typed with an interface named `<Component>Props`.
 - Prefer composition over configuration flags. Several small components beat one component
   with ten boolean props.
