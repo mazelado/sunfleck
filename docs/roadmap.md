@@ -230,6 +230,8 @@ Split from Jasmine (1.0), not yet scheduled.
 - **Frontend plugin slots**, so plugins can add to the interface (widgets, plant page tabs).
 - A plugin catalog page and a plugin development guide.
 - **Offline care logging**, synced when the connection is back.
+- **One shared header for Plants, Seeds and Wishlist**, so the view switch stays in the same
+  place on all three (#213).
 
 ## Done in the first release
 
