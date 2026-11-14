@@ -4,7 +4,7 @@
 # Sunfleck is then available at http://localhost:8000. For access from other devices, put it
 # behind a reverse proxy with HTTPS (Caddy, Traefik, Nginx Proxy Manager, ...).
 #
-# It uses the latest release. To stay on a version, set SUNFLECK_VERSION in .env (e.g. 0.1).
+# It uses the latest release. To stay on a version, set SUNFLECK_VERSION in .env (e.g. 1).
 # To build the image from the source code instead, see compose.build.yaml.
 services:
   sunfleck:

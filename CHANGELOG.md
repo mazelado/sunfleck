@@ -9,6 +9,27 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-14
+
+**Jasmine.** Sunfleck grows up: a new look across the whole app, in light and dark, built
+around what people stumbled on in a usability test; step-by-step setup for a new household;
+photo cropping; and a security review and a code quality review, with every finding fixed.
+From 1.0 on, the API, the plugin interface, the settings and your data stay compatible
+within a major version ([what's promised](docs/stability.md)).
+
+**Before upgrading**, read [how to upgrade](docs/install.md#upgrading), make a backup, and
+check these, which can change how your Sunfleck behaves:
+
+- **Port 8000 is only reachable from the server itself.** If phones or computers on your
+  network open `http://<server>:8000` directly, set `SUNFLECK_LISTEN_ADDRESS=0.0.0.0` in
+  `.env`, and download the new `compose.yaml`.
+- **Behind an HTTPS proxy, browsers are told to use only HTTPS for a year** (HSTS). Only set
+  `SUNFLECK_BEHIND_PROXY=true` with HTTPS you'll keep.
+- **Without `EMAIL_URL`, emails are no longer written to the log.** Admins copy invitation and
+  password-reset links in the app.
+- **API clients:** `/api/v1/wishlist`, `/api/v1/seeds` and a plant's `/conversations` answer
+  `{"items": [...], "count": n}` instead of a plain list.
+
 ### Added
 
 - **Step-by-step setup** (UI plan, part 12): a new household's **Getting started** button opens
@@ -626,7 +647,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/mazelado/sunfleck/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/mazelado/sunfleck/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mazelado/sunfleck/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/mazelado/sunfleck/compare/v0.6.1...v0.7.0

@@ -52,7 +52,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.7 Gardenia** | [Outdoor and edible gardening](#gardenia-outdoor-and-edible-gardening-released) | Released 2026-11-06 |
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
-| **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful) | In progress |
+| **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
 [more gardening](#more-gardening), split from Gardenia, and
@@ -198,7 +198,7 @@ Help from an AI model, only when it's asked for and only with an AI plugin an Ad
 - **Ask about this plant:** a chat with the plant's history and conditions as context.
   Conversations are kept on the plant, for the household to read and continue.
 
-### Jasmine: mature and beautiful
+### Jasmine: mature and beautiful (released)
 
 Making what Sunfleck already does solid and beautiful, rather than adding more.
 
