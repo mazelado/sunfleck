@@ -4,7 +4,7 @@
 """
 
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 from django.http import HttpRequest, HttpResponse
 from ninja import NinjaAPI
@@ -26,6 +26,27 @@ class ApiError(Exception):
         self.details = details or {}
 
 
+class ServiceError(Exception):
+    """A rule a service enforces was broken, e.g. a name that's taken. `code` is stable and
+    shown to API clients; `field` names the form field at fault, if any.
+
+    Each app has its own subclass (PlantsError, CareError, ...). Raised through the API, it's
+    answered with 422, or the status `statuses` gives for its code, so endpoints needn't
+    catch it.
+    """
+
+    statuses: ClassVar[dict[str, int]] = {}
+
+    def __init__(self, code: str, message: str, field: str | None = None) -> None:
+        super().__init__(message)
+        self.code = code
+        self.field = field
+
+    @property
+    def status(self) -> int:
+        return self.statuses.get(self.code, 422)
+
+
 def _error_response(
     api: NinjaAPI,
     request: HttpRequest,
@@ -44,6 +65,11 @@ def register_error_handlers(api: NinjaAPI) -> None:
     @api.exception_handler(ApiError)
     def handle_api_error(request: HttpRequest, exc: ApiError) -> HttpResponse:
         return _error_response(api, request, exc.status, exc.code, exc.message, exc.details)
+
+    @api.exception_handler(ServiceError)
+    def handle_service_error(request: HttpRequest, exc: ServiceError) -> HttpResponse:
+        details = {"field": exc.field} if exc.field else {}
+        return _error_response(api, request, exc.status, exc.code, str(exc), details)
 
     @api.exception_handler(ValidationError)
     def handle_validation_error(request: HttpRequest, exc: ValidationError) -> HttpResponse:

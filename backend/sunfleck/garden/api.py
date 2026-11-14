@@ -5,10 +5,8 @@ Everyone in the household can see them; Gardeners and Admins can change them.
 
 from datetime import date
 from decimal import Decimal
-from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
-from django.utils import timezone
 from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -20,8 +18,9 @@ from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.garden import calendar, services
 from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
-from sunfleck.plants import services as plant_services
-from sunfleck.plants.models import Plant
+from sunfleck.places.time import site_today
+from sunfleck.plants.selectors import get_plant
+from sunfleck.plants.time import plant_today
 from sunfleck.taxonomy.api import SpeciesOut, language, species_out
 
 router = Router(tags=["garden"], auth=django_auth)
@@ -89,10 +88,6 @@ class SownOut(Schema):
     plant_id: int
 
 
-def _seed_name(packet: SeedPacket) -> str:
-    return f"{packet.name} '{packet.variety}'" if packet.variety else packet.name
-
-
 def _get_seed(household: Household, seed_id: int) -> SeedPacket:
     packet = (
         SeedPacket.objects.select_related("taxon__archetype")
@@ -102,10 +97,6 @@ def _get_seed(household: Household, seed_id: int) -> SeedPacket:
     if packet is None:
         raise ApiError(404, "seed_not_found", "These seeds don't exist.")
     return packet
-
-
-def _garden_error(exc: services.GardenError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
 
 
 class SeedPage(Schema):
@@ -130,10 +121,7 @@ def list_seeds(request: HttpRequest, query: Query[ListQuery]) -> SeedPage:
 @router.post("/seeds", response={201: SeedOut})
 def create_seed(request: HttpRequest, data: SeedIn) -> Status[SeedOut]:
     household = require_role(request, Role.GARDENER).household
-    try:
-        packet = services.create_seed(household, services.SeedData(**data.model_dump()))
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    packet = services.create_seed(household, services.SeedData(**data.model_dump()))
     return Status(201, _seed_out(packet, language(request)))
 
 
@@ -141,10 +129,7 @@ def create_seed(request: HttpRequest, data: SeedIn) -> Status[SeedOut]:
 def update_seed(request: HttpRequest, seed_id: int, data: SeedIn) -> SeedOut:
     household = require_role(request, Role.GARDENER).household
     packet = _get_seed(household, seed_id)
-    try:
-        services.update_seed(packet, services.SeedData(**data.model_dump()))
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    services.update_seed(packet, services.SeedData(**data.model_dump()))
     return _seed_out(packet, language(request))
 
 
@@ -167,7 +152,7 @@ def sowing_calendar(request: HttpRequest, site_id: int | None = None) -> SowingC
         site = sites.exclude(frost_source="").first() or sites.first()
     if site is None:
         raise ApiError(404, "site_not_found", "There's no place yet to grow them.")
-    today = timezone.now().astimezone(ZoneInfo(site.timezone)).date()
+    today = site_today(site)
     return SowingCalendarOut(
         site_id=site.pk,
         site_name=site.name,
@@ -176,7 +161,7 @@ def sowing_calendar(request: HttpRequest, site_id: int | None = None) -> SowingC
         entries=[
             SowingEntryOut(
                 seed_id=entry.seed.pk,
-                name=_seed_name(entry.seed),
+                name=entry.seed.display_name,
                 action=entry.action,
                 starts_on=entry.starts_on,
                 ends_on=entry.ends_on,
@@ -192,11 +177,7 @@ def seeds_sown(request: HttpRequest, seed_id: int, data: SownIn) -> Status[SownO
     household = require_role(request, Role.GARDENER).household
     packet = _get_seed(household, seed_id)
     site = Site.objects.filter(household=household).order_by("pk").first()
-    zone = ZoneInfo(site.timezone) if site else timezone.get_current_timezone()
-    try:
-        plant = services.sown(packet, data.location_id, timezone.now().astimezone(zone).date())
-    except plant_services.PlantsError as exc:
-        raise ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {}) from exc
+    plant = services.sown(packet, data.location_id, site_today(site))
     return Status(201, SownOut(plant_id=plant.pk))
 
 
@@ -243,24 +224,12 @@ def _harvest_out(harvest: Harvest) -> HarvestOut:
     )
 
 
-def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = Plant.objects.filter(pk=plant_id, household=household).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
-
-
-def _plant_today(plant: Plant) -> date:
-    zone = ZoneInfo(plant.location.site.timezone) if plant.location else None
-    return timezone.now().astimezone(zone).date() if zone else timezone.localdate()
-
-
 @router.get("/plants/{plant_id}/harvests", response=HarvestsOut)
 def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) -> HarvestsOut:
     """A plant's harvests, the latest first, and this year's total."""
     household = require_role(request, Role.VIEWER).household
-    plant = _get_plant(household, plant_id)
-    totals = services.harvest_totals(plant, _plant_today(plant).year)
+    plant = get_plant(household, plant_id)
+    totals = services.harvest_totals(plant, plant_today(plant).year)
     harvests, count = paginate(
         # The id too, so pages don't overlap.
         plant.harvests.select_related("logged_by").order_by("-harvested_on", "-created_at", "-id"),
@@ -281,17 +250,14 @@ def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) 
 @router.post("/plants/{plant_id}/harvests", response={201: HarvestOut})
 def log_harvest(request: HttpRequest, plant_id: int, data: HarvestIn) -> Status[HarvestOut]:
     membership = require_role(request, Role.GARDENER)
-    plant = _get_plant(membership.household, plant_id)
-    if data.harvested_on > _plant_today(plant):
+    plant = get_plant(membership.household, plant_id)
+    if data.harvested_on > plant_today(plant):
         raise ApiError(
             422, "harvest_in_future", "A harvest can't be in the future.", {"field": "harvested_on"}
         )
-    try:
-        harvest = services.log_harvest(
-            plant, services.HarvestData(**data.model_dump()), membership.user
-        )
-    except services.GardenError as exc:
-        raise _garden_error(exc) from exc
+    harvest = services.log_harvest(
+        plant, services.HarvestData(**data.model_dump()), membership.user
+    )
     return Status(201, _harvest_out(harvest))
 
 

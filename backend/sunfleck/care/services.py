@@ -5,16 +5,16 @@ API endpoints call these functions; they never change care data directly.
 
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from zoneinfo import ZoneInfo
 
-from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
 from sunfleck.accounts.models import Household, User
 from sunfleck.care.models import CareEvent, CareType, Feedback
+from sunfleck.core.errors import ServiceError
 from sunfleck.plants.models import Plant
+from sunfleck.plants.time import plant_local
 from sunfleck.plugins.registry import registry
 
 # Phones' and servers' clocks differ a little; allow for it before calling a time "future".
@@ -23,14 +23,9 @@ CLOCK_TOLERANCE = timedelta(minutes=5)
 EARLIEST_CARE_YEAR = 2000
 
 
-class CareError(Exception):
+class CareError(ServiceError):
     """A care rule was broken. `code` is stable and shown to API clients; `field` names the
     form field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 def care_types_for(household: Household) -> QuerySet[CareType]:
@@ -125,14 +120,6 @@ class CareEventData:
     estimated: bool = False
 
 
-def _aware(plant: Plant, when: datetime) -> datetime:
-    """A time without a time zone is local time at the plant's site."""
-    if timezone.is_aware(when):
-        return when
-    zone = plant.location.site.timezone if plant.location else settings.TIME_ZONE
-    return when.replace(tzinfo=ZoneInfo(zone))
-
-
 def _apply_event(event: CareEvent, household: Household, data: CareEventData) -> None:
     care_type = care_types_for(household).filter(pk=data.care_type_id).first()
     if care_type is None:
@@ -144,7 +131,9 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
             f"Care can't be logged before {EARLIEST_CARE_YEAR}.",
             "performed_at",
         )
-    performed_at = _aware(event.plant, data.performed_at) if data.performed_at else timezone.now()
+    performed_at = (
+        plant_local(event.plant, data.performed_at) if data.performed_at else timezone.now()
+    )
     if performed_at > timezone.now() + CLOCK_TOLERANCE:
         raise CareError("care_in_future", "Care can't be logged in the future.", "performed_at")
     if data.feedback and not care_type.counts_as_watering:

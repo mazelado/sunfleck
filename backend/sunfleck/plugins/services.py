@@ -10,13 +10,14 @@ from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 from django.utils import timezone
 from pydantic import BaseModel, SecretStr, ValidationError
 
 from sunfleck.accounts.models import Household
 from sunfleck.core.crypto import DecryptionError, decrypt, encrypt
+from sunfleck.core.errors import ServiceError
 from sunfleck.plugins.info import PluginInfo
 from sunfleck.plugins.models import PluginSetting
 from sunfleck.plugins.registry import registry
@@ -28,13 +29,13 @@ MAX_ERROR_LENGTH = 500
 CHECK_HOOK = "check_settings"
 
 
-class PluginError(Exception):
+class PluginError(ServiceError):
     """A plugin setting was refused. `field` names the setting at fault, if any."""
 
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
+    statuses: ClassVar[dict[str, int]] = {
+        "plugin_not_found": 404,
+        "plugin_cannot_check": 404,
+    }
 
 
 @dataclass(frozen=True)

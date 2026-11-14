@@ -13,7 +13,6 @@ from pydantic import Field
 
 from sunfleck.accounts.models import Role
 from sunfleck.accounts.permissions import require_role
-from sunfleck.core.errors import ApiError
 from sunfleck.plugins import services
 from sunfleck.plugins.registry import registry
 
@@ -100,11 +99,6 @@ def _plugin_out(state: services.State) -> PluginOut:
     )
 
 
-def _api_error(exc: services.PluginError) -> ApiError:
-    status = 404 if exc.code in ("plugin_not_found", "plugin_cannot_check") else 422
-    return ApiError(status, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 @router.get("/plugins", response=PluginsOut)
 def list_plugins(request: HttpRequest) -> PluginsOut:
     household = require_role(request, Role.ADMIN).household
@@ -121,10 +115,7 @@ def list_plugins(request: HttpRequest) -> PluginsOut:
 def update_plugin(request: HttpRequest, plugin_id: str, data: PluginIn) -> PluginOut:
     """Turn a plugin on or off for the household, and change its settings."""
     household = require_role(request, Role.ADMIN).household
-    try:
-        state = services.update(household, plugin_id, data.enabled, data.settings)
-    except services.PluginError as exc:
-        raise _api_error(exc) from exc
+    state = services.update(household, plugin_id, data.enabled, data.settings)
     return _plugin_out(state)
 
 
@@ -133,10 +124,7 @@ def check_plugin(request: HttpRequest, plugin_id: str, data: SettingsIn) -> Sett
     """Test a plugin with the settings from its form, which needn't be saved, whether or not
     it's on. Nothing is saved."""
     household = require_role(request, Role.ADMIN).household
-    try:
-        found = services.check(household, plugin_id, data.settings)
-    except services.PluginError as exc:
-        raise _api_error(exc) from exc
+    found = services.check(household, plugin_id, data.settings)
     return SettingsCheckOut(
         works=found.problem is None, problem=found.problem, details=found.details
     )

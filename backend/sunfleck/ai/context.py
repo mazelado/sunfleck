@@ -5,9 +5,10 @@ grows, its schedules and its recent care. Never people's names or the site's add
 """
 
 from sunfleck.care.models import CareEvent
-from sunfleck.care.schedules import local_today, plant_zone, schedules_for
+from sunfleck.care.schedules import local_today, schedules_for
 from sunfleck.places.models import LocationKind
 from sunfleck.plants.models import Plant
+from sunfleck.plants.time import plant_zone
 from sunfleck.taxonomy.models import FALLBACK_LANGUAGE, translated, translated_names
 
 # How much of the care log, newest first.

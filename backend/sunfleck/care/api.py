@@ -6,10 +6,8 @@ Everyone in the household can see care; Gardeners and Admins can log and change 
 
 from datetime import date, datetime
 from typing import Any, Literal
-from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
-from django.utils import timezone
 from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -28,8 +26,10 @@ from sunfleck.care.models import (
 )
 from sunfleck.core.errors import ApiError
 from sunfleck.places.models import Site
+from sunfleck.places.time import site_today
 from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
+from sunfleck.plants.selectors import get_plant
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import SiteConditions
 
@@ -332,7 +332,7 @@ def _conditions_out(site: Site, plugin_id: str, conditions: SiteConditions) -> S
     return SiteConditionsOut(
         site_id=site.pk,
         site_name=site.name,
-        today=timezone.now().astimezone(ZoneInfo(site.timezone)).date(),
+        today=site_today(site),
         plugin_id=plugin_id,
         attribution=conditions.attribution,
         updated_at=conditions.updated_at,
@@ -361,30 +361,13 @@ def _suggestion_out(suggestion: schedules.Suggestion) -> SuggestionOut:
     )
 
 
-def _care_error(exc: services.CareError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 # --- Lookups (always within the user's household) ---------------------------------------------
-
-
-def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = Plant.objects.filter(pk=plant_id, household=household).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
 
 
 def _get_plant_for_schedules(household: Household, plant_id: int) -> Plant:
     """The plant, with what its predictions need."""
-    plant = (
-        Plant.objects.select_related("location__site", "taxon__archetype", "care_profile")
-        .filter(pk=plant_id, household=household)
-        .first()
-    )
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
+    related = Plant.objects.select_related("location__site", "taxon__archetype", "care_profile")
+    return get_plant(household, plant_id, related)
 
 
 def _get_schedule(household: Household, schedule_id: int) -> CareSchedule:
@@ -435,10 +418,7 @@ def list_care_types(request: HttpRequest) -> list[CareTypeOut]:
 @router.post("/care-types", response={201: CareTypeOut})
 def create_care_type(request: HttpRequest, data: CareTypeIn) -> Status[CareTypeOut]:
     household = require_role(request, Role.GARDENER).household
-    try:
-        care_type = services.create_care_type(household, services.CareTypeData(**data.model_dump()))
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    care_type = services.create_care_type(household, services.CareTypeData(**data.model_dump()))
     return Status(201, _care_type_out(care_type))
 
 
@@ -446,10 +426,7 @@ def create_care_type(request: HttpRequest, data: CareTypeIn) -> Status[CareTypeO
 def update_care_type(request: HttpRequest, care_type_id: int, data: CareTypeIn) -> CareTypeOut:
     household = require_role(request, Role.GARDENER).household
     care_type = _get_care_type(household, care_type_id)
-    try:
-        services.update_care_type(care_type, services.CareTypeData(**data.model_dump()))
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    services.update_care_type(care_type, services.CareTypeData(**data.model_dump()))
     return _care_type_out(care_type)
 
 
@@ -457,10 +434,7 @@ def update_care_type(request: HttpRequest, care_type_id: int, data: CareTypeIn) 
 def delete_care_type(request: HttpRequest, care_type_id: int) -> Status[None]:
     """Delete a household's own care type. Types that have been used can't be deleted."""
     household = require_role(request, Role.GARDENER).household
-    try:
-        services.delete_care_type(_get_care_type(household, care_type_id))
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    services.delete_care_type(_get_care_type(household, care_type_id))
     return Status(204, None)
 
 
@@ -471,13 +445,8 @@ def delete_care_type(request: HttpRequest, care_type_id: int) -> Status[None]:
 def log_care(request: HttpRequest, plant_id: int, data: CareEventIn) -> Status[CareEventOut]:
     """Log care given to a plant: by default just now, by the signed-in person."""
     membership = require_role(request, Role.GARDENER)
-    plant = _get_plant(membership.household, plant_id)
-    try:
-        event = services.log_care(
-            plant, services.CareEventData(**data.model_dump()), membership.user
-        )
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    plant = get_plant(membership.household, plant_id)
+    event = services.log_care(plant, services.CareEventData(**data.model_dump()), membership.user)
     return Status(201, _event_out(event))
 
 
@@ -486,15 +455,12 @@ def log_care_for_plants(request: HttpRequest, data: BulkCareIn) -> Status[list[C
     """Log the same care for several plants at once, e.g. watering a whole room; all or none."""
     membership = require_role(request, Role.GARDENER)
     fields = data.model_dump(exclude={"plant_ids"})
-    try:
-        events = services.log_care_for_plants(
-            membership.household,
-            data.plant_ids,
-            services.CareEventData(**fields),
-            membership.user,
-        )
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    events = services.log_care_for_plants(
+        membership.household,
+        data.plant_ids,
+        services.CareEventData(**fields),
+        membership.user,
+    )
     return Status(201, [_event_out(event) for event in events])
 
 
@@ -502,10 +468,7 @@ def log_care_for_plants(request: HttpRequest, data: BulkCareIn) -> Status[list[C
 def update_care_event(request: HttpRequest, event_id: int, data: CareEventIn) -> CareEventOut:
     household = require_role(request, Role.GARDENER).household
     event = _get_event(household, event_id)
-    try:
-        services.update_care_event(event, services.CareEventData(**data.model_dump()))
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    services.update_care_event(event, services.CareEventData(**data.model_dump()))
     return _event_out(event)
 
 
@@ -520,7 +483,7 @@ def delete_care_event(request: HttpRequest, event_id: int) -> Status[None]:
 def plant_timeline(request: HttpRequest, plant_id: int, page: Query[TimelineQuery]) -> TimelinePage:
     """The plant's care and photos, newest first, a page at a time."""
     household = require_role(request, Role.VIEWER).household
-    plant = _get_plant(household, plant_id)
+    plant = get_plant(household, plant_id)
     try:
         before = selectors.parse_cursor(page.before) if page.before else None
     except ValueError as exc:
@@ -567,12 +530,9 @@ def accept_routine(
     """Add the chosen schedules from the suggested routine, all or none."""
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant_for_schedules(household, plant_id)
-    try:
-        added = schedules.accept_routine(
-            plant, [schedules.ScheduleData(**item.model_dump()) for item in data.items]
-        )
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    added = schedules.accept_routine(
+        plant, [schedules.ScheduleData(**item.model_dump()) for item in data.items]
+    )
     return Status(201, [_schedule_out(schedule) for schedule in added])
 
 
@@ -580,10 +540,7 @@ def accept_routine(
 def create_schedule(request: HttpRequest, plant_id: int, data: ScheduleIn) -> Status[ScheduleOut]:
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant_for_schedules(household, plant_id)
-    try:
-        schedule = schedules.create_schedule(plant, schedules.ScheduleData(**data.model_dump()))
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    schedule = schedules.create_schedule(plant, schedules.ScheduleData(**data.model_dump()))
     return Status(201, _schedule_out(schedule))
 
 
@@ -592,13 +549,10 @@ def update_schedule(request: HttpRequest, schedule_id: int, data: ScheduleChange
     """Change a schedule's mode, interval, or whether it's in use."""
     household = require_role(request, Role.GARDENER).household
     schedule = _get_schedule(household, schedule_id)
-    try:
-        schedules.update_schedule(
-            schedule,
-            schedules.ScheduleData(care_type_id=schedule.care_type_id, **data.model_dump()),
-        )
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    schedules.update_schedule(
+        schedule,
+        schedules.ScheduleData(care_type_id=schedule.care_type_id, **data.model_dump()),
+    )
     return _schedule_out(schedule)
 
 
@@ -614,10 +568,7 @@ def snooze_schedule(request: HttpRequest, schedule_id: int, data: SnoozeIn) -> S
     """Put off due care until a day (up to two months ahead), or stop putting it off."""
     household = require_role(request, Role.GARDENER).household
     schedule = _get_schedule(household, schedule_id)
-    try:
-        schedules.snooze(schedule, data.until)
-    except services.CareError as exc:
-        raise _care_error(exc) from exc
+    schedules.snooze(schedule, data.until)
     return _schedule_out(schedule)
 
 

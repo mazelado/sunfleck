@@ -37,7 +37,7 @@ from sunfleck.places.api import (
 )
 from sunfleck.places.light_report import plant_light_report
 from sunfleck.places.models import LocationKind
-from sunfleck.plants import services
+from sunfleck.plants import selectors, services
 from sunfleck.plants.models import (
     CARED_FOR,
     ContainerMaterial,
@@ -477,10 +477,6 @@ def _lineage_out(plant: Plant) -> LineageOut:
     )
 
 
-def _plants_error(exc: services.PlantsError) -> ApiError:
-    return ApiError(422, exc.code, str(exc), {"field": exc.field} if exc.field else {})
-
-
 def _plant_data(data: PlantIn) -> services.PlantData:
     fields = data.model_dump(
         exclude={
@@ -524,10 +520,9 @@ def _plants(household: Household) -> QuerySet[Plant]:
 
 
 def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = _plants(household).select_related("cover_photo", "parent").filter(pk=plant_id).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
+    """The plant, with what its page shows."""
+    plants = _plants(household).select_related("cover_photo", "parent")
+    return selectors.get_plant(household, plant_id, plants)
 
 
 def _get_photo(household: Household, photo_id: int) -> Photo:
@@ -573,20 +568,17 @@ def create_plant(request: HttpRequest, data: PlantCreateIn) -> Status[PlantOut]:
     (marked as estimated), so its first due dates start from there."""
     membership = require_role(request, Role.GARDENER)
     household = membership.household
-    try:
-        with transaction.atomic():
-            plant = services.create_plant(household, _plant_data(data))
-            care_services.log_last_care(
-                plant,
-                membership.user,
-                data.last_watered_days_ago,
-                data.last_fertilized_days_ago,
-            )
-            if data.from_wish_id is not None:
-                # Got it: off the wishlist (if someone hasn't taken it off already).
-                household.wishlist.filter(pk=data.from_wish_id).delete()
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    with transaction.atomic():
+        plant = services.create_plant(household, _plant_data(data))
+        care_services.log_last_care(
+            plant,
+            membership.user,
+            data.last_watered_days_ago,
+            data.last_fertilized_days_ago,
+        )
+        if data.from_wish_id is not None:
+            # Got it: off the wishlist (if someone hasn't taken it off already).
+            household.wishlist.filter(pk=data.from_wish_id).delete()
     return Status(201, _plant_out(_get_plant(household, plant.pk), language(request)))
 
 
@@ -595,10 +587,7 @@ def move_plants(request: HttpRequest, data: MovePlantsIn) -> list[PlantSummaryOu
     """Move plants into a location. Returns the plants that moved (those already there don't).
     The lights that reached them are removed, as they belong to their old location."""
     household = require_role(request, Role.GARDENER).household
-    try:
-        moved = services.move_plants(household, data.location_id, data.plant_ids)
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    moved = services.move_plants(household, data.location_id, data.plant_ids)
     plants = _plants(household).filter(pk__in=[plant.pk for plant in moved])
     lang = language(request)
     return [_summary_out(plant, lang) for plant in plants]
@@ -639,10 +628,7 @@ def plant_light(request: HttpRequest, plant_id: int) -> PlantLightReportOut | No
 def update_plant(request: HttpRequest, plant_id: int, data: PlantIn) -> PlantOut:
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant(household, plant_id)
-    try:
-        services.update_plant(plant, _plant_data(data))
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    services.update_plant(plant, _plant_data(data))
     return _plant_out(_get_plant(household, plant_id), language(request))
 
 
@@ -655,10 +641,7 @@ def propagate_plant(
     lights."""
     household = require_role(request, Role.GARDENER).household
     parent = _get_plant(household, plant_id)
-    try:
-        added = services.propagate(parent, services.PropagationData(**data.model_dump()))
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    added = services.propagate(parent, services.PropagationData(**data.model_dump()))
     plants = _plants(household).filter(pk__in=[plant.pk for plant in added]).order_by("id")
     lang = language(request)
     return Status(201, [_summary_out(plant, lang) for plant in plants])
@@ -677,10 +660,7 @@ def set_cover_photo(request: HttpRequest, plant_id: int, data: CoverIn) -> Plant
     """Choose which photo shows on the plant's card."""
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant(household, plant_id)
-    try:
-        services.set_cover_photo(plant, data.photo_id)
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    services.set_cover_photo(plant, data.photo_id)
     return _plant_out(_get_plant(household, plant_id), language(request))
 
 
@@ -711,10 +691,7 @@ def add_photo(
     zone, it's taken to be local time at the plant's site."""
     household = require_role(request, Role.GARDENER).household
     plant = _get_plant(household, plant_id)
-    try:
-        photo = services.add_photo(plant, file, file.size or 0, caption, taken_at)
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    photo = services.add_photo(plant, file, file.size or 0, caption, taken_at)
     return Status(201, photo_out(photo))
 
 
@@ -799,10 +776,7 @@ def crop_photo(request: HttpRequest, photo_id: int, data: PhotoCropIn) -> PhotoO
     it again (`crop` null). The photo itself is kept whole."""
     household = require_role(request, Role.GARDENER).household
     crop = images.Crop(**data.crop.model_dump()) if data.crop else None
-    try:
-        photo = services.crop_photo(_get_photo(household, photo_id), crop)
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    photo = services.crop_photo(_get_photo(household, photo_id), crop)
     return photo_out(photo)
 
 
@@ -872,10 +846,7 @@ def list_wishlist(request: HttpRequest, query: Query[ListQuery]) -> WishPage:
 @router.post("/wishlist", response={201: WishOut})
 def add_wish(request: HttpRequest, data: WishIn) -> Status[WishOut]:
     household = require_role(request, Role.GARDENER).household
-    try:
-        wish = services.save_wish(household, None, services.WishData(**data.model_dump()))
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    wish = services.save_wish(household, None, services.WishData(**data.model_dump()))
     return Status(201, _wish_out(wish, language(request)))
 
 
@@ -883,10 +854,7 @@ def add_wish(request: HttpRequest, data: WishIn) -> Status[WishOut]:
 def update_wish(request: HttpRequest, wish_id: int, data: WishIn) -> WishOut:
     household = require_role(request, Role.GARDENER).household
     wish = _get_wish(household, wish_id)
-    try:
-        services.save_wish(household, wish, services.WishData(**data.model_dump()))
-    except services.PlantsError as exc:
-        raise _plants_error(exc) from exc
+    services.save_wish(household, wish, services.WishData(**data.model_dump()))
     return _wish_out(wish, language(request))
 
 

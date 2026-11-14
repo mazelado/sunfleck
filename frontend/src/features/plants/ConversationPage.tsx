@@ -1,11 +1,8 @@
-import { Alert, Button, Group, Loader, Paper, Stack, Text, Textarea } from "@mantine/core";
-import { IconSend } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { Alert, Button, Group, Stack, Text } from "@mantine/core";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
-
 import {
-  type ChatMessage,
   type Conversation,
   useAskAgain,
   useConversation,
@@ -20,9 +17,8 @@ import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { formatDateTime } from "./dates";
-
-/** Questions to start from, for a new conversation. */
-const STARTERS = ["water", "light", "repot", "grow"] as const;
+import { MessageBubble } from "./MessageBubble";
+import { Composer } from "./Composer";
 
 /**
  * A conversation with the household's AI plugin about one plant, kept on the plant: everyone
@@ -171,134 +167,6 @@ function Thread({ conversation, plantName }: { conversation: Conversation; plant
         </Group>
       )}
     </>
-  );
-}
-
-function MessageBubble({ message }: { message: ChatMessage }) {
-  if (message.role === "question") {
-    return (
-      <Paper radius="lg" p="sm" ml="xl" bg="var(--mantine-color-default-hover)">
-        {message.asked_by && (
-          <Text size="xs" fw={600} c="dimmed">
-            {message.asked_by}
-          </Text>
-        )}
-        <Text style={{ whiteSpace: "pre-wrap" }}>{message.text}</Text>
-      </Paper>
-    );
-  }
-  return (
-    <Paper withBorder radius="lg" p="sm" mr="xl">
-      <Text style={{ whiteSpace: "pre-wrap" }}>{message.text}</Text>
-      <Text size="xs" c="dimmed" mt={6}>
-        {message.attribution}
-      </Text>
-    </Paper>
-  );
-}
-
-interface ComposerProps {
-  label: string;
-  pending: boolean;
-  error: unknown;
-  starters?: boolean;
-  /** Ask; the question is cleared once it's answered, and kept if it fails. */
-  onAsk: (question: string) => Promise<void>;
-}
-
-function Composer({ label, pending, error, starters = false, onAsk }: ComposerProps) {
-  const { t } = useTranslation();
-  const [question, setQuestion] = useState("");
-  const [asking, setAsking] = useState<string | null>(null);
-
-  async function submit() {
-    const text = question.trim();
-    if (!text || pending) return;
-    setAsking(text);
-    try {
-      await onAsk(text);
-      setQuestion("");
-    } catch {
-      // Shown from `error`; the question stays to try again.
-    } finally {
-      setAsking(null);
-    }
-  }
-
-  return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        void submit();
-      }}
-    >
-      <Stack gap="sm">
-        {pending && asking && (
-          <>
-            <Paper radius="lg" p="sm" ml="xl" bg="var(--mantine-color-default-hover)">
-              <Text style={{ whiteSpace: "pre-wrap" }}>{asking}</Text>
-            </Paper>
-            <Group gap="xs" role="status">
-              <Loader size="xs" type="dots" />
-              <Text size="sm" c="dimmed">
-                {t("conversations.thinking")}
-              </Text>
-            </Group>
-          </>
-        )}
-        {starters && !pending && (
-          <Group gap="xs">
-            {STARTERS.map((key) => (
-              <Button
-                key={key}
-                size="compact-sm"
-                radius="xl"
-                variant="default"
-                fw={400}
-                onClick={() => {
-                  setQuestion(t(`conversations.starters.${key}`));
-                }}
-              >
-                {t(`conversations.starters.${key}`)}
-              </Button>
-            ))}
-          </Group>
-        )}
-        <Textarea
-          label={label}
-          value={question}
-          onChange={(event) => {
-            setQuestion(event.currentTarget.value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-              event.preventDefault();
-              void submit();
-            }
-          }}
-          maxLength={2000}
-          autosize
-          minRows={2}
-          maxRows={8}
-          disabled={pending}
-        />
-        <ErrorAlert error={error} />
-        <Group justify="space-between" align="flex-start" wrap="nowrap">
-          <Text size="xs" c="dimmed">
-            {t("conversations.privacy")}
-          </Text>
-          <Button
-            type="submit"
-            loading={pending}
-            disabled={!question.trim()}
-            leftSection={<IconSend size={16} />}
-            style={{ flexShrink: 0 }}
-          >
-            {t("conversations.send")}
-          </Button>
-        </Group>
-      </Stack>
-    </form>
   );
 }
 

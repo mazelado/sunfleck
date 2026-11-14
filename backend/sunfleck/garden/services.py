@@ -5,19 +5,15 @@ from datetime import date
 from decimal import Decimal
 
 from sunfleck.accounts.models import Household, User
+from sunfleck.core.errors import ServiceError
 from sunfleck.garden.models import GRAMS_PER_UNIT, Harvest, HarvestUnit, SeedPacket
 from sunfleck.plants import services as plants
 from sunfleck.plants.models import Plant
 from sunfleck.taxonomy.models import Taxon
 
 
-class GardenError(Exception):
+class GardenError(ServiceError):
     """A change was refused. `field` names the field at fault, if any."""
-
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
 
 
 @dataclass(frozen=True)
@@ -62,11 +58,10 @@ def sown(packet: SeedPacket, location_id: int | None, today: date) -> Plant:
     Raises:
         PlantsError: If the location isn't the household's.
     """
-    name = f"{packet.name} '{packet.variety}'" if packet.variety else packet.name
     return plants.create_plant(
         packet.household,
         plants.PlantData(
-            nickname=name[:100],
+            nickname=packet.display_name[:100],
             location_id=location_id,
             taxon_id=packet.taxon_id,
             acquired_on=today,

@@ -9,16 +9,16 @@ Open Sunfleck: https://plants.example.com/
 
 from dataclasses import dataclass
 from datetime import date, timedelta
-from zoneinfo import ZoneInfo
 
 from django.conf import settings
-from django.utils import formats, timezone, translation
+from django.utils import formats, translation
 from django.utils.translation import gettext, ngettext
 
 from sunfleck.accounts.models import Household, UnitSystem, User
 from sunfleck.care.schedules import Task, due_tasks
 from sunfleck.notifications.models import NotificationKind
 from sunfleck.places.models import Site
+from sunfleck.places.time import site_today
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import Alert, SiteConditions
 
@@ -76,7 +76,7 @@ def _task_lines(tasks: list[Task]) -> list[str]:
 def _frost_lines(user: User, household: Household) -> list[str]:
     lines = []
     for site in Site.objects.filter(household=household).order_by("name"):
-        today = timezone.now().astimezone(ZoneInfo(site.timezone)).date()
+        today = site_today(site)
         for answer in registry.call("site_conditions", household, SiteConditions, site=site):
             for alert in answer.result.alerts:
                 if alert.kind == "frost":

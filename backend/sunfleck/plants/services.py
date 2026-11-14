@@ -6,10 +6,8 @@ API endpoints call these functions; they never change plant data directly.
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from typing import IO
-from zoneinfo import ZoneInfo
+from typing import IO, ClassVar
 
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils import timezone
@@ -17,6 +15,7 @@ from django.utils.translation import gettext as _
 
 from sunfleck.accounts.models import Household
 from sunfleck.core import images
+from sunfleck.core.errors import ServiceError
 from sunfleck.places.models import Location
 from sunfleck.plants.models import (
     ContainerMaterial,
@@ -28,20 +27,25 @@ from sunfleck.plants.models import (
     SoilType,
     Wish,
 )
+from sunfleck.plants.time import plant_local
 from sunfleck.plugins.registry import registry
 from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 MAX_CAPTION_LENGTH = 200
 
 
-class PlantsError(Exception):
+class PlantsError(ServiceError):
     """A plants rule was broken. `code` is stable and shown to API clients; `field` names the
     form field at fault, if any."""
 
-    def __init__(self, code: str, message: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.field = field
+
+class PlantNotFoundError(PlantsError):
+    """The plant isn't the household's (or doesn't exist): 404."""
+
+    statuses: ClassVar[dict[str, int]] = {"plant_not_found": 404}
+
+    def __init__(self) -> None:
+        super().__init__("plant_not_found", "This plant doesn't exist.")
 
 
 # --- Plants -----------------------------------------------------------------------------------
@@ -269,18 +273,11 @@ def move_plants(household: Household, location_id: int, plant_ids: list[int]) ->
 # --- Photos -----------------------------------------------------------------------------------
 
 
-def _local_time(plant: Plant, taken_at: datetime) -> datetime:
-    """Cameras usually record local time without a time zone; use the plant's site's."""
-    if timezone.is_aware(taken_at):
-        return taken_at
-    zone = plant.location.site.timezone if plant.location else settings.TIME_ZONE
-    return taken_at.replace(tzinfo=ZoneInfo(zone))
-
-
 def _taken_at(plant: Plant, taken_at: datetime | None) -> datetime:
     if taken_at is None or not images.is_plausible_date(taken_at):
         return timezone.now()
-    return _local_time(plant, taken_at)
+    # Cameras usually record local time without a time zone: the plant's site's.
+    return plant_local(plant, taken_at)
 
 
 def add_photo(

@@ -20,7 +20,7 @@ from sunfleck.ai.models import Conversation, Message, MessageRole
 from sunfleck.core import limits
 from sunfleck.core.errors import ApiError
 from sunfleck.core.pagination import ListQuery, paginate
-from sunfleck.plants.models import Plant
+from sunfleck.plants.selectors import get_plant
 from sunfleck.taxonomy.api import language
 
 router = Router(tags=["ai"], auth=django_auth)
@@ -91,13 +91,6 @@ def _message_out(message: Message) -> ChatMessageOut:
     )
 
 
-def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = household.plants.filter(pk=plant_id).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
-
-
 def _get_conversation(household: Household, conversation_id: int) -> Conversation:
     conversation = (
         Conversation.objects.select_related("plant", "started_by")
@@ -132,7 +125,7 @@ def list_conversations(
 ) -> ConversationPage:
     """The plant's conversations, the latest first."""
     household = require_role(request, Role.VIEWER).household
-    plant = _get_plant(household, plant_id)
+    plant = get_plant(household, plant_id)
     conversations, count = paginate(
         plant.conversations.select_related("started_by").annotate(
             questions=Count("messages", filter=Q(messages__role=MessageRole.QUESTION))
@@ -161,7 +154,7 @@ def start_conversation(
     question and the plant's species, conditions, schedules and recent care. Nothing is saved
     if the AI can't answer."""
     membership = require_role(request, Role.GARDENER)
-    plant = _get_plant(membership.household, plant_id)
+    plant = get_plant(membership.household, plant_id)
     limits.per_member(request, "ai", limits.AI_PER_MINUTE)
     try:
         conversation = chat.start(plant, data.question, membership.user, language(request))
