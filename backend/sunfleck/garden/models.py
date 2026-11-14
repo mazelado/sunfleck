@@ -40,6 +40,11 @@ class SeedPacket(models.Model):
     def __str__(self) -> str:
         return f"{self.name} ({self.variety})" if self.variety else self.name
 
+    @property
+    def display_name(self) -> str:
+        """The name with its variety, as people say it: Tomato 'Gardener's Delight'."""
+        return f"{self.name} '{self.variety}'" if self.variety else self.name
+
 
 class HarvestUnit(models.TextChoices):
     GRAMS = "g", _("grams")

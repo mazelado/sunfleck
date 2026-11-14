@@ -88,10 +88,6 @@ class SownOut(Schema):
     plant_id: int
 
 
-def _seed_name(packet: SeedPacket) -> str:
-    return f"{packet.name} '{packet.variety}'" if packet.variety else packet.name
-
-
 def _get_seed(household: Household, seed_id: int) -> SeedPacket:
     packet = (
         SeedPacket.objects.select_related("taxon__archetype")
@@ -165,7 +161,7 @@ def sowing_calendar(request: HttpRequest, site_id: int | None = None) -> SowingC
         entries=[
             SowingEntryOut(
                 seed_id=entry.seed.pk,
-                name=_seed_name(entry.seed),
+                name=entry.seed.display_name,
                 action=entry.action,
                 starts_on=entry.starts_on,
                 ends_on=entry.ends_on,

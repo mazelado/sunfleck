@@ -58,11 +58,10 @@ def sown(packet: SeedPacket, location_id: int | None, today: date) -> Plant:
     Raises:
         PlantsError: If the location isn't the household's.
     """
-    name = f"{packet.name} '{packet.variety}'" if packet.variety else packet.name
     return plants.create_plant(
         packet.household,
         plants.PlantData(
-            nickname=name[:100],
+            nickname=packet.display_name[:100],
             location_id=location_id,
             taxon_id=packet.taxon_id,
             acquired_on=today,
