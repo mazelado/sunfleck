@@ -6,7 +6,7 @@ API endpoints call these functions; they never change plant data directly.
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from typing import IO
+from typing import IO, ClassVar
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -38,6 +38,15 @@ MAX_CAPTION_LENGTH = 200
 class PlantsError(ServiceError):
     """A plants rule was broken. `code` is stable and shown to API clients; `field` names the
     form field at fault, if any."""
+
+
+class PlantNotFoundError(PlantsError):
+    """The plant isn't the household's (or doesn't exist): 404."""
+
+    statuses: ClassVar[dict[str, int]] = {"plant_not_found": 404}
+
+    def __init__(self) -> None:
+        super().__init__("plant_not_found", "This plant doesn't exist.")
 
 
 # --- Plants -----------------------------------------------------------------------------------

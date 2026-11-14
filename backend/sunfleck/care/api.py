@@ -30,6 +30,7 @@ from sunfleck.core.errors import ApiError
 from sunfleck.places.models import Site
 from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
+from sunfleck.plants.selectors import get_plant
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import SiteConditions
 
@@ -364,23 +365,10 @@ def _suggestion_out(suggestion: schedules.Suggestion) -> SuggestionOut:
 # --- Lookups (always within the user's household) ---------------------------------------------
 
 
-def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = Plant.objects.filter(pk=plant_id, household=household).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
-
-
 def _get_plant_for_schedules(household: Household, plant_id: int) -> Plant:
     """The plant, with what its predictions need."""
-    plant = (
-        Plant.objects.select_related("location__site", "taxon__archetype", "care_profile")
-        .filter(pk=plant_id, household=household)
-        .first()
-    )
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
+    related = Plant.objects.select_related("location__site", "taxon__archetype", "care_profile")
+    return get_plant(household, plant_id, related)
 
 
 def _get_schedule(household: Household, schedule_id: int) -> CareSchedule:
@@ -458,7 +446,7 @@ def delete_care_type(request: HttpRequest, care_type_id: int) -> Status[None]:
 def log_care(request: HttpRequest, plant_id: int, data: CareEventIn) -> Status[CareEventOut]:
     """Log care given to a plant: by default just now, by the signed-in person."""
     membership = require_role(request, Role.GARDENER)
-    plant = _get_plant(membership.household, plant_id)
+    plant = get_plant(membership.household, plant_id)
     event = services.log_care(plant, services.CareEventData(**data.model_dump()), membership.user)
     return Status(201, _event_out(event))
 
@@ -496,7 +484,7 @@ def delete_care_event(request: HttpRequest, event_id: int) -> Status[None]:
 def plant_timeline(request: HttpRequest, plant_id: int, page: Query[TimelineQuery]) -> TimelinePage:
     """The plant's care and photos, newest first, a page at a time."""
     household = require_role(request, Role.VIEWER).household
-    plant = _get_plant(household, plant_id)
+    plant = get_plant(household, plant_id)
     try:
         before = selectors.parse_cursor(page.before) if page.before else None
     except ValueError as exc:

@@ -37,7 +37,7 @@ from sunfleck.places.api import (
 )
 from sunfleck.places.light_report import plant_light_report
 from sunfleck.places.models import LocationKind
-from sunfleck.plants import services
+from sunfleck.plants import selectors, services
 from sunfleck.plants.models import (
     CARED_FOR,
     ContainerMaterial,
@@ -520,10 +520,9 @@ def _plants(household: Household) -> QuerySet[Plant]:
 
 
 def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = _plants(household).select_related("cover_photo", "parent").filter(pk=plant_id).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
+    """The plant, with what its page shows."""
+    plants = _plants(household).select_related("cover_photo", "parent")
+    return selectors.get_plant(household, plant_id, plants)
 
 
 def _get_photo(household: Household, photo_id: int) -> Photo:

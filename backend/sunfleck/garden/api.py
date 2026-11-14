@@ -21,6 +21,7 @@ from sunfleck.garden import calendar, services
 from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
 from sunfleck.plants.models import Plant
+from sunfleck.plants.selectors import get_plant
 from sunfleck.taxonomy.api import SpeciesOut, language, species_out
 
 router = Router(tags=["garden"], auth=django_auth)
@@ -229,13 +230,6 @@ def _harvest_out(harvest: Harvest) -> HarvestOut:
     )
 
 
-def _get_plant(household: Household, plant_id: int) -> Plant:
-    plant = Plant.objects.filter(pk=plant_id, household=household).first()
-    if plant is None:
-        raise ApiError(404, "plant_not_found", "This plant doesn't exist.")
-    return plant
-
-
 def _plant_today(plant: Plant) -> date:
     zone = ZoneInfo(plant.location.site.timezone) if plant.location else None
     return timezone.now().astimezone(zone).date() if zone else timezone.localdate()
@@ -245,7 +239,7 @@ def _plant_today(plant: Plant) -> date:
 def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) -> HarvestsOut:
     """A plant's harvests, the latest first, and this year's total."""
     household = require_role(request, Role.VIEWER).household
-    plant = _get_plant(household, plant_id)
+    plant = get_plant(household, plant_id)
     totals = services.harvest_totals(plant, _plant_today(plant).year)
     harvests, count = paginate(
         # The id too, so pages don't overlap.
@@ -267,7 +261,7 @@ def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) 
 @router.post("/plants/{plant_id}/harvests", response={201: HarvestOut})
 def log_harvest(request: HttpRequest, plant_id: int, data: HarvestIn) -> Status[HarvestOut]:
     membership = require_role(request, Role.GARDENER)
-    plant = _get_plant(membership.household, plant_id)
+    plant = get_plant(membership.household, plant_id)
     if data.harvested_on > _plant_today(plant):
         raise ApiError(
             422, "harvest_in_future", "A harvest can't be in the future.", {"field": "harvested_on"}
