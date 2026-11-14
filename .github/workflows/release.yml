@@ -53,10 +53,12 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
-          # 0.1.0, 0.1 and latest. Pre-releases (v0.2.0-rc.1) get only their own tag.
+          # 1.2.0, 1.2, 1 and latest. Pre-releases (v1.3.0-rc.1) get only their own tag; 0.x
+          # releases get no major tag, since 0 promised no compatibility.
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
       - uses: docker/build-push-action@v7
         with:
           context: .

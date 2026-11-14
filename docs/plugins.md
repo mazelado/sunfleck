@@ -168,7 +168,8 @@ With Docker, build an image of your own on top of Sunfleck's, with the plugin in
 `compose.yaml`, a `Dockerfile`:
 
 ```dockerfile
-FROM ghcr.io/mazelado/sunfleck:latest
+FROM ghcr.io/mazelado/sunfleck:1
+# :1 is every 1.x release; the plugin API keeps working within it (stability.md).
 # The image's Python environment was made with uv, which isn't in the image: borrow it.
 COPY --from=ghcr.io/astral-sh/uv:0.11.32 /uv /usr/local/bin/uv
 USER root

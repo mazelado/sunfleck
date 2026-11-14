@@ -208,8 +208,9 @@ docker compose up -d
 
 Database changes are applied automatically when it starts. Make a backup first, and read the
 [release notes](https://github.com/mazelado/sunfleck/releases). The Compose file uses the
-latest release; to stay on a version, set it in `.env`, e.g. `SUNFLECK_VERSION=0.1` (0.1's bug
-fixes, but not 0.2).
+latest release; to stay on a version, set it in `.env`: `SUNFLECK_VERSION=1` gets every 1.x
+release (compatible ones, [as promised](stability.md)) but not 2.0, and `SUNFLECK_VERSION=1.0`
+only 1.0's bug fixes.
 
 You can upgrade from any earlier release with the same major version in one step, e.g. from
 0.1 straight to 1.4. Going back to an older version isn't supported: restore the backup
