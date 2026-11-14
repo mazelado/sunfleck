@@ -5,10 +5,8 @@ Everyone in the household can see them; Gardeners and Admins can change them.
 
 from datetime import date
 from decimal import Decimal
-from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
-from django.utils import timezone
 from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -20,8 +18,9 @@ from sunfleck.core.pagination import ListQuery, paginate
 from sunfleck.garden import calendar, services
 from sunfleck.garden.models import Harvest, HarvestUnit, SeedPacket
 from sunfleck.places.models import Site
-from sunfleck.plants.models import Plant
+from sunfleck.places.time import site_today
 from sunfleck.plants.selectors import get_plant
+from sunfleck.plants.time import plant_today
 from sunfleck.taxonomy.api import SpeciesOut, language, species_out
 
 router = Router(tags=["garden"], auth=django_auth)
@@ -157,7 +156,7 @@ def sowing_calendar(request: HttpRequest, site_id: int | None = None) -> SowingC
         site = sites.exclude(frost_source="").first() or sites.first()
     if site is None:
         raise ApiError(404, "site_not_found", "There's no place yet to grow them.")
-    today = timezone.now().astimezone(ZoneInfo(site.timezone)).date()
+    today = site_today(site)
     return SowingCalendarOut(
         site_id=site.pk,
         site_name=site.name,
@@ -182,8 +181,7 @@ def seeds_sown(request: HttpRequest, seed_id: int, data: SownIn) -> Status[SownO
     household = require_role(request, Role.GARDENER).household
     packet = _get_seed(household, seed_id)
     site = Site.objects.filter(household=household).order_by("pk").first()
-    zone = ZoneInfo(site.timezone) if site else timezone.get_current_timezone()
-    plant = services.sown(packet, data.location_id, timezone.now().astimezone(zone).date())
+    plant = services.sown(packet, data.location_id, site_today(site))
     return Status(201, SownOut(plant_id=plant.pk))
 
 
@@ -230,17 +228,12 @@ def _harvest_out(harvest: Harvest) -> HarvestOut:
     )
 
 
-def _plant_today(plant: Plant) -> date:
-    zone = ZoneInfo(plant.location.site.timezone) if plant.location else None
-    return timezone.now().astimezone(zone).date() if zone else timezone.localdate()
-
-
 @router.get("/plants/{plant_id}/harvests", response=HarvestsOut)
 def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) -> HarvestsOut:
     """A plant's harvests, the latest first, and this year's total."""
     household = require_role(request, Role.VIEWER).household
     plant = get_plant(household, plant_id)
-    totals = services.harvest_totals(plant, _plant_today(plant).year)
+    totals = services.harvest_totals(plant, plant_today(plant).year)
     harvests, count = paginate(
         # The id too, so pages don't overlap.
         plant.harvests.select_related("logged_by").order_by("-harvested_on", "-created_at", "-id"),
@@ -262,7 +255,7 @@ def list_harvests(request: HttpRequest, plant_id: int, query: Query[ListQuery]) 
 def log_harvest(request: HttpRequest, plant_id: int, data: HarvestIn) -> Status[HarvestOut]:
     membership = require_role(request, Role.GARDENER)
     plant = get_plant(membership.household, plant_id)
-    if data.harvested_on > _plant_today(plant):
+    if data.harvested_on > plant_today(plant):
         raise ApiError(
             422, "harvest_in_future", "A harvest can't be in the future.", {"field": "harvested_on"}
         )

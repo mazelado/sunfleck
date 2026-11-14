@@ -36,6 +36,7 @@ from sunfleck.places.humidity import location_humidity
 from sunfleck.places.light import grow_light_dli, ppfd_at
 from sunfleck.places.models import BedType, LightSourceKind, LocationKind, Site
 from sunfleck.plants.models import CARED_FOR, Plant, PlantLight, PlantStatus
+from sunfleck.plants.time import plant_today, plant_zone
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import CareContext
@@ -63,13 +64,8 @@ def can_predict(care_type: CareType) -> bool:
     return care_type.counts_as_watering or care_type.key == "fertilize"
 
 
-def plant_zone(plant: Plant) -> ZoneInfo:
-    """The time zone of the plant's site, which decides what "today" is for it."""
-    return ZoneInfo(plant.location.site.timezone if plant.location else settings.TIME_ZONE)
-
-
-def local_today(plant: Plant) -> date:
-    return timezone.now().astimezone(plant_zone(plant)).date()
+# Today where the plant grows, under the name predictions have long used.
+local_today = plant_today
 
 
 # --- Inputs -----------------------------------------------------------------------------------

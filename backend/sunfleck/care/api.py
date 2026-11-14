@@ -6,10 +6,8 @@ Everyone in the household can see care; Gardeners and Admins can log and change 
 
 from datetime import date, datetime
 from typing import Any, Literal
-from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest
-from django.utils import timezone
 from ninja import Query, Router, Schema, Status
 from ninja.security import django_auth
 from pydantic import Field
@@ -28,6 +26,7 @@ from sunfleck.care.models import (
 )
 from sunfleck.core.errors import ApiError
 from sunfleck.places.models import Site
+from sunfleck.places.time import site_today
 from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
 from sunfleck.plants.selectors import get_plant
@@ -333,7 +332,7 @@ def _conditions_out(site: Site, plugin_id: str, conditions: SiteConditions) -> S
     return SiteConditionsOut(
         site_id=site.pk,
         site_name=site.name,
-        today=timezone.now().astimezone(ZoneInfo(site.timezone)).date(),
+        today=site_today(site),
         plugin_id=plugin_id,
         attribution=conditions.attribution,
         updated_at=conditions.updated_at,

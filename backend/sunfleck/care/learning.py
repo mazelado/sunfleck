@@ -11,7 +11,8 @@ from itertools import pairwise
 from statistics import median
 
 from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
-from sunfleck.care.schedules import local_today, plant_zone, recalculate
+from sunfleck.care.schedules import local_today, recalculate
+from sunfleck.plants.time import plant_zone
 from sunfleck.prediction.engine import MAX_MULTIPLIER, MIN_MULTIPLIER
 
 # How many gaps between waterings it takes to see a routine, and only recent ones count
