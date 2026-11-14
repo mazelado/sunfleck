@@ -167,6 +167,8 @@ function withPlant(data: Plant, photos: Photo[] = []) {
     http.get(`*/api/v1/plants/${String(data.id)}/photos`, () =>
       HttpResponse.json({ items: photos, count: photos.length }),
     ),
+    // A photo added from the cover becomes the cover.
+    http.put(`*/api/v1/plants/${String(data.id)}/cover`, () => HttpResponse.json(data)),
   );
 }
 
@@ -1136,6 +1138,30 @@ describe("plant page", () => {
 
     const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
     expect(button).not.toHaveTextContent("Add a photo");
+  });
+
+  it("makes a photo added from the cover the new cover", async () => {
+    signInAs(gardener);
+    const added = { ...photo, id: 6, caption: "" };
+    withPlant(plant({ cover_photo: photo }), [photo]);
+    uploadPhoto.mockResolvedValueOnce(added);
+    let cover: unknown;
+    server.use(
+      http.put("*/api/v1/plants/7/cover", async ({ request }) => {
+        cover = await request.json();
+        return HttpResponse.json(plant({ cover_photo: added }));
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
+    const input = button.parentElement?.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!input) throw new Error("No file input");
+    await user.upload(input, new File(["jpeg"], "leaf.jpg", { type: "image/jpeg" }));
+
+    await waitFor(() => {
+      expect(cover).toEqual({ photo_id: 6 });
+    });
   });
 
   it("opens the cover photo when it's tapped, to crop it", async () => {
