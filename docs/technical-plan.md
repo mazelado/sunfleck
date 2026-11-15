@@ -551,7 +551,7 @@ language, and a test checks each translation's keys and placeholders against Eng
   the browser** before upload, which saves bandwidth and server storage.
 - The PWA caches the app shell so it opens instantly. Full offline logging is a 1.0 goal.
 - **As built (M11):** `vite-plugin-pwa` adds the manifest, icons (rendered from
-  `favicon.svg` by `npm run icons`, including a maskable one) and a Workbox service worker that stores the app's
+  `favicon.svg`, including a maskable one) and a Workbox service worker that stores the app's
   files. Pages still come from the server first (which sets the CSRF cookie); only when it
   can't be reached does the app open from the stored copy, and then it says so with a "Try
   again" button. API data is never stored. Most pages are loaded when first opened, and React

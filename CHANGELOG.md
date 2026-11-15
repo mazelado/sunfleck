@@ -16,8 +16,6 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   from the gallery leave the cover as it is.
 - **Plants, Seeds and Wishlist no longer jump**: the switch between them sat higher on Plants
   than on the other two.
-- **One icon everywhere**: the browser tab, the installed app and notifications now show the
-  same leaf as the top of the app, instead of a different leaf and sun.
 
 ## [1.0.0] - 2026-11-14
 
