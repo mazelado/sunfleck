@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Plants, Seeds and Wishlist no longer jump**: the switch between them sat higher on Plants
+  than on the other two.
+
 ## [1.0.0] - 2026-11-14
 
 **Jasmine.** Sunfleck grows up: a new look across the whole app, in light and dark, built
