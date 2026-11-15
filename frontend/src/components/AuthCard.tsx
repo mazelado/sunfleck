@@ -1,7 +1,8 @@
-import { Center, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconPlant2 } from "@tabler/icons-react";
+import { Center, Paper, Stack, Text, Title } from "@mantine/core";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+
+import { Logo } from "./Logo";
 
 interface AuthCardProps {
   title: string;
@@ -16,9 +17,7 @@ export function AuthCard({ title, children }: AuthCardProps) {
     <Center component="main" mih="100dvh" p="md">
       <Stack w="100%" maw={420} gap="lg">
         <Stack align="center" gap={6}>
-          <ThemeIcon size={56} radius="xl" variant="light">
-            <IconPlant2 size={32} aria-hidden />
-          </ThemeIcon>
+          <Logo size={56} />
           {/* The app's name, not a heading: the page's title (below) is its first heading. */}
           <Text fw={800} fz="h2" lh={1.1} style={{ letterSpacing: "-0.02em" }}>
             {t("app.name")}
