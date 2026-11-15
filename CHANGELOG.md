@@ -9,6 +9,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-15
+
+**Jasmine.** Fixes from using 1.0.1: the app shows its new icon beside its name too.
+
 ### Fixed
 
 - **One icon everywhere**: the top of the app and the sign-in pages now show the new app icon,
@@ -671,7 +675,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/mazelado/sunfleck/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/mazelado/sunfleck/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/mazelado/sunfleck/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/mazelado/sunfleck/compare/v0.8.0...v0.9.0
