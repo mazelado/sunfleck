@@ -15,7 +15,7 @@ export default defineConfig({
     // files on the phone so it opens instantly. Data always comes fresh from the server.
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "icons/apple-touch-icon.png"],
+      includeAssets: ["favicon.svg", "favicon.ico", "icons/apple-touch-icon.png"],
       manifest: {
         name: "Sunfleck",
         short_name: "Sunfleck",

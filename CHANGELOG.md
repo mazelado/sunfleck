@@ -13,6 +13,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 - **Plants, Seeds and Wishlist no longer jump**: the switch between them sat higher on Plants
   than on the other two.
+### Changed
+
+- A new app icon: a curved leaf on a warm sun disc. It's simpler, so it still reads as a
+  browser tab icon, and there's now a `favicon.ico` for browsers and tools that ask for one.
 
 ## [1.0.0] - 2026-11-14
 
