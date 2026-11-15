@@ -14,6 +14,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **A photo added from the top of a plant's page becomes its cover**: the camera button on the
   cover used to add the photo to its history only, leaving the old cover in place. Photos added
   from the gallery leave the cover as it is.
+### Changed
+
+- A new app icon: a curved leaf on a warm sun disc. It's simpler, so it still reads as a
+  browser tab icon, and there's now a `favicon.ico` for browsers and tools that ask for one.
 
 ## [1.0.0] - 2026-11-14
 
