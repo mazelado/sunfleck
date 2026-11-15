@@ -35,6 +35,7 @@ proposals until each release starts.
 | 0.8 | Hibiscus |
 | 0.9 | Iris |
 | 1.0 | Jasmine |
+| 1.1 | Kalanchoe |
 
 **Phases** group the work by what it's for ("Smarter care"), not by a version number. A phase
 ships in one release or a few, and when plans change, only the release plan below changes.
@@ -53,6 +54,8 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
+| **1.0.3 Jasmine** | Fixes from using 1.0.2: segmented controls on phones (#220) | Planned |
+| **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-planned) | Planned |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
 [more gardening](#more-gardening), split from Gardenia, and
@@ -222,6 +225,14 @@ Making what Sunfleck already does solid and beautiful, rather than adding more.
     the built-in plugins.
 - **Stability:** the API and the plugin interface are declared stable, with how they may
   change from 1.0 on, and upgrades are guaranteed from any 0.x release with a backup.
+
+### Kalanchoe: care details (planned)
+
+Small additions from using 1.0, to the care that's logged and the profile.
+
+- **How much water was given**, recorded when logging a watering, in the person's units and
+  pre-filled with the amount Sunfleck suggests (#222).
+- **Re-framing a profile picture** after it's saved, as plant photos can be (#221).
 
 ### More platform
 
