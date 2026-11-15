@@ -18,6 +18,9 @@ promise: they change as we learn what matters most. Ideas and feedback are welco
   is in the [changelog](../CHANGELOG.md) under that version.
 - **1.0** is the first release with stable promises: a stable API and plugin interface, and
   upgrades that keep working.
+- **2.0** marks the end of the next theme, [depth when you want it](#towards-20-depth-when-you-want-it),
+  as 1.0 did for "mature and beautiful". Its parts ship in 1.x releases, and nothing planned
+  for it breaks the API, the plugin interface or upgrades.
 
 **Release names:** each minor version has a plant name, in alphabetical order, kept by its
 patch releases (0.2.0 and 0.2.1 are both Bougainvillea). The names after the next release are
@@ -36,6 +39,12 @@ proposals until each release starts.
 | 0.9 | Iris |
 | 1.0 | Jasmine |
 | 1.1 | Kalanchoe |
+| 1.2 | Lavender |
+| 1.3 | Monstera |
+| 1.4 | Nasturtium |
+| 1.5 | Orchid |
+| 1.6 | Peony |
+| 2.0 | Quince |
 
 **Phases** group the work by what it's for ("Smarter care"), not by a version number. A phase
 ships in one release or a few, and when plans change, only the release plan below changes.
@@ -56,6 +65,12 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
 | **1.0.3 Jasmine** | Fixes from using 1.0.2: segmented controls on phones (#220) | Planned |
 | **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-planned) | Planned |
+| **1.2 Lavender** | [Trust](#lavender-trust-planned) | Planned |
+| **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-planned) | Planned |
+| **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-planned) | Planned |
+| **1.5 Orchid** | [Fertilizer](#orchid-fertilizer-planned) | Planned |
+| **1.6 Peony** | [Sensors that inform](#peony-sensors-that-inform-planned) | Planned |
+| **2.0 Quince** | [Depth when you want it, complete](#quince-depth-when-you-want-it-complete-planned) | Planned |
 
 Not yet scheduled: [more integrations](#more-integrations), split from Fuchsia,
 [more gardening](#more-gardening), split from Gardenia, and
@@ -129,8 +144,10 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 
 Split from Fuchsia (0.6), not yet scheduled.
 
-- **Home Assistant / MQTT** sensor readings (soil moisture, light, temperature, humidity), and
-  reminders triggered by sensor thresholds.
+- Sensor readings from Home Assistant are now planned: see
+  [Nasturtium](#nasturtium-sensors-to-look-at-planned) and
+  [Peony](#peony-sensors-that-inform-planned). Reading MQTT directly, without Home
+  Assistant, stays here.
 - **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
 - **Import from HortusFox and Plant-it.**
 - **Public API documentation** and personal API tokens.
@@ -184,8 +201,10 @@ Growing more plants from the ones you have, and finding each one's page quickly.
 
 Split from Hibiscus (0.8), not yet scheduled.
 
-- A supplies inventory (soil, fertilizer, pots), with optional reminders to restock.
-- Statistics and charts.
+- A supplies inventory for soil and pots, with optional reminders to restock. (Fertilizers
+  are planned in [Orchid](#orchid-fertilizer-planned).)
+- Statistics for the whole household. (A plant's own watering history is planned in
+  [Lavender](#lavender-trust-planned).)
 - A growth time-lapse from photos.
 
 ### Iris: AI assistant (released)
@@ -233,6 +252,94 @@ Small additions from using 1.0, to the care that's logged and the profile.
 - **How much water was given**, recorded when logging a watering, in the person's units and
   pre-filled with the amount Sunfleck suggests (#222).
 - **Re-framing a profile picture** after it's saved, as plant photos can be (#221).
+
+### Towards 2.0: depth when you want it
+
+The theme of the releases from 1.2 to 2.0. Sunfleck stays simple for someone who only wants to
+know what to water today, and lets someone who wants more go deeper at their own pace, and
+learn as they go: from "needs more light" to how much light, in which unit, and why.
+
+How it's built, so that more depth doesn't make the app harder:
+
+- **No basic and advanced modes.** Everyone in a household sees the same app and the same
+  data. A mode would hide things people need, and give every page two versions to keep working.
+- **Whole areas are turned on per household.** Two switches, **Garden** (beds, seeds, sowing,
+  harvest) and **Collection** (propagation, wishlist, labels). AI, weather and identification
+  are plugins already.
+- **Depth is on each card,** one tap away, as **Why?** is today. The advice is clear on its
+  own: *what to do*, then *why*, then *the numbers*, then *your own measurements*.
+- **Things appear when there's data for them.** No sensor, no sensor pages. A chart shows
+  once there's care to chart.
+- **Every explanation is true,** and says "estimated" where a value comes from a model
+  rather than a measurement.
+- **Sunfleck doesn't switch pumps or lights.** It tells Home Assistant what a plant needs,
+  and automation is set up there.
+- **English and Spanish.** Other languages are welcome, as contributions.
+
+### Lavender: trust (planned)
+
+Checking that what Sunfleck already says is right, before it says more.
+
+- **A second usability test, on phones,** with the 1.0 [test plan](usability-test.md). The
+  fixes from the first round are in 1.0, but no one has checked that they work.
+- **Care profiles checked against sources,** starting with the profiles the maintainer's own
+  plants use. Today all 28 are drafts. Each value is checked against at least two sources,
+  written in our own words, and cited; the maintainer approves the citations before a profile
+  is marked `reviewed`. The sources are ones that can be read and cited (university extension
+  services, botanical gardens, the RHS, books and papers) or copied under an open licence;
+  never other apps' data, or data with a non-commercial or unclear licence (see
+  [care data sources](care-data-sources.md)).
+- **How well does Sunfleck predict?** For each plant, how often the soil was "just right"
+  when it was watered, over time. It uses the answers already collected.
+- **A plant's watering history:** when it was watered and how much (#222), next to what was
+  predicted.
+
+### Monstera: simple by default (planned)
+
+- **Garden and Collection switches** for the household, set by an Admin. An area that's off
+  leaves the navigation and the forms; its data is kept, and comes back with it.
+- **"What do you grow?"** in the step-by-step setup (houseplants, outdoor and edible plants,
+  a collection), which sets the switches.
+- **Spanish,** for the app and for the care dataset's common names (from Wikidata, CC0). It
+  comes before the explanations grow, so they're written once for both languages.
+
+### Nasturtium: sensors, to look at (planned)
+
+- **A Home Assistant plugin** that reads a plant's soil moisture, and light, temperature and
+  humidity where there's a sensor, from the entities chosen for it. Any sensor Home Assistant
+  knows works.
+- **The reading on the plant's page,** and a summary kept for each day. Home Assistant keeps
+  the full history, so Sunfleck stays light on a Raspberry Pi.
+- **Not used by the predictions yet.** A soil sensor reads differently in every pot and soil,
+  so its readings are collected next to the "How was the soil?" answers first.
+
+### Orchid: fertilizer (planned)
+
+- **Your fertilizers:** each product with its N-P-K and how you dilute it, and which one was
+  used when fertilizing is logged.
+- **Why?** for fertilizing, as for watering: the season, the plant's growth and its profile.
+- **Strength, not ratios:** the advice is about how strong and how often ("half strength,
+  monthly while growing"), which matters more for potted plants than the N-P-K ratio. Sunfleck
+  records the ratio and explains it, but doesn't recommend one per plant.
+
+### Peony: sensors that inform (planned)
+
+- **Readings calibrated by your own answers:** what a plant's sensor reads when its soil was
+  too dry, just right or still wet.
+- **A factor in Why?:** "the soil is still moist: wait", or "drier than usual: water sooner".
+  As with every factor, it's shown, and reminders follow the new date.
+- **"Needs water" for Home Assistant,** for each plant, to use in dashboards and automations
+  there.
+- **Measured light,** where there's a light sensor, next to the estimate from windows and
+  grow lights.
+
+### Quince: depth when you want it, complete (planned)
+
+- **The same four steps on every card,** for water, light and fertilizer: what to do, why,
+  the numbers, your measurements. Each step says what the next one adds.
+- **A link for a plant sitter:** what to do each day while you're away, without an account.
+  It can only log care, it expires, and an Admin can end it early.
+- **A third usability check,** to compare with the first two.
 
 ### More platform
 
