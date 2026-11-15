@@ -93,3 +93,19 @@ test("signs out and back in", async () => {
   await expect(page.getByRole("heading", { name: "Today" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Account menu: Ada" })).toBeVisible();
 });
+
+test("a segmented control's choices fill it on a touch screen", async () => {
+  await page.goto("/settings/profile");
+  const units = page.getByRole("radiogroup", { name: "Units" });
+  await expect(units).toBeVisible();
+
+  // Each of the two choices takes half the control (less its padding), so its label is
+  // centred and the highlight around the chosen one is as wide as the half (#220).
+  const control = await units.boundingBox();
+  for (const name of ["Metric", "Imperial"]) {
+    const label = await units
+      .locator(".mantine-SegmentedControl-label", { hasText: name })
+      .boundingBox();
+    expect(label?.width).toBeGreaterThan((control?.width ?? 0) * 0.45);
+  }
+});

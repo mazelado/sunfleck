@@ -25,11 +25,20 @@
     min-height: 44px;
   }
 
+  /* Centred in their 44px. A segmented control's label is a flex box rather than an inline
+     one, so it still fills its segment: the selected highlight is sized from it. */
   .mantine-Chip-label,
   .mantine-SegmentedControl-label {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .mantine-Chip-label {
+    display: inline-flex;
+  }
+
+  .mantine-SegmentedControl-label {
+    display: flex;
   }
 
   .mantine-Checkbox-body,

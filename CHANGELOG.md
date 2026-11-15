@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Switches on phones**: the choices in a switch such as Metric / Imperial on the Profile page,
+  or the Plants views, fill the switch again on a touch screen. They were pushed to the left,
+  and the highlight around the chosen one was only as wide as its word (#220).
+
 ## [1.0.2] - 2026-11-15
 
 **Jasmine.** Fixes from using 1.0.1: the app shows its new icon beside its name too.
