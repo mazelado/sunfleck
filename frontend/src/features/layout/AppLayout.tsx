@@ -16,7 +16,6 @@ import {
   IconDeviceMobileDown,
   IconInfoCircle,
   IconChecklist,
-  IconLeaf,
   IconLogout,
   IconMapPin,
   IconPlant2,
@@ -29,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 
 import { useMe, useSignOut } from "../../api/accounts";
+import { Logo } from "../../components/Logo";
 import { PageBarContext } from "../../components/pageBar";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
@@ -96,7 +96,7 @@ export function AppLayout() {
               td="none"
               style={{ display: "flex", alignItems: "center", gap: 6, letterSpacing: "-0.01em" }}
             >
-              <IconLeaf size={22} stroke={2} color="var(--mantine-color-leaf-6)" aria-hidden />
+              <Logo size={26} />
               {t("app.name")}
             </Text>
             {wide && <HeaderNavigation />}

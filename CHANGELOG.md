@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Fixed
+
+- **One icon everywhere**: the top of the app and the sign-in pages now show the new app icon,
+  the leaf on a sun disc, as the browser tab and the home screen do. They showed a plain leaf
+  and a potted plant.
+
 ## [1.0.1] - 2026-11-15
 
 **Jasmine.** Fixes from using 1.0: a photo added from the top of a plant's page becomes its
