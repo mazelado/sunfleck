@@ -9,17 +9,23 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-15
+
+**Jasmine.** Fixes from using 1.0: a photo added from the top of a plant's page becomes its
+cover, the Plants views no longer jump, and a new app icon.
+
+### Changed
+
+- **A new app icon**: a curved leaf on a warm sun disc. It's simpler, so it still reads as a
+  browser tab icon, and there's now a `favicon.ico` for browsers and tools that ask for one.
+
 ### Fixed
 
-- **Plants, Seeds and Wishlist no longer jump**: the switch between them sat higher on Plants
-  than on the other two.
 - **A photo added from the top of a plant's page becomes its cover**: the camera button on the
   cover used to add the photo to its history only, leaving the old cover in place. Photos added
   from the gallery leave the cover as it is.
-### Changed
-
-- A new app icon: a curved leaf on a warm sun disc. It's simpler, so it still reads as a
-  browser tab icon, and there's now a `favicon.ico` for browsers and tools that ask for one.
+- **Plants, Seeds and Wishlist no longer jump**: the switch between them sat higher on Plants
+  than on the other two.
 
 ## [1.0.0] - 2026-11-14
 
@@ -659,7 +665,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/mazelado/sunfleck/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/mazelado/sunfleck/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/mazelado/sunfleck/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mazelado/sunfleck/compare/v0.7.0...v0.8.0
