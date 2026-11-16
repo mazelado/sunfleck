@@ -63,7 +63,6 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
-| **1.0.3 Jasmine** | Fixes from using 1.0.2: segmented controls on phones (#220) | Planned |
 | **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-planned) | Planned |
 | **1.2 Lavender** | [Trust](#lavender-trust-planned) | Planned |
 | **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-planned) | Planned |

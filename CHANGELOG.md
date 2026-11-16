@@ -19,6 +19,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   get a little more water each time. Days between waterings are still starting estimates. A plant
   given a care profile by hand keeps it; see the [review](docs/care-review-2026-11.md).
 
+## [1.0.3] - 2026-11-16
+
+**Jasmine.** Fixes from using 1.0.2: switches fill their width on phones again.
+
 ### Fixed
 
 - **Switches on phones**: the choices in a switch such as Metric / Imperial on the Profile page,
@@ -691,7 +695,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/mazelado/sunfleck/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/mazelado/sunfleck/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/mazelado/sunfleck/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/mazelado/sunfleck/compare/v0.9.0...v1.0.0
