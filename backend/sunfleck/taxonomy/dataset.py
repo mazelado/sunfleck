@@ -164,13 +164,22 @@ def _check_crop(name: str, crop: dict[str, Any] | None) -> list[str]:
 def _check_examples(
     archetypes: dict[str, dict[str, Any]], genera: list[dict[str, Any]]
 ) -> list[str]:
-    """Each profile's examples must be genera that use that profile."""
-    profile_of = {entry["genus"]: entry["archetype"] for entry in genera}
+    """Each profile's examples must be genera or species that use that profile.
+
+    A species can be an example when it has a profile of its own that no genus has, such as
+    rosemary, a species of Salvia.
+    """
+    profile_of = {}
+    for entry in genera:
+        profile_of[entry["genus"]] = entry["archetype"]
+        for species in entry.get("species", []):
+            profile_of[species["name"]] = species.get("archetype", entry["archetype"])
     problems = []
     for key, data in archetypes.items():
-        for genus in data["examples"]:
-            if profile_of.get(genus) != key:
+        for example in data["examples"]:
+            if profile_of.get(example) != key:
                 problems.append(
-                    f"archetypes/{key}.yaml: example {genus} isn't a genus with this profile"
+                    f"archetypes/{key}.yaml: example {example} isn't a genus or species with "
+                    "this profile"
                 )
     return problems

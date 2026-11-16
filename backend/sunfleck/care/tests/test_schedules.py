@@ -231,9 +231,9 @@ def test_changes_to_the_plant_are_picked_up_when_read(monty: Plant) -> None:
     latest = ScheduleAdjustment.objects.filter(schedule=schedule).first()
     assert latest is not None
     assert latest.interval_days == 5
-    # Monty is a tropical aroid (let the top third dry): the top third of its 8 cm pot.
+    # Monty is a tropical aroid (let the top half dry): the top half of its 8 cm pot.
     [amount] = [f for f in schedule.factors if f["code"] == "water_amount"]
-    assert amount["details"] == {"litres": 0.02, "pot_litres": 0.3, "height_known": False}
+    assert amount["details"] == {"litres": 0.04, "pot_litres": 0.3, "height_known": False}
 
 
 def test_fertilizing_waits_out_the_winter(monty: Plant) -> None:

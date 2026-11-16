@@ -27,7 +27,7 @@
     "setting": { "enum": ["indoor", "outdoor", "either"] },
     "examples": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^[A-Z][a-z]+$" },
+      "items": { "type": "string", "pattern": "^[A-Z][a-z]+( (× )?[a-z-]+)?$" },
       "minItems": 1,
       "uniqueItems": true
     },

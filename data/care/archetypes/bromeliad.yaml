@@ -14,6 +14,7 @@ examples:
 - Aechmea
 - Neoregelia
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 10
     summer: 7
@@ -21,12 +22,12 @@ watering:
     winter: 14
   let_dry: top_half
 light:
-  dli_min: 5
+  dli_min: 6
   dli_ideal: 9
-  dli_max: 16
+  dli_max: 14
 humidity: medium_high
 temperature_c:
-  min: 13
+  min: 10
   ideal_min: 18
   ideal_max: 27
   max: 32
@@ -37,7 +38,10 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+notes:
+  en: 'Keep water in the central cup, and empty and refill it every month or two. Never put fertilizer in the cup.'
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Park Brown, S. Bromeliads at a Glance (ENH1071/EP337). UF/IFAS Extension. https://ask.ifas.ufl.edu/publication/EP337, accessed 2026-11-15'
+- 'How to grow bromeliads. Royal Horticultural Society. https://www.rhs.org.uk/plants/bromeliads/growing-guide, accessed 2026-11-15'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'

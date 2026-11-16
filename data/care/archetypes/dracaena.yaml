@@ -1,0 +1,44 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: dracaena
+name:
+  en: Dracaena
+description:
+  en: 'Corn plants and dragon trees: bright indirect light, though they cope with less than
+    most indoor trees; let the soil dry a little between waterings, but not right through.'
+setting: indoor
+examples:
+- Dracaena
+watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
+  interval_days:
+    spring: 9
+    summer: 7
+    autumn: 10
+    winter: 14
+  let_dry: top_third
+light:
+  dli_min: 6
+  dli_ideal: 10
+  dli_max: 14
+humidity: medium
+temperature_c:
+  min: 13
+  ideal_min: 18
+  ideal_max: 27
+  max: 32
+fertilizing:
+  interval_days: 30
+  pause_months_north:
+  - 11
+  - 12
+  - 1
+  - 2
+notes:
+  en: 'Fluoride browns the leaf tips: use a fertilizer low in fluoride and boron, and rinse perlite before potting with it.'
+status: reviewed
+sources:
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'
+- 'McConnell, D.B., J. Chen, R.J. Henny and K.C. Everitt. Cultural Guidelines for Commercial Production of Interiorscape Dracaena (ENH892/EP149). UF/IFAS Extension. https://ask.ifas.ufl.edu/publication/EP149, accessed 2026-11-15'
+- 'Dracaena marginata. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/dracaena-marginata/, accessed 2026-11-15'

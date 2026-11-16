@@ -2,8 +2,9 @@
 
 The first check of Sunfleck's care profiles against published sources, for the 1.2 Lavender
 release ([roadmap](roadmap.md#lavender-trust-planned)). It covers the six profiles used by the
-maintainer's plants. **Nothing in the dataset has changed yet:** each proposed change waits
-for the maintainer to approve its citations.
+maintainer's plants. **Approved and applied on 2026-11-16** (dataset 2026.11.4): every change
+proposed below, with the decisions at the end. The eight profiles involved, including two new
+ones, are now marked `reviewed`.
 
 - **Plants:** aloe vera, avocado, bromeliad (*Guzmania*), dragon tree (*Dracaena marginata*),
   flaming Katy (*Kalanchoe blossfeldiana*), golden pothos, lavender, moth orchid, rosemary
@@ -148,6 +149,23 @@ can scorch it (NCSU-K). The profile's ideal still falls inside its *high* range,
    note the difference in the profile's notes (smaller change), or give rosemary its own
    profile (more accurate, and another profile to maintain)?
 
+### Decided (2026-11-16)
+
+1. **A:** *Dracaena* has its own profile, `dracaena`: ideal light 10 (good from 6, at most
+   14), medium humidity, the soil a little dry between waterings, and a note on fluoride
+   (P1, UF3, NCSU-D). The snake plant keeps `low_light_tough`.
+2. **Avocado stays in `indoor_tree`**, now the profile for brighter trees: light 10 / 16 / 25
+   (*Ficus* and *Schefflera* in P1; full sun for avocado, NCSU-P) and `medium_high` humidity
+   (low humidity dries and shrivels *Ficus* leaves, UF4; avocados like humid air, RHS-A). Its
+   winter feeding (every 6–8 weeks, RHS-A) can't be said in the dataset's fields yet, which
+   only pause feeding or don't.
+3. **Reviewed, with day counts as estimates.** A comment above each reviewed profile's
+   `interval_days` says so, and the dataset README says it for every reviewed profile.
+4. **Rosemary has its own profile**, `rosemary`, for *Salvia rosmarinus*: the soil only half
+   dry, medium humidity, ideal 15–24 °C, monthly feeding (ILL-R, ILL-H, NCSU-R, RHS-R), and
+   the herbs' light from P1. A profile's examples may now name a species, since no genus has
+   this profile. Lavender, sage and the other herbs keep `mediterranean_herb`.
+
 ## Teaching notes found on the way
 
 Things the sources say that would make good "why" or "next step" text later:
@@ -191,6 +209,8 @@ All accessed on 2026-11-15. Copyrighted pages: read, cited and written in our ow
 | RHS-U | *Houseplants for sunlight* (RHS Urban Show 2024). Royal Horticultural Society. <https://www.rhs.org.uk/shows-events/rhs-urban-show/houseplant-profiles/houseplants-for-sunlight> |
 | RHS-L | *How to grow lavender*. Royal Horticultural Society. <https://www.rhs.org.uk/plants/lavender/growing-guide> |
 | RHS-R | *How to grow rosemary*. Royal Horticultural Society. <https://www.rhs.org.uk/herbs/rosemary/grow-your-own> |
+| UF4 | Chen, J., D.B. McConnell, R.J. Henny and K.C. Everitt. *Cultural Guidelines for Commercial Production of Interiorscape Ficus* (ENH879/EP136). UF/IFAS Extension. <https://ask.ifas.ufl.edu/publication/EP136> |
+| NCSU-L | *Lavandula angustifolia*. NC State Extension Plant Toolbox. <https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/> |
 
 **Couldn't be read from this session:** Clemson HGIC (blocked by its firewall), Missouri
 Botanical Garden and the Bromeliad Society International (no response). None of the proposals

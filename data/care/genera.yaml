@@ -543,7 +543,7 @@ genera:
       - dwarf umbrella tree
 - genus: Dracaena
   family: Asparagaceae
-  archetype: indoor_tree
+  archetype: dracaena
   common_names:
     en:
     - dragon tree
@@ -1400,6 +1400,7 @@ genera:
   - Rosmarinus
   species:
   - name: Salvia rosmarinus
+    archetype: rosemary
     common_names:
       en:
       - rosemary
