@@ -14,16 +14,17 @@ examples:
 - Oncidium
 - Cattleya
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: 6
     autumn: 8
-    winter: 12
+    winter: 10
   let_dry: mostly
 light:
   dli_min: 4
   dli_ideal: 7
-  dli_max: 12
+  dli_max: 10
 humidity: medium_high
 temperature_c:
   min: 15
@@ -35,7 +36,9 @@ fertilizing:
   pause_months_north:
   - 12
   - 1
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Phalaenopsis Culture Sheet. American Orchid Society. https://www.aos.org/orchid-care/care-sheets/phalaenopsis-culture-sheet, accessed 2026-11-15'
+- 'How to grow Phalaenopsis (moth orchids). Royal Horticultural Society. https://www.rhs.org.uk/plants/phalaenopsis/growing-guide, accessed 2026-11-15'
+- 'Phalaenopsis. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/phalaenopsis/, accessed 2026-11-15'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'

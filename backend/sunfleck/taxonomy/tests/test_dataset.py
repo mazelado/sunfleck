@@ -32,10 +32,15 @@ def test_the_dataset_is_valid() -> None:
     assert dataset.archetypes["tropical_aroid"]["name"]["en"] == "Tropical aroid"
 
 
-def test_every_care_profile_is_used_by_a_genus() -> None:
+def test_every_care_profile_is_used_by_a_genus_or_species() -> None:
     dataset = load_dataset(settings.CARE_DATA_DIR)
 
-    used = {entry["archetype"] for entry in dataset.genera}
+    used = {entry["archetype"] for entry in dataset.genera} | {
+        species["archetype"]
+        for entry in dataset.genera
+        for species in entry.get("species", [])
+        if "archetype" in species
+    }
 
     assert set(dataset.archetypes) - used == set()
 
@@ -51,7 +56,9 @@ def test_well_known_plants_have_the_expected_profile() -> None:
 
     assert profile["Monstera"] == "tropical_aroid"
     assert profile["Echeveria"] == "succulent"
+    assert profile["Dracaena"] == "dracaena"
     assert species["Dracaena trifasciata"] == "low_light_tough"  # unlike other dracaenas
+    assert species["Salvia rosmarinus"] == "rosemary"  # unlike other salvias
     assert species["Allium schoenoprasum"] == "leafy_herb"  # chives, not a bulb to admire
 
 
@@ -118,7 +125,16 @@ def _set(path: list[str], value: Any) -> Callable[[Any], None]:
                 root / "genera.yaml",
                 lambda data: _genus(data, "Monstera").update(archetype="succulent"),
             ),
-            "archetypes/tropical_aroid.yaml: example Monstera isn't a genus with this profile",
+            "archetypes/tropical_aroid.yaml: example Monstera isn't a genus or species with this "
+            "profile",
+        ),
+        (
+            lambda root: _edit_yaml(
+                root / "archetypes" / "rosemary.yaml",
+                _set(["examples"], ["Salvia officinalis"]),
+            ),
+            "archetypes/rosemary.yaml: example Salvia officinalis isn't a genus or species with "
+            "this profile",
         ),
         (
             # Toxicity is only ever "toxic", from a source: never "safe".

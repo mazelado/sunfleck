@@ -16,6 +16,7 @@ examples:
 - Laurus
 - Olea
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: 5
@@ -23,7 +24,7 @@ watering:
     winter: 14
   let_dry: mostly
 light:
-  dli_min: 15
+  dli_min: 12
   dli_ideal: 22
   dli_max: 40
   outdoor_exposure:
@@ -43,7 +44,8 @@ fertilizing:
   - 1
   - 2
   - 3
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'
+- 'How to grow lavender. Royal Horticultural Society. https://www.rhs.org.uk/plants/lavender/growing-guide, accessed 2026-11-15'
+- 'Lavandula angustifolia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/, accessed 2026-11-15'

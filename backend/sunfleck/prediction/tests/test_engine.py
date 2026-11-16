@@ -514,7 +514,8 @@ def test_every_care_profile_in_the_dataset_can_be_read() -> None:
 
     profiles = {key: Profile.from_dataset(profile) for key, profile in dataset.archetypes.items()}
 
-    assert profiles["tropical_aroid"] == AROID
+    # The tests above use the aroid profile as it was before its review (top third dry).
+    assert profiles["tropical_aroid"] == replace(AROID, let_dry="top_half")
     assert profiles["bog_carnivore"].fertilize_days is None
     assert not profiles["air_plant"].in_soil
 
