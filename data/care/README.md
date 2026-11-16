@@ -25,7 +25,7 @@ under the same license. Why we write our own data rather than copy it is explain
 | `key` | Stable identifier, e.g. `tropical_aroid`. Never change it once released: plants refer to it |
 | `name`, `description`, `notes` | Text per language code (`en` is required). Sunfleck shows the person's language, or English |
 | `setting` | `indoor`, `outdoor`, or `either` |
-| `examples` | Genera that typify the profile. Each must be in `genera.yaml` with this profile |
+| `examples` | Genera that typify the profile, or a species when no genus has the profile (rosemary, in *Salvia*). Each must be in `genera.yaml` with this profile |
 | `watering.interval_days` | Typical days between waterings in spring, summer, autumn and winter, for a plant in an average pot and spot. `null` means only in long dry spells, or not at all while dormant. Sunfleck adjusts this for light, temperature, pot size, weather and feedback |
 | `watering.let_dry` | How much soil should dry first: `keep_moist`, `top_quarter`, `top_third`, `top_half`, `mostly`, `completely` |
 | `light.dli_min`, `dli_ideal`, `dli_max` | Daily light integral in mol/m²/day: roughly 2–6 is low light, 6–12 bright indirect light, 15+ direct sun |
@@ -34,7 +34,7 @@ under the same license. Why we write our own data rather than copy it is explain
 | `temperature_c` | `min` it survives, the `ideal_min`–`ideal_max` range, and the `max` it tolerates, in °C |
 | `fertilizing` | `interval_days` while growing, and `pause_months_north` when not to feed. `null` means never fertilize |
 | `dormancy_months_north` | Months of rest, if any |
-| `status` | `draft` (written from general knowledge) or `reviewed` (checked against the cited sources) |
+| `status` | `draft` (written from general knowledge) or `reviewed` (checked against the cited sources). In a reviewed profile, `watering.interval_days` are still starting estimates unless a comment says otherwise: sources say how dry the soil should be before watering, not how many days apart |
 | `sources` | Where the values come from. At least one |
 
 Months are numbers (1 = January) **for the northern hemisphere**; Sunfleck shifts them by six
@@ -126,9 +126,10 @@ This is a great place to help without writing code.
 3. **Bump the version** in `dataset.yaml`, e.g. `2026.10.0` → `2026.10.1`.
 4. Run the checks (`make test`), or let the pull request's checks run them.
 
-Today every profile is a `draft`: sensible starting values written from general horticultural
-knowledge. Sunfleck learns from each plant's care history, so the starting values only need to
-be reasonable, but citations and reviews make them better for everyone.
+Most profiles are still `draft`: sensible starting values written from general horticultural
+knowledge. The first eight were checked against sources in November 2026; see
+[the review](../../docs/care-review-2026-11.md) for each value and where it came from. Sunfleck learns from each plant's care history, so the
+starting values only need to be reasonable, but citations and reviews make them better for everyone.
 
 Common names in other languages are welcome too: add them under their language code (`de`,
 `fr`, `nl`, ...).

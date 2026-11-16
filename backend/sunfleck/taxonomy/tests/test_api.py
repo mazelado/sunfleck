@@ -108,12 +108,12 @@ def test_list_and_read_care_profiles(client_as: ClientAs) -> None:
     assert next(p for p in profiles if p["key"] == "succulent")["genus_count"] >= 20
     assert aroid["watering"] == {
         "interval_days": {"spring": 7, "summer": 6, "autumn": 9, "winter": 12},
-        "let_dry": "top_third",
+        "let_dry": "top_half",
     }
     assert aroid["light"]["outdoor_exposure"] == []
     assert aroid["fertilizing"] == {"interval_days": 30, "pause_months_north": [11, 12, 1, 2]}
     assert "Monstera" in aroid["genera"]
-    assert aroid["status"] == "draft"
+    assert aroid["status"] == "reviewed"
     assert missing.status_code == 404
 
 

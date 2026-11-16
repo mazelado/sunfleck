@@ -15,6 +15,7 @@ examples:
 - Haworthiopsis
 - Sedum
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 14
     summer: 10
@@ -42,7 +43,13 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Cacti and succulents. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/cacti-and-succulents, accessed 2026-11-15'
+- 'Aloe vera. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/aloe-vera/, accessed 2026-11-15'
+- 'Aloe, a Hardy Houseplant. Penn State Extension. https://extension.psu.edu/aloe-a-hardy-houseplant, accessed 2026-11-15'
+- 'Aloe vera (plant details). Royal Horticultural Society. https://www.rhs.org.uk/plants/981/aloe-vera/details, accessed 2026-11-15'
+- 'Houseplants for sunlight (RHS Urban Show 2024). Royal Horticultural Society. https://www.rhs.org.uk/shows-events/rhs-urban-show/houseplant-profiles/houseplants-for-sunlight, accessed 2026-11-15'
+- 'Kalanchoe blossfeldiana. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/kalanchoe-blossfeldiana/, accessed 2026-11-15'
+- 'A nontraditional holiday plant: Kalanchoe (2025). Illinois Extension. https://extension.illinois.edu/blogs/good-growing/2025-12-19-nontraditional-holiday-plant-kalanchoe, accessed 2026-11-15'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'

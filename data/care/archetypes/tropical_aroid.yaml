@@ -6,7 +6,7 @@ name:
   en: Tropical aroid
 description:
   en: 'Climbing and clumping rainforest aroids: bright indirect light, water when the top
-    third of the soil is dry.'
+    half of the soil is dry.'
 setting: indoor
 examples:
 - Monstera
@@ -15,16 +15,17 @@ examples:
 - Anthurium
 - Syngonium
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: 6
     autumn: 9
     winter: 12
-  let_dry: top_third
+  let_dry: top_half
 light:
   dli_min: 6
   dli_ideal: 10
-  dli_max: 20
+  dli_max: 14
 humidity: medium_high
 temperature_c:
   min: 13
@@ -38,7 +39,9 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'McConnell, D.B., J. Chen, R.J. Henny and K.C. Everitt. Cultural Guidelines for Commercial Production of Interiorscape Epipremnum (ENH894/EP151). UF/IFAS Extension. https://ask.ifas.ufl.edu/publication/EP151, accessed 2026-11-15'
+- 'Pothos as a Houseplant. Penn State Extension. https://extension.psu.edu/pothos-as-a-houseplant, accessed 2026-11-15'
+- 'Epipremnum aureum. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/epipremnum-aureum/, accessed 2026-11-15'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-15'

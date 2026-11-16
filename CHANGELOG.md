@@ -9,6 +9,16 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **Eight care profiles checked against published sources**: tropical aroids, indoor trees,
+  succulents, epiphytic orchids, bromeliads and Mediterranean herbs, and two new ones,
+  **Dracaena** (corn plants and dragon trees, which need less light than other indoor trees)
+  and **Rosemary**. Each now cites extension services, the RHS and the American Orchid Society,
+  and some values changed: aroids are watered when the top half of the soil is dry, so they
+  get a little more water each time. Days between waterings are still starting estimates. A plant
+  given a care profile by hand keeps it; see the [review](docs/care-review-2026-11.md).
+
 ### Fixed
 
 - **Switches on phones**: the choices in a switch such as Metric / Imperial on the Profile page,
