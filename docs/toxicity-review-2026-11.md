@@ -149,8 +149,8 @@ The citation links were updated to the ASPCA's new address too.
   README's "currently the ASPCA" rule is for a later release.
 - **Poinsettia** (*Euphorbia pulcherrima*), when a care profile for it has been checked
   against sources.
-- **Toxicity to children** stays in [more gardening](roadmap.md#more-gardening): it needs
-  its own sources.
+- **Toxicity to people** is planned for [1.3 Monstera](roadmap.md#monstera-simple-by-default-planned),
+  with its own sources.
 
 ## Sources
 
