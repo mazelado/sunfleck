@@ -31,6 +31,7 @@ from sunfleck.places.time import site_today
 from sunfleck.plants.api import PhotoOut, PlantLocationOut, location_out, photo_out
 from sunfleck.plants.models import Plant
 from sunfleck.plants.selectors import get_plant
+from sunfleck.plants.time import plant_today
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import SiteConditions
 
@@ -126,6 +127,19 @@ class HistoryEntryOut(Schema):
     days_from_due: int | None = Field(
         description="Days after the predicted due date; negative: before it."
     )
+
+
+class SoilPeriodOut(Schema):
+    since: date = Field(description="The first day counted, where the plant grows.")
+    until: date = Field(description="The last day counted.")
+    too_dry: int
+    just_right: int
+    still_wet: int
+
+
+class SoilSummaryOut(Schema):
+    recent: SoilPeriodOut = Field(description="The last 90 days, up to today.")
+    earlier: SoilPeriodOut = Field(description="The 90 days before those.")
 
 
 class HistoryQuery(Schema):
@@ -557,6 +571,28 @@ def schedule_history(
         )
         for entry in selectors.schedule_history(schedule, query.limit)
     ]
+
+
+def _soil_period_out(counts: selectors.SoilCounts) -> SoilPeriodOut:
+    return SoilPeriodOut(
+        since=counts.since,
+        until=counts.until,
+        too_dry=counts.too_dry,
+        just_right=counts.just_right,
+        still_wet=counts.still_wet,
+    )
+
+
+@router.get("/care-schedules/{schedule_id}/soil-summary", response=SoilSummaryOut)
+def soil_summary(request: HttpRequest, schedule_id: int) -> SoilSummaryOut:
+    """How often the soil was too dry, just right or still wet when watering, recently and
+    before: how well the watering predictions fit the plant. Watering schedules only."""
+    household = require_role(request, Role.VIEWER).household
+    schedule = _get_schedule(household, schedule_id)
+    if not schedule.care_type.counts_as_watering:
+        raise ApiError(422, "not_watering", "Only watering has soil feedback.")
+    recent, earlier = selectors.soil_summary(schedule, plant_today(schedule.plant))
+    return SoilSummaryOut(recent=_soil_period_out(recent), earlier=_soil_period_out(earlier))
 
 
 @router.get("/plants/{plant_id}/schedules", response=list[ScheduleOut])

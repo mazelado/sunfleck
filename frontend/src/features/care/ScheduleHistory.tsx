@@ -1,12 +1,17 @@
 import { Badge, Group, Loader, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
-import { useScheduleHistory, type HistoryEntry, type Schedule } from "../../api/schedules";
+import {
+  useScheduleHistory,
+  useSoilSummary,
+  type HistoryEntry,
+  type Schedule,
+} from "../../api/schedules";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { waterFromMl } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { formatDate } from "../plants/dates";
-import { describeFromDue } from "./scheduleText";
+import { describeFromDue, describeSoilSummary } from "./scheduleText";
 
 const FEEDBACK_COLOR = { too_dry: "yellow", just_right: "leaf", still_wet: "blue" } as const;
 // The strip shows up to 4 days either side of the due date, so a day or two stands out;
@@ -37,6 +42,7 @@ export function ScheduleHistory({ schedule, label }: { schedule: Schedule; label
   }
   return (
     <Stack gap="xs" pl={34}>
+      {schedule.care_type.counts_as_watering && <SoilSummaryText schedule={schedule} />}
       <HistoryStrip entries={entries} />
       <Stack component="ul" gap={6} m={0} p={0} style={{ listStyle: "none" }} aria-label={label}>
         {entries.map((entry) => (
@@ -45,6 +51,20 @@ export function ScheduleHistory({ schedule, label }: { schedule: Schedule; label
       </Stack>
     </Stack>
   );
+}
+
+/** How often the soil was just right when watering: how well the predictions fit. */
+function SoilSummaryText({ schedule }: { schedule: Schedule }) {
+  const { t } = useTranslation();
+  const summary = useSoilSummary(schedule);
+  if (!summary.data) {
+    return null;
+  }
+  const lines = describeSoilSummary(summary.data, t);
+  if (lines.length === 0) {
+    return null;
+  }
+  return <Text size="sm">{lines.join(" ")}</Text>;
 }
 
 function HistoryRow({ entry }: { entry: HistoryEntry }) {

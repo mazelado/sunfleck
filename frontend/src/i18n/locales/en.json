@@ -965,6 +965,16 @@
       "resting": "While it was resting",
       "notPredicted": "Before Sunfleck predicted it"
     },
+    "soil": {
+      "recent_one": "In the last 90 days, the soil was just right {{right}} of {{count}} time when watering.",
+      "recent_other": "In the last 90 days, the soil was just right {{right}} of {{count}} times when watering.",
+      "restDry": "{{dry}} too dry.",
+      "restWet": "{{wet}} still wet.",
+      "restBoth": "{{dry}} too dry, {{wet}} still wet.",
+      "better": "Better than the 90 days before: {{right}} of {{count}}.",
+      "worse": "Not as good as the 90 days before: {{right}} of {{count}}.",
+      "same": "About the same as the 90 days before: {{right}} of {{count}}."
+    },
     "next": "Next: {{date}}",
     "paused": "Paused",
     "aboutEvery_one": "About every day",

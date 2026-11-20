@@ -1,7 +1,14 @@
 import type { TFunction } from "i18next";
 
 import type { CareType } from "../../api/care";
-import type { Factor, HistoryEntry, Schedule, Suggestion } from "../../api/schedules";
+import type {
+  Factor,
+  HistoryEntry,
+  Schedule,
+  SoilPeriod,
+  SoilSummary,
+  Suggestion,
+} from "../../api/schedules";
 import {
   celsiusToDisplay,
   cmToDisplay,
@@ -266,4 +273,37 @@ export function describeFromDue(entry: HistoryEntry, t: TFunction): string {
   return entry.days_from_due > 0
     ? t("schedules.fromDue.late", { count: entry.days_from_due })
     : t("schedules.fromDue.early", { count: -entry.days_from_due });
+}
+
+const answers = (period: SoilPeriod) => period.too_dry + period.just_right + period.still_wet;
+
+// Periods are compared only with a few answers in each, and only a clear difference counts.
+const MIN_ANSWERS_TO_COMPARE = 3;
+const CLEAR_DIFFERENCE = 0.1;
+
+/**
+ * How well watering fitted the plant, from the soil feedback: how often the soil was just
+ * right in the last 90 days, and whether that's better than the 90 days before. Empty without
+ * answers in the last 90 days.
+ */
+export function describeSoilSummary(summary: SoilSummary, t: TFunction): string[] {
+  const { recent, earlier } = summary;
+  const count = answers(recent);
+  if (count === 0) {
+    return [];
+  }
+  const lines = [t("schedules.soil.recent", { right: recent.just_right, count })];
+  const { too_dry: dry, still_wet: wet } = recent;
+  if (dry > 0 || wet > 0) {
+    const rest = dry > 0 && wet > 0 ? "restBoth" : dry > 0 ? "restDry" : "restWet";
+    lines.push(t(`schedules.soil.${rest}`, { dry, wet }));
+  }
+  const before = answers(earlier);
+  if (count >= MIN_ANSWERS_TO_COMPARE && before >= MIN_ANSWERS_TO_COMPARE) {
+    const change = recent.just_right / count - earlier.just_right / before;
+    const key =
+      change > CLEAR_DIFFERENCE ? "better" : change < -CLEAR_DIFFERENCE ? "worse" : "same";
+    lines.push(t(`schedules.soil.${key}`, { right: earlier.just_right, count: before }));
+  }
+  return lines;
 }

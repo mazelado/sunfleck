@@ -1,12 +1,12 @@
 """Read queries for care data."""
 
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, time, timedelta
 from typing import Literal
 
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import Count, OuterRef, Q, QuerySet, Subquery
 
-from sunfleck.care.models import CareEvent, CareSchedule, ScheduleAdjustment
+from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleAdjustment
 from sunfleck.plants.models import Photo, Plant
 from sunfleck.plants.time import plant_zone
 
@@ -88,6 +88,18 @@ def plant_timeline(
     return page, (page[-1].cursor if len(items) > limit else None)
 
 
+def _care_for(schedule: CareSchedule) -> QuerySet[CareEvent]:
+    """The care given for a schedule: any kind of watering for a watering schedule, as for
+    predictions. Care estimated when the plant was added is left out: no one did it on a day."""
+    care_type = schedule.care_type
+    same_care = (
+        Q(care_type__counts_as_watering=True)
+        if care_type.counts_as_watering
+        else Q(care_type=care_type)
+    )
+    return CareEvent.objects.filter(same_care, plant_id=schedule.plant_id, estimated=False)
+
+
 @dataclass(frozen=True)
 class HistoryEntry:
     """Care given for a schedule, next to what was predicted when it was given."""
@@ -117,17 +129,11 @@ def schedule_history(schedule: CareSchedule, limit: int = 20) -> list[HistoryEnt
     counts for a watering schedule, as for predictions. Care estimated when the plant was added
     is left out: no one did it on a day to compare.
     """
-    care_type = schedule.care_type
-    same_care = (
-        Q(care_type__counts_as_watering=True)
-        if care_type.counts_as_watering
-        else Q(care_type=care_type)
-    )
     before = ScheduleAdjustment.objects.filter(
         schedule=schedule, calculated_at__lt=OuterRef("performed_at")
     ).order_by("-calculated_at", "-pk")
     events = (
-        CareEvent.objects.filter(same_care, plant_id=schedule.plant_id, estimated=False)
+        _care_for(schedule)
         .select_related("care_type", "performed_by")
         .annotate(
             prediction_id=Subquery(before.values("pk")[:1]),
@@ -147,3 +153,60 @@ def schedule_history(schedule: CareSchedule, limit: int = 20) -> list[HistoryEnt
         )
         for event in events
     ]
+
+
+# How far back the soil summary looks, and so how long each of its two periods is.
+SOIL_PERIOD_DAYS = 90
+
+
+@dataclass(frozen=True)
+class SoilCounts:
+    """How the soil was at the waterings from `since` to `until` (days at the plant)."""
+
+    since: date
+    until: date
+    too_dry: int
+    just_right: int
+    still_wet: int
+
+    @property
+    def answers(self) -> int:
+        return self.too_dry + self.just_right + self.still_wet
+
+
+def soil_summary(schedule: CareSchedule, today: date) -> tuple[SoilCounts, SoilCounts]:
+    """How often the soil was too dry, just right or still wet when watering, in the last
+    `SOIL_PERIOD_DAYS` days and in the same length of time before: how well the watering
+    predictions fit this plant, and whether that's getting better.
+
+    It counts the "How was the soil?" answers, including from waterings skipped because the
+    soil was still wet.
+    """
+    zone = plant_zone(schedule.plant)
+    periods = []
+    for back in (0, 1):
+        until = today - timedelta(days=SOIL_PERIOD_DAYS * back)
+        since = until - timedelta(days=SOIL_PERIOD_DAYS - 1)
+        start = datetime.combine(since, time.min, tzinfo=zone)
+        end = datetime.combine(until + timedelta(days=1), time.min, tzinfo=zone)
+        counts = (
+            _care_for(schedule)
+            .filter(performed_at__gte=start, performed_at__lt=end)
+            .aggregate(
+                **{
+                    answer: Count("pk", filter=Q(feedback=answer))
+                    for answer in (Feedback.TOO_DRY, Feedback.JUST_RIGHT, Feedback.STILL_WET)
+                }
+            )
+        )
+        periods.append(
+            SoilCounts(
+                since,
+                until,
+                too_dry=counts[Feedback.TOO_DRY],
+                just_right=counts[Feedback.JUST_RIGHT],
+                still_wet=counts[Feedback.STILL_WET],
+            )
+        )
+    recent, earlier = periods
+    return recent, earlier

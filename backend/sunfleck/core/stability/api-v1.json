@@ -380,6 +380,26 @@
       "[].predicted_interval_days": "integer|null"
     }
   },
+  "GET /api/v1/care-schedules/{schedule_id}/soil-summary": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "earlier": "object",
+      "recent": "object",
+      "recent.just_right": "integer",
+      "recent.since": "string",
+      "recent.still_wet": "integer",
+      "recent.too_dry": "integer",
+      "recent.until": "string"
+    }
+  },
   "GET /api/v1/care-types": {
     "request": {
       "fields": {},
