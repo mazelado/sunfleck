@@ -2140,6 +2140,7 @@ genera:
     common_names:
       en:
       - busy Lizzie
+    archetype: shade_bedding
     crop:
       steps:
       - action: sow_indoors

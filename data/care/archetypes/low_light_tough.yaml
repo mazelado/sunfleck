@@ -13,21 +13,24 @@ examples:
 - Sansevieria
 - Aspidistra
 watering:
+  # From the sources' advice on how often to water; see docs/care-review-2026-11-part-2.md.
   interval_days:
     spring: 21
     summer: 14
     autumn: 21
     winter: 30
   let_dry: completely
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 2
   dli_ideal: 6
   dli_max: 15
 humidity: low
+# max: not sourced.
 temperature_c:
   min: 10
-  ideal_min: 18
-  ideal_max: 27
+  ideal_min: 15
+  ideal_max: 24
   max: 32
 fertilizing:
   interval_days: 60
@@ -37,7 +40,12 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+notes:
+  en: 'Cast iron plants (Aspidistra) like a little more water than ZZ and snake plants: water them before the soil dries out completely.'
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Zamioculcas zamiifolia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/zamioculcas-zamiifolia/, accessed 2026-11-20'
+- 'Dracaena trifasciata. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/dracaena-trifasciata/, accessed 2026-11-20'
+- 'Aspidistra elatior. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/aspidistra-elatior/, accessed 2026-11-20'
+- 'How to grow sansevierias. Royal Horticultural Society. https://www.rhs.org.uk/plants/sansevieria/growing-guide, accessed 2026-11-20'
+- 'How to grow aspidistras. Royal Horticultural Society. https://www.rhs.org.uk/plants/aspidistra/how-to-grow-aspidistras, accessed 2026-11-20'

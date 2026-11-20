@@ -79,7 +79,7 @@ def test_the_ai_chooses_among_the_built_in_profiles(client_as: ClientAs, thinker
     # It can only answer with one of the profiles.
     keys = task.schema["properties"]["profile_key"]["enum"]
     assert "tropical_aroid" in keys
-    assert len(keys) == 30
+    assert len(keys) == 31
 
 
 def test_answers_that_arent_a_profile_are_refused(client_as: ClientAs, thinker: Thinker) -> None:

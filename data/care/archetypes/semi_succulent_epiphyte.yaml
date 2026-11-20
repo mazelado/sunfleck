@@ -6,37 +6,42 @@ name:
   en: Semi-succulent epiphyte
 description:
   en: 'Plants with thick, water-storing leaves that grow on trees in the wild: chunky, airy
-    mix; let it mostly dry between waterings.'
+    mix; let the top half dry between waterings.'
 setting: indoor
 examples:
 - Hoya
 - Peperomia
 - Dischidia
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 12
     summer: 9
     autumn: 14
     winter: 21
-  let_dry: mostly
+  let_dry: top_half
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 6
   dli_ideal: 12
   dli_max: 20
 humidity: medium
+# max: not sourced.
 temperature_c:
-  min: 12
+  min: 10
   ideal_min: 18
   ideal_max: 27
   max: 32
 fertilizing:
-  interval_days: 30
+  interval_days: 14
   pause_months_north:
   - 11
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Hoya carnosa. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/hoya-carnosa/, accessed 2026-11-20'
+- 'Peperomia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/peperomia/, accessed 2026-11-20'
+- 'How to grow hoya. Royal Horticultural Society. https://www.rhs.org.uk/plants/hoya/growing-guide, accessed 2026-11-20'
+- 'How to grow peperomia. Royal Horticultural Society. https://www.rhs.org.uk/plants/peperomia/how-to-grow-peperomia, accessed 2026-11-20'

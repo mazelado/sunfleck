@@ -30,7 +30,7 @@ def test_the_dataset_is_loaded_by_migrate() -> None:
     snake = Taxon.objects.get(scientific_name="Dracaena trifasciata")
 
     assert loaded_version() is not None
-    assert CareArchetype.objects.count() == 30
+    assert CareArchetype.objects.count() == 31
     assert snake.archetype is not None
     assert snake.archetype.key == "low_light_tough"
     assert snake.synonyms == ["Sansevieria trifasciata"]

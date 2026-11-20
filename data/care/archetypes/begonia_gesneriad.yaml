@@ -14,6 +14,7 @@ examples:
 - Episcia
 - Aeschynanthus
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 6
     summer: 5
@@ -21,21 +22,28 @@ watering:
     winter: 10
   let_dry: top_quarter
 light:
-  dli_min: 4
-  dli_ideal: 8
-  dli_max: 14
+  dli_min: 6
+  dli_ideal: 10
+  dli_max: 16
 humidity: medium_high
+# max: not sourced.
 temperature_c:
-  min: 15
+  min: 13
   ideal_min: 18
   ideal_max: 24
   max: 29
 fertilizing:
   interval_days: 21
   pause_months_north:
+  - 10
+  - 11
   - 12
   - 1
-status: draft
+  - 2
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Begonia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/begonia/, accessed 2026-11-20'
+- 'Begonias as houseplants. Royal Horticultural Society. https://www.rhs.org.uk/plants/begonias/houseplants, accessed 2026-11-20'
+- 'How to grow African violets. Royal Horticultural Society. https://www.rhs.org.uk/plants/african-violets/growing-guide, accessed 2026-11-20'
+- 'Streptocarpus. Royal Horticultural Society. https://www.rhs.org.uk/plants/streptocarpus/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

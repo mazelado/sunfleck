@@ -13,12 +13,14 @@ examples:
 - Dypsis
 - Rhapis
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 8
     summer: 6
     autumn: 9
     winter: 12
   let_dry: top_quarter
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 4
   dli_ideal: 8
@@ -36,7 +38,10 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Chamaedorea elegans. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/chamaedorea-elegans/, accessed 2026-11-20'
+- 'Howea forsteriana. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/howea-forsteriana/, accessed 2026-11-20'
+- 'Rhapis excelsa. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/rhapis-excelsa/, accessed 2026-11-20'
+- 'Palms indoors. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/trees/indoor-palms, accessed 2026-11-20'
+- 'How to grow chamaedorea. Royal Horticultural Society. https://www.rhs.org.uk/plants/chamaedorea/growing-guide, accessed 2026-11-20'

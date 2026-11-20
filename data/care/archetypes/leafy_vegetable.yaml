@@ -13,12 +13,14 @@ examples:
 - Brassica
 - Eruca
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 3
     summer: 2
     autumn: 3
     winter: 5
   let_dry: keep_moist
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 12
   dli_ideal: 17
@@ -26,16 +28,19 @@ light:
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# min and max: not sourced.
 temperature_c:
   min: 2
   ideal_min: 10
   ideal_max: 21
   max: 27
 fertilizing:
-  interval_days: 21
+  interval_days: 14
   pause_months_north: []
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'How to grow lettuces. Royal Horticultural Society. https://www.rhs.org.uk/vegetables/lettuce/grow-your-own, accessed 2026-11-20'
+- 'How to grow spinach. Royal Horticultural Society. https://www.rhs.org.uk/vegetables/spinach/grow-your-own, accessed 2026-11-20'
+- 'Growing cool-season crops. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/yard-and-garden-problems/non-pest-issues-in-cool-season-crops, accessed 2026-11-20'

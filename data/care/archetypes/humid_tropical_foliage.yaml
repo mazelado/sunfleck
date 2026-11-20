@@ -13,6 +13,7 @@ examples:
 - Alocasia
 - Fittonia
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 5
     summer: 4
@@ -22,8 +23,9 @@ watering:
 light:
   dli_min: 4
   dli_ideal: 7
-  dli_max: 12
+  dli_max: 10
 humidity: high
+# max: not sourced.
 temperature_c:
   min: 16
   ideal_min: 18
@@ -32,11 +34,16 @@ temperature_c:
 fertilizing:
   interval_days: 30
   pause_months_north:
+  - 10
   - 11
   - 12
   - 1
   - 2
-status: draft
+  - 3
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Maranta leuconeura. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/maranta-leuconeura/, accessed 2026-11-20'
+- 'How to grow calatheas. Royal Horticultural Society. https://www.rhs.org.uk/plants/calathea/growing-guide, accessed 2026-11-20'
+- 'How to grow alocasias. Royal Horticultural Society. https://www.rhs.org.uk/plants/alocasia/growing-guide, accessed 2026-11-20'
+- 'How to grow fittonia. Royal Horticultural Society. https://www.rhs.org.uk/plants/fittonia/how-to-grow-fittonia, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

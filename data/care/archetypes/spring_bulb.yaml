@@ -15,12 +15,14 @@ examples:
 - Crocus
 - Allium
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: null
     autumn: 21
     winter: null
   let_dry: top_third
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 15
   dli_ideal: 25
@@ -28,12 +30,15 @@ light:
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# ideal_min and max: not sourced.
 temperature_c:
-  min: -20
+  min: -30
   ideal_min: 5
   ideal_max: 20
   max: 27
+# interval_days: not sourced; feed from when the shoots appear until the leaves die down.
 fertilizing:
   interval_days: 30
   pause_months_north:
@@ -49,7 +54,10 @@ dormancy_months_north:
 - 6
 - 7
 - 8
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Tulipa. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/tulipa/, accessed 2026-11-20'
+- 'Narcissus. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/narcissus/, accessed 2026-11-20'
+- 'How to grow tulips. Royal Horticultural Society. https://www.rhs.org.uk/plants/tulip/growing-guide, accessed 2026-11-20'
+- 'How to grow daffodils. Royal Horticultural Society. https://www.rhs.org.uk/plants/daffodils/growing-guide, accessed 2026-11-20'
+- 'How to grow bulbs. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/bulbs/growing-guide, accessed 2026-11-20'

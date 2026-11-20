@@ -14,17 +14,19 @@ examples:
 - Asplenium
 - Platycerium
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 4
     summer: 3
     autumn: 5
     winter: 7
-  let_dry: keep_moist
+  let_dry: top_quarter
 light:
-  dli_min: 3
-  dli_ideal: 6
+  dli_min: 4
+  dli_ideal: 8
   dli_max: 10
 humidity: high
+# max: not sourced.
 temperature_c:
   min: 13
   ideal_min: 18
@@ -37,7 +39,9 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Nephrolepis exaltata. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/nephrolepis-exaltata/, accessed 2026-11-20'
+- 'Growing tropical ferns indoors. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/tropical-ferns, accessed 2026-11-20'
+- 'Tender ferns. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/ferns/tender-ferns-houseplants, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

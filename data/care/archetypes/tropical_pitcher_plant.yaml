@@ -10,12 +10,14 @@ setting: indoor
 examples:
 - Nepenthes
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 4
     summer: 3
     autumn: 5
     winter: 7
   let_dry: keep_moist
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 6
   dli_ideal: 10
@@ -29,7 +31,7 @@ temperature_c:
 fertilizing: null
 notes:
   en: Use rain, distilled, or reverse-osmosis water.
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Nepenthes. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/nepenthes/, accessed 2026-11-20'
+- 'How to grow carnivorous plants. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/carnivorous/growing-guide, accessed 2026-11-20'

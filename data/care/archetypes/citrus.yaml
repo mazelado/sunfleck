@@ -5,27 +5,30 @@ key: citrus
 name:
   en: Citrus
 description:
-  en: 'Lemons, oranges and kumquats in pots: lots of sun, water deeply when the top third
-    is dry, and keep frost-free in winter.'
+  en: 'Lemons, oranges and kumquats in pots: lots of sun, keep the soil just moist in summer
+    and a little drier in winter, and keep frost-free.'
 setting: either
 examples:
 - Citrus
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: 4
     autumn: 8
     winter: 14
-  let_dry: top_third
+  let_dry: top_quarter
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 20
   dli_ideal: 30
   dli_max: 45
   outdoor_exposure:
   - full_sun
-humidity: medium
+humidity: medium_high
+# min: lemons; limes need 10 °C and calamondins 13 °C. max: not sourced.
 temperature_c:
-  min: 3
+  min: 5
   ideal_min: 15
   ideal_max: 29
   max: 35
@@ -36,7 +39,8 @@ fertilizing:
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Citrus. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/citrus/, accessed 2026-11-20'
+- 'Growing citrus indoors. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/growing-citrus-indoors, accessed 2026-11-20'
+- 'How to grow citrus. Royal Horticultural Society. https://www.rhs.org.uk/fruit/citrus/grow-your-own, accessed 2026-11-20'

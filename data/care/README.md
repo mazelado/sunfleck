@@ -34,7 +34,7 @@ under the same license. Why we write our own data rather than copy it is explain
 | `temperature_c` | `min` it survives, the `ideal_min`–`ideal_max` range, and the `max` it tolerates, in °C |
 | `fertilizing` | `interval_days` while growing, and `pause_months_north` when not to feed. `null` means never fertilize |
 | `dormancy_months_north` | Months of rest, if any |
-| `status` | `draft` (written from general knowledge) or `reviewed` (checked against the cited sources). In a reviewed profile, `watering.interval_days` are still starting estimates unless a comment says otherwise: sources say how dry the soil should be before watering, not how many days apart |
+| `status` | `draft` (written from general knowledge) or `reviewed` (checked against the cited sources). In a reviewed profile, `watering.interval_days` are still starting estimates unless a comment says otherwise: sources say how dry the soil should be before watering, not how many days apart. A comment above a field also marks values the sources describe only in words, or don't give at all |
 | `sources` | Where the values come from. At least one |
 
 Months are numbers (1 = January) **for the northern hemisphere**; Sunfleck shifts them by six
@@ -126,10 +126,12 @@ This is a great place to help without writing code.
 3. **Bump the version** in `dataset.yaml`, e.g. `2026.10.0` → `2026.10.1`.
 4. Run the checks (`make test`), or let the pull request's checks run them.
 
-Most profiles are still `draft`: sensible starting values written from general horticultural
-knowledge. The first eight were checked against sources in November 2026; see
-[the review](../../docs/care-review-2026-11.md) for each value and where it came from. Sunfleck learns from each plant's care history, so the
-starting values only need to be reasonable, but citations and reviews make them better for everyone.
+Every profile has been checked against sources, in November 2026: see the reviews,
+[part 1](../../docs/care-review-2026-11.md) and [part 2](../../docs/care-review-2026-11-part-2.md),
+for each value and where it came from. Some values still have no source, and say so in a
+comment: a citation for one is a welcome contribution. Sunfleck learns from each plant's care
+history, so the starting values only need to be reasonable, but citations and reviews make
+them better for everyone.
 
 Common names in other languages are welcome too: add them under their language code (`de`,
 `fr`, `nl`, ...).

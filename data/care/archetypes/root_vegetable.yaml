@@ -13,12 +13,14 @@ examples:
 - Raphanus
 - Beta
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 4
     summer: 3
     autumn: 5
     winter: 10
   let_dry: top_third
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 15
   dli_ideal: 22
@@ -26,16 +28,20 @@ light:
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# temperature_c: not sourced.
 temperature_c:
   min: 2
   ideal_min: 12
   ideal_max: 24
   max: 30
+# fertilizing: not sourced.
 fertilizing:
   interval_days: 30
   pause_months_north: []
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'How to grow carrots. Royal Horticultural Society. https://www.rhs.org.uk/vegetables/carrots/grow-your-own, accessed 2026-11-20'
+- 'How to grow radishes. Royal Horticultural Society. https://www.rhs.org.uk/vegetables/radishes/grow-your-own, accessed 2026-11-20'
+- 'How to grow beetroot. Royal Horticultural Society. https://www.rhs.org.uk/vegetables/beetroot/grow-your-own, accessed 2026-11-20'
