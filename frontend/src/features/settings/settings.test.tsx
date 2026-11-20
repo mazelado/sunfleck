@@ -107,6 +107,54 @@ describe("profile", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("frames the profile picture again, from the photo it was cut from", async () => {
+    const crop = { x: 0.1, y: 0.2, width: 0.5, height: 0.5 };
+    const me: Me = {
+      ...ada,
+      avatar_url: "/api/v1/people/1/avatar?v=abc",
+      avatar_source_url: "/api/v1/me/avatar/source?v=src",
+      avatar_crop: crop,
+    };
+    signInAs(me);
+    const sent: unknown[] = [];
+    server.use(
+      http.put("*/api/v1/me/avatar/crop", async ({ request }) => {
+        sent.push(await request.json());
+        return HttpResponse.json({ ...me, avatar_url: "/api/v1/people/1/avatar?v=new" });
+      }),
+    );
+    const { user } = renderApp("/settings/profile");
+
+    // From the Adjust button, or by tapping the picture.
+    await user.click(await screen.findByRole("button", { name: "Adjust your profile picture" }));
+    let dialog = await screen.findByRole("dialog", { name: "Frame your picture" });
+    expect(dialog.querySelector("img")).toHaveAttribute("src", me.avatar_source_url);
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Adjust" }));
+    dialog = await screen.findByRole("dialog", { name: "Frame your picture" });
+    // It starts from the saved square (the test environment can't move it).
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    expect(await screen.findByText("Profile picture saved")).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Adjust" }));
+    dialog = await screen.findByRole("dialog", { name: "Frame your picture" });
+    await user.click(within(dialog).getByRole("button", { name: "Use the middle of the photo" }));
+    await waitFor(() => {
+      expect(sent).toEqual([{ crop }, { crop: null }]);
+    });
+    expect(uploadAvatar).not.toHaveBeenCalled();
+  });
+
+  it("can't adjust a picture set before its photo was kept", async () => {
+    signInAs({ ...ada, avatar_url: "/api/v1/people/1/avatar?v=abc" });
+
+    renderApp("/settings/profile");
+
+    expect(await screen.findByRole("img", { name: "Your profile picture" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Change" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /^Adjust/ })).not.toBeInTheDocument();
+  });
+
   it("shows allauth's message next to the current password", async () => {
     signInAs(ada);
     server.use(

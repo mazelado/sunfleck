@@ -145,6 +145,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -540,6 +546,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -551,6 +563,13 @@
       "role": "null|string",
       "unit_system": "string"
     }
+  },
+  "GET /api/v1/me/avatar/source": {
+    "request": {
+      "fields": {},
+      "required": []
+    },
+    "response": {}
   },
   "GET /api/v1/notifications": {
     "request": {
@@ -1384,6 +1403,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -1706,6 +1731,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -1766,6 +1797,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -2402,6 +2439,12 @@
     },
     "response": {
       "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
       "avatar_url": "null|string",
       "display_name": "string",
       "email": "string",
@@ -2774,6 +2817,39 @@
       "site_id": "integer",
       "temperature_max_c": "null|number",
       "temperature_min_c": "null|number"
+    }
+  },
+  "PUT /api/v1/me/avatar/crop": {
+    "request": {
+      "fields": {
+        "crop": "null|object",
+        "crop.height": "number",
+        "crop.width": "number",
+        "crop.x": "number",
+        "crop.y": "number"
+      },
+      "required": [
+        "crop"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "avatar_crop": "null|object",
+      "avatar_crop.height": "number",
+      "avatar_crop.width": "number",
+      "avatar_crop.x": "number",
+      "avatar_crop.y": "number",
+      "avatar_source_url": "null|string",
+      "avatar_url": "null|string",
+      "display_name": "string",
+      "email": "string",
+      "household": "null|object",
+      "household.id": "integer",
+      "household.name": "string",
+      "id": "integer",
+      "locale": "string",
+      "role": "null|string",
+      "unit_system": "string"
     }
   },
   "PUT /api/v1/notifications/channels/{channel_id}": {

@@ -106,6 +106,90 @@
         "title": "AlertOut",
         "type": "object"
       },
+      "AvatarCropChange": {
+        "properties": {
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AvatarCropIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None shows the middle of the photo."
+          }
+        },
+        "required": [
+          "crop"
+        ],
+        "title": "AvatarCropChange",
+        "type": "object"
+      },
+      "AvatarCropIn": {
+        "properties": {
+          "height": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Height",
+            "type": "number"
+          },
+          "width": {
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "title": "Width",
+            "type": "number"
+          },
+          "x": {
+            "exclusiveMaximum": 1,
+            "minimum": 0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "exclusiveMaximum": 1,
+            "minimum": 0,
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "AvatarCropIn",
+        "type": "object"
+      },
+      "AvatarCropOut": {
+        "properties": {
+          "height": {
+            "title": "Height",
+            "type": "number"
+          },
+          "width": {
+            "title": "Width",
+            "type": "number"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "AvatarCropOut",
+        "type": "object"
+      },
       "BedType": {
         "enum": [
           "raised",
@@ -2610,6 +2694,29 @@
       },
       "MeOut": {
         "properties": {
+          "avatar_crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AvatarCropOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The square of that photo the picture shows (fractions of its width and height, from its top left); none: its middle."
+          },
+          "avatar_source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The photo the profile picture was cut from, to frame it again; none for pictures set before 1.1.",
+            "title": "Avatar Source Url"
+          },
           "avatar_url": {
             "anyOf": [
               {
@@ -2667,6 +2774,8 @@
           "email",
           "display_name",
           "avatar_url",
+          "avatar_source_url",
+          "avatar_crop",
           "locale",
           "unit_system",
           "household",
@@ -8015,6 +8124,65 @@
           }
         ],
         "summary": "Set Avatar",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/v1/me/avatar/crop": {
+      "put": {
+        "description": "Frame your profile picture again, from the photo it was cut from: a square of it\n(`crop`), or its middle (`crop` null).",
+        "operationId": "sunfleck_accounts_api_crop_avatar",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarCropChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Crop Avatar",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/v1/me/avatar/source": {
+      "get": {
+        "description": "The photo your profile picture was cut from (WebP), to frame it again. Only yours.",
+        "operationId": "sunfleck_accounts_api_get_avatar_source",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Avatar Source",
         "tags": [
           "accounts"
         ]

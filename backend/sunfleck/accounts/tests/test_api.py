@@ -19,6 +19,8 @@ from sunfleck.accounts.tests.factories import (
     MembershipFactory,
     UserFactory,
 )
+from sunfleck.core import images
+from sunfleck.core.tests.test_images import halves
 from sunfleck.plants.tests.factories import image_bytes
 
 STRONG_PASSWORD = "a long and unusual passphrase"
@@ -633,9 +635,12 @@ def test_a_profile_picture_goes_with_its_account(
     services.set_avatar(ada, io.BytesIO(image_bytes()), 1000)
     name = ada.avatar.name or ""
 
+    source = ada.avatar_source.name or ""
+
     ada.delete()
 
     assert not default_storage.exists(name)
+    assert not default_storage.exists(source)
 
 
 def test_a_profile_picture_can_be_cropped(member_of: Callable[[Role], Membership]) -> None:
@@ -651,6 +656,105 @@ def test_a_profile_picture_can_be_cropped(member_of: Callable[[Role], Membership
 
     assert response.status_code == 200
     assert response.json()["avatar_url"] is not None
+
+
+def picture_colour(client: Client, url: str) -> tuple[int, int, int]:
+    response = client.get(url)
+    image = Image.open(io.BytesIO(b"".join(response.streaming_content)))  # type: ignore[attr-defined]
+    return image.convert("RGB").getpixel((128, 128))  # type: ignore[return-value]
+
+
+def test_a_profile_picture_can_be_framed_again(member_of: Callable[[Role], Membership]) -> None:
+    ada = member_of(Role.VIEWER).user
+    client = Client()
+    client.force_login(ada)
+    file = SimpleUploadedFile("me.png", halves(), content_type="image/png")
+    left = {"x": 0.0, "y": 0.25, "width": 0.375, "height": 0.5}
+    set_response = client.post(
+        "/api/v1/me/avatar",
+        {"file": file, **{f"crop_{key}": value for key, value in left.items()}},
+    ).json()
+    assert set_response["avatar_crop"] == left
+    red, _, blue = picture_colour(client, set_response["avatar_url"])
+    assert red > 150 > blue
+    # The photo it was cut from is there, for the person themself, to frame it again.
+    source = client.get(set_response["avatar_source_url"])
+    assert (source.status_code, source["Content-Type"]) == (200, "image/webp")
+    ada.refresh_from_db()
+    old_picture, source_name = ada.avatar.name or "", ada.avatar_source.name or ""
+
+    right = {"x": 0.625, "y": 0.25, "width": 0.375, "height": 0.5}
+    moved = client.put(
+        "/api/v1/me/avatar/crop", {"crop": right}, content_type="application/json"
+    ).json()
+
+    assert moved["avatar_crop"] == right
+    assert moved["avatar_url"] != set_response["avatar_url"]
+    red, _, blue = picture_colour(client, moved["avatar_url"])
+    assert blue > 150 > red
+    assert not default_storage.exists(old_picture)
+    assert default_storage.exists(source_name)
+    assert moved["avatar_source_url"] == set_response["avatar_source_url"]
+
+    # Back to the middle of the photo.
+    middle = client.put(
+        "/api/v1/me/avatar/crop", {"crop": None}, content_type="application/json"
+    ).json()
+    assert middle["avatar_crop"] is None
+    assert middle["avatar_url"] is not None
+
+
+def test_a_new_frame_must_be_inside_the_photo(member_of: Callable[[Role], Membership]) -> None:
+    ada = member_of(Role.VIEWER).user
+    services.set_avatar(ada, io.BytesIO(halves()), 1000)
+    client = Client()
+    client.force_login(ada)
+
+    response = client.put(
+        "/api/v1/me/avatar/crop",
+        {"crop": {"x": 0.9, "y": 0, "width": 0.5, "height": 0.5}},
+        content_type="application/json",
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_crop"
+
+
+def test_pictures_set_before_their_photo_was_kept_cant_be_framed_again(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    ada = member_of(Role.VIEWER).user
+    services.set_avatar(ada, io.BytesIO(halves()), 1000)
+    # As a picture set before 1.1: only the picture.
+    ada.avatar_source.delete(save=True)
+    client = Client()
+    client.force_login(ada)
+
+    me = client.get("/api/v1/me").json()
+    response = client.put("/api/v1/me/avatar/crop", {"crop": None}, content_type="application/json")
+
+    assert (me["avatar_url"] is not None, me["avatar_source_url"], me["avatar_crop"]) == (
+        True,
+        None,
+        None,
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "avatar_not_adjustable"
+    assert client.get("/api/v1/me/avatar/source").status_code == 404
+
+
+def test_removing_a_profile_picture_removes_its_photo(
+    member_of: Callable[[Role], Membership],
+) -> None:
+    ada = member_of(Role.VIEWER).user
+    services.set_avatar(ada, io.BytesIO(halves()), 1000, images.Crop(0, 0, 0.5, 0.5))
+    names = (ada.avatar.name or "", ada.avatar_source.name or "")
+
+    services.remove_avatar(ada)
+
+    ada.refresh_from_db()
+    assert not any(default_storage.exists(name) for name in names)
+    assert (ada.avatar_crop, ada.avatar_source.name) == (None, "")
 
 
 def test_profile_picture_crops_must_be_inside_the_photo(

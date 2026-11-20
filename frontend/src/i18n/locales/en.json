@@ -138,7 +138,10 @@
     "pictureChange": "Change",
     "pictureRemove": "Remove",
     "pictureSaved": "Profile picture saved",
-    "pictureFrame": "Frame your picture"
+    "pictureFrame": "Frame your picture",
+    "pictureAdjust": "Adjust",
+    "pictureAdjustLabel": "Adjust your profile picture",
+    "pictureMiddle": "Use the middle of the photo"
   },
   "household": {
     "title": "Household",

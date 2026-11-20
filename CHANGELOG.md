@@ -15,6 +15,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   or fl oz, cups or gallons for imperial units. One tap fills in the amount Sunfleck suggests.
   The amount shows in the plant's care history, and it's in exports and the API (`amount_ml`)
   (#222).
+- **Frame your profile picture again**: tap it, or **Adjust**, to move and zoom it later without
+  choosing the photo again, or go back to the middle of the photo. This works for pictures
+  chosen from 1.1 on, as Sunfleck now keeps the photo they're cut from. To adjust an older
+  picture, choose it again once (#221).
 
 ### Changed
 
@@ -25,6 +29,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and some values changed: aroids are watered when the top half of the soil is dry, so they
   get a little more water each time. Days between waterings are still starting estimates. A plant
   given a care profile by hand keeps it; see the [review](docs/care-review-2026-11.md).
+- **Plants, Seeds and Wishlist share one header**, so the switch between them stays in the same
+  place, also while Seeds and Wishlist load (#213).
 
 ## [1.0.3] - 2026-11-16
 

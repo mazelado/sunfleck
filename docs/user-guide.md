@@ -204,6 +204,9 @@ lists the latest harvests. Exports include them.
   - **Every few days**: a fixed interval, for anything else, or if you prefer it.
 - **Soil feedback**: when you water, say whether the soil was **Too dry**, **Just right** or
   **Still wet**. Sunfleck adjusts that plant's watering from your last few answers.
+- **How much water you gave**: when logging a watering with details, you can also say how much
+  you gave, in your units. Tap the suggested amount to fill it in. It shows in the plant's care
+  history, so you can look back at it, but it doesn't change the schedule.
 - **Your routine**: if you keep watering a plant clearly more or less often than its schedule
   (three times in a row), its page offers to match the schedule to how you water. It only
   changes if you accept, and you can go back to Sunfleck's own estimate at any time.
@@ -266,7 +269,8 @@ itself: only its owner can reset its password or remove it.
 
 Under **Profile**, everyone sets their name, a profile picture (only their household sees it),
 language, units (metric, or imperial: inches and °F), and password. After choosing a picture,
-move and zoom it to frame it in the circle, then save.
+move and zoom it to frame it in the circle, then save. To frame it differently later, tap the
+picture or **Adjust**. Pictures chosen before 1.1 need to be chosen again first.
 
 ## Plugins
 

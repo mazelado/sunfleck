@@ -177,6 +177,19 @@ def thumbnail(file: IO[bytes], crop: Crop | None) -> bytes:
     return _webp(image, THUMBNAIL_QUALITY, source.info.get("icc_profile"))
 
 
+def avatar_source(file: IO[bytes]) -> bytes:
+    """The photo a profile picture is cut from, kept so it can be framed again: a WebP copy at
+    most AVATAR_SIZE * 4 pixels on its long edge, upright and without metadata.
+
+    Raises:
+        ImageError: If the file isn't a supported image or is too large to process.
+    """
+    _, image, _ = _open(file, AVATAR_SIZE * 4)
+    image = image.convert("RGB")
+    image.thumbnail((AVATAR_SIZE * 4, AVATAR_SIZE * 4), Image.Resampling.LANCZOS)
+    return _webp(image, IMAGE_QUALITY, None)
+
+
 def process_avatar(file: IO[bytes], crop: Crop | None = None) -> bytes:
     """A profile picture: the part of the photo the person chose, or else the middle of it, as
     a WebP square of AVATAR_SIZE pixels, upright and without metadata.
