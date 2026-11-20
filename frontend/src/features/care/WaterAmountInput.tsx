@@ -1,4 +1,4 @@
-import { Button, Group, NativeSelect, NumberInput, Stack } from "@mantine/core";
+import { Button, Group, NativeSelect, NumberInput, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
 import { useUnits } from "../../lib/useUnits";
@@ -40,30 +40,39 @@ export function WaterAmountInput({ amount, onChange, suggestion, error }: WaterA
 
   return (
     <Stack gap={4}>
-      <NumberInput
-        label={t("care.amount")}
-        description={t("common.optional")}
-        min={0}
-        decimalScale={2}
-        allowNegative={false}
-        value={amount.value}
-        error={error}
-        onChange={(value) => {
-          onChange({ ...amount, value });
-        }}
-        rightSectionWidth={96}
-        rightSection={
-          <NativeSelect
-            aria-label={t("care.amountUnit")}
-            variant="unstyled"
-            data={unitChoices.map((unit) => ({ value: unit, label: t(`care.waterUnits.${unit}`) }))}
-            value={amount.unit}
-            onChange={(event) => {
-              onChange({ ...amount, unit: event.currentTarget.value as WaterVolume["unit"] });
-            }}
-          />
-        }
-      />
+      {/* The unit beside the amount, not inside it: there it gets too narrow to read. */}
+      <Group gap="xs" align="flex-start" wrap="nowrap">
+        <NumberInput
+          label={
+            <>
+              {t("care.amount")}{" "}
+              <Text span c="dimmed" size="xs">
+                {t("common.optional")}
+              </Text>
+            </>
+          }
+          min={0}
+          decimalScale={2}
+          allowNegative={false}
+          hideControls
+          inputMode="decimal"
+          value={amount.value}
+          error={error}
+          style={{ flex: 1 }}
+          onChange={(value) => {
+            onChange({ ...amount, value });
+          }}
+        />
+        <NativeSelect
+          label={t("care.amountUnit")}
+          w={120}
+          data={unitChoices.map((unit) => ({ value: unit, label: t(`care.waterUnits.${unit}`) }))}
+          value={amount.unit}
+          onChange={(event) => {
+            onChange({ ...amount, unit: event.currentTarget.value as WaterVolume["unit"] });
+          }}
+        />
+      </Group>
       {suggested && !isSuggested && (
         <Group>
           <Button
