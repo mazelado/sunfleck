@@ -63,7 +63,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.8 Hibiscus** | [Collector features](#hibiscus-collector-features-released) | Released 2026-11-06 |
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
-| **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-planned) | Planned |
+| **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-released) | Released 2026-11-20 |
 | **1.2 Lavender** | [Trust](#lavender-trust-planned) | Planned |
 | **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-planned) | Planned |
 | **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-planned) | Planned |
@@ -244,7 +244,7 @@ Making what Sunfleck already does solid and beautiful, rather than adding more.
 - **Stability:** the API and the plugin interface are declared stable, with how they may
   change from 1.0 on, and upgrades are guaranteed from any 0.x release with a backup.
 
-### Kalanchoe: care details (planned)
+### Kalanchoe: care details (released)
 
 Small additions from using 1.0, to the care that's logged and the profile.
 
