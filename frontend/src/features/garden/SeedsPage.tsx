@@ -2,6 +2,7 @@ import {
   Badge,
   Button,
   Group,
+  Loader,
   Modal,
   NumberInput,
   Paper,
@@ -17,11 +18,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { type Seed, useDeleteSeed, useSaveSeed, useSeeds } from "../../api/garden";
-import { PageHeader } from "../../components/PageHeader";
-import { PlantsViews } from "../plants/PlantsViews";
+import { PlantsViewsHeader } from "../plants/PlantsViewsHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { FullPageLoader } from "../../components/FullPageLoader";
 import { sentenceCase } from "../../lib/text";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { EmptyState } from "../../components/EmptyState";
@@ -37,13 +36,10 @@ export function SeedsPage() {
   // The seeds being edited: a packet, "new", or none.
   const [editing, setEditing] = useState<Seed | "new" | null>(null);
 
-  if (seeds.isPending) {
-    return <FullPageLoader />;
-  }
   const items = seeds.data ?? [];
   return (
     <Stack gap="lg">
-      <PageHeader
+      <PlantsViewsHeader
         title={t("seeds.title")}
         action={
           canEdit && (
@@ -58,13 +54,14 @@ export function SeedsPage() {
           )
         }
       />
-      <PlantsViews />
       <Text c="dimmed" size="sm">
         {t("seeds.intro")}
       </Text>
       <ErrorAlert error={seeds.error} />
+      {/* Below the header, so the views don't jump while loading. */}
+      {seeds.isPending && <Loader role="status" aria-label={t("common.loading")} mx="auto" />}
       {items.length > 0 && <SowingCalendar />}
-      {items.length === 0 && !seeds.error && (
+      {items.length === 0 && !seeds.isPending && !seeds.error && (
         <EmptyState illustration="seeds">{t("seeds.empty")}</EmptyState>
       )}
       {items.map((seed) => (

@@ -2,6 +2,7 @@ import {
   Anchor,
   Button,
   Group,
+  Loader,
   Modal,
   Paper,
   Stack,
@@ -17,11 +18,9 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { useDeleteWish, useSaveWish, useWishlist, type Wish } from "../../api/wishlist";
-import { PageHeader } from "../../components/PageHeader";
-import { PlantsViews } from "./PlantsViews";
+import { PlantsViewsHeader } from "./PlantsViewsHeader";
 import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { FullPageLoader } from "../../components/FullPageLoader";
 import { sentenceCase } from "../../lib/text";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { EmptyState } from "../../components/EmptyState";
@@ -35,13 +34,10 @@ export function WishlistPage() {
   const canEdit = useCanEdit();
   const [editing, setEditing] = useState<Wish | "new" | null>(null);
 
-  if (wishlist.isPending) {
-    return <FullPageLoader />;
-  }
   const items = wishlist.data ?? [];
   return (
     <Stack gap="lg">
-      <PageHeader
+      <PlantsViewsHeader
         title={t("wishlist.title")}
         action={
           canEdit && (
@@ -56,12 +52,13 @@ export function WishlistPage() {
           )
         }
       />
-      <PlantsViews />
       <Text c="dimmed" size="sm">
         {t("wishlist.intro")}
       </Text>
       <ErrorAlert error={wishlist.error} />
-      {items.length === 0 && !wishlist.error && (
+      {/* Below the header, so the views don't jump while loading. */}
+      {wishlist.isPending && <Loader role="status" aria-label={t("common.loading")} mx="auto" />}
+      {items.length === 0 && !wishlist.isPending && !wishlist.error && (
         <EmptyState illustration="plant">{t("wishlist.empty")}</EmptyState>
       )}
       {items.map((wish) => (
