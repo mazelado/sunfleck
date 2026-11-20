@@ -207,6 +207,12 @@ lists the latest harvests. Exports include them.
 - **How much water you gave**: when logging a watering with details, you can also say how much
   you gave, in your units. Tap the suggested amount to fill it in. It shows in the plant's care
   history, so you can look back at it, but it doesn't change the schedule.
+- **History**: once care has been logged, **History** next to **Why?** shows each time it was
+  done, next to when Sunfleck said it was due: on the day, or how many days before or after,
+  with the soil feedback and the water given. A row of dots shows the same at a glance: early
+  below the line, late above it, coloured by how the soil was. Care logged before its
+  schedule was added, or imported from an export made before 1.2, says it was done "before
+  Sunfleck predicted it".
 - **Your routine**: if you keep watering a plant clearly more or less often than its schedule
   (three times in a row), its page offers to match the schedule to how you water. It only
   changes if you accept, and you can go back to Sunfleck's own estimate at any time.

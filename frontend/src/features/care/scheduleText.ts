@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
 
 import type { CareType } from "../../api/care";
-import type { Factor, Schedule, Suggestion } from "../../api/schedules";
+import type { Factor, HistoryEntry, Schedule, Suggestion } from "../../api/schedules";
 import {
   celsiusToDisplay,
   cmToDisplay,
@@ -250,4 +250,20 @@ export function describeWaterAmount(
   return details.in_ground
     ? t("schedules.amount.ground", { depth })
     : t("schedules.amount.groundGuess", { depth });
+}
+
+/** How far from the due date care was given, in words. */
+export function describeFromDue(entry: HistoryEntry, t: TFunction): string {
+  if (!entry.predicted) {
+    return t("schedules.fromDue.notPredicted");
+  }
+  if (entry.days_from_due === null) {
+    return t("schedules.fromDue.resting");
+  }
+  if (entry.days_from_due === 0) {
+    return t("schedules.fromDue.onTime");
+  }
+  return entry.days_from_due > 0
+    ? t("schedules.fromDue.late", { count: entry.days_from_due })
+    : t("schedules.fromDue.early", { count: -entry.days_from_due });
 }

@@ -1,13 +1,18 @@
 import { Anchor } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
-/** "Why?": shows or hides what a schedule's interval took into account. */
+/**
+ * "Why?": shows or hides what a schedule's interval took into account. With a `label`, the
+ * same kind of link for more depth on a schedule, such as its history.
+ */
 export function WhyToggle({
   shown,
   onToggle,
+  label,
 }: {
   shown: boolean;
   onToggle: (shown: boolean) => void;
+  label?: string;
 }) {
   const { t } = useTranslation();
   return (
@@ -21,7 +26,7 @@ export function WhyToggle({
         onToggle(!shown);
       }}
     >
-      {t("schedules.why")}
+      {label ?? t("schedules.why")}
     </Anchor>
   );
 }

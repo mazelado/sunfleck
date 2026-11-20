@@ -340,6 +340,46 @@
       "watering.let_dry": "string"
     }
   },
+  "GET /api/v1/care-schedules/{schedule_id}/history": {
+    "request": {
+      "fields": {
+        "path:schedule_id": "integer",
+        "query:limit": "integer"
+      },
+      "required": [
+        "path:schedule_id"
+      ]
+    },
+    "response": {
+      "(body)": "array",
+      "[].care_event": "object",
+      "[].care_event.amount_ml": "integer|null",
+      "[].care_event.care_type": "object",
+      "[].care_event.care_type.affects_prediction": "boolean",
+      "[].care_event.care_type.counts_as_watering": "boolean",
+      "[].care_event.care_type.icon": "string",
+      "[].care_event.care_type.id": "integer",
+      "[].care_event.care_type.is_builtin": "boolean",
+      "[].care_event.care_type.key": "null|string",
+      "[].care_event.care_type.name": "string",
+      "[].care_event.estimated": "boolean",
+      "[].care_event.feedback": "null|string",
+      "[].care_event.id": "integer",
+      "[].care_event.notes": "string",
+      "[].care_event.performed_at": "string",
+      "[].care_event.performed_by": "null|object",
+      "[].care_event.performed_by.avatar_url": "null|string",
+      "[].care_event.performed_by.display_name": "string",
+      "[].care_event.performed_by.id": "integer",
+      "[].care_event.plant_id": "integer",
+      "[].care_event.skipped": "boolean",
+      "[].days_from_due": "integer|null",
+      "[].done_on": "string",
+      "[].predicted": "boolean",
+      "[].predicted_due": "null|string",
+      "[].predicted_interval_days": "integer|null"
+    }
+  },
   "GET /api/v1/care-types": {
     "request": {
       "fields": {},

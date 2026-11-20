@@ -157,3 +157,20 @@ export async function acceptSuggestedRoutine(plantId: number): Promise<void> {
     );
   }
 }
+
+export type HistoryEntry = components["schemas"]["HistoryEntryOut"];
+
+/** The care given for a schedule, newest first, each next to what was predicted then. */
+export function useScheduleHistory(schedule: Schedule, enabled = true) {
+  return useQuery({
+    // Under the plant's key, so logging care refreshes it.
+    queryKey: [...plantKey(schedule.plant_id), "schedules", schedule.id, "history"],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/care-schedules/{schedule_id}/history", {
+          params: { path: { schedule_id: schedule.id } },
+        }),
+      ),
+    enabled,
+  });
+}

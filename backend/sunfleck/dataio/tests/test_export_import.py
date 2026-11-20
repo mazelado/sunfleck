@@ -18,7 +18,13 @@ from sunfleck.accounts.tests.factories import HouseholdFactory, MembershipFactor
 from sunfleck.ai.models import Conversation, Message
 from sunfleck.care import schedules
 from sunfleck.care import services as care_services
-from sunfleck.care.models import CareEvent, CareSchedule, Feedback, ScheduleMode
+from sunfleck.care.models import (
+    CareEvent,
+    CareSchedule,
+    Feedback,
+    ScheduleAdjustment,
+    ScheduleMode,
+)
 from sunfleck.care.tests.factories import builtin
 from sunfleck.core import images
 from sunfleck.dataio import exporter, importer, schema
@@ -403,6 +409,34 @@ def test_exports_from_before_routines_import(filled: Household) -> None:
     assert (water.routine_multiplier, water.routine_set_on) == (1.0, None)
 
 
+def _past_predictions(household: Household) -> list[tuple[Any, ...]]:
+    return list(
+        ScheduleAdjustment.objects.filter(schedule__plant__household=household)
+        .order_by("calculated_at", "schedule__care_type__name", "pk")
+        .values_list("schedule__care_type__name", "calculated_at", "interval_days", "next_due")
+    )
+
+
+def test_past_predictions_are_kept_to_compare_care_with(filled: Household) -> None:
+    target = new_household()
+    importer.import_into(target, io.BytesIO(export_bytes(filled)))
+
+    assert _past_predictions(target) == _past_predictions(filled) != []
+
+
+def test_exports_from_before_past_predictions_import(filled: Household) -> None:
+    def drop_predictions(exported: dict[str, Any]) -> None:
+        for plant in exported["plants"]:
+            for schedule in plant["schedules"]:
+                del schedule["predictions"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_predictions)))
+
+    assert CareSchedule.objects.filter(plant__household=target).exists()
+    assert _past_predictions(target) == []
+
+
 def test_imported_schedules_are_predicted_from_the_imported_care(filled: Household) -> None:
     target = new_household()
     importer.import_into(target, io.BytesIO(export_bytes(filled)))
@@ -499,6 +533,10 @@ def first_plant(exported: dict[str, Any]) -> dict[str, Any]:
         (
             lambda e: first_plant(e)["schedules"][1].update(fixed_interval_days=0),
             "schedule of 'Monty'",
+        ),
+        (
+            lambda e: first_plant(e)["schedules"][0]["predictions"][0].update(interval_days=-1),
+            "past prediction for 'Monty'",
         ),
     ],
 )

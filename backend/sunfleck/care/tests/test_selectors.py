@@ -1,10 +1,12 @@
 import io
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 
 from sunfleck.care import selectors
-from sunfleck.care.tests.factories import CareEventFactory
+from sunfleck.care.models import CareSchedule, CareType, ScheduleAdjustment
+from sunfleck.care.tests.factories import CareEventFactory, builtin
+from sunfleck.places.tests.factories import LocationFactory
 from sunfleck.plants import services as plant_services
 from sunfleck.plants.models import Photo, Plant
 from sunfleck.plants.tests.factories import PlantFactory, image_bytes
@@ -66,3 +68,109 @@ def test_paging_neither_skips_nor_repeats_items_at_the_same_moment(limit: int) -
 def test_invalid_cursors_are_refused(value: str) -> None:
     with pytest.raises(ValueError, match=r".+"):
         selectors.parse_cursor(value)
+
+
+# --- A schedule's history, next to what was predicted ------------------------------------------
+
+
+def _day(day: int, hour: int = 12) -> datetime:
+    return datetime(2026, 4, day, hour, tzinfo=UTC)
+
+
+def _watering_schedule(plant: Plant) -> CareSchedule:
+    """A watering schedule with no recorded predictions: the tests add their own."""
+    return CareSchedule.objects.create(
+        plant=plant, care_type=builtin("water"), started_on=date(2026, 4, 1)
+    )
+
+
+def _predicted(schedule: CareSchedule, at: datetime, due: date | None, days: int | None) -> None:
+    ScheduleAdjustment.objects.create(
+        schedule=schedule, calculated_at=at, next_due=due, interval_days=days
+    )
+
+
+def _history(schedule: CareSchedule, limit: int = 20) -> list[tuple[date, date | None, int | None]]:
+    return [
+        (entry.done_on, entry.predicted_due, entry.days_from_due)
+        for entry in selectors.schedule_history(schedule, limit)
+    ]
+
+
+@pytest.mark.django_db
+def test_care_is_compared_with_the_prediction_made_before_it() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    _predicted(schedule, _day(1), date(2026, 4, 8), 7)
+    _predicted(schedule, _day(5), date(2026, 4, 9), 8)  # the weather changed
+    CareEventFactory.create(plant=plant, performed_at=_day(3))  # early, before the change
+    _predicted(schedule, _day(10, 13), date(2026, 4, 18), 8)  # made by logging the next one
+    CareEventFactory.create(plant=plant, performed_at=_day(10))
+
+    assert _history(schedule) == [
+        (date(2026, 4, 10), date(2026, 4, 9), 1),
+        (date(2026, 4, 3), date(2026, 4, 8), -5),
+    ]
+
+
+@pytest.mark.django_db
+def test_care_with_no_prediction_before_it_has_nothing_to_compare() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    CareEventFactory.create(plant=plant, performed_at=_day(2))
+    _predicted(schedule, _day(2, 13), date(2026, 4, 9), 7)
+
+    (entry,) = selectors.schedule_history(schedule)
+
+    assert (entry.predicted, entry.predicted_due, entry.days_from_due) == (False, None, None)
+
+
+@pytest.mark.django_db
+def test_care_while_resting_had_a_prediction_but_no_due_date() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    _predicted(schedule, _day(1), None, None)
+    CareEventFactory.create(plant=plant, performed_at=_day(3))
+
+    (entry,) = selectors.schedule_history(schedule)
+
+    assert (entry.predicted, entry.predicted_due, entry.days_from_due) == (True, None, None)
+
+
+@pytest.mark.django_db
+def test_history_has_every_kind_of_watering_but_not_estimated_or_other_care() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    soak = CareType.objects.create(household=plant.household, name="Soak", counts_as_watering=True)
+    CareEventFactory.create(plant=plant, performed_at=_day(1), estimated=True)
+    CareEventFactory.create(plant=plant, performed_at=_day(2), care_type=builtin("fertilize"))
+    watered = CareEventFactory.create(plant=plant, performed_at=_day(3))
+    soaked = CareEventFactory.create(plant=plant, performed_at=_day(4), care_type=soak)
+    skipped = CareEventFactory.create(plant=plant, performed_at=_day(5), skipped=True)
+
+    entries = selectors.schedule_history(schedule)
+
+    assert [entry.event for entry in entries] == [skipped, soaked, watered]
+
+
+@pytest.mark.django_db
+def test_history_is_newest_first_up_to_the_limit() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    for day in (1, 3, 5, 7):
+        CareEventFactory.create(plant=plant, performed_at=_day(day))
+
+    assert [done for done, _, _ in _history(schedule, limit=2)] == [
+        date(2026, 4, 7),
+        date(2026, 4, 5),
+    ]
+
+
+@pytest.mark.django_db
+def test_the_day_care_was_done_is_the_day_where_the_plant_grows() -> None:
+    plant = PlantFactory.create(location=LocationFactory.create())  # in Amsterdam
+    schedule = _watering_schedule(plant)
+    _predicted(schedule, _day(1), date(2026, 4, 4), 3)
+    CareEventFactory.create(plant=plant, performed_at=_day(3, 23))  # 01:00 on the 4th there
+
+    assert _history(schedule) == [(date(2026, 4, 4), date(2026, 4, 4), 0)]

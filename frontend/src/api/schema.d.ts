@@ -168,6 +168,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-schedules/{schedule_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Schedule History
+         * @description The care given for a schedule, newest first, each next to what Sunfleck predicted
+         *     when it was done.
+         */
+        get: operations["sunfleck_care_api_schedule_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-schedules/{schedule_id}/routine": {
         parameters: {
             query?: never;
@@ -2404,6 +2425,41 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** HistoryEntryOut */
+        HistoryEntryOut: {
+            care_event: components["schemas"]["CareEventOut"];
+            /**
+             * Days From Due
+             * @description Days after the predicted due date; negative: before it.
+             */
+            days_from_due: number | null;
+            /**
+             * Done On
+             * Format: date
+             * @description The day it was done, where the plant grows.
+             */
+            done_on: string;
+            /**
+             * Predicted
+             * @description Whether Sunfleck had predicted this care before it was done. Care from before its schedule was added, or imported from an export made before 1.2, has nothing to compare with.
+             */
+            predicted: boolean;
+            /**
+             * Predicted Due
+             * @description When the prediction in force just before it was done said it was due; none while resting.
+             */
+            predicted_due: string | null;
+            /** Predicted Interval Days */
+            predicted_interval_days: number | null;
+        };
+        /** HistoryQuery */
+        HistoryQuery: {
+            /**
+             * Limit
+             * @default 20
+             */
+            limit: number;
+        };
         /** HouseholdOut */
         HouseholdOut: {
             /** Id */
@@ -4267,6 +4323,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    sunfleck_care_api_schedule_history: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryEntryOut"][];
+                };
             };
         };
     };

@@ -1796,6 +1796,83 @@
         "title": "HealthOut",
         "type": "object"
       },
+      "HistoryEntryOut": {
+        "properties": {
+          "care_event": {
+            "$ref": "#/components/schemas/CareEventOut"
+          },
+          "days_from_due": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days after the predicted due date; negative: before it.",
+            "title": "Days From Due"
+          },
+          "done_on": {
+            "description": "The day it was done, where the plant grows.",
+            "format": "date",
+            "title": "Done On",
+            "type": "string"
+          },
+          "predicted": {
+            "description": "Whether Sunfleck had predicted this care before it was done. Care from before its schedule was added, or imported from an export made before 1.2, has nothing to compare with.",
+            "title": "Predicted",
+            "type": "boolean"
+          },
+          "predicted_due": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the prediction in force just before it was done said it was due; none while resting.",
+            "title": "Predicted Due"
+          },
+          "predicted_interval_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Interval Days"
+          }
+        },
+        "required": [
+          "care_event",
+          "done_on",
+          "predicted",
+          "predicted_due",
+          "predicted_interval_days",
+          "days_from_due"
+        ],
+        "title": "HistoryEntryOut",
+        "type": "object"
+      },
+      "HistoryQuery": {
+        "properties": {
+          "limit": {
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "HistoryQuery",
+        "type": "object"
+      },
       "HouseholdOut": {
         "properties": {
           "id": {
@@ -6640,6 +6717,60 @@
           }
         ],
         "summary": "Update Schedule",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}/history": {
+      "get": {
+        "description": "The care given for a schedule, newest first, each next to what Sunfleck predicted\nwhen it was done.",
+        "operationId": "sunfleck_care_api_schedule_history",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryEntryOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Schedule History",
         "tags": [
           "care"
         ]
