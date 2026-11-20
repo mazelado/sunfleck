@@ -213,6 +213,9 @@ lists the latest harvests. Exports include them.
   below the line, late above it, coloured by how the soil was. Care logged before its
   schedule was added, or imported from an export made before 1.2, says it was done "before
   Sunfleck predicted it".
+  For watering, it starts with how often the soil was **just right** in the last 90 days: how
+  well Sunfleck's watering fits that plant. With a few answers in both, it also says whether
+  that's better than the 90 days before.
 - **Your routine**: if you keep watering a plant clearly more or less often than its schedule
   (three times in a row), its page offers to match the schedule to how you water. It only
   changes if you accept, and you can go back to Sunfleck's own estimate at any time.

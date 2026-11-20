@@ -5379,6 +5379,61 @@
         "title": "SnoozeIn",
         "type": "object"
       },
+      "SoilPeriodOut": {
+        "properties": {
+          "just_right": {
+            "title": "Just Right",
+            "type": "integer"
+          },
+          "since": {
+            "description": "The first day counted, where the plant grows.",
+            "format": "date",
+            "title": "Since",
+            "type": "string"
+          },
+          "still_wet": {
+            "title": "Still Wet",
+            "type": "integer"
+          },
+          "too_dry": {
+            "title": "Too Dry",
+            "type": "integer"
+          },
+          "until": {
+            "description": "The last day counted.",
+            "format": "date",
+            "title": "Until",
+            "type": "string"
+          }
+        },
+        "required": [
+          "since",
+          "until",
+          "too_dry",
+          "just_right",
+          "still_wet"
+        ],
+        "title": "SoilPeriodOut",
+        "type": "object"
+      },
+      "SoilSummaryOut": {
+        "properties": {
+          "earlier": {
+            "$ref": "#/components/schemas/SoilPeriodOut",
+            "description": "The 90 days before those."
+          },
+          "recent": {
+            "$ref": "#/components/schemas/SoilPeriodOut",
+            "description": "The last 90 days, up to today."
+          }
+        },
+        "required": [
+          "recent",
+          "earlier"
+        ],
+        "title": "SoilSummaryOut",
+        "type": "object"
+      },
       "SoilType": {
         "enum": [
           "potting_mix",
@@ -6931,6 +6986,44 @@
           }
         ],
         "summary": "Snooze Schedule",
+        "tags": [
+          "care"
+        ]
+      }
+    },
+    "/api/v1/care-schedules/{schedule_id}/soil-summary": {
+      "get": {
+        "description": "How often the soil was too dry, just right or still wet when watering, recently and\nbefore: how well the watering predictions fit the plant. Watering schedules only.",
+        "operationId": "sunfleck_care_api_soil_summary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "title": "Schedule Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoilSummaryOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Soil Summary",
         "tags": [
           "care"
         ]

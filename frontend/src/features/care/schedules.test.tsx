@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { Plant } from "../../api/plants";
-import type { Factor, HistoryEntry, Schedule, Suggestion } from "../../api/schedules";
+import type { Factor, HistoryEntry, Schedule, SoilPeriod, Suggestion } from "../../api/schedules";
 import type { CareProfile } from "../../api/taxonomy";
 import i18n from "../../i18n";
 import { renderApp } from "../../test/render";
@@ -13,6 +13,7 @@ import {
   daysUntil,
   describeDue,
   describeFromDue,
+  describeSoilSummary,
   describeWaterAmount,
   explainFactor,
 } from "./scheduleText";
@@ -707,6 +708,9 @@ describe("a schedule's history", () => {
           historyEntry(1, "2026-03-30", { predicted: false }),
         ]),
       ),
+      http.get("*/api/v1/care-schedules/1/soil-summary", () =>
+        HttpResponse.json({ recent: soil(1, 2, 0), earlier: soil(0, 0, 0) }),
+      ),
     );
     const { user } = renderApp("/plants/7");
 
@@ -720,6 +724,11 @@ describe("a schedule's history", () => {
     expect(onTime).toHaveTextContent(/On the day it was due.*Soil: Just right/);
     expect(first).toHaveTextContent("Before Sunfleck predicted it");
     expect(screen.getByTestId("history-strip")).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "In the last 90 days, the soil was just right 2 of 3 times when watering. 1 too dry.",
+      ),
+    ).toBeVisible();
   });
 
   it("isn't offered until the care has been logged", async () => {
@@ -734,5 +743,46 @@ describe("a schedule's history", () => {
 
     expect(await screen.findByRole("button", { name: "Why?" })).toBeVisible();
     expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument();
+  });
+});
+
+function soil(tooDry: number, justRight: number, stillWet: number): SoilPeriod {
+  return {
+    since: "2026-01-16",
+    until: "2026-04-15",
+    too_dry: tooDry,
+    just_right: justRight,
+    still_wet: stillWet,
+  };
+}
+
+describe("how often the soil was just right", () => {
+  const describe_ = (recent: SoilPeriod, earlier: SoilPeriod) =>
+    describeSoilSummary({ recent, earlier }, t);
+
+  it("says nothing without answers in the last 90 days", () => {
+    expect(describe_(soil(0, 0, 0), soil(1, 4, 0))).toEqual([]);
+  });
+
+  it("counts the answers, and the ones that weren't just right", () => {
+    expect(describe_(soil(0, 1, 0), soil(0, 0, 0))).toEqual([
+      "In the last 90 days, the soil was just right 1 of 1 time when watering.",
+    ]);
+    expect(describe_(soil(1, 1, 0), soil(0, 0, 0))).toEqual([
+      "In the last 90 days, the soil was just right 1 of 2 times when watering.",
+      "1 too dry.",
+    ]);
+    expect(describe_(soil(2, 1, 1), soil(0, 0, 0))[1]).toBe("2 too dry, 1 still wet.");
+    expect(describe_(soil(0, 1, 3), soil(0, 0, 0))[1]).toBe("3 still wet.");
+  });
+
+  it("compares with the 90 days before, once each has a few answers", () => {
+    const now = soil(1, 4, 0); // 80%
+    expect(describe_(now, soil(2, 2, 1)).at(-1)).toBe("Better than the 90 days before: 2 of 5.");
+    expect(describe_(soil(2, 2, 1), now).at(-1)).toBe("Not as good as the 90 days before: 4 of 5.");
+    expect(describe_(now, soil(1, 3, 0)).at(-1)).toBe(
+      "About the same as the 90 days before: 3 of 4.",
+    );
+    expect(describe_(now, soil(1, 1, 0))).toHaveLength(2); // too few before to compare
   });
 });

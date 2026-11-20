@@ -174,3 +174,52 @@ def test_the_day_care_was_done_is_the_day_where_the_plant_grows() -> None:
     CareEventFactory.create(plant=plant, performed_at=_day(3, 23))  # 01:00 on the 4th there
 
     assert _history(schedule) == [(date(2026, 4, 4), date(2026, 4, 4), 0)]
+
+
+# --- How often the soil was just right ----------------------------------------------------------
+
+TODAY = date(2026, 6, 30)
+
+
+def _answer(plant: Plant, on: date, feedback: str, **fields: object) -> None:
+    CareEventFactory.create(
+        plant=plant,
+        performed_at=datetime.combine(on, datetime.min.time(), tzinfo=UTC) + timedelta(hours=12),
+        feedback=feedback,
+        **fields,
+    )
+
+
+def _counts(counts: selectors.SoilCounts) -> tuple[date, date, int, int, int]:
+    return (counts.since, counts.until, counts.too_dry, counts.just_right, counts.still_wet)
+
+
+@pytest.mark.django_db
+def test_the_soil_summary_counts_answers_in_the_last_90_days_and_the_90_before() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    _answer(plant, TODAY, "just_right")
+    _answer(plant, TODAY - timedelta(days=89), "too_dry")  # the first day of the last 90
+    _answer(plant, TODAY - timedelta(days=90), "still_wet")  # the last day of the 90 before
+    _answer(plant, TODAY - timedelta(days=179), "just_right")
+    _answer(plant, TODAY - timedelta(days=180), "too_dry")  # too long ago
+    CareEventFactory.create(plant=plant, performed_at=_day(20))  # no answer
+
+    recent, earlier = selectors.soil_summary(schedule, TODAY)
+
+    assert _counts(recent) == (date(2026, 4, 2), TODAY, 1, 1, 0)
+    assert _counts(earlier) == (date(2026, 1, 2), date(2026, 4, 1), 0, 1, 1)
+    assert (recent.answers, earlier.answers) == (2, 2)
+
+
+@pytest.mark.django_db
+def test_the_soil_summary_counts_skipped_waterings_but_not_estimated_or_other_care() -> None:
+    plant = PlantFactory.create()
+    schedule = _watering_schedule(plant)
+    _answer(plant, TODAY, "still_wet", skipped=True)  # checked, and it didn't need water
+    _answer(plant, TODAY, "too_dry", estimated=True)
+    _answer(plant, TODAY, "too_dry", care_type=builtin("fertilize"))
+
+    recent, _ = selectors.soil_summary(schedule, TODAY)
+
+    assert (recent.too_dry, recent.just_right, recent.still_wet) == (0, 0, 1)

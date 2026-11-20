@@ -253,6 +253,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/care-schedules/{schedule_id}/soil-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Soil Summary
+         * @description How often the soil was too dry, just right or still wet when watering, recently and
+         *     before: how well the watering predictions fit the plant. Watering schedules only.
+         */
+        get: operations["sunfleck_care_api_soil_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/care-types": {
         parameters: {
             query?: never;
@@ -3708,6 +3729,34 @@ export interface components {
              */
             until: string | null;
         };
+        /** SoilPeriodOut */
+        SoilPeriodOut: {
+            /** Just Right */
+            just_right: number;
+            /**
+             * Since
+             * Format: date
+             * @description The first day counted, where the plant grows.
+             */
+            since: string;
+            /** Still Wet */
+            still_wet: number;
+            /** Too Dry */
+            too_dry: number;
+            /**
+             * Until
+             * Format: date
+             * @description The last day counted.
+             */
+            until: string;
+        };
+        /** SoilSummaryOut */
+        SoilSummaryOut: {
+            /** @description The 90 days before those. */
+            earlier: components["schemas"]["SoilPeriodOut"];
+            /** @description The last 90 days, up to today. */
+            recent: components["schemas"]["SoilPeriodOut"];
+        };
         /**
          * SoilType
          * @enum {string}
@@ -4438,6 +4487,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ScheduleOut"];
+                };
+            };
+        };
+    };
+    sunfleck_care_api_soil_summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SoilSummaryOut"];
                 };
             };
         };

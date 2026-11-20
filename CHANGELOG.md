@@ -14,6 +14,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **A plant's care history, next to what Sunfleck predicted**: **History**, next to **Why?** on
   each care schedule, shows when the care was done, how many days before or after it was due,
   the soil feedback and the water given, with a row of dots to see it at a glance.
+- **How well watering fits each plant**: a watering schedule's **History** starts with how often
+  the soil was just right in the last 90 days, from your "How was the soil?" answers, and
+  whether that's better than the 90 days before.
 - **Exports keep past predictions**, so a restored household's history can still be compared
   with them. Exports from earlier versions still import; their care is shown
   as done "before Sunfleck predicted it".

@@ -174,3 +174,21 @@ export function useScheduleHistory(schedule: Schedule, enabled = true) {
     enabled,
   });
 }
+
+export type SoilSummary = components["schemas"]["SoilSummaryOut"];
+export type SoilPeriod = components["schemas"]["SoilPeriodOut"];
+
+/** How often the soil was too dry, just right or still wet when watering, recently and
+ * before. Watering schedules only. */
+export function useSoilSummary(schedule: Schedule, enabled = true) {
+  return useQuery({
+    queryKey: [...plantKey(schedule.plant_id), "schedules", schedule.id, "soil-summary"],
+    queryFn: async () =>
+      unwrap(
+        await api.GET("/api/v1/care-schedules/{schedule_id}/soil-summary", {
+          params: { path: { schedule_id: schedule.id } },
+        }),
+      ),
+    enabled,
+  });
+}

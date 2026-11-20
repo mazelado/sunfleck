@@ -240,3 +240,58 @@ def test_other_households_schedule_history_is_hidden(client_as: ClientAs) -> Non
 
     assert response.status_code == 404
     assert response.json()["error"]["code"] == "schedule_not_found"
+
+
+def test_a_watering_schedules_soil_summary(client_as: ClientAs, monty: Plant) -> None:
+    schedule = schedules.create_schedule(
+        monty, schedules.ScheduleData(builtin("water").pk, ScheduleMode.PREDICTED)
+    )
+    gardener = client_as(Role.GARDENER)
+    for feedback in ("too_dry", "just_right", "just_right"):
+        send(
+            gardener,
+            "POST",
+            f"/api/v1/plants/{monty.pk}/care-events",
+            {"care_type_id": builtin("water").pk, "feedback": feedback},
+        )
+
+    response = client_as(Role.VIEWER).get(f"/api/v1/care-schedules/{schedule.pk}/soil-summary")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "recent": {
+            "since": "2026-01-16",
+            "until": "2026-04-15",
+            "too_dry": 1,
+            "just_right": 2,
+            "still_wet": 0,
+        },
+        "earlier": {
+            "since": "2025-10-18",
+            "until": "2026-01-15",
+            "too_dry": 0,
+            "just_right": 0,
+            "still_wet": 0,
+        },
+    }
+
+
+def test_only_watering_has_a_soil_summary(client_as: ClientAs, monty: Plant) -> None:
+    mist = schedules.create_schedule(
+        monty, schedules.ScheduleData(builtin("mist").pk, ScheduleMode.FIXED, 3)
+    )
+    theirs = schedules.create_schedule(
+        PlantFactory.create(), schedules.ScheduleData(builtin("water").pk, ScheduleMode.FIXED, 3)
+    )
+    gardener = client_as(Role.GARDENER)
+
+    responses = [
+        gardener.get(f"/api/v1/care-schedules/{mist.pk}/soil-summary"),
+        gardener.get(f"/api/v1/care-schedules/{theirs.pk}/soil-summary"),
+    ]
+
+    assert [response.status_code for response in responses] == [422, 404]
+    assert [response.json()["error"]["code"] for response in responses] == [
+        "not_watering",
+        "schedule_not_found",
+    ]
