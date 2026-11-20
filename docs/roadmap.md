@@ -291,6 +291,10 @@ Checking that what Sunfleck already says is right, before it says more.
   ones that can be read and cited (university extension services, botanical gardens, the RHS,
   books and papers) or copied under an open licence; never other apps' data, or data with a
   non-commercial or unclear licence (see [care data sources](care-data-sources.md)).
+- **Toxicity to pets, for every plant.** 0.5 flagged the common houseplants first; the rest,
+  including every outdoor and edible plant, are checked against the ASPCA's lists in the
+  [toxicity review](toxicity-review-2026-11.md). The same rules: "known to be toxic" with its
+  source, or "unknown", never "safe".
 - **How well does Sunfleck predict?** For each plant, how often the soil was "just right"
   when it was watered, over time. It uses the answers already collected.
 - **A plant's watering history:** when it was watered and how much (#222), next to what was
