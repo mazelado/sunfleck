@@ -10,22 +10,24 @@ setting: indoor
 examples:
 - Tillandsia
 watering:
+  # From the sources' advice on how often to water; see docs/care-review-2026-11-part-2.md.
   interval_days:
-    spring: 7
-    summer: 5
-    autumn: 7
-    winter: 10
+    spring: 4
+    summer: 3
+    autumn: 4
+    winter: 7
   let_dry: completely
+# dli_min and dli_max: not sourced. dli_ideal: inside the bromeliads' range in P1.
 light:
   dli_min: 5
   dli_ideal: 10
   dli_max: 20
 humidity: medium
 temperature_c:
-  min: 10
+  min: 12
   ideal_min: 15
-  ideal_max: 30
-  max: 35
+  ideal_max: 27
+  max: 30
 fertilizing:
   interval_days: 30
   pause_months_north:
@@ -34,8 +36,9 @@ fertilizing:
   - 1
   - 2
 notes:
-  en: Watering means soaking for 20–30 minutes, then drying upside down.
-status: draft
+  en: 'Watering means soaking for 20–30 minutes, then drying upside down. Don''t water when it''s below 12 °C: they stay wet too long.'
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Air plants. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/houseplants/air-plants, accessed 2026-11-20'
+- 'Tillandsia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/tillandsia/, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

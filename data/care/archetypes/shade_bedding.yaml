@@ -1,0 +1,45 @@
+# Care profile ("archetype") for the Sunfleck care dataset. CC BY-SA 4.0: see ../LICENSE.
+# Field reference: ../README.md. Months are for the northern hemisphere; the app mirrors
+# them in the southern hemisphere.
+key: shade_bedding
+name:
+  en: Shade bedding annual
+description:
+  en: 'Busy Lizzies for shady beds and pots: moist soil, shelter from hot sun, and regular
+    feeding in pots.'
+setting: outdoor
+examples:
+- Impatiens walleriana
+watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
+  interval_days:
+    spring: 3
+    summer: 2
+    autumn: 3
+    winter: 7
+  let_dry: keep_moist
+light:
+  dli_min: 6
+  dli_ideal: 16
+  dli_max: 22
+  outdoor_exposure:
+  - part_shade
+  - shade
+# humidity: not sourced.
+humidity: medium
+# ideal_min: soil above 16 °C before planting out (Minnesota Extension). min, ideal_max and max: not sourced.
+temperature_c:
+  min: 5
+  ideal_min: 16
+  ideal_max: 27
+  max: 32
+fertilizing:
+  interval_days: 30
+  pause_months_north: []
+notes:
+  en: New Guinea impatiens and sun-tolerant hybrids take more sun, and use the bedding annual profile.
+status: reviewed
+sources:
+- 'Impatiens. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/impatiens, accessed 2026-11-20'
+- 'How to grow Impatiens. Royal Horticultural Society. https://www.rhs.org.uk/plants/impatiens/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

@@ -60,6 +60,23 @@ def test_well_known_plants_have_the_expected_profile() -> None:
     assert species["Dracaena trifasciata"] == "low_light_tough"  # unlike other dracaenas
     assert species["Salvia rosmarinus"] == "rosemary"  # unlike other salvias
     assert species["Allium schoenoprasum"] == "leafy_herb"  # chives, not a bulb to admire
+    assert profile["Impatiens"] == "bedding_annual"  # New Guinea impatiens take sun
+    assert species["Impatiens walleriana"] == "shade_bedding"  # busy Lizzie needs shade
+
+
+def test_every_profile_is_reviewed() -> None:
+    dataset = load_dataset(settings.CARE_DATA_DIR)
+
+    drafts = {key for key, profile in dataset.archetypes.items() if profile["status"] != "reviewed"}
+
+    assert drafts == set()
+
+
+def test_border_perennials_are_not_fed() -> None:
+    dataset = load_dataset(settings.CARE_DATA_DIR)
+
+    assert dataset.archetypes["shade_perennial"]["fertilizing"] is None
+    assert dataset.archetypes["sun_perennial"]["fertilizing"] is None
 
 
 # --- Mistakes the checks catch ----------------------------------------------------------------

@@ -9,6 +9,18 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Changed
+
+- **Every care profile checked against published sources**: the last 22, from cacti and ferns
+  to vegetables and garden shrubs, now cite extension services and the RHS, like the first
+  eight. Some values changed: ferns, begonias and Christmas cacti are told they need a little
+  more light; air plants are watered every 3–4 days; citrus, ferns and hoyas are watered when
+  the soil is less dry; border perennials are no longer reminded to be fed, as most don't need
+  it. Days between waterings are still starting estimates. A plant given a care profile by hand
+  keeps it; see the [review](docs/care-review-2026-11-part-2.md).
+- **Busy Lizzies have their own care profile**, for shade: they were treated as sun-loving
+  bedding, so a shady bed looked too dark for them.
+
 ## [1.1.0] - 2026-11-20
 
 **Kalanchoe.** Care details: record how much water you gave, frame your profile picture again

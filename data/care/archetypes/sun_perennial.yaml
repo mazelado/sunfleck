@@ -5,8 +5,8 @@ key: sun_perennial
 name:
   en: Sun-loving perennial
 description:
-  en: 'Border perennials that come back every year: full sun, water in dry spells, and cut
-    back after flowering or in early spring.'
+  en: 'Border perennials that come back every year: full sun or part shade, water in dry
+    spells, and cut back after flowering or in early spring.'
 setting: outdoor
 examples:
 - Echinacea
@@ -15,39 +15,42 @@ examples:
 - Hemerocallis
 - Iris
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 7
     summer: 4
     autumn: 10
     winter: null
   let_dry: top_third
+# dli_max: not sourced (P1 stops at 30).
 light:
-  dli_min: 20
+  dli_min: 12
   dli_ideal: 30
   dli_max: 50
   outdoor_exposure:
   - full_sun
+  - part_shade
+# humidity: not sourced.
 humidity: medium
+# min: on the safe side; coneflowers and rudbeckias are hardy to −40 °C. ideal_min, ideal_max and max: not sourced.
 temperature_c:
   min: -20
   ideal_min: 12
   ideal_max: 28
   max: 35
-fertilizing:
-  interval_days: 60
-  pause_months_north:
-  - 8
-  - 9
-  - 10
-  - 11
-  - 12
-  - 1
-  - 2
+fertilizing: null
 dormancy_months_north:
 - 12
 - 1
 - 2
-status: draft
+notes:
+  en: Most need no feeding in a border; in poor soil, give a balanced fertilizer in spring.
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Echinacea purpurea. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/echinacea-purpurea/, accessed 2026-11-20'
+- 'Rudbeckia hirta. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/rudbeckia-hirta/, accessed 2026-11-20'
+- 'Daylilies. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/daylilies, accessed 2026-11-20'
+- 'How to grow Rudbeckia. Royal Horticultural Society. https://www.rhs.org.uk/plants/rudbeckia/growing-guide, accessed 2026-11-20'
+- 'How to grow hemerocallis. Royal Horticultural Society. https://www.rhs.org.uk/plants/hemerocallis/growing-guide, accessed 2026-11-20'
+- 'How to grow perennial plants. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/perennials/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

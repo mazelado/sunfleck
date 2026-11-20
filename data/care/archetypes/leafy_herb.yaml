@@ -13,12 +13,14 @@ examples:
 - Coriandrum
 - Mentha
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 4
     summer: 2
     autumn: 4
     winter: 7
   let_dry: top_quarter
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 12
   dli_ideal: 17
@@ -26,20 +28,25 @@ light:
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# min and max: not sourced. Basil needs nights above 10 °C outdoors.
 temperature_c:
   min: 7
   ideal_min: 16
   ideal_max: 26
   max: 32
 fertilizing:
-  interval_days: 21
+  interval_days: 42
   pause_months_north:
   - 11
   - 12
   - 1
   - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Growing herbs in home gardens. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/growing-herbs, accessed 2026-11-20'
+- 'Ocimum basilicum. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/ocimum-basilicum/, accessed 2026-11-20'
+- 'How to grow basil. Royal Horticultural Society. https://www.rhs.org.uk/herbs/basil/grow-your-own, accessed 2026-11-20'
+- 'How to grow parsley. Royal Horticultural Society. https://www.rhs.org.uk/herbs/parsley/grow-your-own, accessed 2026-11-20'
+- 'How to grow mint. Royal Horticultural Society. https://www.rhs.org.uk/herbs/mint/grow-your-own, accessed 2026-11-20'

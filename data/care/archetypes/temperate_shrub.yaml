@@ -15,25 +15,30 @@ examples:
 - Rhododendron
 - Camellia
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 10
     summer: 5
     autumn: 14
     winter: null
   let_dry: top_third
+# dli_max: not sourced (P1 stops at 30).
 light:
-  dli_min: 15
+  dli_min: 10
   dli_ideal: 25
   dli_max: 45
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# ideal_min, ideal_max and max: not sourced.
 temperature_c:
   min: -20
   ideal_min: 10
   ideal_max: 25
   max: 32
+# fertilizing: not sourced.
 fertilizing:
   interval_days: 60
   pause_months_north:
@@ -48,7 +53,12 @@ dormancy_months_north:
 - 12
 - 1
 - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Hydrangea macrophylla. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/hydrangea-macrophylla/, accessed 2026-11-20'
+- 'How to grow shrubby hydrangeas. Royal Horticultural Society. https://www.rhs.org.uk/plants/hydrangea/shrubby/growing-guide, accessed 2026-11-20'
+- 'How to grow roses. Royal Horticultural Society. https://www.rhs.org.uk/plants/roses/growing-guide, accessed 2026-11-20'
+- 'How to grow box. Royal Horticultural Society. https://www.rhs.org.uk/plants/box/growing-guide, accessed 2026-11-20'
+- 'How to grow rhododendrons. Royal Horticultural Society. https://www.rhs.org.uk/plants/rhododendron/growing-guide, accessed 2026-11-20'
+- 'How to grow camellias. Royal Horticultural Society. https://www.rhs.org.uk/plants/camellia/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

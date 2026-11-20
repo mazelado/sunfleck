@@ -15,20 +15,24 @@ examples:
 - Pelargonium
 - Tropaeolum
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 3
     summer: 2
     autumn: 3
     winter: 7
   let_dry: top_quarter
+# dli_max: not sourced (P1 stops at 30).
 light:
-  dli_min: 15
+  dli_min: 12
   dli_ideal: 25
   dli_max: 45
   outdoor_exposure:
   - full_sun
   - part_shade
+# humidity: not sourced.
 humidity: medium
+# max: not sourced.
 temperature_c:
   min: 5
   ideal_min: 15
@@ -37,7 +41,13 @@ temperature_c:
 fertilizing:
   interval_days: 14
   pause_months_north: []
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Growing petunias. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/growing-petunias, accessed 2026-11-20'
+- 'Marigolds. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/marigolds, accessed 2026-11-20'
+- 'Impatiens. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/impatiens, accessed 2026-11-20'
+- 'How to grow annuals and biennials. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/annuals-biennials/growing-guide, accessed 2026-11-20'
+- 'How to grow Impatiens. Royal Horticultural Society. https://www.rhs.org.uk/plants/impatiens/growing-guide, accessed 2026-11-20'
+- 'How to grow annual nasturtiums. Royal Horticultural Society. https://www.rhs.org.uk/plants/nasturtiums/annual-nasturtiums/how-to-grow-annual-nasturtiums, accessed 2026-11-20'
+- 'How to grow pelargoniums. Royal Horticultural Society. https://www.rhs.org.uk/plants/pelargonium/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

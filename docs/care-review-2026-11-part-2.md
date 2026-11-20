@@ -2,10 +2,9 @@
 
 The second check of Sunfleck's care profiles against published sources, for the 1.2 Lavender
 release ([roadmap](roadmap.md#lavender-trust-planned)). It covers the 22 profiles still marked
-`draft` after [part 1](care-review-2026-11.md). **Proposed, not yet approved:** nothing in the
-dataset changes until the maintainer has approved the citations and answered the
-[decisions](#decisions-for-the-maintainer). Then the changes are applied, the profiles are
-marked `reviewed`, and the dataset version is bumped.
+`draft` after [part 1](care-review-2026-11.md). **Approved and applied on 2026-11-20** (dataset
+2026.11.5): every change proposed below, with the [decisions](#decided-2026-11-20) at the end.
+All 22 profiles, and the new `shade_bedding`, are now marked `reviewed`.
 
 - **Profiles:** `air_plant`, `bedding_annual`, `begonia_gesneriad`, `bog_carnivore`, `citrus`,
   `desert_cactus`, `easy_foliage`, `forest_cactus`, `fruiting_vegetable`,
@@ -362,6 +361,18 @@ sourced* means no source gives a number for it. *Described* means sources descri
      slower progress, but clearer meaning.
    - **Recommendation: A**, consistent with part 1, and add to the dataset README that
      `reviewed` fields can be *described* rather than measured.
+
+### Decided (2026-11-20)
+
+1. **A:** busy Lizzie (*Impatiens walleriana*) has its own profile, `shade_bedding`: ideal
+   light 16 (good from 6, at most 22, P1), part shade or shade, soil kept moist, and feeding
+   every 30 days in pots (UMN-IMP, RHS-IMP). Other *Impatiens* keep `bedding_annual`.
+2. **A:** `shade_perennial` and `sun_perennial` have `fertilizing: null`, with a note to feed
+   once in spring in poor soil.
+3. **A:** *Aspidistra* stays in `low_light_tough`, with a note that it likes a little more
+   water than ZZ and snake plants.
+4. **A:** the profiles are `reviewed`, and a comment above each field the sources don't give
+   says so: *not sourced*, or for light *described in words*. The dataset README says it too.
 
 ## Noted for later
 

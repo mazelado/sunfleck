@@ -13,6 +13,7 @@ examples:
 - Epiphyllum
 - Rhipsalis
 watering:
+  # From the sources' advice on how often to water; see docs/care-review-2026-11-part-2.md.
   interval_days:
     spring: 10
     summer: 7
@@ -20,9 +21,9 @@ watering:
     winter: 14
   let_dry: top_half
 light:
-  dli_min: 5
-  dli_ideal: 8
-  dli_max: 14
+  dli_min: 6
+  dli_ideal: 12
+  dli_max: 18
 humidity: medium_high
 temperature_c:
   min: 10
@@ -36,7 +37,10 @@ fertilizing:
   - 11
   - 12
   - 1
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Schlumbergera. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/schlumbergera/, accessed 2026-11-20'
+- 'Holiday cacti. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/holiday-cacti, accessed 2026-11-20'
+- 'How to grow Christmas cactus. Royal Horticultural Society. https://www.rhs.org.uk/plants/christmas-cactus/growing-guide, accessed 2026-11-20'
+- 'How to grow epiphyllum cacti. Royal Horticultural Society. https://www.rhs.org.uk/plants/epiphyllum/growing-guide, accessed 2026-11-20'
+- 'Torres, A.P. and R.G. Lopez. Measuring Daily Light Integral in a Greenhouse (HO-238-W), Table 2. Purdue Extension. https://www.extension.purdue.edu/extmedia/ho/ho-238-w.pdf, accessed 2026-11-20'

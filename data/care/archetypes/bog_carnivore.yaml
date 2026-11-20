@@ -5,27 +5,31 @@ key: bog_carnivore
 name:
   en: Bog carnivore
 description:
-  en: 'Carnivorous plants from sunny bogs: always wet with rain or distilled water, full sun,
-    a cold winter rest, and no fertilizer.'
+  en: 'Carnivorous plants from sunny bogs: always wet with rain or distilled water, full sun
+    or part shade, a cold winter rest, and no fertilizer.'
 setting: either
 examples:
 - Dionaea
 - Sarracenia
 - Drosera
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 2
     summer: 1
     autumn: 2
     winter: 7
   let_dry: keep_moist
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 15
   dli_ideal: 25
   dli_max: 40
   outdoor_exposure:
   - full_sun
+  - part_shade
 humidity: high
+# ideal_min, ideal_max and max: not sourced.
 temperature_c:
   min: -5
   ideal_min: 18
@@ -39,7 +43,8 @@ dormancy_months_north:
 - 2
 notes:
   en: Use rain, distilled, or reverse-osmosis water; tap water minerals harm them.
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Dionaea muscipula. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/dionaea-muscipula/, accessed 2026-11-20'
+- 'Sarracenia. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/sarracenia/, accessed 2026-11-20'
+- 'How to grow carnivorous plants. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/carnivorous/growing-guide, accessed 2026-11-20'

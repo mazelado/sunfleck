@@ -278,7 +278,7 @@ data/care/
 ├── schema/                 # JSON Schema that every file is validated against in CI
 │   ├── archetype.schema.json
 │   └── genera.schema.json
-├── archetypes/             # 28 care profiles, one per file
+├── archetypes/             # 31 care profiles, one per file
 │   ├── succulent.yaml
 │   ├── tropical_aroid.yaml
 │   └── ...

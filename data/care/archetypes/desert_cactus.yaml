@@ -14,12 +14,14 @@ examples:
 - Echinopsis
 - Gymnocalycium
 watering:
+  # Starting estimates: the sources say how dry the soil should be, not how many days.
   interval_days:
     spring: 21
     summer: 14
     autumn: 28
     winter: 45
   let_dry: completely
+# Sources describe the light in words, not numbers: these values are estimates.
 light:
   dli_min: 15
   dli_ideal: 25
@@ -27,6 +29,7 @@ light:
   outdoor_exposure:
   - full_sun
 humidity: low
+# max: not sourced.
 temperature_c:
   min: 5
   ideal_min: 18
@@ -46,7 +49,8 @@ dormancy_months_north:
 - 12
 - 1
 - 2
-status: draft
+status: reviewed
 sources:
-- 'Sunfleck contributors'' general horticultural knowledge (2026). Starting estimates: please
-  add a citable source when you refine them.'
+- 'Mammillaria. NC State Extension Plant Toolbox. https://plants.ces.ncsu.edu/plants/mammillaria/, accessed 2026-11-20'
+- 'Cacti and succulents. University of Minnesota Extension. https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/cacti-and-succulents, accessed 2026-11-20'
+- 'How to grow cacti and succulents. Royal Horticultural Society. https://www.rhs.org.uk/plants/types/cacti-succulents/houseplants/growing-guide, accessed 2026-11-20'
