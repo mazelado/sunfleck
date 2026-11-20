@@ -1,10 +1,10 @@
-# Usability test results (1.0)
+# Usability test results
 
 *A template: copy it, fill it in after the sessions (see the
 [test plan](usability-test.md#afterwards)), and replace this line with the dates. No names:
 participants are P1, P2, and so on.*
 
-- **Version tested:** `main` at commit ________, on ________ (dates)
+- **Round:** ____ · **Version tested:** `main` at commit ________, on ________ (dates)
 - **Moderator:** ________ · **Note-taker:** ________
 
 ## Participants
@@ -36,6 +36,8 @@ Ease is the median SEQ (1 = very hard, 7 = very easy).
 | 10 | Is a plant safe for a cat? | | | | | | /5 | | |
 | 11 | Invite someone | | | | | | /5 | | |
 | 12 | Set up a morning reminder | | | | | | /5 | | |
+| 13 | Say how much water was given (round 2) | | | | | | /5 | | |
+| 14 | How often the soil was right (round 2) | | | | | | /5 | | |
 
 ## SUS scores
 
@@ -53,7 +55,7 @@ Ease is the median SEQ (1 = very hard, 7 = very easy).
 
 One row per problem, however many people hit it. Severity: 4 catastrophe, 3 major, 2 minor,
 1 cosmetic (see the [test plan](usability-test.md#scoring-and-rating)). Problems rated 3 or 4
-are fixed before 1.0.
+are fixed before the release being tested.
 
 | # | Problem (what happened, where) | Who hit it | Severity | Fix, or issue |
 |---|---|---|---|---|

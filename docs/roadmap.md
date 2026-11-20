@@ -281,6 +281,8 @@ Checking that what Sunfleck already says is right, before it says more.
 
 - **A second usability test, on phones,** with the 1.0 [test plan](usability-test.md). The
   fixes from the first round are in 1.0, but no one has checked that they work.
+  [Round 2](usability-test.md#round-2-12) checks each of them, and adds tasks for the care
+  history.
 - **Care profiles checked against sources.** The eight used by the maintainer's own plants
   were checked first and shipped in 1.1 ([review](care-review-2026-11.md)); the other 22, and
   a new profile for busy Lizzies, are checked in [part 2](care-review-2026-11-part-2.md). Each

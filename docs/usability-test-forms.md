@@ -4,7 +4,7 @@ For the [usability test](usability-test.md). Print one set per participant: the 
 and the observation sheet are for the moderator, and the SUS questionnaire is for the
 participant. Cut the task cards apart to hand over, one at a time.
 
-Participant: **P__** (a number, never a name) · Date: ________ · Phone: ________
+Participant: **P__** (a number, never a name) · Round: ____ · Date: ________ · Phone: ________
 
 ---
 
@@ -42,6 +42,13 @@ Participant: **P__** (a number, never a name) · Date: ________ · Phone: ______
 11. Someone you live with wants to help with the watering. Let them in.
 12. You'd like a reminder on your phone each morning about what needs doing. Set that up.
 
+*Round 2 (1.2) only, after task 12:*
+
+13. You've just watered the avocado seedling with about a mug of water, 250 ml. Let the app
+    know, and how much you gave.
+14. Has the app been getting the golden pothos's watering right? Find out how often its soil
+    was neither too dry nor too wet when it was watered.
+
 ---
 
 ## Observation sheet
@@ -63,6 +70,8 @@ Ease (SEQ): "How easy or hard was that?" 1 = very hard … 7 = very easy.
 | 10 | | | | | |
 | 11 | | | | | |
 | 12 | | | | | |
+| 13 | | | | | |
+| 14 | | | | | |
 
 ---
 

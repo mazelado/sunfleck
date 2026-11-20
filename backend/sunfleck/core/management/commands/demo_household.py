@@ -3,11 +3,12 @@
     python manage.py demo_household --photos ../docs/screenshots/photos
 
 Makes the first account (ada@example.com, unless given), a home with two rooms and their
-windows, five plants with photos and care history, and today's weather (with the weather
+windows, five plants with photos and care history (the golden pothos with two months of it,
+for its History), and today's weather (with the weather
 plugin on, from a stored forecast, so nothing is fetched). Only on an empty database.
 """
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -17,7 +18,7 @@ from django.utils import timezone
 
 from sunfleck.accounts.services import complete_setup
 from sunfleck.care import schedules
-from sunfleck.care.models import CareType, ScheduleMode
+from sunfleck.care.models import CareSchedule, CareType, Feedback, ScheduleAdjustment, ScheduleMode
 from sunfleck.care.services import CareEventData, log_care
 from sunfleck.places import services as places
 from sunfleck.places.models import Direction, LightSourceKind, LocationKind
@@ -36,6 +37,21 @@ DUE, SOON, WATERED = "due", "soon", "watered"
 SOON_DAYS = 4
 WATERED_DAYS_AGO = 2
 FERTILIZED_DAYS_AGO = 10
+
+# Earlier waterings, oldest first, before the latest one: days after Sunfleck said each was
+# due, and how the soil was. A few days either way and a mix of answers, as in real use; one
+# "too dry" and one "still wet" about cancel out, so the plant is still due when it should be.
+HISTORY: dict[str, list[tuple[int, Feedback]]] = {
+    "Golden pothos": [
+        (-1, Feedback.JUST_RIGHT),
+        (2, Feedback.TOO_DRY),
+        (0, Feedback.JUST_RIGHT),
+        (-2, Feedback.STILL_WET),
+        (1, Feedback.JUST_RIGHT),
+        (0, Feedback.JUST_RIGHT),
+    ],
+}
+HISTORY_WATER_ML = 250
 
 # (nickname, species or genus, care profile if neither is known, room, photo, watering)
 PLANTS: list[tuple[str, str | None, str | None, str, str, str]] = [
@@ -105,6 +121,8 @@ class Command(BaseCommand):
                     plant, schedules.ScheduleData(care_type.pk, ScheduleMode.PREDICTED)
                 )
                 if care_type == water:
+                    if nickname in HISTORY:
+                        schedule = _past_waterings(schedule, HISTORY[nickname], user)
                     days_ago = _watered_days_ago(watering, schedule.interval_days)
                 else:
                     days_ago = FERTILIZED_DAYS_AGO
@@ -145,6 +163,54 @@ class Command(BaseCommand):
                 "fetched_at": datetime.now(tz=ZoneInfo("UTC")),
             },
         )
+
+
+def _past_waterings(
+    schedule: CareSchedule, history: list[tuple[int, Feedback]], user: Any
+) -> CareSchedule:
+    """Water the plant in the past, each time next to what Sunfleck predicted then, so its
+    History has something to show. The latest watering is logged afterwards, as for the other
+    plants; these end one interval before it, so it's on time."""
+    zone = ZoneInfo(TIMEZONE)
+    interval = schedule.interval_days or 14
+    latest = timezone.now().astimezone(zone).date() - timedelta(days=interval)
+    # Work back from the latest watering: each was `interval` days after the one before.
+    done: list[date] = []
+    due = latest
+    for offset, _ in reversed(history):
+        watered = due - timedelta(days=interval)
+        done.insert(0, watered)
+        due = watered - timedelta(days=offset)
+    for (offset, feedback), watered in zip(history, done, strict=True):
+        due_on = watered - timedelta(days=offset)
+        # What Sunfleck predicted, just before: the day after the previous watering.
+        predicted_at = datetime.combine(due_on - timedelta(days=interval - 1), time(8), zone)
+        ScheduleAdjustment.objects.create(
+            schedule=schedule,
+            calculated_at=predicted_at,
+            interval_days=interval,
+            next_due=due_on,
+            factors=[],
+        )
+        log_care(
+            schedule.plant,
+            CareEventData(
+                schedule.care_type_id,
+                performed_at=datetime.combine(watered, time(9), zone),
+                feedback=feedback,
+                amount_ml=HISTORY_WATER_ML,
+            ),
+            user,
+        )
+    # The prediction before the latest watering, which is logged next.
+    ScheduleAdjustment.objects.create(
+        schedule=schedule,
+        calculated_at=datetime.combine(done[-1], time(10), zone),
+        interval_days=interval,
+        next_due=latest,
+        factors=[],
+    )
+    return schedules.recalculate(schedule)
 
 
 def _watered_days_ago(watering: str, interval_days: int | None) -> int:
