@@ -28,7 +28,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   pencil cactus and two *Cordyline* species are new to the dataset. Where the ASPCA's list has
   no entry, the NC State Extension Plant Toolbox or Pet Poison Helpline is the source. Each
   flag cites its source, and a plant without one still says "not known", never "safe"; see
-  the [review](docs/toxicity-review-2026-11.md).
+  the [review](docs/toxicity-review-2026-11.md) (#238).
 
 ### Changed
 
