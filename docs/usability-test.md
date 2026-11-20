@@ -1,19 +1,27 @@
-# Usability test (1.0)
+# Usability test
 
 A task test with a few people from real households, done cold, to find what the click counts
 in [usability.md](usability.md) can't: whether people understand the screens. Each session
 ends with the System Usability Scale (SUS), a standard 10-question score that can be compared
 with other apps and with later releases.
 
+It's run once per round, with the same tasks, so rounds can be compared:
+
+- **Round 1 (1.0):** [results](usability-test-results-1.0-round-1.md). Its problems were fixed
+  in 1.0.
+- **Round 2 (1.2), on phones:** whether round 1's fixes work, and the care history added
+  since. See [round 2](#round-2-12) for what's different;
+  [results](usability-test-results-1.2-round-2.md), to fill in.
+
 - **Who runs it:** the maintainer (the *moderator*), with this plan.
-- **What's needed:** 3 to 5 people, about 45 minutes each, a test copy of Sunfleck, and the
-  printed [forms](usability-test-forms.md).
+- **What's needed:** 3 to 5 people, about 45 minutes each (50 in round 2), a test copy of
+  Sunfleck, and the printed [forms](usability-test-forms.md).
 - **Where the results go:** a copy of the [results template](usability-test-results.md),
-  filled in after the sessions. Problems found are fixed before the 1.0 release.
-  Round 1: [results](usability-test-results-1.0-round-1.md).
+  filled in after the sessions. Problems found are fixed before the release being tested.
 - **Alongside it:** a [heuristic review](heuristic-review.md) of the same screens, done
   without participants.
 
+- [Round 2 (1.2)](#round-2-12)
 - [Participants](#participants)
 - [A test copy of Sunfleck](#a-test-copy-of-sunfleck)
 - [The session](#the-session)
@@ -21,6 +29,46 @@ with other apps and with later releases.
 - [What to note](#what-to-note)
 - [Scoring and rating](#scoring-and-rating)
 - [Afterwards](#afterwards)
+
+## Round 2 (1.2)
+
+The same plan as round 1, with these differences:
+
+- **On phones.** Round 1 ran on a desktop PC, so the next round has to show the app as it's
+  mostly used. Each participant uses their own phone, through Tailscale (see
+  [a test copy](#a-test-copy-of-sunfleck)). Don't fall back to a desktop: if a phone can't
+  reach the test copy, lend one that can, and note it.
+- **New people.** Nobody from round 1: they'd remember where things are.
+- **All tasks, task 1 too.** Round 1 skipped first-time setup; since 1.0, a new household gets
+  a step-by-step **Getting started**, and only a session can show whether it works. If a
+  participant would never install an app themselves, still run it: say "Someone has just
+  installed this for you" before reading the task.
+- **The same wording** for tasks 1 to 12, so they compare with round 1. Tasks 13 and 14 are
+  new, for what was added since: how much water was given (1.1), and a plant's care history
+  with how often the soil was just right (1.2). They come last, so tasks 1 to 12 run as
+  before.
+- **Check round 1's fixes.** Each problem from round 1 was fixed in 1.0. Watch the task where
+  it showed, and mark on the [results](usability-test-results-1.2-round-2.md#round-1s-problems)
+  whether the fix worked:
+
+  | Round 1 problem | Fixed in 1.0 by | Watch on task |
+  |---|---|---|
+  | U1 Snooze can't be found | **Put off care** on a plant's page, and **Later** on Today | 6 |
+  | U2 Soil feedback on the wrong watering; past care logged as today | **Add earlier care**, and the question saying which watering it's about | 5 |
+  | U3 Watering a room's plants at once isn't found | **Water all 2 in Living room** on Today, and on a room's page | 4 |
+  | U4 Rooms are called "locations"; a room wasn't saved | "Rooms and spots", **Getting started**, and a question before leaving a form with unsaved changes | 1, 2 |
+  | U5 The plant form is long, and its room easy to miss | Room right after the name; the rest under **More details** | 3 |
+  | U6 Cropping can't be found | Tapping the cover opens it; **Crop** offered after adding a photo | 8 |
+  | U7 The light check is misread | The answer and the advice first | 7 |
+  | U8 Inviting someone saves the household instead | **Invite someone** in its own card, also from **Settings** | 11 |
+  | U9 The account menu goes unnoticed | **Settings** behind the gear at the top | 11, 12 |
+  | U10 The evening reminder looks like the whole setup | **Notifications** starts with **This device** | 12 |
+  | U11 Date fields' calendar button isn't noticed | Not changed: seen on a desktop; on a phone, tapping a date opens the phone's own picker | 5, 6 |
+
+- **About 50 minutes:** part B has two more tasks.
+- **The demo household** gives the golden pothos two months of waterings, with how the soil
+  was and what Sunfleck predicted each time, for task 14. Load it with the same commands as
+  before, from the version being tested.
 
 ## Participants
 
@@ -110,8 +158,8 @@ About 45 minutes. One moderator; a second person taking notes helps, but isn't n
 
 3. **Part A: setting up (10 min).** Tasks 1 to 3, on the empty copy.
 
-4. **Part B: everyday use (20 min).** Fill in the demo household, sign the phone in, then
-   tasks 4 to 12.
+4. **Part B: everyday use (20 min, 25 in round 2).** Fill in the demo household, sign the
+   phone in, then tasks 4 to 12, and 13 and 14 in round 2.
 
 5. **SUS questionnaire (3 min).** They fill it in alone, on paper, straight after the tasks,
    before any discussion.
@@ -154,6 +202,8 @@ Each is a goal, in everyday words, without the app's own words (no "log", "sched
 | 10 | "Is the golden pothos safe to keep if you had a cat?" | They find the toxicity notice and answer "no" |
 | 11 | "Someone you live with wants to help with the watering. Let them in." | An invitation, with the Gardener role |
 | 12 | "You'd like a reminder on your phone each morning about what needs doing. Set that up." | A notification channel added (this device or another), or they say how they would |
+| 13 | "You've just watered the avocado seedling with about a mug of water, 250 ml. Let the app know, and how much you gave." (round 2) | A watering on the avocado seedling today, with 250 ml (or the same in their units) |
+| 14 | "Has the app been getting the golden pothos's watering right? Find out how often its soil was neither too dry nor too wet when it was watered." (round 2) | They open its watering history and read the summary out: in the demo, 4 of 6 times, or one more answer if they said how the soil was in task 4 |
 
 Tasks 4 to 6 and 9 have click budgets in [usability.md](usability.md): compare their paths
 with the shortest ones there.
@@ -194,7 +244,7 @@ apps.
 [results template](usability-test-results.md#problems). Rate each with the severity scale
 used in the heuristic review:
 
-| Severity | Meaning | Before 1.0 |
+| Severity | Meaning | Before the release |
 |---|---|---|
 | 4: catastrophe | People can't complete a core task, or lose data | Must fix |
 | 3: major | People get stuck or make mistakes, or complete it only with help | Must fix |
@@ -209,7 +259,7 @@ rather than once (1 to 3).
 1. Fill in the results template within a day, while it's fresh: each person's results,
    their SUS score, and the problems with severities.
 2. Share the filled-in results (without names) in an issue or a pull request. Fixes for the
-   problems rated 3 and 4 go in before 1.0. The rest become issues.
+   problems rated 3 and 4 go in before the release being tested. The rest become issues.
 3. Note what the test couldn't show: AI features, plant identification, notifications
    arriving over days, and large households.
 4. Shred the paper forms once the results are written up.

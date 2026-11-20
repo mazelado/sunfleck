@@ -6,6 +6,7 @@ import time_machine
 from django.core.management import CommandError, call_command
 
 from sunfleck.accounts.models import User
+from sunfleck.care import learning, selectors
 from sunfleck.care.models import CareSchedule
 from sunfleck.plants.models import Plant
 
@@ -53,3 +54,21 @@ def test_it_only_runs_on_an_empty_database(tmp_path: Path) -> None:
         call_command("demo_household", photos=PHOTOS)
     with pytest.raises(CommandError):
         call_command("demo_household", photos=tmp_path / "missing")
+
+
+@pytest.mark.parametrize("month", [1, 7])
+def test_the_golden_pothos_has_a_history_to_show(month: int) -> None:
+    # For the usability test (docs/usability-test.md, task 14) and the screenshots.
+    with time_machine.travel(datetime(2026, month, 15, 10, tzinfo=UTC), tick=False):
+        call_command("demo_household", photos=PHOTOS)
+        water = CareSchedule.objects.get(plant__nickname="Golden pothos", care_type__key="water")
+
+        history = selectors.schedule_history(water)
+        recent, _ = selectors.soil_summary(water, date(2026, month, 15))
+        # A few days either way isn't a routine of its own to offer.
+        assert learning.routine_suggestion(water) is None
+
+    assert len(history) == 7
+    assert all(entry.predicted for entry in history)
+    assert [entry.days_from_due for entry in history] == [0, 0, 1, -2, 0, 2, -1]
+    assert (recent.just_right, recent.too_dry, recent.still_wet) == (4, 1, 1)
