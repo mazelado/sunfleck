@@ -116,6 +116,7 @@ class CareEventData:
     performed_at: datetime | None = None
     notes: str = ""
     feedback: Feedback | None = None
+    amount_ml: int | None = None
     skipped: bool = False
     estimated: bool = False
 
@@ -140,10 +141,20 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
         raise CareError(
             "feedback_only_for_watering", "Soil feedback is only for watering.", "feedback"
         )
+    if data.amount_ml is not None:
+        if not care_type.counts_as_watering:
+            raise CareError(
+                "amount_only_for_watering", "An amount of water is only for watering.", "amount_ml"
+            )
+        if data.skipped:
+            raise CareError(
+                "amount_when_skipped", "Skipped care has no amount of water.", "amount_ml"
+            )
     event.care_type = care_type
     event.performed_at = performed_at.astimezone(UTC)
     event.notes = data.notes.strip()
     event.feedback = data.feedback or ""
+    event.amount_ml = data.amount_ml
     event.skipped = data.skipped
     event.estimated = data.estimated
     event.save()
@@ -154,7 +165,8 @@ def log_care(plant: Plant, data: CareEventData, user: User | None) -> CareEvent:
 
     Raises:
         CareError: If the care type isn't one of the household's, the time is in the future,
-            or soil feedback is given for anything but watering.
+            soil feedback or an amount of water is given for anything but watering, or an
+            amount is given for skipped care.
     """
     event = CareEvent(plant=plant, performed_by=user)
     _apply_event(event, plant.household, data)
@@ -182,7 +194,7 @@ def log_care_for_plants(
 
 
 def update_care_event(event: CareEvent, data: CareEventData) -> CareEvent:
-    """Correct a logged event (type, time, notes, feedback, skipped).
+    """Correct a logged event (type, time, notes, feedback, amount, skipped).
 
     Raises:
         CareError: As for `log_care`.

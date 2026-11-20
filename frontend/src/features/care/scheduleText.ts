@@ -210,6 +210,18 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
   return { text: text(), effect };
 }
 
+/** How much water the schedule suggests giving each time, in litres: for a pot, or a whole
+ * bed of known size; null when it doesn't say an amount (e.g. a depth in the ground). */
+export function suggestedLitres(factors: Factor[]): number | null {
+  const details = factors.find((each) => each.code === "water_amount")?.details;
+  if (!details) return null;
+  if (typeof details.litres === "number") return details.litres;
+  if (typeof details.bed_area_m2 === "number" && typeof details.depth_mm === "number") {
+    return details.depth_mm * details.bed_area_m2;
+  }
+  return null;
+}
+
 /** Roughly how much water to give, e.g. "About 2 cups each time, or until a little drains
  * from the bottom"; null when the prediction doesn't say. */
 export function describeWaterAmount(

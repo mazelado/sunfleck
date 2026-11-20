@@ -685,6 +685,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/avatar/crop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Crop Avatar
+         * @description Frame your profile picture again, from the photo it was cut from: a square of it
+         *     (`crop`), or its middle (`crop` null).
+         */
+        put: operations["sunfleck_accounts_api_crop_avatar"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/avatar/source": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Avatar Source
+         * @description The photo your profile picture was cut from (WebP), to frame it again. Only yours.
+         */
+        get: operations["sunfleck_accounts_api_get_avatar_source"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications": {
         parameters: {
             query?: never;
@@ -1668,6 +1709,33 @@ export interface components {
              */
             on: string;
         };
+        /** AvatarCropChange */
+        AvatarCropChange: {
+            /** @description None shows the middle of the photo. */
+            crop: components["schemas"]["AvatarCropIn"] | null;
+        };
+        /** AvatarCropIn */
+        AvatarCropIn: {
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
+        /** AvatarCropOut */
+        AvatarCropOut: {
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /**
          * BedType
          * @enum {string}
@@ -1675,6 +1743,11 @@ export interface components {
         BedType: "raised" | "in_ground";
         /** BulkCareIn */
         BulkCareIn: {
+            /**
+             * Amount Ml
+             * @description Care types that count as watering only, and not skipped: how much water was given, in millilitres.
+             */
+            amount_ml?: number | null;
             /** Care Type Id */
             care_type_id: number;
             /** @description Care types that count as watering only: how the soil was beforehand. */
@@ -1744,6 +1817,11 @@ export interface components {
         };
         /** CareEventIn */
         CareEventIn: {
+            /**
+             * Amount Ml
+             * @description Care types that count as watering only, and not skipped: how much water was given, in millilitres.
+             */
+            amount_ml?: number | null;
             /** Care Type Id */
             care_type_id: number;
             /** @description Care types that count as watering only: how the soil was beforehand. */
@@ -1767,6 +1845,11 @@ export interface components {
         };
         /** CareEventOut */
         CareEventOut: {
+            /**
+             * Amount Ml
+             * @description Watering only: how much water was given, in ml.
+             */
+            amount_ml: number | null;
             care_type: components["schemas"]["CareTypeOut"];
             /**
              * Estimated
@@ -2633,6 +2716,13 @@ export interface components {
         };
         /** MeOut */
         MeOut: {
+            /** @description The square of that photo the picture shows (fractions of its width and height, from its top left); none: its middle. */
+            avatar_crop: components["schemas"]["AvatarCropOut"] | null;
+            /**
+             * Avatar Source Url
+             * @description The photo the profile picture was cut from, to frame it again; none for pictures set before 1.1.
+             */
+            avatar_source_url: string | null;
             /**
              * Avatar Url
              * @description The profile picture, if there is one.
@@ -5099,6 +5189,48 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["MeOut"];
                 };
+            };
+        };
+    };
+    sunfleck_accounts_api_crop_avatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AvatarCropChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    sunfleck_accounts_api_get_avatar_source: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

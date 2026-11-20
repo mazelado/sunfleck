@@ -4,6 +4,7 @@ API endpoints call these functions; they never change account data directly.
 """
 
 import hashlib
+import io
 import secrets
 import uuid
 from datetime import datetime, timedelta
@@ -53,6 +54,12 @@ class InvitationInvalidError(AccountsError):
 
 class LastAdminError(AccountsError):
     code = "last_admin"
+
+
+class AvatarNotAdjustableError(AccountsError):
+    """The profile picture was set before its photo was kept (1.1), or there's none."""
+
+    code = "avatar_not_adjustable"
 
 
 class ProtectedAccountError(AccountsError):
@@ -264,25 +271,76 @@ def password_reset_url(request: HttpRequest, user: User, *, acting_user: User) -
 # --- Profile pictures -------------------------------------------------------------------------
 
 
+# What a profile picture is saved as.
+AVATAR_FIELDS = (
+    "avatar",
+    "avatar_source",
+    "avatar_crop_x",
+    "avatar_crop_y",
+    "avatar_crop_width",
+    "avatar_crop_height",
+)
+
+
 def set_avatar(user: User, file: IO[bytes], size: int, crop: images.Crop | None = None) -> None:
-    """Set the person's profile picture, replacing the old one.
+    """Set the person's profile picture, replacing the old one. The photo it's cut from is kept
+    too, so it can be framed again (see `crop_avatar`).
 
     Raises:
-        images.ImageError: If the file is too large or isn't a usable image.
+        images.ImageError: If the file is too large or isn't a usable image, or the crop isn't
+            inside it.
     """
     if size > images.MAX_UPLOAD_BYTES:
         limit = images.MAX_UPLOAD_BYTES // (1024 * 1024)
         raise images.ImageError("image_too_large", f"Photos can be at most {limit} MB.")
-    data = images.process_avatar(file, crop)
-    old = user.avatar.name
+    source = images.avatar_source(file)
+    # Cut from the kept copy, so framing it again later gives the same picture.
+    picture = images.process_avatar(io.BytesIO(source), crop)
+    old = (user.avatar.name, user.avatar_source.name)
+    user.avatar_source.save(f"{uuid.uuid4().hex}.webp", ContentFile(source), save=False)
+    _save_avatar(user, picture, crop)
+    _delete_files(user, old)
+
+
+def crop_avatar(user: User, crop: images.Crop | None) -> None:
+    """Frame the profile picture again: the square `crop` of the photo it was cut from, or its
+    middle (None).
+
+    Raises:
+        AvatarNotAdjustableError: If there's no kept photo (pictures set before 1.1).
+        images.ImageError: `invalid_crop` if the crop isn't inside the photo, or is too small.
+    """
+    if not user.avatar or not user.avatar_source:
+        raise AvatarNotAdjustableError("Choose the photo again to frame it.")
+    with user.avatar_source.open("rb") as file:
+        picture = images.process_avatar(file, crop)
+    old = (user.avatar.name,)
+    _save_avatar(user, picture, crop)
+    _delete_files(user, old)
+
+
+def _save_avatar(user: User, picture: bytes, crop: images.Crop | None) -> None:
     # A new name each time, so browsers that cached the old picture fetch the new one.
-    user.avatar.save(f"{uuid.uuid4().hex}.webp", ContentFile(data), save=False)
-    user.save(update_fields=["avatar"])
-    if old:
-        user.avatar.storage.delete(old)
+    user.avatar.save(f"{uuid.uuid4().hex}.webp", ContentFile(picture), save=False)
+    user.avatar_crop_x, user.avatar_crop_y = (crop.x, crop.y) if crop else (None, None)
+    user.avatar_crop_width, user.avatar_crop_height = (
+        (crop.width, crop.height) if crop else (None, None)
+    )
+    user.save(update_fields=[*AVATAR_FIELDS])
+
+
+def _delete_files(user: User, names: tuple[str | None, ...]) -> None:
+    for name in names:
+        if name:
+            user.avatar.storage.delete(name)
 
 
 def remove_avatar(user: User) -> None:
-    if user.avatar:
-        user.avatar.delete(save=False)
-        user.save(update_fields=["avatar"])
+    """Remove the profile picture, and the photo it was cut from."""
+    if not user.avatar and not user.avatar_source:
+        return
+    user.avatar.delete(save=False)
+    user.avatar_source.delete(save=False)
+    user.avatar_crop_x = user.avatar_crop_y = None
+    user.avatar_crop_width = user.avatar_crop_height = None
+    user.save(update_fields=[*AVATAR_FIELDS])

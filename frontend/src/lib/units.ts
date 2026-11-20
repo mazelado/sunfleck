@@ -49,6 +49,52 @@ export function waterVolume(litres: number, units: UnitSystem): WaterVolume {
   return { unit: "litres", value: Math.max(1, nearest(litres, 0.5)) };
 }
 
+/** The units an amount of water can be entered in, smallest first. */
+export const WATER_UNITS: Record<UnitSystem, readonly WaterVolume["unit"][]> = {
+  metric: ["ml", "litres"],
+  imperial: ["flOz", "cups", "gallons"],
+};
+
+const ML_PER: Record<WaterVolume["unit"], number> = {
+  ml: 1,
+  litres: 1000,
+  flOz: 29.5735,
+  cups: 236.588,
+  gallons: 3785.41,
+};
+
+/** An amount of water as entered (a string while it's typed, e.g. "1."), if there's one. */
+export function enteredWater(
+  value: number | string,
+  unit: WaterVolume["unit"],
+): WaterVolume | null {
+  const number = Number(value);
+  return value !== "" && Number.isFinite(number) && number > 0 ? { unit, value: number } : null;
+}
+
+/** An amount of water in millilitres, as the API stores it. */
+export function waterToMl({ unit, value }: WaterVolume): number {
+  return Math.round(value * ML_PER[unit]);
+}
+
+/**
+ * Water given (recorded in ml), in the person's units, as exactly as it was recorded:
+ * "330 ml" or "1.25 L"; "6 fl oz", "1.5 cups" or "2.1 gallons".
+ */
+export function waterFromMl(ml: number, units: UnitSystem): WaterVolume {
+  const unit =
+    units === "imperial"
+      ? ml < ML_PER.cups / 2
+        ? "flOz"
+        : ml <= ML_PER.cups * 8
+          ? "cups"
+          : "gallons"
+      : ml < 1000
+        ? "ml"
+        : "litres";
+  return { unit, value: round(ml / ML_PER[unit], unit === "ml" ? 0 : 2) };
+}
+
 /** A depth of water (as rain is measured): millimetres, or quarter inches. */
 export function waterDepth(
   mm: number,

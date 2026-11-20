@@ -100,6 +100,8 @@ export const ada: Me = {
   email: "ada@example.com",
   display_name: "Ada",
   avatar_url: null,
+  avatar_source_url: null,
+  avatar_crop: null,
   locale: "en",
   unit_system: "metric",
   household: { id: 1, name: "Fern Gully" },

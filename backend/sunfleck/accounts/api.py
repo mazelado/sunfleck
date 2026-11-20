@@ -57,11 +57,37 @@ class HouseholdOut(Schema):
     name: str
 
 
+class AvatarCropOut(Schema):
+    x: float
+    y: float
+    width: float
+    height: float
+
+
+class AvatarCropIn(Schema):
+    x: float = Field(ge=0, lt=1)
+    y: float = Field(ge=0, lt=1)
+    width: float = Field(gt=0, le=1)
+    height: float = Field(gt=0, le=1)
+
+
+class AvatarCropChange(Schema):
+    crop: AvatarCropIn | None = Field(description="None shows the middle of the photo.")
+
+
 class MeOut(Schema):
     id: int
     email: str
     display_name: str
     avatar_url: str | None = Field(description="The profile picture, if there is one.")
+    avatar_source_url: str | None = Field(
+        description="The photo the profile picture was cut from, to frame it again; none for "
+        "pictures set before 1.1."
+    )
+    avatar_crop: AvatarCropOut | None = Field(
+        description="The square of that photo the picture shows (fractions of its width and "
+        "height, from its top left); none: its middle."
+    )
     locale: str
     unit_system: UnitSystem
     household: HouseholdOut | None
@@ -178,13 +204,25 @@ def avatar_url(user: User) -> str | None:
     return f"{url}?v={PurePosixPath(user.avatar.name or '').stem}"
 
 
+def _avatar_source_url(user: User) -> str | None:
+    if not user.avatar or not user.avatar_source:
+        return None
+    url = reverse("api-v1:avatar_source")
+    return f"{url}?v={PurePosixPath(user.avatar_source.name or '').stem}"
+
+
 def _me(user: User) -> MeOut:
     membership = get_membership(user)
+    crop = user.avatar_crop
     return MeOut(
         id=user.pk,
         email=user.email,
         display_name=user.display_name,
         avatar_url=avatar_url(user),
+        avatar_source_url=_avatar_source_url(user),
+        avatar_crop=AvatarCropOut(x=crop.x, y=crop.y, width=crop.width, height=crop.height)
+        if crop and user.avatar_source
+        else None,
         locale=user.locale,
         unit_system=UnitSystem(user.unit_system),
         household=(
@@ -325,6 +363,32 @@ def set_avatar(
     except images.ImageError as exc:
         raise ApiError(422, exc.code, str(exc), {"field": "file"}) from exc
     return _me(user)
+
+
+@router.put("/me/avatar/crop", response=MeOut)
+def crop_avatar(request: HttpRequest, data: AvatarCropChange) -> MeOut:
+    """Frame your profile picture again, from the photo it was cut from: a square of it
+    (`crop`), or its middle (`crop` null)."""
+    user = _user(request)
+    crop = images.Crop(**data.crop.model_dump()) if data.crop else None
+    try:
+        services.crop_avatar(user, crop)
+    except services.AvatarNotAdjustableError as exc:
+        raise _accounts_error(exc) from exc
+    except images.ImageError as exc:
+        raise ApiError(422, exc.code, str(exc), {"field": "crop"}) from exc
+    return _me(user)
+
+
+@router.get("/me/avatar/source", url_name="avatar_source")
+def get_avatar_source(request: HttpRequest) -> FileResponse:
+    """The photo your profile picture was cut from (WebP), to frame it again. Only yours."""
+    user = _user(request)
+    if not user.avatar or not user.avatar_source:
+        raise ApiError(404, "avatar_not_found", "There's no picture here.")
+    response = FileResponse(user.avatar_source.open("rb"), content_type="image/webp")
+    response["Cache-Control"] = "private, max-age=31536000, immutable"
+    return response
 
 
 @router.delete("/me/avatar", response=MeOut)

@@ -33,6 +33,8 @@ import type { Photo } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { formatDateAndTime, relativeDay } from "../../lib/relativeTime";
+import { waterFromMl } from "../../lib/units";
+import { useUnits } from "../../lib/useUnits";
 import { CareEventDialog } from "./CareEventDialog";
 import { CareIcon } from "./icons";
 import { useCareTypeName } from "./useCareTypeName";
@@ -129,7 +131,9 @@ function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
   const { done } = useCareTypeName();
   const deleteEvent = useDeleteCareEvent();
   const updateEvent = useUpdateCareEvent();
+  const units = useUnits();
   const action = done(event.care_type);
+  const given = event.amount_ml ? waterFromMl(event.amount_ml, units) : null;
 
   return (
     <Group gap="sm" wrap="nowrap" align="flex-start">
@@ -158,6 +162,16 @@ function CareEntry({ event, canEdit, askFeedback, onEdit }: CareEntryProps) {
               color={event.feedback === "just_right" ? "leaf" : "yellow"}
             >
               {t("care.soil", { feedback: t(`care.feedback.${event.feedback}`) })}
+            </Badge>
+          )}
+          {given && (
+            <Badge size="sm" variant="light" color="blue" tt="none">
+              {t("care.gave", {
+                amount: t(`amounts.${given.unit}`, {
+                  value: new Intl.NumberFormat(i18n.language).format(given.value),
+                  count: given.value,
+                }),
+              })}
             </Badge>
           )}
         </Group>

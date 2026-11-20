@@ -119,6 +119,7 @@ def filled(household: Household, ada: Membership) -> Household:
             builtin("water").pk,
             performed_at=datetime(2026, 5, 1, 9, tzinfo=UTC),
             feedback=Feedback.TOO_DRY,
+            amount_ml=750,
             notes="Very dry",
         ),
         ada.user,
@@ -267,7 +268,7 @@ def test_an_export_imports_into_a_new_household_unchanged(
     assert (summary.sites, summary.plants, summary.photos, summary.care_events) == (1, 2, 2, 2)
     # Care is credited to the member with the same email.
     event = CareEvent.objects.get(plant__household=target, feedback=Feedback.TOO_DRY)
-    assert event.performed_by == ada.user
+    assert (event.performed_by, event.amount_ml) == (ada.user, 750)
     assert summary.members_to_invite == []
     assert summary.plugins_needing_keys == ["Plant identification (Pl@ntNet)"]
     monty = Plant.objects.get(household=target, nickname="Monty")
@@ -288,6 +289,18 @@ def test_exports_from_before_pot_heights_import(filled: Household) -> None:
 
     monty = Plant.objects.get(household=target, nickname="Monty")
     assert (monty.container_diameter_cm, monty.container_height_cm) == (17, None)
+
+
+def test_exports_from_before_water_amounts_import(filled: Household) -> None:
+    def drop_amounts(exported: dict[str, Any]) -> None:
+        for event in first_plant(exported)["care_events"]:
+            del event["amount_ml"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_amounts)))
+
+    event = CareEvent.objects.get(plant__household=target, feedback=Feedback.TOO_DRY)
+    assert event.amount_ml is None
 
 
 def test_exports_from_before_garden_beds_import(filled: Household) -> None:

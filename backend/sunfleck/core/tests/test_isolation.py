@@ -51,6 +51,7 @@ A_PERSONS_OWN = {
     ("PATCH", "/api/v1/me"),
     ("POST", "/api/v1/me/avatar"),
     ("DELETE", "/api/v1/me/avatar"),
+    ("PUT", "/api/v1/me/avatar/crop"),
     ("POST", "/api/v1/notifications/calendar"),
     ("DELETE", "/api/v1/notifications/calendar"),
     ("POST", "/api/v1/notifications/channels"),
@@ -92,6 +93,7 @@ BODIES: dict[tuple[str, str], Any] = {
     ("POST", "/api/v1/locations/{location_id}/light-sources"): {"kind": "window", "direction": "S"},
     ("PATCH", "/api/v1/me"): {},
     ("POST", "/api/v1/me/avatar"): {"file": FILE},
+    ("PUT", "/api/v1/me/avatar/crop"): {"crop": None},
     ("POST", "/api/v1/notifications/channels"): {"label": "Phone", "url": "ntfy://ntfy.sh/x"},
     ("PUT", "/api/v1/notifications/channels/{channel_id}"): {"label": "Phone", "enabled": True},
     ("PUT", "/api/v1/notifications/preferences"): {

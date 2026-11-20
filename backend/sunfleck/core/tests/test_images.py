@@ -188,3 +188,10 @@ def test_a_profile_picture_is_the_square_chosen() -> None:
     assert avatar.size == (images.AVATAR_SIZE, images.AVATAR_SIZE)
     red, _, blue = avatar.getpixel((200, 200))  # type: ignore[misc]
     assert red > 150 > blue
+
+
+def test_a_profile_pictures_photo_is_kept_upright_smaller_and_without_metadata() -> None:
+    source = _open(images.avatar_source(io.BytesIO(halves(3000, 1500))))
+
+    assert source.size == (images.AVATAR_SIZE * 4, images.AVATAR_SIZE * 2)
+    assert not source.getexif()

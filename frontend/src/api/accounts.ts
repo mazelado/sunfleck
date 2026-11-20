@@ -142,6 +142,16 @@ export function useSetAvatar() {
   });
 }
 
+/** Frame the profile picture again, from the photo it was cut from; null: its middle. */
+export function useCropAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (crop: AvatarCrop | null) =>
+      unwrap(await api.PUT("/api/v1/me/avatar/crop", { body: { crop } })),
+    onSuccess: (me) => updatedPicture(queryClient, me),
+  });
+}
+
 export function useRemoveAvatar() {
   const queryClient = useQueryClient();
   return useMutation({

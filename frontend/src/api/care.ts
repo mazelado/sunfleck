@@ -129,6 +129,7 @@ export function eventInput(event: CareEvent): CareEventInput {
     performed_at: event.performed_at,
     notes: event.notes,
     feedback: event.feedback,
+    amount_ml: event.amount_ml,
     skipped: event.skipped,
   };
 }

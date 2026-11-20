@@ -13,7 +13,15 @@ class CareTypeAdmin(admin.ModelAdmin[CareType]):
 
 @admin.register(CareEvent)
 class CareEventAdmin(admin.ModelAdmin[CareEvent]):
-    list_display = ("care_type", "plant", "performed_at", "performed_by", "feedback", "skipped")
+    list_display = (
+        "care_type",
+        "plant",
+        "performed_at",
+        "performed_by",
+        "feedback",
+        "amount_ml",
+        "skipped",
+    )
     list_filter = ("care_type", "feedback", "skipped")
     raw_id_fields = ("plant", "performed_by")
     date_hierarchy = "performed_at"

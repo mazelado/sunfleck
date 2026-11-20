@@ -23,11 +23,16 @@ import {
   useLogCare,
   useUpdateCareEvent,
 } from "../../api/care";
+import { useSchedules } from "../../api/schedules";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { toLocalInput } from "../../lib/relativeTime";
+import { useUnits } from "../../lib/useUnits";
+import { enteredWater, waterFromMl, waterToMl, waterVolume } from "../../lib/units";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 import { CareTypeDialog } from "./CareTypeDialog";
+import { suggestedLitres } from "./scheduleText";
 import { useCareTypeName } from "./useCareTypeName";
+import { WaterAmountInput, type WaterAmountValue } from "./WaterAmountInput";
 
 interface CareEventDialogProps {
   plantId: number;
@@ -42,11 +47,15 @@ interface CareFormValues {
   careTypeId: string | null;
   when: string;
   feedback: Feedback | null;
+  amount: WaterAmountValue;
   skipped: boolean;
   notes: string;
 }
 
-/** Log care with a time, notes, and (for watering) how the soil was; or correct logged care. */
+/**
+ * Log care with a time, notes, and (for watering) how the soil was and how much water was given;
+ * or correct logged care.
+ */
 export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEventDialogProps) {
   const { t } = useTranslation();
   const careTypes = useCareTypes().data ?? [];
@@ -56,11 +65,16 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
   const updateEvent = useUpdateCareEvent();
   const save = event ? updateEvent : logCare;
   const [addingType, setAddingType] = useState(false);
+  const units = useUnits();
+  const schedules = useSchedules(plantId).data ?? [];
   const form = useForm<CareFormValues>({
     initialValues: {
       careTypeId: String(event?.care_type.id ?? careTypeId ?? careTypes[0]?.id ?? ""),
       when: toLocalInput(event ? new Date(event.performed_at) : new Date()),
       feedback: event?.feedback ?? null,
+      amount: event?.amount_ml
+        ? waterFromMl(event.amount_ml, units)
+        : { value: "", unit: units === "imperial" ? "cups" : "ml" },
       skipped: event?.skipped ?? false,
       notes: event?.notes ?? "",
     },
@@ -68,13 +82,22 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
   const values = form.getValues();
   const isWatering =
     careTypes.find((type) => String(type.id) === values.careTypeId)?.counts_as_watering ?? false;
+  // What the schedule for this care suggests giving; for another kind of watering (e.g. bottom
+  // watering, with no schedule of its own), what the plant's watering schedule suggests.
+  const schedule =
+    schedules.find((each) => String(each.care_type.id) === values.careTypeId) ??
+    schedules.find((each) => each.care_type.key === "water");
+  const litres = schedule ? suggestedLitres(schedule.factors) : null;
+  const suggestion = litres === null ? null : waterVolume(litres, units);
 
   const handleSubmit = form.onSubmit(async (formValues) => {
+    const entered = enteredWater(formValues.amount.value, formValues.amount.unit);
     const body = {
       care_type_id: Number(formValues.careTypeId),
       performed_at: new Date(formValues.when).toISOString(),
       notes: formValues.notes,
       feedback: isWatering ? formValues.feedback : null,
+      amount_ml: isWatering && !formValues.skipped && entered ? waterToMl(entered) : null,
       skipped: formValues.skipped,
     };
     try {
@@ -85,7 +108,11 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
       }
       onClose();
     } catch (error) {
-      applyFieldErrors(form, error, { care_type_id: "careTypeId", performed_at: "when" });
+      applyFieldErrors(form, error, {
+        care_type_id: "careTypeId",
+        performed_at: "when",
+        amount_ml: "amount",
+      });
     }
   });
 
@@ -152,6 +179,16 @@ export function CareEventDialog({ plantId, event, careTypeId, onClose }: CareEve
                 </Group>
               </Chip.Group>
             </Stack>
+          )}
+          {isWatering && !values.skipped && (
+            <WaterAmountInput
+              amount={values.amount}
+              suggestion={suggestion}
+              error={form.errors.amount as string | undefined}
+              onChange={(amount) => {
+                form.setFieldValue("amount", amount);
+              }}
+            />
           )}
           <Checkbox
             label={t("care.skippedLabel")}

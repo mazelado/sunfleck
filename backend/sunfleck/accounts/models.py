@@ -9,6 +9,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from sunfleck.core import images
+
 
 def normalize_email(email: str) -> str:
     """Return `email` trimmed and lowercased, so each address maps to exactly one account."""
@@ -55,6 +57,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     # Shown only to members of the person's household, through the API (not as public media).
     avatar = models.ImageField(_("profile picture"), upload_to="avatars/", blank=True)
+    # The photo the picture was cut from (upright, without metadata), and the square chosen in
+    # it, so it can be framed again. Pictures set before 1.1 have neither.
+    avatar_source = models.ImageField(
+        _("profile picture's photo"), upload_to="avatars/sources/", blank=True
+    )
+    avatar_crop_x = models.FloatField(null=True, blank=True)
+    avatar_crop_y = models.FloatField(null=True, blank=True)
+    avatar_crop_width = models.FloatField(null=True, blank=True)
+    avatar_crop_height = models.FloatField(null=True, blank=True)
 
     objects: ClassVar[UserManager] = UserManager()
 
@@ -68,6 +79,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email
+
+    @property
+    def avatar_crop(self) -> images.Crop | None:
+        """The square of `avatar_source` the profile picture shows; None: its middle."""
+        if self.avatar_crop_x is None or self.avatar_crop_y is None:
+            return None
+        if self.avatar_crop_width is None or self.avatar_crop_height is None:
+            return None
+        return images.Crop(
+            self.avatar_crop_x, self.avatar_crop_y, self.avatar_crop_width, self.avatar_crop_height
+        )
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         self.email = normalize_email(self.email)

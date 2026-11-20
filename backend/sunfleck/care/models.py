@@ -66,6 +66,10 @@ class CareType(models.Model):
         return self.household_id is None
 
 
+# The most water that can be recorded for one watering: 1,000 litres, enough for a large bed.
+MAX_WATER_ML = 1_000_000
+
+
 class Feedback(models.TextChoices):
     """How the soil was when watering, which tunes future watering predictions."""
 
@@ -92,6 +96,13 @@ class CareEvent(models.Model):
     notes = models.TextField(_("notes"), blank=True)
     feedback = models.CharField(
         _("how was the soil?"), max_length=16, choices=Feedback.choices, blank=True
+    )
+    # Watering only: how much water was given, in millilitres (shown in the person's units).
+    amount_ml = models.PositiveIntegerField(
+        _("water given (ml)"),
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(MAX_WATER_ML)],
     )
     skipped = models.BooleanField(_("skipped"), default=False)
     # Not logged as it happened, but estimated when the plant was added ("a few days ago"), so

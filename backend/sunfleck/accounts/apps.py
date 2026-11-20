@@ -19,3 +19,5 @@ def _delete_avatar(sender: type, instance: Any, **kwargs: Any) -> None:
     """Profile pictures go with their account."""
     if instance.avatar:
         instance.avatar.delete(save=False)
+    if instance.avatar_source:
+        instance.avatar_source.delete(save=False)

@@ -9,12 +9,11 @@ import { useSites } from "../../api/places";
 import { usePlants } from "../../api/plants";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { PageHeader } from "../../components/PageHeader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { ActiveFilters } from "./ActiveFilters";
 import { PlantCard } from "./PlantCard";
 import { PlantsSkeleton } from "./PlantsSkeleton";
-import { PlantsViews } from "./PlantsViews";
+import { PlantsViewsHeader } from "./PlantsViewsHeader";
 import { type PlantFilterValues, PlantFilters } from "./PlantFilters";
 
 /** All plants, as a grid of photo cards, with search and (folded away) filters. */
@@ -56,25 +55,21 @@ export function PlantsPage() {
 
   return (
     <Stack gap="sm">
-      {/* As far from the title as on Seeds and Wishlist, so the views don't jump. */}
-      <Stack gap="lg">
-        <PageHeader
-          title={t("plants.title")}
-          action={
-            canEdit && (
-              <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>
-                {t("plants.addPlant")}
-              </Button>
-            )
-          }
-          menu={
-            <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
-              {t("labels.printQr")}
-            </Menu.Item>
-          }
-        />
-        <PlantsViews />
-      </Stack>
+      <PlantsViewsHeader
+        title={t("plants.title")}
+        action={
+          canEdit && (
+            <Button component={Link} to="/plants/new" leftSection={<IconPlus size={16} />}>
+              {t("plants.addPlant")}
+            </Button>
+          )
+        }
+        menu={
+          <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
+            {t("labels.printQr")}
+          </Menu.Item>
+        }
+      />
 
       <Stack gap="xs">
         <Group gap="xs" wrap="nowrap">
