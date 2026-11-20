@@ -3,13 +3,13 @@
 Finishing the toxicity flags in the care dataset, for the 1.2 Lavender release
 ([roadmap](roadmap.md#lavender-trust-planned)). 0.5 Echinacea flagged "the common houseplant
 genera first"; the rest was never done, including every outdoor and edible plant added in 0.7
-Gardenia. **Proposed, for the maintainer to decide on.** The changes are applied in a
-follow-up pull request that records the decisions.
+Gardenia. **Approved and applied on 2026-11-20** (dataset 2026.11.6): every addition below,
+with the recommended option for each [decision](#decided-2026-11-20).
 
 - **Checked:** 2026-11-20, every genus and species in `genera.yaml` (189 genera, 128 species)
   against the ASPCA's toxic and non-toxic plant lists for cats and for dogs, then each
   matching entry's own page, read one by one.
-- **Today:** 29 flags (14 genera, 15 species), all on houseplants.
+- **Before:** 29 flags (14 genera, 15 species), all on houseplants.
 - **Proposed:** 21 new flags that follow the [existing rules](../data/care/README.md#toxicity-to-pets)
   directly, and 5 decisions below. With the recommendations, that's **30 new flags and one
   moved** (58 in all), and every plant on the ASPCA list that the dataset has is covered,
@@ -118,6 +118,19 @@ left out (unknown), never "safe". The entry names kidney failure among the signs
      without a source for them.
    - **C. Nothing.** Risk: none, but pencil cactus stays unknown.
    - **Recommendation: A.**
+
+### Decided (2026-11-20)
+
+1. **C:** *Hosta*, *Paeonia*, *Achillea* and *Lavandula* are flagged on the genus; *Lobelia*
+   stays unknown.
+2. **A:** *Solanum* is flagged on the genus (`nightshade`), and tomato keeps its own entry.
+3. **A:** catnip (*Nepeta cataria*) is a species, toxic to cats.
+4. **A:** *Cordyline fruticosa* (ti plant) and *Cordyline australis* (cabbage tree) are
+   species with their own flags; the genus has none.
+5. **A:** pencil cactus (*Euphorbia tirucalli*) is a species, flagged. Poinsettia is noted for
+   later.
+
+The citation links were updated to the ASPCA's new address too.
 
 ## Also proposed
 

@@ -72,7 +72,7 @@ A genus or species can say it's **known to be toxic** to cats and dogs, with the
     cats: toxic
     dogs: toxic
     sources:
-      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/<entry>
+      - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/<entry>
     note:
       en: Insoluble calcium oxalates   # optional: what the source names as the toxic part
 ```
