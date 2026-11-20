@@ -281,10 +281,11 @@ Checking that what Sunfleck already says is right, before it says more.
 
 - **A second usability test, on phones,** with the 1.0 [test plan](usability-test.md). The
   fixes from the first round are in 1.0, but no one has checked that they work.
-- **Care profiles checked against sources,** starting with the profiles the maintainer's own
-  plants use. Today all 28 are drafts. Each value is checked against at least two sources,
-  written in our own words, and cited; the maintainer approves the citations before a profile
-  is marked `reviewed`. The sources are ones that can be read and cited (university extension
+- **Care profiles checked against sources.** The eight used by the maintainer's own plants
+  were checked first and shipped in 1.1 ([review](care-review-2026-11.md)); the other 22 are
+  still drafts, with changes proposed in [part 2](care-review-2026-11-part-2.md). Each value
+  is checked against at least two sources, written in our own words, and cited; the
+  maintainer approves the citations before a profile is marked `reviewed`. The sources are ones that can be read and cited (university extension
   services, botanical gardens, the RHS, books and papers) or copied under an open licence;
   never other apps' data, or data with a non-commercial or unclear licence (see
   [care data sources](care-data-sources.md)).
