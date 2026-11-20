@@ -323,6 +323,7 @@ class _Importer:
                 else None,
                 notes=event_item.notes,
                 feedback=event_item.feedback,
+                amount_ml=event_item.amount_ml,
                 skipped=event_item.skipped,
                 estimated=event_item.estimated,
             )

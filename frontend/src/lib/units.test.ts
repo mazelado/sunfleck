@@ -8,6 +8,8 @@ import {
   displayToCm,
   hoursOn,
   waterDepth,
+  waterFromMl,
+  waterToMl,
   waterVolume,
 } from "./units";
 
@@ -50,5 +52,16 @@ describe("units", () => {
     expect(waterDepth(30, "metric")).toEqual({ unit: "mm", value: 30 });
     expect(waterDepth(25, "imperial")).toEqual({ unit: "inches", value: 1 });
     expect(waterDepth(2, "imperial")).toEqual({ unit: "inches", value: 0.25 });
+  });
+
+  it("shows water given as exactly as it was recorded, and converts it back", () => {
+    expect(waterFromMl(330, "metric")).toEqual({ unit: "ml", value: 330 });
+    expect(waterFromMl(1250, "metric")).toEqual({ unit: "litres", value: 1.25 });
+    expect(waterFromMl(89, "imperial")).toEqual({ unit: "flOz", value: 3.01 });
+    expect(waterFromMl(355, "imperial")).toEqual({ unit: "cups", value: 1.5 });
+    expect(waterFromMl(7571, "imperial")).toEqual({ unit: "gallons", value: 2 });
+    expect(waterToMl({ unit: "cups", value: 1.5 })).toBe(355);
+    expect(waterToMl({ unit: "litres", value: 1.25 })).toBe(1250);
+    expect(waterToMl({ unit: "flOz", value: 8 })).toBe(237);
   });
 });

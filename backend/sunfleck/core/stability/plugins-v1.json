@@ -80,6 +80,7 @@
       "user"
     ],
     "care.CareEvent": [
+      "amount_ml",
       "care_type",
       "created_at",
       "estimated",

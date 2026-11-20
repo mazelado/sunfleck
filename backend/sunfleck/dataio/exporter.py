@@ -128,6 +128,7 @@ def _plant(plant: Plant) -> schema.Plant:
                 performed_by=event.performed_by_id,
                 notes=event.notes,
                 feedback=event.feedback,
+                amount_ml=event.amount_ml,
                 skipped=event.skipped,
                 estimated=event.estimated,
             )

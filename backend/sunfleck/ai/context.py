@@ -107,6 +107,8 @@ def _recent_care(plant: Plant) -> list[str]:
             details.append("checked, not needed")
         if event.feedback:
             details.append(f"soil was {event.get_feedback_display().lower()}")
+        if event.amount_ml:
+            details.append(f"gave {event.amount_ml} ml")
         if event.notes:
             details.append(f'notes: "{event.notes[:200]}"')
         extra = f" ({'; '.join(details)})" if details else ""

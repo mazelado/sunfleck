@@ -109,6 +109,7 @@ function event(id: number, plantId: number): CareEvent {
     performed_by: null,
     notes: "",
     feedback: null,
+    amount_ml: null,
     skipped: false,
     estimated: false,
   };

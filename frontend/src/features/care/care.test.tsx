@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { CareEvent, TimelineItem } from "../../api/care";
+import type { Schedule } from "../../api/schedules";
 import type { Photo, Plant } from "../../api/plants";
 import { renderApp } from "../../test/render";
 import { ada, apiError, builtinCareTypes, server, signInAs } from "../../test/server";
@@ -50,6 +51,7 @@ function careEvent(overrides: Partial<CareEvent> = {}): CareEvent {
     performed_by: { id: 1, display_name: "Ada", avatar_url: null },
     notes: "",
     feedback: null,
+    amount_ml: null,
     skipped: false,
     estimated: false,
     ...overrides,
@@ -267,6 +269,84 @@ describe("custom watering types", () => {
 });
 
 describe("history", () => {
+  it("records how much water was given, the suggested amount in one tap", async () => {
+    signInAs(gardener);
+    withPlant();
+    const schedule: Schedule = {
+      id: 1,
+      plant_id: 7,
+      care_type: water,
+      mode: "predicted",
+      fixed_interval_days: null,
+      origin: "suggested",
+      enabled: true,
+      started_on: "2026-04-01",
+      snoozed_until: null,
+      due_on: null,
+      routine_suggestion: null,
+      routine_since: null,
+      interval_days: 6,
+      next_due: null,
+      factors: [{ code: "water_amount", multiplier: 1, details: { litres: 0.32, pot_litres: 2 } }],
+    };
+    const logged: Record<string, unknown>[] = [];
+    server.use(
+      http.get("*/api/v1/plants/7/schedules", () => HttpResponse.json([schedule])),
+      http.post("*/api/v1/plants/7/care-events", async ({ request }) => {
+        logged.push((await request.json()) as Record<string, unknown>);
+        return HttpResponse.json(careEvent(), { status: 201 });
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    // The suggested amount, in one tap.
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
+    let dialog = await screen.findByRole("dialog", { name: "Log care" });
+    const amount = within(dialog).getByRole("textbox", { name: /How much water/ });
+    expect(amount).toHaveValue("");
+    await user.click(
+      await within(dialog).findByRole("button", { name: "Use the suggested 300 ml" }),
+    );
+    expect(amount).toHaveValue("300");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(logged).toHaveLength(1);
+    });
+    expect(logged[0]).toMatchObject({ amount_ml: 300 });
+
+    // Another amount, in litres.
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
+    dialog = await screen.findByRole("dialog", { name: "Log care" });
+    await user.type(within(dialog).getByRole("textbox", { name: /How much water/ }), "1.25");
+    await user.selectOptions(within(dialog).getByRole("combobox", { name: "Unit" }), "L");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(logged).toHaveLength(2);
+    });
+    expect(logged[1]).toMatchObject({ amount_ml: 1250 });
+
+    // Skipped care has no amount.
+    await user.click(await screen.findByRole("button", { name: "Add earlier care" }));
+    dialog = await screen.findByRole("dialog", { name: "Log care" });
+    await user.type(within(dialog).getByRole("textbox", { name: /How much water/ }), "200");
+    await user.click(within(dialog).getByLabelText(/I checked, but didn't need to/));
+    expect(within(dialog).queryByRole("textbox", { name: /How much water/ })).toBeNull();
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(logged).toHaveLength(3);
+    });
+    expect(logged[2]).toMatchObject({ amount_ml: null, skipped: true });
+  });
+
+  it("shows how much water was given, in the person's units", async () => {
+    signInAs({ ...gardener, unit_system: "imperial" });
+    withPlant([careItem(careEvent({ amount_ml: 355 }))]);
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("1.5 cups given")).toBeVisible();
+  });
+
   it("marks care estimated when the plant was added", async () => {
     signInAs(gardener);
     withPlant([careItem(careEvent({ estimated: true }))]);
@@ -315,6 +395,7 @@ describe("history", () => {
         performed_at: watering.performed_at,
         notes: "",
         feedback: "just_right",
+        amount_ml: null,
         skipped: false,
       });
     });

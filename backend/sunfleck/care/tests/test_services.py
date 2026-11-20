@@ -93,12 +93,14 @@ def test_care_is_logged_now_by_default() -> None:
             care_type_id=builtin("water").pk,
             notes=" Bottom watered ",
             feedback="too_dry",  # type: ignore[arg-type]
+            amount_ml=400,
         ),
         user,
     )
 
     assert (event.performed_at, event.performed_by) == (NOW, user)
     assert (event.notes, event.feedback, event.skipped) == ("Bottom watered", "too_dry", False)
+    assert event.amount_ml == 400
 
 
 @pytest.mark.django_db
@@ -108,6 +110,8 @@ def test_care_is_logged_now_by_default() -> None:
     [
         ({"performed_at": NOW + timedelta(hours=1)}, "care_in_future", "performed_at"),
         ({"feedback": "still_wet", "key": "fertilize"}, "feedback_only_for_watering", "feedback"),
+        ({"amount_ml": 500, "key": "fertilize"}, "amount_only_for_watering", "amount_ml"),
+        ({"amount_ml": 500, "skipped": True}, "amount_when_skipped", "amount_ml"),
         ({"key": "other household"}, "care_type_not_found", "care_type_id"),
     ],
 )

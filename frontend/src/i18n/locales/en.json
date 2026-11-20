@@ -720,6 +720,17 @@
     "soil": "Soil: {{feedback}}",
     "howWasSoil": "How was the soil?",
     "howWasSoilHelp": "Before watering. This helps Sunfleck learn when this plant needs water.",
+    "amount": "How much water?",
+    "amountUnit": "Unit",
+    "useSuggestedAmount": "Use the suggested {{amount}}",
+    "gave": "{{amount}} given",
+    "waterUnits": {
+      "ml": "ml",
+      "litres": "L",
+      "flOz": "fl oz",
+      "cups": "cups",
+      "gallons": "gallons"
+    },
     "more": "More care",
     "logWithDetails": "Add details or another day…",
     "logCare": "Log care",

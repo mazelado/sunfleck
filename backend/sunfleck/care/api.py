@@ -17,6 +17,7 @@ from sunfleck.accounts.models import Household, Role, User
 from sunfleck.accounts.permissions import require_role
 from sunfleck.care import learning, schedules, selectors, services
 from sunfleck.care.models import (
+    MAX_WATER_ML,
     CareEvent,
     CareSchedule,
     CareType,
@@ -70,6 +71,7 @@ class CareEventOut(Schema):
     performed_by: PersonOut | None
     notes: str
     feedback: Feedback | None
+    amount_ml: int | None = Field(description="Watering only: how much water was given, in ml.")
     skipped: bool
     estimated: bool = Field(
         description="Estimated when the plant was added, rather than logged as it happened."
@@ -83,6 +85,13 @@ class CareEventIn(Schema):
     feedback: Feedback | None = Field(
         default=None,
         description="Care types that count as watering only: how the soil was beforehand.",
+    )
+    amount_ml: int | None = Field(
+        default=None,
+        ge=1,
+        le=MAX_WATER_ML,
+        description="Care types that count as watering only, and not skipped: how much water "
+        "was given, in millilitres.",
     )
     skipped: bool = Field(
         default=False, description="Checked, but decided not to (e.g. the soil was still wet)."
@@ -268,6 +277,7 @@ def _event_out(event: CareEvent) -> CareEventOut:
         performed_by=_person_out(event.performed_by),
         notes=event.notes,
         feedback=Feedback(event.feedback) if event.feedback else None,
+        amount_ml=event.amount_ml,
         skipped=event.skipped,
         estimated=event.estimated,
     )

@@ -974,6 +974,7 @@
       "items": "array",
       "items[].at": "string",
       "items[].care_event": "null|object",
+      "items[].care_event.amount_ml": "integer|null",
       "items[].care_event.care_type": "object",
       "items[].care_event.care_type.affects_prediction": "boolean",
       "items[].care_event.care_type.counts_as_watering": "boolean",
@@ -1398,6 +1399,7 @@
   "POST /api/v1/care-events/bulk": {
     "request": {
       "fields": {
+        "amount_ml": "integer|null",
         "care_type_id": "integer",
         "feedback": "null|string",
         "notes": "string",
@@ -1412,6 +1414,7 @@
     },
     "response": {
       "(body)": "array",
+      "[].amount_ml": "integer|null",
       "[].care_type": "object",
       "[].care_type.affects_prediction": "boolean",
       "[].care_type.counts_as_watering": "boolean",
@@ -2001,6 +2004,7 @@
   "POST /api/v1/plants/{plant_id}/care-events": {
     "request": {
       "fields": {
+        "amount_ml": "integer|null",
         "care_type_id": "integer",
         "feedback": "null|string",
         "notes": "string",
@@ -2015,6 +2019,7 @@
     },
     "response": {
       "(body)": "object",
+      "amount_ml": "integer|null",
       "care_type": "object",
       "care_type.affects_prediction": "boolean",
       "care_type.counts_as_watering": "boolean",
@@ -2543,6 +2548,7 @@
   "PUT /api/v1/care-events/{event_id}": {
     "request": {
       "fields": {
+        "amount_ml": "integer|null",
         "care_type_id": "integer",
         "feedback": "null|string",
         "notes": "string",
@@ -2557,6 +2563,7 @@
     },
     "response": {
       "(body)": "object",
+      "amount_ml": "integer|null",
       "care_type": "object",
       "care_type.affects_prediction": "boolean",
       "care_type.counts_as_watering": "boolean",

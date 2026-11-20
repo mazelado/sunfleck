@@ -9,6 +9,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **How much water was given**: when logging a watering, say how much you gave, in ml or litres,
+  or fl oz, cups or gallons for imperial units. One tap fills in the amount Sunfleck suggests.
+  The amount shows in the plant's care history, and it's in exports and the API (`amount_ml`)
+  (#222).
+
 ### Changed
 
 - **Eight care profiles checked against published sources**: tropical aroids, indoor trees,

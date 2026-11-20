@@ -97,11 +97,12 @@ def test_gardener_logs_watering_with_feedback(client_as: ClientAs, plant: Plant)
         client_as(Role.GARDENER),
         "POST",
         f"/api/v1/plants/{plant.pk}/care-events",
-        {"care_type_id": builtin("water").pk, "feedback": "too_dry"},
+        {"care_type_id": builtin("water").pk, "feedback": "too_dry", "amount_ml": 600},
     )
 
     assert response.status_code == 201
     event = response.json()
+    assert event["amount_ml"] == 600
     assert event["care_type"]["key"] == "water"
     assert event["performed_at"] == "2026-06-01T09:00:00Z"
     assert event["performed_by"]["display_name"]
@@ -155,6 +156,25 @@ def test_logging_another_households_care_type_names_the_field(
 
     assert response.status_code == 422
     assert response.json()["error"]["details"] == {"field": "care_type_id"}
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("amount", "status"), [(0, 422), (1_000_001, 422), (None, 201), (1_000_000, 201)]
+)
+def test_the_amount_of_water_given_has_limits(
+    client_as: ClientAs, plant: Plant, amount: int | None, status: int
+) -> None:
+    response = send(
+        client_as(Role.GARDENER),
+        "POST",
+        f"/api/v1/plants/{plant.pk}/care-events",
+        {"care_type_id": builtin("water").pk, "amount_ml": amount},
+    )
+
+    assert response.status_code == status
+    if status == 201:
+        assert response.json()["amount_ml"] == amount
 
 
 @pytest.mark.django_db

@@ -1675,6 +1675,11 @@ export interface components {
         BedType: "raised" | "in_ground";
         /** BulkCareIn */
         BulkCareIn: {
+            /**
+             * Amount Ml
+             * @description Care types that count as watering only, and not skipped: how much water was given, in millilitres.
+             */
+            amount_ml?: number | null;
             /** Care Type Id */
             care_type_id: number;
             /** @description Care types that count as watering only: how the soil was beforehand. */
@@ -1744,6 +1749,11 @@ export interface components {
         };
         /** CareEventIn */
         CareEventIn: {
+            /**
+             * Amount Ml
+             * @description Care types that count as watering only, and not skipped: how much water was given, in millilitres.
+             */
+            amount_ml?: number | null;
             /** Care Type Id */
             care_type_id: number;
             /** @description Care types that count as watering only: how the soil was beforehand. */
@@ -1767,6 +1777,11 @@ export interface components {
         };
         /** CareEventOut */
         CareEventOut: {
+            /**
+             * Amount Ml
+             * @description Watering only: how much water was given, in ml.
+             */
+            amount_ml: number | null;
             care_type: components["schemas"]["CareTypeOut"];
             /**
              * Estimated

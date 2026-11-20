@@ -117,6 +117,8 @@ class CareEvent(Model):
     skipped: bool
     # Estimated when the plant was added (added in 0.5; older exports don't have it).
     estimated: bool = False
+    # Watering only: how much water was given, in ml (added in 1.1).
+    amount_ml: int | None = None
 
 
 class Harvest(Model):

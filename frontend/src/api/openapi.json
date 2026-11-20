@@ -116,6 +116,20 @@
       },
       "BulkCareIn": {
         "properties": {
+          "amount_ml": {
+            "anyOf": [
+              {
+                "maximum": 1000000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Care types that count as watering only, and not skipped: how much water was given, in millilitres.",
+            "title": "Amount Ml"
+          },
           "care_type_id": {
             "title": "Care Type Id",
             "type": "integer"
@@ -280,6 +294,20 @@
       },
       "CareEventIn": {
         "properties": {
+          "amount_ml": {
+            "anyOf": [
+              {
+                "maximum": 1000000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Care types that count as watering only, and not skipped: how much water was given, in millilitres.",
+            "title": "Amount Ml"
+          },
           "care_type_id": {
             "title": "Care Type Id",
             "type": "integer"
@@ -329,6 +357,18 @@
       },
       "CareEventOut": {
         "properties": {
+          "amount_ml": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Watering only: how much water was given, in ml.",
+            "title": "Amount Ml"
+          },
           "care_type": {
             "$ref": "#/components/schemas/CareTypeOut"
           },
@@ -387,6 +427,7 @@
           "performed_by",
           "notes",
           "feedback",
+          "amount_ml",
           "skipped",
           "estimated"
         ],
