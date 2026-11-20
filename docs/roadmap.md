@@ -176,9 +176,7 @@ Split from Gardenia (0.7), not yet scheduled.
 
 - A simple **garden map** of the beds and what grows in them.
 - Companion planting hints (as a plugin with its own data).
-- **Toxicity to children** in the dataset, with the same rules as for pets: "known to be
-  toxic" with its source, or "unknown", never "safe". It needs its own sources, such as poison
-  control centres, since there's no single list like the ASPCA's.
+- Toxicity to people moved to [Monstera](#monstera-simple-by-default-planned) (1.3).
 
 ### Hibiscus: collector features (released)
 
@@ -291,6 +289,11 @@ Checking that what Sunfleck already says is right, before it says more.
   ones that can be read and cited (university extension services, botanical gardens, the RHS,
   books and papers) or copied under an open licence; never other apps' data, or data with a
   non-commercial or unclear licence (see [care data sources](care-data-sources.md)).
+- **Toxicity to pets, for every plant.** 0.5 flagged the common houseplants first; the rest,
+  including every outdoor and edible plant, were checked against the ASPCA's lists in the
+  [toxicity review](toxicity-review-2026-11.md), with NC State and Pet Poison Helpline where the
+  ASPCA has no entry: 63 flags, up from 29. The same rules: "known to be toxic" with its
+  source, or "unknown", never "safe".
 - **How well does Sunfleck predict?** For each plant, how often the soil was "just right"
   when it was watered, over time. It uses the answers already collected.
 - **A plant's watering history:** when it was watered and how much (#222), next to what was
@@ -304,6 +307,12 @@ Checking that what Sunfleck already says is right, before it says more.
   a collection), which sets the switches.
 - **Spanish,** for the app and for the care dataset's common names (from Wikidata, CC0). It
   comes before the explanations grow, so they're written once for both languages.
+- **Toxicity to people** in the dataset, with the same rules as for pets: "known to be
+  harmful" with its source, or "unknown", never "safe". Unlike pets, it says how serious it is
+  and whether touching the plant is a problem too (e.g. *Euphorbia* sap). There's no single
+  list like the ASPCA's, so it's checked against several, such as NC State's Plant Toolbox,
+  the RHS's list of potentially harmful garden plants and poison control centres, in a review
+  first, as for pets.
 
 ### Nasturtium: sensors, to look at (planned)
 

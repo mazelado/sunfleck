@@ -21,6 +21,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   with them. Exports from earlier versions still import; their care is shown
   as done "before Sunfleck predicted it".
 
+- **Toxicity to pets, for many more plants**: 63 plants and genera now say they're known to
+  be toxic to cats or dogs, up from 29. Among them are garden and kitchen plants such as
+  tulips, daffodils, daylilies (to cats), onions and garlic, tomatoes, citrus, mint, lavender
+  and hydrangeas, and houseplants such as the ZZ plant, croton and string of pearls. Catnip,
+  pencil cactus and two *Cordyline* species are new to the dataset. Where the ASPCA's list has
+  no entry, the NC State Extension Plant Toolbox or Pet Poison Helpline is the source. Each
+  flag cites its source, and a plant without one still says "not known", never "safe"; see
+  the [review](docs/toxicity-review-2026-11.md) (#238).
+
 ### Changed
 
 - **Every care profile checked against published sources**: the last 22, from cacti and ferns

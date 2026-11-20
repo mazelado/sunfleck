@@ -72,7 +72,7 @@ A genus or species can say it's **known to be toxic** to cats and dogs, with the
     cats: toxic
     dogs: toxic
     sources:
-      - https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/<entry>
+      - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/<entry>
     note:
       en: Insoluble calcium oxalates   # optional: what the source names as the toxic part
 ```
@@ -80,10 +80,16 @@ A genus or species can say it's **known to be toxic** to cats and dogs, with the
 - **Only "toxic", never "safe".** Without `toxicity`, a plant's toxicity is *unknown*, and
   Sunfleck says exactly that. Even where a source lists a plant as non-toxic, it isn't recorded:
   a wrong "safe" can hurt a pet; a missing "toxic" only leaves the person to check.
-- **Every flag has a source**: the page of the source's own entry for that plant, currently
-  the [ASPCA Animal Poison Control](https://www.aspca.org/pet-care/animal-poison-control) list
-  for cats and dogs. Check each entry by hand. The facts can be used, but the list itself is
-  copyrighted: cite its entries, don't copy it wholesale.
+- **Every flag has a source**: the page of the source's own entry for that plant. Check each
+  entry by hand. The facts can be used, but the lists themselves are copyrighted: cite their
+  entries, don't copy them wholesale.
+  - **First, the [ASPCA Animal Poison Control](https://www.aspca.org/pet-care/aspca-poison-control)
+    list** for cats and dogs.
+  - **Only where the ASPCA has no entry,** the plant's page at the
+    [NC State Extension Plant Toolbox](https://plants.ces.ncsu.edu/) or
+    [Pet Poison Helpline](https://www.petpoisonhelpline.com/), and only when it says the plant
+    is toxic to pets, cats or dogs. A page about people only isn't enough. Where it says
+    "pets", record cats and dogs, unless it names one of them.
 - **Genus or species:** put the flag on the genus only when the source lists its common
   species. When species differ, put it on those species. A species without its own
   `toxicity` takes its genus's.

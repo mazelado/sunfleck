@@ -37,7 +37,7 @@ def test_search_species(client_as: ClientAs) -> None:
             "cats": True,
             "dogs": True,
             "sources": [
-                "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
+                "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
             ],
             "note": "Insoluble calcium oxalates",
         },
@@ -173,7 +173,7 @@ def test_plant_gets_its_species_care_profile(client_as: ClientAs) -> None:
             "cats": True,
             "dogs": True,
             "sources": [
-                "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
+                "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant"
             ],
             "note": "Insoluble calcium oxalates",
         },
