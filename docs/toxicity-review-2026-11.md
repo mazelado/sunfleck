@@ -139,14 +139,55 @@ The citation links were updated to the ASPCA's new address too.
   redirect, but 22 of the 29 citations use them. Change them to the new address. Scope:
   links only. Risk: none.
 
+## Addendum: a second source (decided 2026-11-20)
+
+Some popular houseplants aren't in the ASPCA's list at all, so they stayed unknown. Two more
+sources were checked for them, on 2026-11-20:
+
+- **The [NC State Extension Plant Toolbox](https://plants.ces.ncsu.edu/).** Its "Poison"
+  fields (severity, symptoms, toxic part) are about **people**. It mentions pets only in some
+  plants' descriptions, and in tags such as "problem for cats" and "problem for dogs".
+- **[Pet Poison Helpline](https://www.petpoisonhelpline.com/).** Its pages say "toxic to
+  pets", without naming cats or dogs, and it has no page for most of these plants.
+
+| Plant | NC State | Pet Poison Helpline |
+|---|---|---|
+| ZZ plant | "medium toxicity to cats and dogs" | no page |
+| *Monstera adansonii* | "toxic to humans and pets"; tagged for cats and dogs | no page |
+| String of pearls (*Curio rowleyanus*) | "toxic to both humans and pets"; tagged for cats and dogs | no page found |
+| Croton (*Codiaeum variegatum*) | about people only | toxic to pets: mild mouth and stomach irritation |
+| Crown of thorns (*Euphorbia milii*) | tagged for cats and dogs, no text | toxic to pets: mild irritation, sap irritates skin and eyes |
+| *Rhaphidophora*, *Homalomena*, *Agave*, avocado | about people only, tags only, or nothing | no page, or not readable |
+
+Options:
+
+- **A. NC State, only where its text names pets:** ZZ plant, *M. adansonii*, string of pearls.
+  Risk: low.
+- **B. A, and Pet Poison Helpline:** also croton and crown of thorns. Risk: low to medium, as
+  "pets" is recorded as cats and dogs.
+- **C. The ASPCA only.** Risk: these stay unknown.
+
+**Decided: B** (dataset 2026.11.7). The README's rule now says: the ASPCA first; only where it has no entry, NC
+State or Pet Poison Helpline, when the page says the plant is toxic to pets, cats or dogs;
+"pets" is recorded as cats and dogs unless one is named. A page about people only isn't
+enough. Five species are flagged:
+
+| Species | Common name | Source | Toxic part (note) |
+|---|---|---|---|
+| *Zamioculcas zamiifolia* | ZZ plant | NC State | Calcium oxalate |
+| *Monstera adansonii* | Swiss cheese vine | NC State | Calcium oxalate crystals |
+| *Curio rowleyanus* | string of pearls | NC State | Pyrrolizidine alkaloids |
+| *Codiaeum variegatum* | croton | Pet Poison Helpline | Mild irritation of the mouth and stomach; the sap can irritate skin |
+| *Euphorbia milii* | crown of thorns | Pet Poison Helpline | Mild irritation of the mouth and stomach; the sap can irritate skin and eyes |
+
+That makes **63 flags** in all.
+
 ## Noted for later
 
-- **Plants often called toxic that the ASPCA doesn't list,** so they stay unknown for now:
-  ZZ plant (*Zamioculcas*), *Rhaphidophora*, *Monstera adansonii*, *Homalomena*, croton
-  (*Codiaeum*), crown of thorns, string of pearls (*Curio*), *Agave*, and avocado (the ASPCA
-  covers avocado under foods to avoid, not in its plant list). Covering them needs a second
-  source that names each plant, for example a university extension service. A change to the
-  README's "currently the ASPCA" rule is for a later release.
+- **Still unknown:** *Rhaphidophora* (NC State tags it as a problem for cats and dogs, but
+  says nothing about pets in its text), *Homalomena*, *Agave* and avocado (the ASPCA covers
+  avocado under foods to avoid, not in its plant list). Each needs a page that says it's
+  toxic to pets.
 - **Poinsettia** (*Euphorbia pulcherrima*), when a care profile for it has been checked
   against sources.
 - **Toxicity to people** is planned for [1.3 Monstera](roadmap.md#monstera-simple-by-default-planned),

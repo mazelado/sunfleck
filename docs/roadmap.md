@@ -291,7 +291,8 @@ Checking that what Sunfleck already says is right, before it says more.
   non-commercial or unclear licence (see [care data sources](care-data-sources.md)).
 - **Toxicity to pets, for every plant.** 0.5 flagged the common houseplants first; the rest,
   including every outdoor and edible plant, were checked against the ASPCA's lists in the
-  [toxicity review](toxicity-review-2026-11.md): 58 flags, up from 29. The same rules: "known to be toxic" with its
+  [toxicity review](toxicity-review-2026-11.md), with NC State and Pet Poison Helpline where the
+  ASPCA has no entry: 63 flags, up from 29. The same rules: "known to be toxic" with its
   source, or "unknown", never "safe".
 - **How well does Sunfleck predict?** For each plant, how often the soil was "just right"
   when it was watered, over time. It uses the answers already collected.

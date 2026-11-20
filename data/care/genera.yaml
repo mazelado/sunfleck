@@ -28,6 +28,13 @@ genera:
       en:
       - Swiss cheese vine
       - monkey mask
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://plants.ces.ncsu.edu/plants/monstera-adansonii/
+      note:
+        en: Calcium oxalate crystals
 - genus: Philodendron
   family: Araceae
   archetype: tropical_aroid
@@ -357,6 +364,13 @@ genera:
       en:
       - ZZ plant
       - Zanzibar gem
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://plants.ces.ncsu.edu/plants/zamioculcas-zamiifolia/
+      note:
+        en: Calcium oxalate
 - genus: Sansevieria
   family: Asparagaceae
   archetype: low_light_tough
@@ -719,6 +733,13 @@ genera:
       en:
       - croton
       - garden croton
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.petpoisonhelpline.com/poison/croton/
+      note:
+        en: Mild irritation of the mouth and stomach; the sap can irritate skin
 - genus: Araucaria
   family: Araucariaceae
   archetype: indoor_tree
@@ -1096,6 +1117,13 @@ genera:
       - string of pearls
     synonyms:
     - Senecio rowleyanus
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://plants.ces.ncsu.edu/plants/curio-rowleyanus/
+      note:
+        en: Pyrrolizidine alkaloids
 - genus: Senecio
   family: Asteraceae
   archetype: succulent
@@ -1126,6 +1154,13 @@ genera:
     common_names:
       en:
       - crown of thorns
+    toxicity:
+      cats: toxic
+      dogs: toxic
+      sources:
+      - https://www.petpoisonhelpline.com/poison/crown-of-thorns/
+      note:
+        en: Mild irritation of the mouth and stomach; the sap can irritate skin and eyes
   - name: Euphorbia trigona
     common_names:
       en:
