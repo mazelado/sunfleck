@@ -8,7 +8,7 @@ profiles by key, since those come from the care dataset rather than the househol
 
 from datetime import date, datetime, time
 from decimal import Decimal
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -148,6 +148,15 @@ class Conversation(Model):
     messages: list[Message]
 
 
+class Prediction(Model):
+    """A change in a schedule's prediction, kept to compare the care given with it."""
+
+    calculated_at: datetime
+    interval_days: int | None
+    next_due: date | None
+    factors: list[dict[str, Any]] = Field(default_factory=list)
+
+
 class Schedule(Model):
     care_type: CareTypeRef
     mode: str
@@ -159,6 +168,9 @@ class Schedule(Model):
     # Watering matched to the person's routine (added in 0.4; older exports don't have it).
     routine_multiplier: float = 1.0
     routine_set_on: date | None = None
+    # Added in 1.2: older exports have no past predictions, so their care history has
+    # nothing to be compared with.
+    predictions: list[Prediction] = Field(default_factory=list)
 
 
 class Plant(Model):

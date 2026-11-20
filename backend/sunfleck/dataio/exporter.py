@@ -14,7 +14,7 @@ from django.utils import timezone
 from sunfleck import __version__
 from sunfleck.accounts.models import Household
 from sunfleck.ai.models import Conversation
-from sunfleck.care.models import CareEvent, CareSchedule, CareType
+from sunfleck.care.models import CareEvent, CareSchedule, CareType, ScheduleAdjustment
 from sunfleck.dataio import schema
 from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import Site
@@ -174,6 +174,15 @@ def _plant(plant: Plant) -> schema.Plant:
                 snoozed_until=item.snoozed_until,
                 routine_multiplier=item.routine_multiplier,
                 routine_set_on=item.routine_set_on,
+                predictions=[
+                    schema.Prediction(
+                        calculated_at=adjustment.calculated_at,
+                        interval_days=adjustment.interval_days,
+                        next_due=adjustment.next_due,
+                        factors=adjustment.factors,
+                    )
+                    for adjustment in item.adjustments.all()
+                ],
             )
             for item in plant.schedules.all()
         ],
@@ -204,7 +213,15 @@ def build(household: Household) -> schema.Export:
                     "messages"
                 ),
             ),
-            Prefetch("schedules", queryset=CareSchedule.objects.select_related("care_type")),
+            Prefetch(
+                "schedules",
+                queryset=CareSchedule.objects.select_related("care_type").prefetch_related(
+                    Prefetch(
+                        "adjustments",
+                        queryset=ScheduleAdjustment.objects.order_by("calculated_at", "pk"),
+                    )
+                ),
+            ),
         )
         .order_by("pk")
     )

@@ -11,6 +11,7 @@ import { CareEventDialog } from "./CareEventDialog";
 import { CareRing } from "./CareRing";
 import { FactorList } from "./FactorList";
 import { PutOffDialog } from "./PutOffDialog";
+import { ScheduleHistory } from "./ScheduleHistory";
 import { ScheduleMenu } from "./ScheduleMenu";
 import { daysUntil, describeDue, describeInterval, describeWaterAmount } from "./scheduleText";
 import { urgency, URGENCY_TEXT } from "./urgency";
@@ -37,6 +38,7 @@ export function ScheduleRow({ schedule, plantName, level, canEdit, onEdit }: Sch
   const units = useUnits();
   const quick = useQuickLog(schedule.plant_id, plantName);
   const [showWhy, setShowWhy] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [dialog, setDialog] = useState<"putOff" | "details" | null>(null);
   const careName = name(schedule.care_type);
   const due = schedule.enabled && schedule.due_on !== null ? daysUntil(schedule.due_on) : null;
@@ -45,6 +47,8 @@ export function ScheduleRow({ schedule, plantName, level, canEdit, onEdit }: Sch
     schedule.interval_days === null
       ? null
       : describeWaterAmount(schedule.factors, { t, locale: i18n.language, units });
+  // Its history, once there's some: until the care is first logged, there's nothing to show.
+  const logged = !schedule.factors.some((factor) => factor.code === "not_logged");
 
   return (
     <Stack gap={4}>
@@ -89,6 +93,17 @@ export function ScheduleRow({ schedule, plantName, level, canEdit, onEdit }: Sch
                 </>
               )}{" "}
               · <WhyToggle shown={showWhy} onToggle={setShowWhy} />
+              {logged && (
+                <>
+                  {" "}
+                  ·{" "}
+                  <WhyToggle
+                    label={t("schedules.history")}
+                    shown={showHistory}
+                    onToggle={setShowHistory}
+                  />
+                </>
+              )}
             </Text>
             {amount && (
               <Text size="sm" c="dimmed">
@@ -130,6 +145,12 @@ export function ScheduleRow({ schedule, plantName, level, canEdit, onEdit }: Sch
         <FactorList
           factors={schedule.factors}
           label={t("schedules.whyTitle", { name: careName })}
+        />
+      )}
+      {showHistory && (
+        <ScheduleHistory
+          schedule={schedule}
+          label={t("schedules.historyTitle", { name: careName })}
         />
       )}
       {dialog === "putOff" && (

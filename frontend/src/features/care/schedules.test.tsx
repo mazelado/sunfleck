@@ -4,12 +4,18 @@ import { describe, expect, it } from "vitest";
 
 import type { Me } from "../../api/accounts";
 import type { Plant } from "../../api/plants";
-import type { Factor, Schedule, Suggestion } from "../../api/schedules";
+import type { Factor, HistoryEntry, Schedule, Suggestion } from "../../api/schedules";
 import type { CareProfile } from "../../api/taxonomy";
 import i18n from "../../i18n";
 import { renderApp } from "../../test/render";
 import { ada, builtinCareTypes, server, signInAs } from "../../test/server";
-import { daysUntil, describeDue, describeWaterAmount, explainFactor } from "./scheduleText";
+import {
+  daysUntil,
+  describeDue,
+  describeFromDue,
+  describeWaterAmount,
+  explainFactor,
+} from "./scheduleText";
 
 const t = i18n.t.bind(i18n);
 const gardener: Me = { ...ada, role: "gardener" };
@@ -634,5 +640,99 @@ describe("the care schedule", () => {
         enabled: true,
       });
     });
+  });
+});
+
+function historyEntry(
+  id: number,
+  done_on: string,
+  fromDue: Partial<HistoryEntry>,
+  event: Partial<HistoryEntry["care_event"]> = {},
+): HistoryEntry {
+  return {
+    care_event: {
+      id,
+      plant_id: 7,
+      care_type: waterSchedule.care_type,
+      performed_at: `${done_on}T09:00:00Z`,
+      performed_by: null,
+      notes: "",
+      feedback: null,
+      amount_ml: null,
+      skipped: false,
+      estimated: false,
+      ...event,
+    },
+    done_on,
+    predicted: true,
+    predicted_due: null,
+    predicted_interval_days: 6,
+    days_from_due: null,
+    ...fromDue,
+  };
+}
+
+describe("a schedule's history", () => {
+  it("says how far from the due date care was given", () => {
+    const entry = (fromDue: Partial<HistoryEntry>) =>
+      describeFromDue(historyEntry(1, "2026-04-10", fromDue), t);
+
+    expect(entry({ predicted_due: "2026-04-10", days_from_due: 0 })).toBe("On the day it was due");
+    expect(entry({ predicted_due: "2026-04-09", days_from_due: 1 })).toBe("1 day after it was due");
+    expect(entry({ predicted_due: "2026-04-13", days_from_due: -3 })).toBe(
+      "3 days before it was due",
+    );
+    expect(entry({})).toBe("While it was resting");
+    expect(entry({ predicted: false })).toBe("Before Sunfleck predicted it");
+  });
+
+  it("shows each watering next to when it was due", async () => {
+    signInAs({ ...ada, role: "viewer" });
+    withPlant([waterSchedule]);
+    server.use(
+      http.get("*/api/v1/care-schedules/1/history", () =>
+        HttpResponse.json([
+          historyEntry(
+            3,
+            "2026-04-14",
+            { predicted_due: "2026-04-12", days_from_due: 2 },
+            { feedback: "too_dry", amount_ml: 250 },
+          ),
+          historyEntry(
+            2,
+            "2026-04-06",
+            { predicted_due: "2026-04-06", days_from_due: 0 },
+            { feedback: "just_right" },
+          ),
+          historyEntry(1, "2026-03-30", { predicted: false }),
+        ]),
+      ),
+    );
+    const { user } = renderApp("/plants/7");
+
+    await user.click(await screen.findByRole("button", { name: "History" }));
+
+    const history = await screen.findByRole("list", {
+      name: "Water: each time, next to when it was due",
+    });
+    const [late, onTime, first] = within(history).getAllByRole("listitem");
+    expect(late).toHaveTextContent(/2 days after it was due.*Soil: Too dry.*250 ml given/);
+    expect(onTime).toHaveTextContent(/On the day it was due.*Soil: Just right/);
+    expect(first).toHaveTextContent("Before Sunfleck predicted it");
+    expect(screen.getByTestId("history-strip")).toBeInTheDocument();
+  });
+
+  it("isn't offered until the care has been logged", async () => {
+    signInAs({ ...ada, role: "viewer" });
+    const notLogged: Factor = {
+      code: "not_logged",
+      multiplier: 1,
+      details: { since: "2026-04-01" },
+    };
+    withPlant([{ ...waterSchedule, factors: [season, notLogged] }]);
+    renderApp("/plants/7");
+
+    expect(await screen.findByRole("button", { name: "Why?" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "History" })).not.toBeInTheDocument();
   });
 });

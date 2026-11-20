@@ -22,7 +22,7 @@ from pydantic import ValidationError as SchemaError
 
 from sunfleck.accounts.models import Household, User
 from sunfleck.ai.models import Conversation, Message
-from sunfleck.care.models import CareEvent, CareSchedule, CareType
+from sunfleck.care.models import CareEvent, CareSchedule, CareType, ScheduleAdjustment
 from sunfleck.core.images import (
     IMAGE_MAX_EDGE,
     IMAGE_QUALITY,
@@ -367,6 +367,19 @@ class _Importer:
             )
             _check(schedule, f"schedule of {item.nickname!r}")
             schedule.save()
+            adjustments = [
+                ScheduleAdjustment(
+                    schedule=schedule,
+                    calculated_at=prediction.calculated_at,
+                    interval_days=prediction.interval_days,
+                    next_due=prediction.next_due,
+                    factors=prediction.factors,
+                )
+                for prediction in schedule_item.predictions
+            ]
+            for adjustment in adjustments:
+                _check(adjustment, f"past prediction for {item.nickname!r}")
+            ScheduleAdjustment.objects.bulk_create(adjustments)
 
     def import_conversation(self, plant: Plant, item: schema.Conversation) -> None:
         where = f"conversation about {plant.nickname!r}"

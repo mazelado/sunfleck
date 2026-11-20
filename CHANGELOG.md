@@ -9,6 +9,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **A plant's care history, next to what Sunfleck predicted**: **History**, next to **Why?** on
+  each care schedule, shows when the care was done, how many days before or after it was due,
+  the soil feedback and the water given, with a row of dots to see it at a glance.
+- **Exports keep past predictions**, so a restored household's history can still be compared
+  with them. Exports from earlier versions still import; their care is shown
+  as done "before Sunfleck predicted it".
+
 ### Changed
 
 - **Every care profile checked against published sources**: the last 22, from cacti and ferns

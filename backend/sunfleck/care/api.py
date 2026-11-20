@@ -110,6 +110,28 @@ class TimelinePage(Schema):
     next_cursor: str | None = Field(description="Pass as `before` to get the next page.")
 
 
+class HistoryEntryOut(Schema):
+    care_event: CareEventOut
+    done_on: date = Field(description="The day it was done, where the plant grows.")
+    predicted: bool = Field(
+        description="Whether Sunfleck had predicted this care before it was done. Care from "
+        "before its schedule was added, or imported from an export made before 1.2, has "
+        "nothing to compare with."
+    )
+    predicted_due: date | None = Field(
+        description="When the prediction in force just before it was done said it was due; "
+        "none while resting."
+    )
+    predicted_interval_days: int | None
+    days_from_due: int | None = Field(
+        description="Days after the predicted due date; negative: before it."
+    )
+
+
+class HistoryQuery(Schema):
+    limit: int = Field(default=20, ge=1, le=100)
+
+
 class TimelineQuery(Schema):
     before: str | None = Field(default=None, max_length=100)
     limit: int = Field(default=30, ge=1, le=100)
@@ -514,6 +536,27 @@ def plant_timeline(request: HttpRequest, plant_id: int, page: Query[TimelineQuer
 
 
 # --- Schedules and the suggested routine ------------------------------------------------------
+
+
+@router.get("/care-schedules/{schedule_id}/history", response=list[HistoryEntryOut])
+def schedule_history(
+    request: HttpRequest, schedule_id: int, query: Query[HistoryQuery]
+) -> list[HistoryEntryOut]:
+    """The care given for a schedule, newest first, each next to what Sunfleck predicted
+    when it was done."""
+    household = require_role(request, Role.VIEWER).household
+    schedule = _get_schedule(household, schedule_id)
+    return [
+        HistoryEntryOut(
+            care_event=_event_out(entry.event),
+            done_on=entry.done_on,
+            predicted=entry.predicted,
+            predicted_due=entry.predicted_due,
+            predicted_interval_days=entry.predicted_interval_days,
+            days_from_due=entry.days_from_due,
+        )
+        for entry in selectors.schedule_history(schedule, query.limit)
+    ]
 
 
 @router.get("/plants/{plant_id}/schedules", response=list[ScheduleOut])

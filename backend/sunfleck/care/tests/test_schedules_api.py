@@ -199,3 +199,44 @@ def test_other_households_plants_and_schedules_are_hidden(client_as: ClientAs) -
         "schedule_not_found",
         "schedule_not_found",
     ]
+
+
+def test_a_schedules_history_shows_care_next_to_what_was_predicted(
+    client_as: ClientAs, monty: Plant
+) -> None:
+    gardener = client_as(Role.GARDENER)
+    item = {"care_type_id": builtin("water").pk, "mode": "predicted"}
+    schedule = send(gardener, "POST", f"/api/v1/plants/{monty.pk}/schedules", item).json()
+    assert schedule["next_due"] == "2026-04-22"
+    with time_machine.travel(datetime(2026, 4, 24, 9, tzinfo=UTC), tick=False):
+        logged = send(
+            gardener,
+            "POST",
+            f"/api/v1/plants/{monty.pk}/care-events",
+            {"care_type_id": builtin("water").pk, "feedback": "too_dry", "amount_ml": 250},
+        ).json()
+
+        history = client_as(Role.VIEWER).get(f"/api/v1/care-schedules/{schedule['id']}/history")
+
+    assert history.status_code == 200
+    (entry,) = history.json()
+    assert entry["care_event"]["id"] == logged["id"]
+    assert (entry["care_event"]["feedback"], entry["care_event"]["amount_ml"]) == ("too_dry", 250)
+    assert {key: value for key, value in entry.items() if key != "care_event"} == {
+        "done_on": "2026-04-24",
+        "predicted": True,
+        "predicted_due": "2026-04-22",
+        "predicted_interval_days": 7,
+        "days_from_due": 2,
+    }
+
+
+def test_other_households_schedule_history_is_hidden(client_as: ClientAs) -> None:
+    schedule = schedules.create_schedule(
+        PlantFactory.create(), schedules.ScheduleData(builtin("mist").pk, ScheduleMode.FIXED, 3)
+    )
+
+    response = client_as(Role.GARDENER).get(f"/api/v1/care-schedules/{schedule.pk}/history")
+
+    assert response.status_code == 404
+    assert response.json()["error"]["code"] == "schedule_not_found"
