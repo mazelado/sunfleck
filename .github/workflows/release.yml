@@ -24,6 +24,9 @@ jobs:
             found && (/^## \[/ || /^\[[^]]*\]: /) { exit }
             found { print }
           ' CHANGELOG.md > notes.md
+          # Links in the changelog are relative to the repository ("docs/…"); on the release
+          # page they'd lead nowhere, so point them at the files as they are at this tag.
+          sed -E -i "s#\]\(([^):#][^):]*)\)#](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/\1)#g" notes.md
           if ! grep -q "[^[:space:]]" notes.md; then
             echo "CHANGELOG.md has no section for $version" >&2
             exit 1
