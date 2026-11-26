@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { type InvitationCreated, type Role, useCreateInvitation } from "../../api/accounts";
 import { CopyableLink } from "../../components/CopyableLink";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { LeaveDialog } from "../../components/LeaveDialog";
+import { useLeaveGuard } from "../../lib/useLeaveGuard";
 import { useRoleOptions } from "./useRoleOptions";
 
 export function InviteForm() {
@@ -16,6 +18,8 @@ export function InviteForm() {
     initialValues: { email: "", role: "gardener" },
     validate: { email: isEmail(t("validation.email")) },
   });
+  // An email typed but no invitation made: ask before leaving, since nobody was invited yet.
+  const leaveGuard = useLeaveGuard(() => form.getValues().email.trim() !== "");
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
@@ -53,6 +57,11 @@ export function InviteForm() {
           </Button>
         </Stack>
       </form>
+      <LeaveDialog
+        blocker={leaveGuard.blocker}
+        title={t("household.inviteNotSentTitle")}
+        message={t("household.inviteNotSent", { button: t("household.sendInvitation") })}
+      />
       {created && (
         <Paper withBorder radius="md" p="md" bg="var(--mantine-color-green-light)" role="status">
           <Stack gap="xs">

@@ -11,7 +11,7 @@ It's run once per round, with the same tasks, so rounds can be compared:
   in 1.0.
 - **Round 2 (1.2), on phones:** whether round 1's fixes work, and the care history added
   since. See [round 2](#round-2-12) for what's different;
-  [results](usability-test-results-1.2-round-2.md), to fill in.
+  [results](usability-test-results-1.2-round-2.md). Its problems rated 3 are fixed before 1.2.
 
 - **Who runs it:** the maintainer (the *moderator*), with this plan.
 - **What's needed:** 3 to 5 people, about 45 minutes each (50 in round 2), a test copy of

@@ -217,6 +217,31 @@ describe("notifications", () => {
     });
   });
 
+  it("say that nothing is sent until there's somewhere to send it", async () => {
+    signInAs(ada);
+    server.use(
+      http.put("*/api/v1/notifications/preferences", async ({ request }) =>
+        HttpResponse.json(await request.json()),
+      ),
+    );
+    const { user } = renderApp("/settings/notifications");
+
+    // In the usability test, everyone took the times for the whole setup.
+    expect(await screen.findByText(/Nothing is sent yet/)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText(/Saved. Nothing will be sent until/)).toBeVisible();
+  });
+
+  it("don't warn about the times once there's a channel", async () => {
+    signInAs(ada);
+    withChannels([phone]);
+    renderApp("/settings/notifications");
+
+    expect(await screen.findByText("My phone")).toBeVisible();
+    expect(screen.queryByText(/Nothing is sent yet/)).toBeNull();
+  });
+
   it("preview today's digest", async () => {
     signInAs(ada);
     server.use(
@@ -438,6 +463,27 @@ describe("notifications", () => {
 
       expect(await screen.findByText(/This browser can't get notifications/)).toBeVisible();
       expect(screen.queryByRole("button", { name: "Get notifications on this device" })).toBeNull();
+    });
+
+    it("explain the steps on an iPhone that hasn't added Sunfleck to the Home Screen", async () => {
+      signInAs(ada);
+      vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Safari/604.1",
+      );
+
+      renderApp("/settings/notifications");
+
+      expect(
+        await screen.findByText(/only send notifications once it's on your Home/),
+      ).toBeVisible();
+      const steps = within(screen.getByRole("list")).getAllByRole("listitem");
+      expect(steps.map((step) => step.textContent)).toEqual([
+        "Tap the Share button in Safari (a square with an arrow).",
+        "Choose Add to Home Screen, then Add.",
+        "Open Sunfleck from your Home Screen, and come back here to turn notifications on.",
+      ]);
+      expect(screen.queryByRole("button", { name: "Get notifications on this device" })).toBeNull();
+      vi.restoreAllMocks();
     });
 
     it("show a device like a channel, without an address to change", async () => {

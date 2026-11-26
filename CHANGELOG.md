@@ -32,6 +32,13 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Notifications say when nothing will be sent**: until this device or another way is added,
+  the times say that nothing is sent yet, and so does saving them. On an iPhone or iPad, **This
+  device** lists the steps to add Sunfleck to the Home Screen. In the usability test, everyone
+  took the times for the whole setup (#241).
+- **Inviting someone is harder to miss**: the household name's **Save** stays off until the
+  name changes, and leaving with an email typed but nobody invited asks first. In the usability
+  test, people pressed that **Save** instead of **Create invitation** (#241).
 - **Every care profile checked against published sources**: the last 22, from cacti and ferns
   to vegetables and garden shrubs, now cite extension services and the RHS, like the first
   eight. Some values changed: ferns, begonias and Christmas cacti are told they need a little
