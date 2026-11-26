@@ -1,0 +1,1039 @@
+# Spanish translation of Sunfleck's server texts (emails, notifications, the admin).
+# See docs/translating.md: tú, one Spanish for every country, and its glossary.
+# This file is distributed under the same license as Sunfleck (AGPL-3.0).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Sunfleck\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 05:24+0000\n"
+"PO-Revision-Date: 2026-11-26 05:30+0000\n"
+"Last-Translator: Sunfleck contributors\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+
+#: sunfleck/accounts/admin.py:35
+msgid "Profile"
+msgstr "Perfil"
+
+#: sunfleck/accounts/admin.py:37
+msgid "Permissions"
+msgstr "Permisos"
+
+#: sunfleck/accounts/admin.py:40
+msgid "Important dates"
+msgstr "Fechas importantes"
+
+#: sunfleck/accounts/admin.py:59
+#, python-format
+msgid ""
+"%(person)s already belongs to a household. Each person can belong to one."
+msgstr ""
+"%(person)s ya pertenece a un hogar. Cada persona puede pertenecer a uno."
+
+#: sunfleck/accounts/api.py:282
+#, python-format
+msgid "You're invited to %(household)s on Sunfleck"
+msgstr "Te han invitado a %(household)s en Sunfleck"
+
+#: sunfleck/accounts/api.py:286
+#, python-format
+msgid ""
+"%(inviter)s invited you to join %(household)s on Sunfleck, a plant care "
+"app.\n"
+"\n"
+"Accept the invitation and create your account here:\n"
+"%(url)s\n"
+"\n"
+"The link works for 7 days."
+msgstr ""
+"%(inviter)s te ha invitado a unirte a %(household)s en Sunfleck, una app "
+"para cuidar plantas.\n"
+"\n"
+"Acepta la invitación y crea tu cuenta aquí:\n"
+"%(url)s\n"
+"\n"
+"El enlace funciona durante 7 días."
+
+#: sunfleck/accounts/models.py:38
+msgid "Metric"
+msgstr "Métrico"
+
+#: sunfleck/accounts/models.py:39
+msgid "Imperial"
+msgstr "Imperial"
+
+#: sunfleck/accounts/models.py:45 sunfleck/accounts/models.py:172
+msgid "email address"
+msgstr "dirección de correo"
+
+#: sunfleck/accounts/models.py:46
+msgid "display name"
+msgstr "nombre visible"
+
+#: sunfleck/accounts/models.py:47
+msgid "language"
+msgstr "idioma"
+
+#: sunfleck/accounts/models.py:49
+msgid "units"
+msgstr "unidades"
+
+#: sunfleck/accounts/models.py:51
+msgid "active"
+msgstr "activo"
+
+#: sunfleck/accounts/models.py:53
+msgid "staff status"
+msgstr "acceso de personal"
+
+#: sunfleck/accounts/models.py:55
+msgid "Whether the user can sign in to the Django admin site."
+msgstr ""
+"Si la persona puede iniciar sesión en el sitio de administración de Django."
+
+#: sunfleck/accounts/models.py:57
+msgid "date joined"
+msgstr "fecha de alta"
+
+#: sunfleck/accounts/models.py:59
+msgid "profile picture"
+msgstr "foto de perfil"
+
+#: sunfleck/accounts/models.py:63
+msgid "profile picture's photo"
+msgstr "foto original de la foto de perfil"
+
+#: sunfleck/accounts/models.py:77
+msgid "user"
+msgstr "usuario"
+
+#: sunfleck/accounts/models.py:78
+msgid "users"
+msgstr "usuarios"
+
+#: sunfleck/accounts/models.py:108 sunfleck/care/models.py:25
+#: sunfleck/garden/models.py:26 sunfleck/notifications/models.py:19
+#: sunfleck/places/models.py:31 sunfleck/places/models.py:95
+#: sunfleck/places/models.py:157 sunfleck/plants/models.py:73
+#: sunfleck/plants/models.py:229 sunfleck/taxonomy/models.py:38
+msgid "name"
+msgstr "nombre"
+
+#: sunfleck/accounts/models.py:112
+msgid "garden"
+msgstr "jardín"
+
+#: sunfleck/accounts/models.py:112
+msgid "Seeds, sowing and harvests."
+msgstr "Semillas, siembra y cosechas."
+
+#: sunfleck/accounts/models.py:115
+msgid "collection"
+msgstr "colección"
+
+#: sunfleck/accounts/models.py:115
+msgid "Propagation, the wishlist and labels."
+msgstr "Propagación, la lista de deseos y las etiquetas."
+
+#: sunfleck/accounts/models.py:121
+msgid "household"
+msgstr "hogar"
+
+#: sunfleck/accounts/models.py:122
+msgid "households"
+msgstr "hogares"
+
+#: sunfleck/accounts/models.py:131
+msgid "Viewer"
+msgstr "Lector"
+
+#: sunfleck/accounts/models.py:132
+msgid "Gardener"
+msgstr "Jardinero"
+
+#: sunfleck/accounts/models.py:133
+msgid "Admin"
+msgstr "Admin"
+
+#: sunfleck/accounts/models.py:149 sunfleck/accounts/models.py:173
+#: sunfleck/ai/models.py:43
+msgid "role"
+msgstr "rol"
+
+#: sunfleck/accounts/models.py:154
+msgid "membership"
+msgstr "pertenencia"
+
+#: sunfleck/accounts/models.py:155
+msgid "memberships"
+msgstr "pertenencias"
+
+#: sunfleck/accounts/models.py:184
+msgid "invitation"
+msgstr "invitación"
+
+#: sunfleck/accounts/models.py:185
+msgid "invitations"
+msgstr "invitaciones"
+
+#: sunfleck/ai/models.py:17
+msgid "title"
+msgstr "título"
+
+#: sunfleck/ai/models.py:26
+msgid "conversation"
+msgstr "conversación"
+
+#: sunfleck/ai/models.py:27
+msgid "conversations"
+msgstr "conversaciones"
+
+#: sunfleck/ai/models.py:35
+msgid "question"
+msgstr "pregunta"
+
+#: sunfleck/ai/models.py:36
+msgid "answer"
+msgstr "respuesta"
+
+#: sunfleck/ai/models.py:44
+msgid "text"
+msgstr "texto"
+
+#: sunfleck/ai/models.py:50
+msgid "attribution"
+msgstr "atribución"
+
+#: sunfleck/ai/models.py:54
+msgid "message"
+msgstr "mensaje"
+
+#: sunfleck/ai/models.py:55
+msgid "messages"
+msgstr "mensajes"
+
+#: sunfleck/care/models.py:24 sunfleck/taxonomy/models.py:37
+msgid "key"
+msgstr "clave"
+
+#: sunfleck/care/models.py:27
+msgid "icon"
+msgstr "icono"
+
+#: sunfleck/care/models.py:29
+msgid "affects predictions"
+msgstr "influye en las predicciones"
+
+#: sunfleck/care/models.py:32
+msgid "counts as watering"
+msgstr "cuenta como riego"
+
+#: sunfleck/care/models.py:36
+msgid "care type"
+msgstr "tipo de cuidado"
+
+#: sunfleck/care/models.py:37
+msgid "care types"
+msgstr "tipos de cuidado"
+
+#: sunfleck/care/models.py:76
+msgid "Too dry"
+msgstr "Demasiado seca"
+
+#: sunfleck/care/models.py:77
+msgid "Just right"
+msgstr "Perfecta"
+
+#: sunfleck/care/models.py:78
+msgid "Still wet"
+msgstr "Aún húmeda"
+
+#: sunfleck/care/models.py:88
+msgid "done at"
+msgstr "hecho el"
+
+#: sunfleck/care/models.py:96 sunfleck/garden/models.py:31
+#: sunfleck/garden/models.py:77 sunfleck/plants/models.py:124
+#: sunfleck/plants/models.py:240
+msgid "notes"
+msgstr "notas"
+
+#: sunfleck/care/models.py:98
+msgid "how was the soil?"
+msgstr "¿cómo estaba la tierra?"
+
+#: sunfleck/care/models.py:102
+msgid "water given (ml)"
+msgstr "agua dada (ml)"
+
+#: sunfleck/care/models.py:107
+msgid "skipped"
+msgstr "saltado"
+
+#: sunfleck/care/models.py:110
+msgid "estimated"
+msgstr "estimado"
+
+#: sunfleck/care/models.py:115
+msgid "care event"
+msgstr "cuidado registrado"
+
+#: sunfleck/care/models.py:116
+msgid "care events"
+msgstr "cuidados registrados"
+
+#: sunfleck/care/models.py:125
+msgid "Predicted"
+msgstr "Predicha"
+
+#: sunfleck/care/models.py:126
+msgid "Every few days"
+msgstr "Cada pocos días"
+
+#: sunfleck/care/models.py:130
+msgid "Suggested"
+msgstr "Sugerida"
+
+#: sunfleck/care/models.py:131
+msgid "Added by hand"
+msgstr "Añadida a mano"
+
+#: sunfleck/care/models.py:144
+msgid "mode"
+msgstr "modo"
+
+#: sunfleck/care/models.py:147
+msgid "every (days)"
+msgstr "cada (días)"
+
+#: sunfleck/care/models.py:152
+msgid "origin"
+msgstr "origen"
+
+#: sunfleck/care/models.py:153 sunfleck/notifications/models.py:23
+#: sunfleck/places/models.py:177
+msgid "in use"
+msgstr "en uso"
+
+#: sunfleck/care/models.py:155
+msgid "started on"
+msgstr "empezó el"
+
+#: sunfleck/care/models.py:164
+msgid "snoozed until"
+msgstr "pospuesto hasta"
+
+#: sunfleck/care/models.py:167
+msgid "your routine"
+msgstr "tu rutina"
+
+#: sunfleck/care/models.py:175
+msgid "care schedule"
+msgstr "pauta de cuidados"
+
+#: sunfleck/care/models.py:176
+msgid "care schedules"
+msgstr "pautas de cuidados"
+
+#: sunfleck/care/models.py:213
+msgid "schedule adjustment"
+msgstr "ajuste de la pauta"
+
+#: sunfleck/care/models.py:214
+msgid "schedule adjustments"
+msgstr "ajustes de la pauta"
+
+#: sunfleck/garden/models.py:24 sunfleck/plants/models.py:80
+#: sunfleck/plants/models.py:236
+msgid "species"
+msgstr "especie"
+
+#: sunfleck/garden/models.py:27
+msgid "variety"
+msgstr "variedad"
+
+#: sunfleck/garden/models.py:28
+msgid "how many"
+msgstr "cuántas"
+
+#: sunfleck/garden/models.py:30
+msgid "sow by"
+msgstr "sembrar antes de"
+
+#: sunfleck/garden/models.py:36
+msgid "seed packet"
+msgstr "sobre de semillas"
+
+#: sunfleck/garden/models.py:37
+msgid "seed packets"
+msgstr "sobres de semillas"
+
+#: sunfleck/garden/models.py:50
+msgid "grams"
+msgstr "gramos"
+
+#: sunfleck/garden/models.py:51
+msgid "kilograms"
+msgstr "kilos"
+
+#: sunfleck/garden/models.py:52
+msgid "ounces"
+msgstr "onzas"
+
+#: sunfleck/garden/models.py:53
+msgid "pounds"
+msgstr "libras"
+
+#: sunfleck/garden/models.py:54
+msgid "pieces"
+msgstr "piezas"
+
+#: sunfleck/garden/models.py:55
+msgid "bunches"
+msgstr "manojos"
+
+#: sunfleck/garden/models.py:66
+msgid "harvested on"
+msgstr "cosechado el"
+
+#: sunfleck/garden/models.py:69
+msgid "amount"
+msgstr "cantidad"
+
+#: sunfleck/garden/models.py:76
+msgid "unit"
+msgstr "unidad"
+
+#: sunfleck/garden/models.py:84
+msgid "harvest"
+msgstr "cosecha"
+
+#: sunfleck/garden/models.py:85
+msgid "harvests"
+msgstr "cosechas"
+
+#: sunfleck/notifications/calendar.py:60
+msgid "Plant care"
+msgstr "Cuidado de las plantas"
+
+#: sunfleck/notifications/digest.py:41
+#, python-format
+msgid "Open Sunfleck: %(url)s/"
+msgstr "Abre Sunfleck: %(url)s/"
+
+#: sunfleck/notifications/digest.py:48
+msgid "Frost warning"
+msgstr "Aviso de helada"
+
+#: sunfleck/notifications/digest.py:51
+#, python-format
+msgid "Still to do today: %(count)d plant"
+msgid_plural "Still to do today: %(count)d plants"
+msgstr[0] "Aún pendiente hoy: %(count)d planta"
+msgstr[1] "Aún pendiente hoy: %(count)d plantas"
+msgstr[2] "Aún pendiente hoy: %(count)d plantas"
+
+#: sunfleck/notifications/digest.py:56
+#, python-format
+msgid "%(count)d plant needs care today"
+msgid_plural "%(count)d plants need care today"
+msgstr[0] "%(count)d planta necesita cuidados hoy"
+msgstr[1] "%(count)d plantas necesitan cuidados hoy"
+msgstr[2] "%(count)d plantas necesitan cuidados hoy"
+
+#: sunfleck/notifications/digest.py:64
+msgid "No location"
+msgstr "Sin habitación"
+
+#: sunfleck/notifications/digest.py:69
+#, python-format
+msgid "%(days)d day overdue"
+msgid_plural "%(days)d days overdue"
+msgstr[0] "%(days)d día de retraso"
+msgstr[1] "%(days)d días de retraso"
+msgstr[2] "%(days)d días de retraso"
+
+#: sunfleck/notifications/digest.py:89
+msgid "tonight"
+msgstr "esta noche"
+
+#: sunfleck/notifications/digest.py:91
+msgid "tomorrow night"
+msgstr "mañana por la noche"
+
+#: sunfleck/notifications/digest.py:93
+#, python-format
+msgid "on %(day)s night"
+msgstr "el %(day)s por la noche"
+
+#: sunfleck/notifications/digest.py:94
+#, python-format
+msgid "Frost likely %(when)s at %(site)s (low of %(low)s)."
+msgstr "Probable helada %(when)s en %(site)s (mínima de %(low)s)."
+
+#: sunfleck/notifications/models.py:22
+msgid "service"
+msgstr "servicio"
+
+#: sunfleck/notifications/models.py:29
+msgid "notification channel"
+msgstr "canal de notificación"
+
+#: sunfleck/notifications/models.py:30
+msgid "notification channels"
+msgstr "canales de notificación"
+
+#: sunfleck/notifications/models.py:43
+msgid "daily digest at"
+msgstr "resumen diario a las"
+
+#: sunfleck/notifications/models.py:45
+msgid "evening reminder at"
+msgstr "recordatorio de la tarde a las"
+
+#: sunfleck/notifications/models.py:46 sunfleck/places/models.py:38
+msgid "time zone"
+msgstr "zona horaria"
+
+#: sunfleck/notifications/models.py:49 sunfleck/notifications/models.py:50
+msgid "notification preferences"
+msgstr "preferencias de notificación"
+
+#: sunfleck/notifications/models.py:57
+msgid "Daily digest"
+msgstr "Resumen diario"
+
+#: sunfleck/notifications/models.py:58
+msgid "Evening reminder"
+msgstr "Recordatorio de la tarde"
+
+#: sunfleck/notifications/models.py:62
+msgid "Sent"
+msgstr "Enviado"
+
+#: sunfleck/notifications/models.py:63
+msgid "Nothing to send"
+msgstr "Nada que enviar"
+
+#: sunfleck/notifications/models.py:64
+msgid "Failed"
+msgstr "Fallido"
+
+#: sunfleck/notifications/models.py:81
+msgid "notification log entry"
+msgstr "entrada del registro de notificaciones"
+
+#: sunfleck/notifications/models.py:82
+msgid "notification log"
+msgstr "registro de notificaciones"
+
+#: sunfleck/notifications/models.py:109
+msgid "calendar feed"
+msgstr "calendario suscrito"
+
+#: sunfleck/notifications/models.py:110
+msgid "calendar feeds"
+msgstr "calendarios suscritos"
+
+#: sunfleck/notifications/models.py:126
+msgid "push key"
+msgstr "clave de notificaciones"
+
+#: sunfleck/notifications/models.py:127
+msgid "push keys"
+msgstr "claves de notificaciones"
+
+#: sunfleck/notifications/services.py:192
+msgid "Sunfleck test"
+msgstr "Prueba de Sunfleck"
+
+#: sunfleck/notifications/services.py:193
+#, python-format
+msgid "Notifications to %(label)s work."
+msgstr "Las notificaciones a %(label)s funcionan."
+
+#: sunfleck/places/models.py:15
+msgid "Estimated from past weather"
+msgstr "Estimadas a partir del tiempo pasado"
+
+#: sunfleck/places/models.py:16
+msgid "Entered"
+msgstr "Indicadas"
+
+#: sunfleck/places/models.py:33
+msgid "latitude"
+msgstr "latitud"
+
+#: sunfleck/places/models.py:36
+msgid "longitude"
+msgstr "longitud"
+
+#: sunfleck/places/models.py:42
+msgid "last spring frost"
+msgstr "última helada de primavera"
+
+#: sunfleck/places/models.py:43
+msgid "first autumn frost"
+msgstr "primera helada de otoño"
+
+#: sunfleck/places/models.py:45
+msgid "frost dates from"
+msgstr "fechas de heladas según"
+
+#: sunfleck/places/models.py:53
+msgid "site"
+msgstr "lugar"
+
+#: sunfleck/places/models.py:54
+msgid "sites"
+msgstr "lugares"
+
+#: sunfleck/places/models.py:70
+msgid "Indoor"
+msgstr "Interior"
+
+#: sunfleck/places/models.py:71
+msgid "Outdoor"
+msgstr "Exterior"
+
+#: sunfleck/places/models.py:75
+msgid "Low"
+msgstr "Baja"
+
+#: sunfleck/places/models.py:76
+msgid "Medium"
+msgstr "Media"
+
+#: sunfleck/places/models.py:77
+msgid "High"
+msgstr "Alta"
+
+#: sunfleck/places/models.py:81
+msgid "Full sun"
+msgstr "Pleno sol"
+
+#: sunfleck/places/models.py:82
+msgid "Part shade"
+msgstr "Semisombra"
+
+#: sunfleck/places/models.py:83
+msgid "Shade"
+msgstr "Sombra"
+
+#: sunfleck/places/models.py:87
+msgid "Raised bed"
+msgstr "Bancal elevado"
+
+#: sunfleck/places/models.py:88 sunfleck/plants/models.py:50
+msgid "In the ground"
+msgstr "En el suelo"
+
+#: sunfleck/places/models.py:96 sunfleck/places/models.py:156
+msgid "kind"
+msgstr "tipo"
+
+#: sunfleck/places/models.py:98
+msgid "typical minimum temperature"
+msgstr "temperatura mínima habitual"
+
+#: sunfleck/places/models.py:99
+msgid "typical maximum temperature"
+msgstr "temperatura máxima habitual"
+
+#: sunfleck/places/models.py:100
+msgid "humidity"
+msgstr "humedad"
+
+#: sunfleck/places/models.py:103
+msgid "sun exposure"
+msgstr "horas de sol"
+
+#: sunfleck/places/models.py:107
+msgid "kind of bed"
+msgstr "tipo de bancal"
+
+#: sunfleck/places/models.py:109
+msgid "bed width"
+msgstr "ancho del bancal"
+
+#: sunfleck/places/models.py:110
+msgid "bed length"
+msgstr "largo del bancal"
+
+#: sunfleck/places/models.py:115
+msgid "location"
+msgstr "habitación o espacio"
+
+#: sunfleck/places/models.py:116
+msgid "locations"
+msgstr "habitaciones y espacios"
+
+#: sunfleck/places/models.py:132
+msgid "North"
+msgstr "Norte"
+
+#: sunfleck/places/models.py:133
+msgid "North-east"
+msgstr "Noreste"
+
+#: sunfleck/places/models.py:134
+msgid "East"
+msgstr "Este"
+
+#: sunfleck/places/models.py:135
+msgid "South-east"
+msgstr "Sureste"
+
+#: sunfleck/places/models.py:136
+msgid "South"
+msgstr "Sur"
+
+#: sunfleck/places/models.py:137
+msgid "South-west"
+msgstr "Suroeste"
+
+#: sunfleck/places/models.py:138
+msgid "West"
+msgstr "Oeste"
+
+#: sunfleck/places/models.py:139
+msgid "North-west"
+msgstr "Noroeste"
+
+#: sunfleck/places/models.py:143
+msgid "Window"
+msgstr "Ventana"
+
+#: sunfleck/places/models.py:144
+msgid "Grow light"
+msgstr "Lámpara de cultivo"
+
+#: sunfleck/places/models.py:160
+msgid "direction it faces"
+msgstr "hacia dónde da"
+
+#: sunfleck/places/models.py:164
+msgid "PPFD at plant height (µmol/m²/s)"
+msgstr "PPFD a la altura de la planta (µmol/m²/s)"
+
+#: sunfleck/places/models.py:171
+msgid "PPFD measured at (cm)"
+msgstr "PPFD medida a (cm)"
+
+#: sunfleck/places/models.py:175
+msgid "turns on at"
+msgstr "se enciende a las"
+
+#: sunfleck/places/models.py:176
+msgid "turns off at"
+msgstr "se apaga a las"
+
+#: sunfleck/places/models.py:182
+msgid "light source"
+msgstr "fuente de luz"
+
+#: sunfleck/places/models.py:183
+msgid "light sources"
+msgstr "fuentes de luz"
+
+#: sunfleck/plants/models.py:17
+msgid "Active"
+msgstr "Activa"
+
+#: sunfleck/plants/models.py:18
+msgid "Dormant"
+msgstr "En reposo"
+
+#: sunfleck/plants/models.py:20
+msgid "Propagating"
+msgstr "En propagación"
+
+#: sunfleck/plants/models.py:21
+msgid "Given away"
+msgstr "Regalada"
+
+#: sunfleck/plants/models.py:22
+msgid "Died"
+msgstr "Muerta"
+
+#: sunfleck/plants/models.py:32
+msgid "Cutting"
+msgstr "Esqueje"
+
+#: sunfleck/plants/models.py:33
+msgid "Division"
+msgstr "División"
+
+#: sunfleck/plants/models.py:34
+msgid "Offset or pup"
+msgstr "Hijuelo"
+
+#: sunfleck/plants/models.py:35
+msgid "Seed"
+msgstr "Semilla"
+
+#: sunfleck/plants/models.py:36
+msgid "Layering"
+msgstr "Acodo"
+
+#: sunfleck/plants/models.py:37 sunfleck/plants/models.py:49
+#: sunfleck/plants/models.py:62
+msgid "Other"
+msgstr "Otro"
+
+#: sunfleck/plants/models.py:43
+msgid "Plastic"
+msgstr "Plástico"
+
+#: sunfleck/plants/models.py:44
+msgid "Terracotta"
+msgstr "Terracota"
+
+#: sunfleck/plants/models.py:45
+msgid "Glazed ceramic"
+msgstr "Cerámica esmaltada"
+
+#: sunfleck/plants/models.py:46
+msgid "Fabric"
+msgstr "Tela"
+
+#: sunfleck/plants/models.py:47
+msgid "Metal"
+msgstr "Metal"
+
+#: sunfleck/plants/models.py:48
+msgid "Wood"
+msgstr "Madera"
+
+#: sunfleck/plants/models.py:54
+msgid "Potting mix"
+msgstr "Sustrato universal"
+
+#: sunfleck/plants/models.py:55
+msgid "Chunky aroid mix"
+msgstr "Mezcla gruesa para aráceas"
+
+#: sunfleck/plants/models.py:56
+msgid "Cactus and succulent mix"
+msgstr "Mezcla para cactus y suculentas"
+
+#: sunfleck/plants/models.py:57
+msgid "Orchid bark"
+msgstr "Corteza para orquídeas"
+
+#: sunfleck/plants/models.py:58
+msgid "Sphagnum moss"
+msgstr "Musgo esfagno"
+
+#: sunfleck/plants/models.py:59
+msgid "Semi-hydro (LECA, pon)"
+msgstr "Semihidroponía (arcilla expandida, pon)"
+
+#: sunfleck/plants/models.py:60
+msgid "Water"
+msgstr "Agua"
+
+#: sunfleck/plants/models.py:61
+msgid "Garden soil"
+msgstr "Tierra de jardín"
+
+#: sunfleck/plants/models.py:89 sunfleck/taxonomy/models.py:42
+#: sunfleck/taxonomy/models.py:80
+msgid "care profile"
+msgstr "perfil de cuidados"
+
+#: sunfleck/plants/models.py:92
+msgid "status"
+msgstr "estado"
+
+#: sunfleck/plants/models.py:95
+msgid "pot diameter (cm)"
+msgstr "diámetro de la maceta (cm)"
+
+#: sunfleck/plants/models.py:101
+msgid "pot height (cm)"
+msgstr "altura de la maceta (cm)"
+
+#: sunfleck/plants/models.py:107
+msgid "pot material"
+msgstr "material de la maceta"
+
+#: sunfleck/plants/models.py:109
+msgid "soil"
+msgstr "sustrato"
+
+#: sunfleck/plants/models.py:110
+msgid "acquired on"
+msgstr "conseguida el"
+
+#: sunfleck/plants/models.py:119
+msgid "grown from"
+msgstr "obtenida de"
+
+#: sunfleck/plants/models.py:122
+msgid "how it was grown"
+msgstr "cómo se obtuvo"
+
+#: sunfleck/plants/models.py:135
+msgid "plant"
+msgstr "planta"
+
+#: sunfleck/plants/models.py:136
+msgid "plants"
+msgstr "plantas"
+
+#: sunfleck/plants/models.py:161
+msgid "distance from the light (cm)"
+msgstr "distancia a la luz (cm)"
+
+#: sunfleck/plants/models.py:168
+msgid "light reaching a plant"
+msgstr "luz que le llega a una planta"
+
+#: sunfleck/plants/models.py:169
+msgid "light reaching plants"
+msgstr "luz que les llega a las plantas"
+
+#: sunfleck/plants/models.py:194
+msgid "image"
+msgstr "imagen"
+
+#: sunfleck/plants/models.py:195
+msgid "thumbnail"
+msgstr "miniatura"
+
+#: sunfleck/plants/models.py:198
+msgid "taken at"
+msgstr "tomada el"
+
+#: sunfleck/plants/models.py:199
+msgid "caption"
+msgstr "pie de foto"
+
+#: sunfleck/plants/models.py:209
+msgid "photo"
+msgstr "foto"
+
+#: sunfleck/plants/models.py:210
+msgid "photos"
+msgstr "fotos"
+
+#: sunfleck/plants/models.py:239
+msgid "link"
+msgstr "enlace"
+
+#: sunfleck/plants/models.py:245
+msgid "wish"
+msgstr "deseo"
+
+#: sunfleck/plants/models.py:246
+msgid "wishlist"
+msgstr "lista de deseos"
+
+#: sunfleck/plants/services.py:201
+#, python-format
+msgid "%(name)s (%(method)s)"
+msgstr "%(name)s (%(method)s)"
+
+#: sunfleck/plants/services.py:202
+#, python-format
+msgid "%(name)s (%(method)s %(number)d)"
+msgstr "%(name)s (%(method)s %(number)d)"
+
+#: sunfleck/plugins/models.py:19
+msgid "plugin"
+msgstr "complemento"
+
+#: sunfleck/plugins/models.py:20
+msgid "on"
+msgstr "activado"
+
+#: sunfleck/plugins/models.py:21
+msgid "settings"
+msgstr "ajustes"
+
+#: sunfleck/plugins/models.py:23
+msgid "secrets"
+msgstr "secretos"
+
+#: sunfleck/plugins/models.py:25
+msgid "latest error"
+msgstr "último error"
+
+#: sunfleck/plugins/models.py:26
+msgid "latest error at"
+msgstr "último error el"
+
+#: sunfleck/plugins/models.py:30
+msgid "plugin setting"
+msgstr "ajuste de complemento"
+
+#: sunfleck/plugins/models.py:31
+msgid "plugin settings"
+msgstr "ajustes de complementos"
+
+#: sunfleck/taxonomy/models.py:39
+msgid "profile"
+msgstr "perfil"
+
+#: sunfleck/taxonomy/models.py:43
+msgid "care profiles"
+msgstr "perfiles de cuidados"
+
+#: sunfleck/taxonomy/models.py:51
+msgid "Genus"
+msgstr "Género"
+
+#: sunfleck/taxonomy/models.py:52
+msgid "Species"
+msgstr "Especie"
+
+#: sunfleck/taxonomy/models.py:58
+msgid "scientific name"
+msgstr "nombre científico"
+
+#: sunfleck/taxonomy/models.py:59
+msgid "rank"
+msgstr "rango"
+
+#: sunfleck/taxonomy/models.py:60
+msgid "genus"
+msgstr "género"
+
+#: sunfleck/taxonomy/models.py:61
+msgid "family"
+msgstr "familia"
+
+#: sunfleck/taxonomy/models.py:62
+msgid "common names"
+msgstr "nombres comunes"
+
+#: sunfleck/taxonomy/models.py:63
+msgid "older names"
+msgstr "nombres anteriores"
+
+#: sunfleck/taxonomy/models.py:64
+msgid "note"
+msgstr "nota"
+
+#: sunfleck/taxonomy/models.py:68
+msgid "toxicity"
+msgstr "toxicidad"
+
+#: sunfleck/taxonomy/models.py:73
+msgid "crop timing"
+msgstr "calendario de cultivo"
+
+#: sunfleck/taxonomy/models.py:86
+msgid "genus or species"
+msgstr "género o especie"
+
+#: sunfleck/taxonomy/models.py:87
+msgid "genera and species"
+msgstr "géneros y especies"
