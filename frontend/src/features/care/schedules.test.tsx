@@ -417,7 +417,11 @@ describe("the care schedule", () => {
     );
     const { user } = renderApp("/plants/7");
 
-    await user.click(await screen.findByRole("button", { name: "Options for Fertilize" }));
+    // Due care says what its menu is for; care not due yet keeps "⋯".
+    expect(await screen.findByRole("button", { name: "Options for Water" })).toBeVisible();
+    const later = screen.getByRole("button", { name: "Later: put off or change Fertilize" });
+    expect(later).toHaveTextContent("Later");
+    await user.click(later);
     await user.click(await screen.findByRole("menuitem", { name: "In a week" }));
 
     await waitFor(() => {
