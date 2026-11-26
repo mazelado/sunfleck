@@ -954,6 +954,8 @@
     "deleted": "Schedule deleted",
     "saved": "Schedule saved",
     "menu": "Options for {{name}}",
+    "putOffButton": "Later",
+    "putOffMenu": "Later: put off or change {{name}}",
     "why": "Why?",
     "whyTitle": "Why {{name}} is due then",
     "history": "History",

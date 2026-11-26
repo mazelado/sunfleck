@@ -184,9 +184,9 @@ lists the latest harvests. Exports include them.
   spot gets what the plant likes at this time of year.
 - **A plant's care** is one **Care** card on its page: a row for each schedule, with a ring,
   when it's due in words, how often (tap it to change the schedule) and **Why?**. The button
-  at the end of a row does that care (**Water**, **Fertilize**), and its **⋯** menu puts it
-  off (tomorrow, in 3 days, in a week, or another day), changes the schedule, or logs it
-  with details.
+  at the end of a row does that care (**Water**, **Fertilize**), and the menu beside it
+  (**Later** when the care is due, **⋯** otherwise) puts it off (tomorrow, in 3 days, in a
+  week, or another day), changes the schedule, or logs it with details.
 - **Logging care**: tap the care's button on a plant's page, **More care** under the rows for
   other care, or the check mark on Today. Its confirmation offers **Undo**, and **Add details
   or another day…** to add how much water you gave, the soil, notes, or the day it was really

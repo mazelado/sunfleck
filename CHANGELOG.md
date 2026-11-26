@@ -40,6 +40,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Putting off care is in plain sight on a plant's page**: when care is due, the **⋯** next to
+  its button is now a **Later** button, as on Today. In the usability test, it was looked for
+  under **Add a schedule** first (#254).
 - **Adding a photo is easier to spot**: over a plant's cover photo, the round camera button is
   now labelled **Add a photo**, and **Crop**, offered after adding one, stands out and stays
   longer. In the usability test, the camera button was missed, and **Edit** taken for it

@@ -1,4 +1,4 @@
-import { ActionIcon, Menu } from "@mantine/core";
+import { ActionIcon, Button, Menu } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlarmSnooze,
@@ -76,14 +76,28 @@ export function ScheduleMenu({
   return (
     <Menu position="bottom-end" width={230}>
       <Menu.Target>
-        <ActionIcon
-          variant="default"
-          size="input-sm"
-          radius="xl"
-          aria-label={t("schedules.menu", { name: care })}
-        >
-          <IconDots size={18} />
-        </ActionIcon>
+        {/* Care that's due says what the menu is for: in the usability test, putting it off
+            was looked for under Add a schedule and the care plans, not behind "⋯". */}
+        {canPutOff && !notYetDue ? (
+          <Button
+            variant="default"
+            radius="xl"
+            px="sm"
+            leftSection={<IconAlarmSnooze size={16} />}
+            aria-label={t("schedules.putOffMenu", { name: care })}
+          >
+            {t("schedules.putOffButton")}
+          </Button>
+        ) : (
+          <ActionIcon
+            variant="default"
+            size="input-sm"
+            radius="xl"
+            aria-label={t("schedules.menu", { name: care })}
+          >
+            <IconDots size={18} />
+          </ActionIcon>
+        )}
       </Menu.Target>
       <Menu.Dropdown>
         {canPutOff && (
