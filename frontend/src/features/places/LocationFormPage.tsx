@@ -43,6 +43,7 @@ import {
 import { useCanEdit } from "../../lib/useCanEdit";
 import { useLeaveGuard } from "../../lib/useLeaveGuard";
 import { useUnits } from "../../lib/useUnits";
+import { useAreas } from "../../lib/useAreas";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
 /** Create a location (`.../locations/new`) or edit one (`.../locations/:locationId/edit`). */
@@ -80,6 +81,7 @@ interface LocationFormValues {
 
 function LocationForm({ site, location }: { site: Site; location?: Location }) {
   const { t } = useTranslation();
+  const areas = useAreas();
   const navigate = useNavigate();
   const units = useUnits();
   const applyFieldErrors = useApplyFieldErrors();
@@ -223,7 +225,8 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
                   {...form.getInputProps("exposure")}
                 />
               )}
-              {!indoor && (
+              {/* Garden beds are part of Garden. Off, a bed's details are kept as they are. */}
+              {!indoor && areas.garden && (
                 <Select
                   label={t("places.bedType")}
                   description={t("places.bedTypeHelp")}
@@ -236,7 +239,7 @@ function LocationForm({ site, location }: { site: Site; location?: Location }) {
                   {...form.getInputProps("bed_type")}
                 />
               )}
-              {isBed && (
+              {isBed && areas.garden && (
                 <Stack gap={4}>
                   <Group grow align="flex-start">
                     <NumberInput

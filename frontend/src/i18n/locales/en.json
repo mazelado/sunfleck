@@ -170,6 +170,18 @@
     "noInvitations": "No pending invitations.",
     "revoke": "Revoke invitation for {{email}}"
   },
+  "areas": {
+    "title": "Parts of the app",
+    "help": "Turn on what this household needs. A part that's off is hidden for everyone; nothing is deleted, and it all comes back when it's turned on again.",
+    "garden": "Garden",
+    "gardenHelp": "Seeds and when to sow them, harvests, and garden beds.",
+    "collection": "Collection",
+    "collectionHelp": "Propagating plants, a wishlist, and QR and NFC labels.",
+    "gardenOff": "Garden is turned off for this household.",
+    "collectionOff": "Collection is turned off for this household.",
+    "askAdmin": "An Admin can turn it on in the household's settings.",
+    "turnOn": "Turn it on in Settings"
+  },
   "notFound": {
     "title": "Page not found",
     "home": "Go to the home page"

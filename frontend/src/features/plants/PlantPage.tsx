@@ -6,6 +6,7 @@ import { useParams } from "react-router";
 import { type Photo, usePlant } from "../../api/plants";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useAreas } from "../../lib/useAreas";
 import { CareCard } from "../care/CareCard";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { PlantHarvests } from "../garden/PlantHarvests";
@@ -27,6 +28,7 @@ export function PlantPage() {
   const plantId = Number(useParams().plantId);
   const plant = usePlant(plantId);
   const canEdit = useCanEdit();
+  const areas = useAreas();
   // Mantine's "md" breakpoint.
   const wide = useMediaQuery("(min-width: 62em)", false, { getInitialValueInEffect: false });
   // Photos open from the header, the gallery or the history.
@@ -67,7 +69,7 @@ export function PlantPage() {
         }}
       />
       <PlantTimeline plantId={data.id} canEdit={canEdit} onOpenPhoto={open} />
-      <PlantHarvests plant={data} />
+      {areas.garden && <PlantHarvests plant={data} />}
     </>
   );
 

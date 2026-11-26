@@ -7,6 +7,7 @@ import { useLocation } from "react-router";
 import { useMe, useUpdateHousehold } from "../../api/accounts";
 import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
+import { HouseholdAreas } from "./HouseholdAreas";
 import { MembersList } from "./MembersList";
 import { Invitations } from "./Invitations";
 import { InviteForm } from "./InviteForm";
@@ -16,10 +17,11 @@ export function HouseholdPage() {
   const me = useMe().data;
   const { hash } = useLocation();
   const loaded = Boolean(me?.household);
-  // From "Invite someone" on the Settings page: straight to the email field.
+  // From "Invite someone" on the Settings page: straight to the email field. From a part of
+  // the app that's turned off: to its switch.
   useEffect(() => {
-    if (!loaded || hash !== "#invite") return;
-    const card = document.getElementById("invite");
+    if (!loaded || (hash !== "#invite" && hash !== "#areas")) return;
+    const card = document.getElementById(hash.slice(1));
     card?.scrollIntoView({ block: "start" });
     card?.querySelector<HTMLInputElement>('input[type="email"]')?.focus();
   }, [hash, loaded]);
@@ -48,6 +50,7 @@ export function HouseholdPage() {
       )}
       <MembersList me={me} isAdmin={isAdmin} />
       {isAdmin && <Invitations />}
+      {isAdmin && <HouseholdAreas household={me.household} />}
       {isAdmin && <HouseholdNameForm name={me.household.name} />}
     </Stack>
   );
@@ -63,7 +66,7 @@ function HouseholdNameForm({ name }: { name: string }) {
 
   const handleSubmit = form.onSubmit(async (values) => {
     try {
-      await updateHousehold.mutateAsync(values.name);
+      await updateHousehold.mutateAsync({ name: values.name });
       form.resetDirty();
       notifications.show({ color: "green", message: t("common.saved") });
     } catch {

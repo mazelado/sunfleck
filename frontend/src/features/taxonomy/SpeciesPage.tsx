@@ -11,6 +11,7 @@ import { PageHeader } from "../../components/PageHeader";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { sentenceCase } from "../../lib/text";
 import { FullPageLoader } from "../../components/FullPageLoader";
+import { useAreas } from "../../lib/useAreas";
 import { CareProfileFacts } from "./CareProfileFacts";
 import { CropTiming } from "./CropTiming";
 import { ToxicityNotice } from "./Toxicity";
@@ -18,6 +19,7 @@ import { ToxicityNotice } from "./Toxicity";
 /** A genus or species: its names, and the care its profile suggests. */
 export function SpeciesPage() {
   const { t } = useTranslation();
+  const areas = useAreas();
   const species = useSpecies(Number(useParams().taxonId));
   const profile = useCareProfile(species.data?.care_profile?.key ?? null);
   const canEdit = useCanEdit();
@@ -53,7 +55,7 @@ export function SpeciesPage() {
           )
         }
       />
-      {canEdit && (
+      {canEdit && areas.collection && (
         <Button
           variant="light"
           leftSection={<IconHeart size={16} />}

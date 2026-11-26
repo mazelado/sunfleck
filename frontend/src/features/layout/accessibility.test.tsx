@@ -40,6 +40,17 @@ describe("accessibility", () => {
     expect(await accessibilityProblems()).toEqual([]);
   });
 
+  it("a part of the app that's turned off has no problems axe can find", async () => {
+    signInAs({
+      ...ada,
+      household: { id: 1, name: "Fern Gully", garden: false, collection: false },
+    });
+    renderApp("/plants/seeds");
+    await screen.findByRole("heading", { level: 1, name: "Garden" });
+
+    expect(await accessibilityProblems()).toEqual([]);
+  });
+
   it("the sign-in page has no problems axe can find", async () => {
     renderApp("/sign-in");
     await screen.findByRole("heading", { level: 1, name: "Sign in" });
