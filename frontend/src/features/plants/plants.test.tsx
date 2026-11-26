@@ -1131,13 +1131,14 @@ describe("plant page", () => {
     expect(uploadPhoto).toHaveBeenCalledWith(7, expect.objectContaining({ filename: "leaf.jpg" }));
   });
 
-  it("shows a camera button on a cover photo", async () => {
+  it("labels the button to add a photo over a cover photo", async () => {
     signInAs(gardener);
     withPlant(plant({ cover_photo: photo }), [photo]);
     renderApp("/plants/7");
 
+    // In the usability test, a camera icon alone was missed.
     const button = await screen.findByRole("button", { name: "Add a photo of Monty" });
-    expect(button).not.toHaveTextContent("Add a photo");
+    expect(button).toHaveTextContent("Add a photo");
   });
 
   it("makes a photo added from the cover the new cover", async () => {

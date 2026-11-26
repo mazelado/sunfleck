@@ -1,4 +1,4 @@
-import { ActionIcon, Button, FileButton, Group, Text } from "@mantine/core";
+import { Button, FileButton, Group, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCamera } from "@tabler/icons-react";
 import { useState } from "react";
@@ -11,8 +11,8 @@ import { preparePhoto } from "../../lib/photos";
 interface AddPhotoButtonProps {
   plantId: number;
   /**
-   * On the plant's cover, named after the plant: a round camera button over a photo, or a
-   * labelled button over the placeholder of a plant without one. The photo it adds (the last,
+   * On the plant's cover, named after the plant: a labelled button over the photo, or over the
+   * placeholder of a plant without one. The photo it adds (the last,
    * of several) becomes the cover.
    */
   cover?: { plantName: string; hasPhoto: boolean };
@@ -37,26 +37,28 @@ export function AddPhotoButton({ plantId, cover, onCrop }: AddPhotoButtonProps) 
           const photo = await upload.mutateAsync(await preparePhoto(file));
           added = photo;
           const id = `photo-${String(photo.id)}`;
+          const offerCrop = onCrop && files.length === 1;
           notifications.show({
             id,
-            message:
-              onCrop && files.length === 1 ? (
-                <Group justify="space-between" wrap="nowrap">
-                  <Text size="sm">{t("plants.photoAdded")}</Text>
-                  <Button
-                    size="compact-sm"
-                    variant="subtle"
-                    onClick={() => {
-                      notifications.hide(id);
-                      onCrop(photo);
-                    }}
-                  >
-                    {t("photoCrop.button")}
-                  </Button>
-                </Group>
-              ) : (
-                t("plants.photoAdded")
-              ),
+            // Long enough to see Crop: in the usability test, it went by unnoticed.
+            autoClose: offerCrop ? 8000 : undefined,
+            message: offerCrop ? (
+              <Group justify="space-between" wrap="nowrap">
+                <Text size="sm">{t("plants.photoAdded")}</Text>
+                <Button
+                  size="compact-sm"
+                  variant="light"
+                  onClick={() => {
+                    notifications.hide(id);
+                    onCrop(photo);
+                  }}
+                >
+                  {t("photoCrop.button")}
+                </Button>
+              </Group>
+            ) : (
+              t("plants.photoAdded")
+            ),
           });
         } catch (error) {
           notifications.show({ color: "red", message: `${file.name}: ${errorMessage(error)}` });
@@ -77,34 +79,21 @@ export function AddPhotoButton({ plantId, cover, onCrop }: AddPhotoButtonProps) 
   const label = cover ? t("plants.addPhotoOf", { name: cover.plantName }) : undefined;
   return (
     <FileButton onChange={(files) => void handleFiles(files)} accept="image/*" multiple>
-      {(props) =>
-        cover?.hasPhoto ? (
-          <ActionIcon
-            {...props}
-            variant="default"
-            size="xl"
-            radius="xl"
-            loading={busy}
-            aria-label={label}
-            className="sunfleck-cover-button"
-          >
-            <IconCamera size={22} />
-          </ActionIcon>
-        ) : (
-          <Button
-            {...props}
-            variant={cover ? "default" : "light"}
-            size={cover ? "sm" : "xs"}
-            radius={cover ? "xl" : undefined}
-            loading={busy}
-            aria-label={label}
-            className={cover ? "sunfleck-cover-button" : undefined}
-            leftSection={<IconCamera size={cover ? 18 : 14} />}
-          >
-            {t("plants.addPhoto")}
-          </Button>
-        )
-      }
+      {(props) => (
+        // Labelled over a photo too: in the usability test, a camera icon alone was missed.
+        <Button
+          {...props}
+          variant={cover ? "default" : "light"}
+          size={cover ? "sm" : "xs"}
+          radius={cover ? "xl" : undefined}
+          loading={busy}
+          aria-label={label}
+          className={cover ? "sunfleck-cover-button" : undefined}
+          leftSection={<IconCamera size={cover ? 18 : 14} />}
+        >
+          {t("plants.addPhoto")}
+        </Button>
+      )}
     </FileButton>
   );
 }

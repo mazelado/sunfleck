@@ -32,6 +32,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Adding a photo is easier to spot**: over a plant's cover photo, the round camera button is
+  now labelled **Add a photo**, and **Crop**, offered after adding one, stands out and stays
+  longer. In the usability test, the camera button was missed, and **Edit** taken for it
+  (#246).
 - **Notifications say when nothing will be sent**: until this device or another way is added,
   the times say that nothing is sent yet, and so does saving them. On an iPhone or iPad, **This
   device** lists the steps to add Sunfleck to the Home Screen. In the usability test, everyone
