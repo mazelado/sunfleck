@@ -1069,6 +1069,35 @@ describe("plant page", () => {
     expect(screen.getByText("Medium here now (about 8 mol/m²/day)")).toBeVisible();
   });
 
+  it("changes the pot from where it's shown, straight to its size", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    withPlant(plant());
+    const { user } = renderApp("/plants/7");
+
+    // In the usability test, people looked for the pot here before finding Edit at the top.
+    await user.click(await screen.findByRole("link", { name: "Change the pot size" }));
+
+    const diameter = await screen.findByLabelText(/Pot diameter/);
+    await waitFor(() => {
+      expect(diameter).toHaveFocus();
+    });
+  });
+
+  it("offers to add a pot size when there's none", async () => {
+    signInAs(gardener);
+    withPlant(
+      plant({ container_diameter_cm: null, container_height_cm: null, container_material: null }),
+    );
+
+    renderApp("/plants/7");
+
+    expect(await screen.findByRole("link", { name: "Add the pot size" })).toHaveAttribute(
+      "href",
+      "/plants/7/edit#pot",
+    );
+  });
+
   it("shows the plant's details and light in the person's units", async () => {
     signInAs({ ...viewer, unit_system: "imperial" });
     withPlant(plant({ container_height_cm: 15 }), [photo]);
@@ -1087,6 +1116,7 @@ describe("plant page", () => {
     expect(screen.getByText("39 in from the window")).toBeVisible();
     expect(await screen.findByRole("button", { name: "New leaf" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Edit" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Change the pot size" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Add a photo/ })).not.toBeInTheDocument();
   });
 

@@ -15,6 +15,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   mark, the confirmation now offers **Add details or another day…**, next to **Undo**, to add
   how much water was given, how the soil was, or the day it was really done. In the usability
   test, people logged yesterday's watering as today, or left out the amount (#250).
+- **Change the pot from where it's shown**: under **About** on a plant's page, the pot has a
+  **Change** link (or **Add**, without one) that opens the plant's form at the pot size. In the
+  usability test, everyone looked there or in the care guide before finding **Edit** (#251).
 
 - **A plant's care history, next to what Sunfleck predicted**: **History**, next to **Why?** on
   each care schedule, shows when the care was done, how many days before or after it was due,
@@ -41,6 +44,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   now labelled **Add a photo**, and **Crop**, offered after adding one, stands out and stays
   longer. In the usability test, the camera button was missed, and **Edit** taken for it
   (#253).
+- **Settings says its name**: the gear at the top is now labelled **Settings**. In the usability
+  test, people looked for it in their profile, Today, the care guide and Plants first (#252).
 - **Notifications say when nothing will be sent**: until this device or another way is added,
   the times say that nothing is sent yet, and so does saving them. On an iPhone or iPad, **This
   device** lists the steps to add Sunfleck to the Home Screen. In the usability test, everyone
