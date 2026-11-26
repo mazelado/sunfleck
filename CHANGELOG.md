@@ -31,7 +31,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 ### Changed
 
 - **Searching for a plant ignores accents**: "arandano" finds *arándano azul*, and "pina"
-  finds *piña*, in the care guide, a plant's species and the Plants page's search by species.
+  finds *piña*, in the care guide, a plant's species and the Plants page's search by species
+  (#267).
 
 ## [1.2.0] - 2026-11-26
 
