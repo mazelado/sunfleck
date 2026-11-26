@@ -23,7 +23,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Sunfleck in Spanish**: choose **Español** under **Profile → Language**. Before signing
   in, a browser set to Spanish gets it too. The whole app is translated, with numbers written
   the Spanish way ("3,6"); emails, notifications and the care guide's plant names and profiles
-  are still in English (#260, #261, #262).
+  are still in English (#260, #261, #262, #263).
 
 ## [1.2.0] - 2026-11-26
 
