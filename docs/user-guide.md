@@ -19,8 +19,10 @@ the weather, and they get better as you tell it how the soil was.
 ## Getting started
 
 Until your household has a plant, **Today** shows these steps and ticks off each one that's
-done. Its button opens a step-by-step setup, one question per screen ("Step 2 of 4"): where
-your plants live, which room or spot the plant is in (and, indoors, whether a window lights it
+done. Its button opens a step-by-step setup, one question per screen ("Step 2 of 4"). In a new
+household, an Admin is first asked what they grow: outdoor and edible plants turn on
+[Garden](#parts-of-the-app), and a collection turns on [Collection](#parts-of-the-app);
+houseplants need neither. Then: where your plants live, which room or spot the plant is in (and, indoors, whether a window lights it
 and which way it faces), which plant it is, and when it was last watered. **Finish** adds the
 plant with its suggested routine and opens its page. Each step is saved as you go, so you can
 leave and come back where you left off. The steps below can also be done one by one, from
@@ -293,8 +295,9 @@ picture or **Adjust**. Pictures chosen before 1.1 need to be chosen again first.
 
 ### Parts of the app
 
-Sunfleck starts simple. Two parts of the app are for people who want more, and an Admin turns
-them on under **Household**, in **Parts of the app**:
+Sunfleck starts simple. Two parts of the app are for people who want more. An Admin turns
+them on when the step-by-step setup asks **What do you grow?**, or at any time under
+**Household**, in **Parts of the app**:
 
 - **Garden**: [seeds](#seeds) and the sowing calendar, [harvests](#harvests), and garden beds.
 - **Collection**: [propagating](#plants) plants, the [wishlist](#wishlist), and QR and NFC

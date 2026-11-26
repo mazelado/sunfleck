@@ -17,6 +17,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   and NFC labels. A part that's off is hidden for everyone in the household; nothing is
   deleted, and it comes back when it's turned on again. Households from before 1.3 keep both
   on; new ones start with both off (#257, #258).
+- **"What do you grow?"**: in a new household, the step-by-step setup first asks an Admin
+  whether they grow outdoor and edible plants, or a collection, and turns on Garden or
+  Collection to match. Houseplants need neither (#259).
 
 ## [1.2.0] - 2026-11-26
 

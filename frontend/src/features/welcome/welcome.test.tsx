@@ -159,6 +159,59 @@ describe("first-run flow", () => {
     });
   });
 
+  it("asks an Admin of a new household what they grow, which turns on parts of the app", async () => {
+    let me: Me = {
+      ...ada,
+      household: { id: 1, name: "Fern Gully", garden: false, collection: false },
+    };
+    let sent: unknown;
+    server.use(
+      http.get("*/api/v1/me", () => HttpResponse.json(me)),
+      http.patch("*/api/v1/household", async ({ request }) => {
+        sent = await request.json();
+        me = { ...me, household: { id: 1, name: "Fern Gully", garden: true, collection: false } };
+        return HttpResponse.json(me.household);
+      }),
+    );
+    const { user } = renderApp("/welcome");
+
+    expect(await screen.findByText("Step 1 of 5")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "What do you grow?", level: 1 })).toBeVisible();
+    expect(await accessibilityProblems()).toEqual([]);
+    await user.click(screen.getByRole("checkbox", { name: /^Outdoor and edible plants/ }));
+    await user.click(screen.getByRole("button", { name: "Next: where they live" }));
+
+    expect(await screen.findByText("Step 2 of 5")).toBeVisible();
+    expect(sent).toEqual({ garden: true, collection: false });
+    // Back, the answer is kept.
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    expect(
+      await screen.findByRole("checkbox", { name: /^Outdoor and edible plants/ }),
+    ).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: /^A collection/ })).not.toBeChecked();
+  });
+
+  it("saves nothing when what's grown is left as it was", async () => {
+    signInAs({
+      ...ada,
+      household: { id: 1, name: "Fern Gully", garden: false, collection: false },
+    });
+    const { user } = renderApp("/welcome");
+
+    await user.click(await screen.findByRole("button", { name: "Next: where they live" }));
+
+    // No request to change the household: the fake API would fail the test.
+    expect(await screen.findByText("Step 2 of 5")).toBeVisible();
+  });
+
+  it("doesn't ask what's grown once the household has a place", async () => {
+    signInAs(ada);
+    server.use(http.get("*/api/v1/sites", () => HttpResponse.json([home])));
+    renderApp("/welcome");
+
+    expect(await screen.findByText("Step 2 of 4")).toBeVisible();
+  });
+
   it("starts at the first step not done yet", async () => {
     signInAs(gardener);
     server.use(http.get("*/api/v1/sites", () => HttpResponse.json([home])));

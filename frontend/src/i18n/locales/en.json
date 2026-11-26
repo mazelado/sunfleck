@@ -1470,6 +1470,15 @@
     "homeName": "Home",
     "whereNeeded": "Choose where it is: on the map, from your device's location, or by its coordinates.",
     "finished": "{{name}} is added, with its care routine.",
+    "grow": {
+      "question": "What do you grow?",
+      "why": "Sunfleck looks after houseplants either way. Choose what else to show; you can change it later in Settings, under Household.",
+      "garden": "Outdoor and edible plants",
+      "gardenHelp": "Seeds and when to sow them, harvests, and garden beds.",
+      "collection": "A collection",
+      "collectionHelp": "Propagating plants, a wishlist, and QR and NFC labels.",
+      "next": "Next: where they live"
+    },
     "place": {
       "question": "Where do your plants live?",
       "why": "Its position gives Sunfleck the seasons, the daylight and the weather there. It isn't shared.",
