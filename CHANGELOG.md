@@ -26,7 +26,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   warnings, invitations and the calendar. The care guide has Spanish names for 109 plants
   (*costilla de Adán*, *aguacate* or *palta*), from Wikidata, and shows the others by their
   scientific names rather than in English; the care profiles are still in English
-  (#260, #261, #262, #263, #264).
+  (#260, #261, #262, #263, #264, #266).
 
 ## [1.2.0] - 2026-11-26
 
