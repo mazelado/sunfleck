@@ -11,7 +11,7 @@ FRONTEND_DEPS := frontend/node_modules/.package-lock.json
 .DEFAULT_GOAL := help
 .PHONY: help setup dev dev-backend dev-frontend dev-worker migrate migrations superuser test test-backend \
 	test-frontend e2e screenshots lint lint-backend lint-frontend format api-types stability-baseline \
-	messages docker
+	messages compile-messages docker
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
@@ -61,11 +61,16 @@ screenshots: ## Make the README's screenshots again, of a demo household (docs/i
 
 lint: lint-backend lint-frontend ## Run every check that CI runs (except tests)
 
-lint-backend: ## Check backend formatting, lint rules, types, and migrations
+lint-backend: ## Check backend formatting, lint rules, types, migrations and translations
 	$(BACKEND) uv run ruff format --check . ../plugins
 	$(BACKEND) uv run ruff check . ../plugins
 	$(BACKEND) uv run mypy . ../plugins
 	$(BACKEND) $(DEV_ENV) uv run python manage.py makemigrations --check --dry-run
+	@# The server's translations: each must keep the English text's placeholders. Needs gettext.
+	@if command -v msgfmt >/dev/null; then \
+		for po in backend/sunfleck/locale/*/LC_MESSAGES/django.po; do \
+			[ ! -e "$$po" ] || msgfmt --check -o /dev/null "$$po" || exit 1; done; \
+	else echo "Skipped checking the server's translations: install gettext (msgfmt)."; fi
 
 lint-frontend: ## Check frontend formatting, lint rules, and types
 	$(FRONTEND) npm run format:check
@@ -91,6 +96,9 @@ api-types: ## Regenerate frontend API types after changing the backend API
 
 stability-baseline: ## Record the API and plugin interface after adding to them; see docs/stability.md
 	$(BACKEND) $(DEV_ENV) uv run python manage.py stability_baseline
+
+compile-messages: ## Compile the server's translations, to see them when running locally (needs gettext)
+	$(BACKEND) $(DEV_ENV) uv run python manage.py compilemessages --ignore=.venv
 
 messages: ## Update the server's translation files (add a language with LOCALE=de); see docs/translating.md
 	$(BACKEND) uv run python manage.py makemessages $(if $(LOCALE),--locale $(LOCALE),--all) \

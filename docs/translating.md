@@ -32,9 +32,12 @@ Use the language's code: `de` for German, `nl` for Dutch, `pt-BR` for Brazilian 
 3. **Tell Sunfleck about it.** Add the language to `LANGUAGES` in
    `backend/sunfleck/config/settings.py`, e.g. `("de", "Deutsch")`. (A test checks that the
    app's translation files and this list match.)
-4. **Check it.** `make test` checks that your translation uses only keys and placeholders
-   that exist in English. Then run the app (`make dev`), choose your language under
-   **Profile → Language**, and look around.
+4. **Check it.** `make test` checks that the app's translation uses only keys and placeholders
+   that exist in English, and `make lint` checks the server's (with
+   [gettext](https://www.gnu.org/software/gettext/) installed; CI always does). Then run
+   `make compile-messages` for the server's texts, run the app (`make dev`), choose your
+   language under **Profile → Language**, and look around. Emails and notifications are sent
+   in each person's language.
 
 People choose their language in their profile; before signing in, the app uses the
 browser's language if Sunfleck has it.

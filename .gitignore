@@ -1,5 +1,7 @@
 # Python
 __pycache__/
+# Compiled translations: the Docker image compiles its own (make compile-messages for local use).
+*.mo
 *.py[cod]
 .venv/
 .mypy_cache/

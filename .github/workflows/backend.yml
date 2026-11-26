@@ -36,6 +36,14 @@ jobs:
         run: uv run python manage.py makemigrations --check --dry-run
         env:
           DEBUG: "true"
+      # A translation that drops or misspells a placeholder (%(count)d) would make the email or
+      # notification fail to send in that language.
+      - name: Check the server's translations
+        run: |
+          sudo apt-get install --yes --no-install-recommends gettext
+          for po in sunfleck/locale/*/LC_MESSAGES/django.po; do
+            msgfmt --check --output-file=/dev/null "$po"
+          done
 
   test-sqlite:
     name: Tests (SQLite, Python ${{ matrix.python }})
