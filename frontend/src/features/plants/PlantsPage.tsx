@@ -10,6 +10,7 @@ import { usePlants } from "../../api/plants";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useAreas } from "../../lib/useAreas";
 import { ActiveFilters } from "./ActiveFilters";
 import { PlantCard } from "./PlantCard";
 import { PlantsSkeleton } from "./PlantsSkeleton";
@@ -19,6 +20,7 @@ import { type PlantFilterValues, PlantFilters } from "./PlantFilters";
 /** All plants, as a grid of photo cards, with search and (folded away) filters. */
 export function PlantsPage() {
   const { t } = useTranslation();
+  const areas = useAreas();
   const canEdit = useCanEdit();
   const sites = useSites().data ?? [];
   const [search, setSearch] = useState("");
@@ -65,9 +67,11 @@ export function PlantsPage() {
           )
         }
         menu={
-          <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
-            {t("labels.printQr")}
-          </Menu.Item>
+          areas.collection && (
+            <Menu.Item component={Link} to="/plants/labels" leftSection={<IconQrcode size={16} />}>
+              {t("labels.printQr")}
+            </Menu.Item>
+          )
         }
       />
 

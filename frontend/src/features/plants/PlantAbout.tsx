@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import type { Plant } from "../../api/plants";
 import { cmToDisplay, lengthUnit } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
+import { useAreas } from "../../lib/useAreas";
 import { PlantCareProfile } from "../taxonomy/PlantCareProfile";
 import { formatDate } from "./dates";
 import { PlantLineage } from "./PlantLineage";
@@ -15,6 +16,7 @@ import { PlantLineage } from "./PlantLineage";
  */
 export function PlantAbout({ plant, canEdit }: { plant: Plant; canEdit: boolean }) {
   const { t, i18n } = useTranslation();
+  const areas = useAreas();
   const units = useUnits();
   const pot = [
     plant.container_diameter_cm !== null
@@ -91,7 +93,7 @@ export function PlantAbout({ plant, canEdit }: { plant: Plant; canEdit: boolean 
             </Stack>
           </>
         )}
-        <PlantLineage plant={plant} />
+        {areas.collection && <PlantLineage plant={plant} />}
       </Stack>
     </Paper>
   );

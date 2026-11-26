@@ -63,7 +63,8 @@ right. Every page also has a link back above its title on a wider screen.
   weather; or enter them on the site's page (only the day and month count).
 - A **garden bed** is an outdoor spot marked as a raised bed or a bed in the ground. A
   raised bed dries out sooner, so its plants are watered a little more often. With its width
-  and length, the watering amount also says how much water the whole bed needs.
+  and length, the watering amount also says how much water the whole bed needs. Garden beds
+  are part of [Garden](#parts-of-the-app).
 - **Light** indoors comes from **windows** (with the direction they face) and **grow
   lights** (with their brightness and when they're on). Each plant says which reach it, and
   how far it is from each window and below each grow light. Sunfleck estimates how much light
@@ -126,14 +127,14 @@ right. Every page also has a link back above its title on a wider screen.
   you choose another) its room and lights, named after it ("Monty (cutting 2)"). They're
   marked **Propagating**: watered as usual, but not fertilized until they've taken. Then set
   each one's status to Active. Each one's **About** card shows the plant it was grown from,
-  and the parent's lists them.
+  and the parent's lists them. Propagating is part of [Collection](#parts-of-the-app).
 - **Labels**: each plant has a QR code; scanning it with a phone opens the plant's page
   (after signing in). **Print a label** in the **⋯** menu at the top of a plant's page, or **Print QR labels** in the Plants page's **⋯** menu (or
   on a room's page, for the plants there), prints a sheet of them in three sizes, with
   or without the species. On Chrome for Android, **Write to an NFC tag** (in the same menu) puts the plant's
   address on a tag, so tapping it opens the page. Labels link to `SUNFLECK_PUBLIC_URL` if
   it's set, else to the address you're using: print them from an address your phone can
-  reach.
+  reach. Labels are part of [Collection](#parts-of-the-app).
 - **A plant's page**: its photo, name and room at the top, then its **Care**, its **Light**
   (whether it gets enough now and what would help, the windows and lamps that reach it, and
   **Through the year** for each season, in words: dim, medium, bright, very bright), photos
@@ -150,6 +151,8 @@ right. Every page also has a link back above its title on a wider screen.
 
 ## Wishlist
 
+The wishlist is part of [Collection](#parts-of-the-app).
+
 - **Wishlist** (at the top of the Plants tab: Plants · Seeds · Wishlist) lists plants you'd like to have: a name, the species if
   you know it, where to get it (a link) and notes. On a species' page in the Care guide,
   **Add to the wishlist** adds it in one tap.
@@ -157,6 +160,8 @@ right. Every page also has a link back above its title on a wider screen.
   the plant, it comes off the wishlist. Exports include the wishlist.
 
 ## Seeds
+
+Seeds and the sowing calendar are part of [Garden](#parts-of-the-app).
 
 **Seeds** (at the top of the Plants tab: Plants · Seeds · Wishlist) lists the seeds you have: their species, variety, how many,
 and the year to sow them by. Seeds past that year are marked, since they may not come up.
@@ -171,7 +176,7 @@ Seeds need their species for the calendar, and the place needs its frost dates (
 
 ## Harvests
 
-Vegetables, herbs and fruit have a **Harvests** card on their page: **Log a harvest** with the
+Harvests are part of [Garden](#parts-of-the-app). Vegetables, herbs and fruit have a **Harvests** card on their page: **Log a harvest** with the
 day and, if you counted or weighed it, how much (grams, kilograms, ounces, pounds, pieces or
 bunches). The card adds up the year so far in your units ("In 2026: 3.6 lb · 12 pieces") and
 lists the latest harvests. Exports include them.
@@ -285,6 +290,19 @@ Under **Profile**, everyone sets their name, a profile picture (only their house
 language, units (metric, or imperial: inches and °F), and password. After choosing a picture,
 move and zoom it to frame it in the circle, then save. To frame it differently later, tap the
 picture or **Adjust**. Pictures chosen before 1.1 need to be chosen again first.
+
+### Parts of the app
+
+Sunfleck starts simple. Two parts of the app are for people who want more, and an Admin turns
+them on under **Household**, in **Parts of the app**:
+
+- **Garden**: [seeds](#seeds) and the sowing calendar, [harvests](#harvests), and garden beds.
+- **Collection**: [propagating](#plants) plants, the [wishlist](#wishlist), and QR and NFC
+  labels.
+
+A part that's off is hidden for everyone in the household, from the pages, menus and forms.
+Nothing is deleted: its data stays, is still exported, and comes back when it's turned on
+again. Households from before 1.3 have both turned on.
 
 ## Plugins
 

@@ -8,6 +8,7 @@ import type { Photo, Plant } from "../../api/plants";
 import { PageHeader } from "../../components/PageHeader";
 import { relativeDay } from "../../lib/relativeTime";
 import { sentenceCase } from "../../lib/text";
+import { useAreas } from "../../lib/useAreas";
 import { useNfcWriter } from "../labels/useNfcWriter";
 import { LocationKindBadge } from "../places/LocationKindBadge";
 import { AddPhotoButton } from "./AddPhotoButton";
@@ -28,6 +29,7 @@ interface PlantHeaderProps {
  */
 export function PlantHeader({ plant, canEdit, onOpenPhoto }: PlantHeaderProps) {
   const { t, i18n } = useTranslation();
+  const areas = useAreas();
   const nfc = useNfcWriter(plant);
   const [propagating, setPropagating] = useState(false);
   const { cover_photo: cover, location, species } = plant;
@@ -117,30 +119,32 @@ export function PlantHeader({ plant, canEdit, onOpenPhoto }: PlantHeaderProps) {
           )
         }
         menu={
-          <>
-            {canEdit && (
+          areas.collection && (
+            <>
+              {canEdit && (
+                <Menu.Item
+                  leftSection={<IconPlant size={16} />}
+                  onClick={() => {
+                    setPropagating(true);
+                  }}
+                >
+                  {t("plants.lineage.propagate")}
+                </Menu.Item>
+              )}
               <Menu.Item
-                leftSection={<IconPlant size={16} />}
-                onClick={() => {
-                  setPropagating(true);
-                }}
+                component={Link}
+                to={`/plants/labels?plant=${String(plant.id)}`}
+                leftSection={<IconPrinter size={16} />}
               >
-                {t("plants.lineage.propagate")}
+                {t("labels.printOne")}
               </Menu.Item>
-            )}
-            <Menu.Item
-              component={Link}
-              to={`/plants/labels?plant=${String(plant.id)}`}
-              leftSection={<IconPrinter size={16} />}
-            >
-              {t("labels.printOne")}
-            </Menu.Item>
-            {nfc.available && (
-              <Menu.Item leftSection={<IconNfc size={16} />} onClick={nfc.write}>
-                {t("labels.writeNfc")}
-              </Menu.Item>
-            )}
-          </>
+              {nfc.available && (
+                <Menu.Item leftSection={<IconNfc size={16} />} onClick={nfc.write}>
+                  {t("labels.writeNfc")}
+                </Menu.Item>
+              )}
+            </>
+          )
         }
       />
       {propagating && (

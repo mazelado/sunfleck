@@ -11,6 +11,7 @@ export type Role = components["schemas"]["Role"];
 export type Member = components["schemas"]["MemberOut"];
 export type InvitationCreated = components["schemas"]["InvitationCreatedOut"];
 export type SetupInput = components["schemas"]["SetupIn"];
+export type HouseholdUpdate = components["schemas"]["HouseholdUpdate"];
 
 const keys = {
   me: ["me"] as const,
@@ -171,12 +172,17 @@ function updatedPicture(queryClient: QueryClient, me: Me) {
 
 // --- Household --------------------------------------------------------------------------------
 
+/** Rename the household, or turn its areas (Garden, Collection) on or off. */
 export function useUpdateHousehold() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (name: string) =>
-      unwrap(await api.PATCH("/api/v1/household", { body: { name } })),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.me }),
+    mutationFn: async (body: HouseholdUpdate) =>
+      unwrap(await api.PATCH("/api/v1/household", { body })),
+    onSuccess: (household) => {
+      // At once, so a switch doesn't flip back while `me` is fetched again.
+      queryClient.setQueryData<Me | null>(keys.me, (me) => me && { ...me, household });
+      return queryClient.invalidateQueries({ queryKey: keys.me });
+    },
   });
 }
 

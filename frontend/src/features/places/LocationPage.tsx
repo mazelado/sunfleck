@@ -19,6 +19,7 @@ import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
 import { cmToDisplay, lengthUnit } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
+import { useAreas } from "../../lib/useAreas";
 import { LocationPlants } from "../plants/LocationPlants";
 import { LocationKindBadge } from "./LocationKindBadge";
 import { describeConditions, describeLight, lightWord } from "./describe";
@@ -29,6 +30,7 @@ type Dialog = { kind: "window" | "grow_light"; light?: LightSource } | null;
 
 export function LocationPage() {
   const { t } = useTranslation();
+  const areas = useAreas();
   const params = useParams();
   const found = useLocation(Number(params.siteId), Number(params.locationId));
   const canEdit = useCanEdit();
@@ -86,13 +88,15 @@ export function LocationPage() {
           )
         }
         menu={
-          <Menu.Item
-            component={Link}
-            to={`/plants/labels?location=${String(location.id)}`}
-            leftSection={<IconQrcode size={16} />}
-          >
-            {t("labels.printQrHere")}
-          </Menu.Item>
+          areas.collection && (
+            <Menu.Item
+              component={Link}
+              to={`/plants/labels?location=${String(location.id)}`}
+              leftSection={<IconQrcode size={16} />}
+            >
+              {t("labels.printQrHere")}
+            </Menu.Item>
+          )
         }
       />
 

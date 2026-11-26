@@ -8,6 +8,7 @@ import { SetupPage } from "./features/auth/SetupPage";
 import { SignInPage } from "./features/auth/SignInPage";
 import { AppLayout } from "./features/layout/AppLayout";
 import { NotFoundPage } from "./features/layout/NotFoundPage";
+import { RequireArea } from "./features/layout/RequireArea";
 import { RequireAuth } from "./features/layout/RequireAuth";
 import { SetupGate } from "./features/layout/SetupGate";
 import { TodayPage } from "./features/today/TodayPage";
@@ -49,12 +50,17 @@ export const routes: RouteObject[] = [
                 ...page(() => import("./features/plants/PlantsPage"), "PlantsPage"),
               },
               {
-                path: "/plants/wishlist",
-                ...page(() => import("./features/plants/WishlistPage"), "WishlistPage"),
-              },
-              {
-                path: "/plants/labels",
-                ...page(() => import("./features/labels/LabelsPage"), "LabelsPage"),
+                element: <RequireArea area="collection" />,
+                children: [
+                  {
+                    path: "/plants/wishlist",
+                    ...page(() => import("./features/plants/WishlistPage"), "WishlistPage"),
+                  },
+                  {
+                    path: "/plants/labels",
+                    ...page(() => import("./features/labels/LabelsPage"), "LabelsPage"),
+                  },
+                ],
               },
               {
                 path: "/plants/new",
@@ -113,8 +119,13 @@ export const routes: RouteObject[] = [
                 ...page(() => import("./features/places/LocationFormPage"), "LocationFormPage"),
               },
               {
-                path: "/plants/seeds",
-                ...page(() => import("./features/garden/SeedsPage"), "SeedsPage"),
+                element: <RequireArea area="garden" />,
+                children: [
+                  {
+                    path: "/plants/seeds",
+                    ...page(() => import("./features/garden/SeedsPage"), "SeedsPage"),
+                  },
+                ],
               },
               // Seeds' address until they became a view of the Plants tab (1.0).
               { path: "/seeds", element: <Navigate to="/plants/seeds" replace /> },

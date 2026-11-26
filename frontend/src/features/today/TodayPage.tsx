@@ -10,6 +10,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { PageHeader } from "../../components/PageHeader";
 import { useCanEdit } from "../../lib/useCanEdit";
+import { useAreas } from "../../lib/useAreas";
 import { GardenNote } from "../garden/GardenNote";
 import { GettingStarted } from "../home/GettingStarted";
 import { DueCount } from "./DueCount";
@@ -21,6 +22,7 @@ import { WeatherCard } from "./WeatherCard";
 /** The household's care for today: what's overdue or due, by location, then what's coming up. */
 export function TodayPage() {
   const { t, i18n } = useTranslation();
+  const areas = useAreas();
   const today = useToday();
   const canEdit = useCanEdit();
   const places = useSites().data;
@@ -98,7 +100,7 @@ export function TodayPage() {
           </Alert>
         )}
 
-        <GardenNote />
+        {areas.garden && <GardenNote />}
 
         {!isNew && (
           <>

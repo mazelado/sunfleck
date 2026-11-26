@@ -874,6 +874,35 @@ describe("plant page", () => {
     expect(screen.queryByRole("button", { name: "What's wrong?" })).not.toBeInTheDocument();
   });
 
+  it("leaves out propagating and labels when the household has Collection off", async () => {
+    const household = { id: 1, name: "Fern Gully", garden: true, collection: false };
+    signInAs({ ...gardener, household });
+    withSites([home]);
+    withPlant(
+      plant({
+        lineage: {
+          parent: null,
+          propagation_method: null,
+          offspring: [
+            {
+              id: 8,
+              nickname: "Monty (cutting 1)",
+              acquired_on: null,
+              propagation_method: "cutting",
+              status: "propagating",
+            },
+          ],
+        },
+      }),
+    );
+    renderApp("/plants/7");
+
+    expect(await screen.findByRole("heading", { name: "Monty" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Edit" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "More actions" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Grown from it")).not.toBeInTheDocument();
+  });
+
   it("propagates cuttings from a plant, named after it", async () => {
     signInAs(gardener);
     withSites([home]);

@@ -9,6 +9,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Garden and Collection, turned on when you want them**: an Admin turns two parts of the app
+  on or off under **Settings → Household → Parts of the app**. **Garden** is seeds and the
+  sowing calendar, harvests and garden beds; **Collection** is propagating, the wishlist and QR
+  and NFC labels. A part that's off is hidden for everyone in the household; nothing is
+  deleted, and it comes back when it's turned on again. Households from before 1.3 keep both
+  on; new ones start with both off (#257).
+
 ## [1.2.0] - 2026-11-26
 
 **Lavender.** Trust: every care profile checked against published sources, toxicity to pets
