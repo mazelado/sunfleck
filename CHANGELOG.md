@@ -40,6 +40,10 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Adding a photo is easier to spot**: over a plant's cover photo, the round camera button is
+  now labelled **Add a photo**, and **Crop**, offered after adding one, stands out and stays
+  longer. In the usability test, the camera button was missed, and **Edit** taken for it
+  (#253).
 - **Settings says its name**: the gear at the top is now labelled **Settings**. In the usability
   test, people looked for it in their profile, Today, the care guide and Plants first (#252).
 - **Notifications say when nothing will be sent**: until this device or another way is added,
