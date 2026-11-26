@@ -46,6 +46,39 @@ which) and is missing new ones (shown in English). English itself has no keys th
 use: `make lint` checks, so nobody translates a text that's never shown. For the server, run `make messages`: it
 updates every `.po` file, marking changed texts as "fuzzy" for review.
 
+## Spanish
+
+Spanish (`es`) is one translation for every Spanish-speaking country, so:
+
+- **Address people as _tú_**, as most apps do.
+- **Use words understood everywhere**, and avoid ones from one country only: _dispositivo_, not
+  _ordenador_ or _computadora_; _app_, not _aplicación móvil_.
+- **Keep it short where space is tight** (the tab bar, buttons beside a plant's name), and check
+  it on a 375px-wide phone: _Guía_ in the tab bar, _Luego_ for **Later**.
+- **Roles keep one form**, as in the rest of the interface: _Admin_, _Jardinero_, _Lector_.
+
+The same English word is always translated the same way:
+
+| English | Spanish |
+|---|---|
+| Household | Hogar |
+| Place; home or garden | Lugar; casa o jardín |
+| Room or spot | Habitación o espacio |
+| Garden bed | Bancal |
+| Care; care type; care guide; care profile | Cuidados; tipo de cuidado; Guía de cuidados; perfil de cuidados |
+| Water; watering | Regar; riego |
+| Fertilize; fertilizer | Abonar; abono |
+| Repot, prune, mist | Trasplantar, podar, pulverizar |
+| Schedule; routine | Pauta; rutina |
+| Resting season | Época de reposo |
+| Snooze; put off | Posponer; aplazar |
+| Log (care) | Registrar |
+| Settings; plugin | Ajustes; complemento |
+| Grow light | Lámpara de cultivo |
+| Garden; Collection (parts of the app) | Jardín; Colección |
+| Wishlist; seeds; harvest | Lista de deseos; semillas; cosecha |
+| Turn on / off | Activar / desactivar |
+
 ## Not translated (yet)
 
 - **Plant names and care profiles** come from the care dataset, which has its own
