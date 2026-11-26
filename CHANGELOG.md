@@ -16,7 +16,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   sowing calendar, harvests and garden beds; **Collection** is propagating, the wishlist and QR
   and NFC labels. A part that's off is hidden for everyone in the household; nothing is
   deleted, and it comes back when it's turned on again. Households from before 1.3 keep both
-  on; new ones start with both off (#257).
+  on; new ones start with both off (#257, #258).
 
 ## [1.2.0] - 2026-11-26
 
