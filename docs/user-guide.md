@@ -89,6 +89,11 @@ right. Every page also has a link back above its title on a wider screen.
   **care profile**, which comes with its species. Choose another care profile if it needs
   different care, or if you don't know the species. The **Care guide** describes each profile;
   **Indoor** or **Outdoor** above the list shows only those.
+- **Toxic plants:** a plant's page warns when its species is known to be toxic to cats or
+  dogs, or harmful to people: how serious it is if eaten (mildly, harmful, or seriously), and
+  whether its sap irritates skin, with where that comes from. A species' page in the Care guide
+  also says when it isn't known, which never means it's safe. For food crops, only a part
+  people might eat counts, such as a potato's green tubers; the note says which.
 - **No care profile for its species?** If an Admin turned on an AI plugin, **Suggest with AI**
   asks which of the built-in care profiles fits it best, and why. It only suggests: check the
   profile in the Care guide, then use it or choose another.

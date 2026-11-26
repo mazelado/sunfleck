@@ -10,6 +10,7 @@ import { useAreas } from "../../lib/useAreas";
 import { CareCard } from "../care/CareCard";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { PlantHarvests } from "../garden/PlantHarvests";
+import { HarmToPeopleNotice } from "../taxonomy/HarmToPeople";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
 import { DiagnosePlant } from "./DiagnosePlant";
 import { LightCard } from "./LightCard";
@@ -52,6 +53,7 @@ export function PlantPage() {
     <>
       <PlantHeader plant={data} canEdit={canEdit} onOpenPhoto={open} />
       <ToxicityNotice toxicity={data.species?.toxicity} />
+      <HarmToPeopleNotice harm={data.species?.harmful_to_people} />
     </>
   );
   const care = (
