@@ -24,7 +24,6 @@ second usability test, on phones.
 - **Change the pot from where it's shown**: under **About** on a plant's page, the pot has a
   **Change** link (or **Add**, without one) that opens the plant's form at the pot size. In the
   usability test, everyone looked there or in the care guide before finding **Edit** (#251).
-
 - **A plant's care history, next to what Sunfleck predicted**: **History**, next to **Why?** on
   each care schedule, shows when the care was done, how many days before or after it was due,
   the soil feedback and the water given, with a row of dots to see it at a glance.
@@ -34,7 +33,6 @@ second usability test, on phones.
 - **Exports keep past predictions**, so a restored household's history can still be compared
   with them. Exports from earlier versions still import; their care is shown
   as done "before Sunfleck predicted it".
-
 - **Toxicity to pets, for many more plants**: 63 plants and genera now say they're known to
   be toxic to cats or dogs, up from 29. Among them are garden and kitchen plants such as
   tulips, daffodils, daylilies (to cats), onions and garlic, tomatoes, citrus, mint, lavender
