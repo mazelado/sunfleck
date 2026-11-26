@@ -3,6 +3,9 @@
 #
 # A species gets its genus's care profile unless it names its own (`archetype`).
 # `synonyms` are older names people still search by.
+#
+# Spanish common names (`es`) come from Wikidata (CC0), chosen from each taxon's own item on
+# 2026-11-26: see docs/spanish-care-data-2026-11.md.
 genera:
 - genus: Monstera
   family: Araceae
@@ -16,6 +19,10 @@ genera:
       en:
       - Swiss cheese plant
       - split-leaf philodendron
+      es:
+      - costilla de Adán
+      - cerimán
+      - mano de tigre
     toxicity:
       cats: toxic
       dogs: toxic
@@ -41,6 +48,8 @@ genera:
   common_names:
     en:
     - philodendron
+    es:
+    - filodendro
   toxicity:
     cats: toxic
     dogs: toxic
@@ -94,6 +103,8 @@ genera:
       - golden pothos
       - devil's ivy
       - pothos
+      es:
+      - potus
     synonyms:
     - Scindapsus aureus
     toxicity:
@@ -137,6 +148,8 @@ genera:
     en:
     - anthurium
     - flamingo flower
+    es:
+    - anturio
   toxicity:
     cats: toxic
     dogs: toxic
@@ -193,6 +206,9 @@ genera:
   common_names:
     en:
     - dumb cane
+    es:
+    - diefembaquia
+    - lotería
   toxicity:
     cats: toxic
     dogs: toxic
@@ -211,6 +227,8 @@ genera:
   common_names:
     en:
     - peace lily
+    es:
+    - cuna de Moisés
   toxicity:
     cats: toxic
     dogs: toxic
@@ -265,6 +283,9 @@ genera:
     common_names:
       en:
       - prayer plant
+      es:
+      - planta de la oración
+      - maranta
 - genus: Ctenanthe
   family: Marantaceae
   archetype: humid_tropical_foliage
@@ -322,6 +343,8 @@ genera:
   common_names:
     en:
     - angel wings
+    es:
+    - caladio
   toxicity:
     cats: toxic
     dogs: toxic
@@ -411,6 +434,8 @@ genera:
       en:
       - spider plant
       - airplane plant
+      es:
+      - cinta
 - genus: Tradescantia
   family: Commelinaceae
   archetype: easy_foliage
@@ -428,6 +453,8 @@ genera:
     common_names:
       en:
       - small-leaf spiderwort
+      es:
+      - suelda con suelda
     toxicity:
       cats: toxic
       dogs: toxic
@@ -452,12 +479,18 @@ genera:
   common_names:
     en:
     - ivy
+    es:
+    - hiedra
+    - yedra
   species:
   - name: Hedera helix
     common_names:
       en:
       - English ivy
       - common ivy
+      es:
+      - hiedra común
+      - hiedra trepadora
     toxicity:
       cats: toxic
       dogs: toxic
@@ -484,12 +517,16 @@ genera:
     en:
     - wax plant
     - hoya
+    es:
+    - planta de cera
   species:
   - name: Hoya carnosa
     common_names:
       en:
       - wax plant
       - porcelain flower
+      es:
+      - flor de nácar
   - name: Hoya kerrii
     common_names:
       en:
@@ -533,10 +570,16 @@ genera:
       en:
       - rubber plant
       - rubber tree
+      es:
+      - árbol del caucho
+      - gomero
+      - árbol de la goma
   - name: Ficus benjamina
     common_names:
       en:
       - weeping fig
+      es:
+      - benjamina
     toxicity:
       cats: toxic
       dogs: toxic
@@ -569,6 +612,8 @@ genera:
     en:
     - dragon tree
     - dracaena
+    es:
+    - dracena
   toxicity:
     cats: toxic
     dogs: toxic
@@ -581,6 +626,8 @@ genera:
     common_names:
       en:
       - corn plant
+      es:
+      - tronco del Brasil
     toxicity:
       cats: toxic
       dogs: toxic
@@ -627,6 +674,8 @@ genera:
       en:
       - money tree
       - Guiana chestnut
+      es:
+      - castaño de Guinea
 - genus: Persea
   family: Lauraceae
   archetype: indoor_tree
@@ -639,18 +688,26 @@ genera:
       en:
       - avocado
       - alligator pear
+      es:
+      - aguacate
+      - palta
 - genus: Strelitzia
   family: Strelitziaceae
   archetype: indoor_tree
   common_names:
     en:
     - bird of paradise
+    es:
+    - flor de pajarito
   species:
   - name: Strelitzia reginae
     common_names:
       en:
       - bird of paradise
       - crane flower
+      es:
+      - ave del paraíso
+      - esterlicia
     toxicity:
       cats: toxic
       dogs: toxic
@@ -743,23 +800,32 @@ genera:
 - genus: Araucaria
   family: Araucariaceae
   archetype: indoor_tree
+  common_names:
+    es:
+    - araucaria
   species:
   - name: Araucaria heterophylla
     common_names:
       en:
       - Norfolk Island pine
+      es:
+      - pino de la isla Norfolk
 - genus: Coffea
   family: Rubiaceae
   archetype: indoor_tree
   common_names:
     en:
     - coffee plant
+    es:
+    - cafeto
   species:
   - name: Coffea arabica
     common_names:
       en:
       - coffee plant
       - Arabian coffee
+      es:
+      - cafeto de Arabia
 - genus: Musa
   family: Musaceae
   archetype: indoor_tree
@@ -802,6 +868,8 @@ genera:
       en:
       - areca palm
       - butterfly palm
+      es:
+      - palmera amarilla
 - genus: Rhapis
   family: Arecaceae
   archetype: indoor_palm
@@ -883,6 +951,8 @@ genera:
   archetype: begonia_gesneriad
   common_names:
     en:
+    - begonia
+    es:
     - begonia
   toxicity:
     cats: toxic
@@ -969,12 +1039,17 @@ genera:
       en:
       - jade plant
       - money plant
+      es:
+      - árbol de jade
+      - jade
 - genus: Sedum
   family: Crassulaceae
   archetype: succulent
   common_names:
     en:
     - stonecrop
+    es:
+    - sedo
   species:
   - name: Sedum morganianum
     common_names:
@@ -1005,6 +1080,8 @@ genera:
   common_names:
     en:
     - aeonium
+    es:
+    - bejeque
 - genus: Sempervivum
   family: Crassulaceae
   archetype: succulent
@@ -1036,6 +1113,8 @@ genera:
       en:
       - aloe vera
       - medicinal aloe
+      es:
+      - sábila
     toxicity:
       cats: toxic
       dogs: toxic
@@ -1082,6 +1161,9 @@ genera:
     en:
     - agave
     - century plant
+    es:
+    - agave
+    - maguey
 - genus: Yucca
   family: Asparagaceae
   archetype: succulent
@@ -1143,6 +1225,9 @@ genera:
   common_names:
     en:
     - living stones
+    es:
+    - piedra viva
+    - planta piedra
 - genus: Euphorbia
   family: Euphorbiaceae
   archetype: succulent
@@ -1154,6 +1239,9 @@ genera:
     common_names:
       en:
       - crown of thorns
+      es:
+      - corona de Cristo
+      - corona de espinas
     toxicity:
       cats: toxic
       dogs: toxic
@@ -1198,6 +1286,8 @@ genera:
       en:
       - string of hearts
       - rosary vine
+      es:
+      - collar de corazones
 - genus: Adenium
   family: Apocynaceae
   archetype: succulent
@@ -1228,11 +1318,18 @@ genera:
   common_names:
     en:
     - prickly pear
+    es:
+    - nopal
+    - chumbera
+    - tuna
   species:
   - name: Opuntia microdasys
     common_names:
       en:
       - bunny ears cactus
+      es:
+      - orejas de conejo
+      - nopal cegador
 - genus: Echinopsis
   family: Cactaceae
   archetype: desert_cactus
@@ -1258,6 +1355,8 @@ genera:
   common_names:
     en:
     - barrel cactus
+    es:
+    - cactus de barril
 - genus: Echinocactus
   family: Cactaceae
   archetype: desert_cactus
@@ -1331,12 +1430,16 @@ genera:
   common_names:
     en:
     - dancing lady orchid
+    es:
+    - dama danzante
 - genus: Cattleya
   family: Orchidaceae
   archetype: epiphytic_orchid
   common_names:
     en:
     - cattleya
+    es:
+    - catleya
 - genus: Vanda
   family: Orchidaceae
   archetype: epiphytic_orchid
@@ -1349,12 +1452,16 @@ genera:
   common_names:
     en:
     - boat orchid
+    es:
+    - orquídea barco
 - genus: Paphiopedilum
   family: Orchidaceae
   archetype: epiphytic_orchid
   common_names:
     en:
     - slipper orchid
+    es:
+    - sandalia de Venus
 - genus: Ludisia
   family: Orchidaceae
   archetype: epiphytic_orchid
@@ -1416,17 +1523,24 @@ genera:
     en:
     - pineapple
     - bromeliad
+    es:
+    - piña
   species:
   - name: Ananas comosus
     common_names:
       en:
       - pineapple
+      es:
+      - piña
+      - ananá
 - genus: Tillandsia
   family: Bromeliaceae
   archetype: air_plant
   common_names:
     en:
     - air plant
+    es:
+    - clavel del aire
   species:
   - name: Tillandsia ionantha
     common_names:
@@ -1436,23 +1550,34 @@ genera:
     common_names:
       en:
       - Spanish moss
+      es:
+      - heno
+      - barba de viejo
+      - musgo español
 - genus: Dionaea
   family: Droseraceae
   archetype: bog_carnivore
   common_names:
     en:
     - Venus flytrap
+    es:
+    - atrapamoscas
   species:
   - name: Dionaea muscipula
     common_names:
       en:
       - Venus flytrap
+      es:
+      - Venus atrapamoscas
+      - dionea atrapamoscas
 - genus: Drosera
   family: Droseraceae
   archetype: bog_carnivore
   common_names:
     en:
     - sundew
+    es:
+    - rocío de sol
   species:
   - name: Drosera capensis
     common_names:
@@ -1477,6 +1602,8 @@ genera:
     en:
     - tropical pitcher plant
     - monkey cup
+    es:
+    - planta de jarra
 - genus: Salvia
   family: Lamiaceae
   archetype: mediterranean_herb
@@ -1491,6 +1618,8 @@ genera:
     common_names:
       en:
       - rosemary
+      es:
+      - romero
     synonyms:
     - Rosmarinus officinalis
   - name: Salvia officinalis
@@ -1498,24 +1627,33 @@ genera:
       en:
       - common sage
       - garden sage
+      es:
+      - salvia
 - genus: Thymus
   family: Lamiaceae
   archetype: mediterranean_herb
   common_names:
     en:
     - thyme
+    es:
+    - tomillo
   species:
   - name: Thymus vulgaris
     common_names:
       en:
       - common thyme
       - garden thyme
+      es:
+      - tomillo
+      - tomillo común
 - genus: Lavandula
   family: Lamiaceae
   archetype: mediterranean_herb
   common_names:
     en:
     - lavender
+    es:
+    - lavanda
   toxicity:
     cats: toxic
     dogs: toxic
@@ -1528,6 +1666,8 @@ genera:
     common_names:
       en:
       - English lavender
+      es:
+      - espliego común
 - genus: Origanum
   family: Lamiaceae
   archetype: mediterranean_herb
@@ -1548,6 +1688,8 @@ genera:
     common_names:
       en:
       - oregano
+      es:
+      - orégano
 - genus: Laurus
   family: Lauraceae
   archetype: mediterranean_herb
@@ -1560,6 +1702,9 @@ genera:
       en:
       - bay laurel
       - sweet bay
+      es:
+      - laurel
+      - laurel común
     toxicity:
       cats: toxic
       dogs: toxic
@@ -1578,6 +1723,8 @@ genera:
     common_names:
       en:
       - olive tree
+      es:
+      - olivo
 - genus: Ocimum
   family: Lamiaceae
   archetype: leafy_herb
@@ -1590,6 +1737,8 @@ genera:
       en:
       - basil
       - sweet basil
+      es:
+      - albahaca
     crop:
       steps:
       - action: sow_indoors
@@ -1610,6 +1759,8 @@ genera:
     common_names:
       en:
       - parsley
+      es:
+      - perejil
     toxicity:
       cats: toxic
       dogs: toxic
@@ -1636,6 +1787,9 @@ genera:
       en:
       - coriander
       - cilantro
+      es:
+      - cilantro
+      - coriandro
     crop:
       steps:
       - action: sow_outdoors
@@ -1660,6 +1814,9 @@ genera:
     common_names:
       en:
       - spearmint
+      es:
+      - hierbabuena
+      - menta
   - name: Mentha × piperita
     common_names:
       en:
@@ -1675,6 +1832,8 @@ genera:
     common_names:
       en:
       - dill
+      es:
+      - eneldo
     crop:
       steps:
       - action: sow_outdoors
@@ -1699,6 +1858,8 @@ genera:
     common_names:
       en:
       - tomato
+      es:
+      - tomatera
     toxicity:
       cats: toxic
       dogs: toxic
@@ -1720,6 +1881,8 @@ genera:
       en:
       - aubergine
       - eggplant
+      es:
+      - berenjena
     crop:
       steps:
       - action: sow_indoors
@@ -1733,6 +1896,9 @@ genera:
     common_names:
       en:
       - potato
+      es:
+      - patata
+      - papa
     archetype: root_vegetable
     crop:
       steps:
@@ -1754,6 +1920,10 @@ genera:
       - sweet pepper
       - bell pepper
       - chili pepper
+      es:
+      - pimiento morrón
+      - ají
+      - chile
     crop:
       steps:
       - action: sow_indoors
@@ -1775,6 +1945,8 @@ genera:
     common_names:
       en:
       - cucumber
+      es:
+      - pepino común
     crop:
       steps:
       - action: sow_indoors
@@ -1788,6 +1960,8 @@ genera:
     common_names:
       en:
       - melon
+      es:
+      - melón
     crop:
       steps:
       - action: sow_indoors
@@ -1811,6 +1985,9 @@ genera:
       - courgette
       - zucchini
       - pumpkin
+      es:
+      - calabacín
+      - zapallo italiano
     crop:
       steps:
       - action: sow_indoors
@@ -1832,6 +2009,10 @@ genera:
       en:
       - French bean
       - green bean
+      es:
+      - frijol
+      - judía
+      - poroto
     crop:
       steps:
       - action: sow_outdoors
@@ -1842,6 +2023,8 @@ genera:
     common_names:
       en:
       - runner bean
+      es:
+      - ayocote
     crop:
       steps:
       - action: sow_outdoors
@@ -1860,6 +2043,10 @@ genera:
       en:
       - pea
       - garden pea
+      es:
+      - guisante
+      - arveja
+      - chícharo
     crop:
       steps:
       - action: sow_outdoors
@@ -1872,6 +2059,9 @@ genera:
   common_names:
     en:
     - strawberry
+    es:
+    - fresa
+    - frutilla
   species:
   - name: Fragaria × ananassa
     common_names:
@@ -1888,6 +2078,8 @@ genera:
     common_names:
       en:
       - lettuce
+      es:
+      - lechuga
     crop:
       steps:
       - action: sow_outdoors
@@ -1905,6 +2097,8 @@ genera:
     common_names:
       en:
       - spinach
+      es:
+      - espinaca
     crop:
       steps:
       - action: sow_outdoors
@@ -1925,6 +2119,9 @@ genera:
       - cabbage
       - kale
       - broccoli
+      es:
+      - col común
+      - berza
     crop:
       steps:
       - action: sow_indoors
@@ -1947,6 +2144,9 @@ genera:
       en:
       - rocket
       - arugula
+      es:
+      - rúcula
+      - roqueta
     crop:
       steps:
       - action: sow_outdoors
@@ -1981,6 +2181,8 @@ genera:
     common_names:
       en:
       - radish
+      es:
+      - rábano
     crop:
       steps:
       - action: sow_outdoors
@@ -2001,6 +2203,8 @@ genera:
       - beetroot
       - chard
       - beet
+      es:
+      - acelga
     crop:
       steps:
       - action: sow_outdoors
@@ -2013,6 +2217,8 @@ genera:
   common_names:
     en:
     - citrus
+    es:
+    - cítricos
   synonyms:
   - Fortunella
   toxicity:
@@ -2028,6 +2234,9 @@ genera:
     common_names:
       en:
       - lemon
+      es:
+      - limonero
+      - limón
   - name: Citrus × sinensis
     common_names:
       en:
@@ -2044,6 +2253,8 @@ genera:
   common_names:
     en:
     - hydrangea
+    es:
+    - hortensia
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2063,6 +2274,8 @@ genera:
   common_names:
     en:
     - rose
+    es:
+    - rosal
 - genus: Buxus
   family: Buxaceae
   archetype: temperate_shrub
@@ -2070,6 +2283,8 @@ genera:
     en:
     - box
     - boxwood
+    es:
+    - boj
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2083,6 +2298,8 @@ genera:
       en:
       - common box
       - boxwood
+      es:
+      - boj común
 - genus: Rhododendron
   family: Ericaceae
   archetype: temperate_shrub
@@ -2090,6 +2307,8 @@ genera:
     en:
     - rhododendron
     - azalea
+    es:
+    - rododendro
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2103,6 +2322,8 @@ genera:
   common_names:
     en:
     - camellia
+    es:
+    - camelia
 - genus: Syringa
   family: Oleaceae
   archetype: temperate_shrub
@@ -2115,12 +2336,16 @@ genera:
   common_names:
     en:
     - viburnum
+    es:
+    - viburno
 - genus: Ilex
   family: Aquifoliaceae
   archetype: temperate_shrub
   common_names:
     en:
     - holly
+    es:
+    - acebo
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2140,6 +2365,8 @@ genera:
     common_names:
       en:
       - highbush blueberry
+      es:
+      - arándano azul
 - genus: Rubus
   family: Rosaceae
   archetype: temperate_shrub
@@ -2152,6 +2379,9 @@ genera:
     common_names:
       en:
       - raspberry
+      es:
+      - frambueso
+      - frambuesa
 - genus: Echinacea
   family: Asteraceae
   archetype: sun_perennial
@@ -2186,6 +2416,9 @@ genera:
     common_names:
       en:
       - catnip
+      es:
+      - hierba gatera
+      - menta gatuna
     toxicity:
       cats: toxic
       sources:
@@ -2212,12 +2445,16 @@ genera:
     en:
     - cranesbill
     - hardy geranium
+    es:
+    - geranio
 - genus: Hemerocallis
   family: Asphodelaceae
   archetype: sun_perennial
   common_names:
     en:
     - daylily
+    es:
+    - lirio de día
   toxicity:
     cats: toxic
     sources:
@@ -2230,6 +2467,8 @@ genera:
   common_names:
     en:
     - iris
+    es:
+    - lirio
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2243,6 +2482,8 @@ genera:
   common_names:
     en:
     - peony
+    es:
+    - peonía
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2341,6 +2582,8 @@ genera:
   common_names:
     en:
     - marigold
+    es:
+    - clavel chino
   species:
   - name: Tagetes patula
     common_names:
@@ -2382,6 +2625,8 @@ genera:
     en:
     - geranium
     - pelargonium
+    es:
+    - pelargonio
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2420,6 +2665,9 @@ genera:
     common_names:
       en:
       - nasturtium
+      es:
+      - capuchina
+      - espuela de galán
     crop:
       steps:
       - action: sow_outdoors
@@ -2464,6 +2712,8 @@ genera:
     common_names:
       en:
       - sunflower
+      es:
+      - girasol
     crop:
       steps:
       - action: sow_outdoors
@@ -2475,6 +2725,8 @@ genera:
   common_names:
     en:
     - tulip
+    es:
+    - tulipán
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2488,6 +2740,8 @@ genera:
   common_names:
     en:
     - daffodil
+    es:
+    - narciso
   toxicity:
     cats: toxic
     dogs: toxic
@@ -2501,6 +2755,8 @@ genera:
   common_names:
     en:
     - hyacinth
+    es:
+    - jacinto
   species:
   - name: Hyacinthus orientalis
     common_names:
@@ -2545,6 +2801,8 @@ genera:
     common_names:
       en:
       - chives
+      es:
+      - cebollino
     archetype: leafy_herb
     crop:
       steps:
@@ -2559,6 +2817,8 @@ genera:
     common_names:
       en:
       - onion
+      es:
+      - cebolla
     archetype: root_vegetable
     crop:
       steps:
@@ -2570,6 +2830,8 @@ genera:
     common_names:
       en:
       - garlic
+      es:
+      - ajo
     archetype: root_vegetable
     crop:
       steps:
