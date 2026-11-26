@@ -231,6 +231,9 @@ class Export(Model):
     exported_at: datetime
     care_dataset: str | None
     household: str
+    # Added in 1.3: every area was shown before, so earlier exports turn them all on.
+    garden: bool = True
+    collection: bool = True
     members: list[Member] = Field(default_factory=list)
     care_types: list[CustomCareType] = Field(default_factory=list)
     sites: list[Site] = Field(default_factory=list)

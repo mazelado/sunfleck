@@ -233,6 +233,8 @@ def build(household: Household) -> schema.Export:
         exported_at=timezone.now(),
         care_dataset=dataset.version if dataset else None,
         household=household.name,
+        garden=household.garden,
+        collection=household.collection,
         members=[
             schema.Member(
                 ref=membership.user_id,

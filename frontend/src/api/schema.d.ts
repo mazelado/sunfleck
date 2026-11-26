@@ -2483,6 +2483,16 @@ export interface components {
         };
         /** HouseholdOut */
         HouseholdOut: {
+            /**
+             * Collection
+             * @description Whether the Collection area (propagation, wishlist, labels) is on.
+             */
+            collection: boolean;
+            /**
+             * Garden
+             * @description Whether the Garden area (seeds, sowing, harvests) is on.
+             */
+            garden: boolean;
             /** Id */
             id: number;
             /** Name */
@@ -2490,8 +2500,12 @@ export interface components {
         };
         /** HouseholdUpdate */
         HouseholdUpdate: {
+            /** Collection */
+            collection?: boolean | null;
+            /** Garden */
+            garden?: boolean | null;
             /** Name */
-            name: string;
+            name?: string | null;
         };
         /**
          * Humidity

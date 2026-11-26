@@ -104,7 +104,7 @@ export const ada: Me = {
   avatar_crop: null,
   locale: "en",
   unit_system: "metric",
-  household: { id: 1, name: "Fern Gully" },
+  household: { id: 1, name: "Fern Gully", garden: true, collection: true },
   role: "admin",
 };
 
