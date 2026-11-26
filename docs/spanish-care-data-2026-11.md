@@ -5,7 +5,9 @@ The last part of Spanish for the 1.3 Monstera release
 numbers are in Spanish already (#260–#264), but the care guide still shows plant names and
 care profiles in English. This proposes Spanish for both, for the maintainer to decide on
 before anything in `data/care/` changes, as for the [care](care-review-2026-11.md) and
-[toxicity](toxicity-review-2026-11.md) reviews. **Not applied yet.**
+[toxicity](toxicity-review-2026-11.md) reviews. **Decided on 2026-11-26**
+([decisions](#decided-2026-11-26)): the common names are applied (dataset 2026.11.8); the
+care profiles' and notes' Spanish waits for a native speaker to read it.
 
 - **Common names** from Wikidata (CC0, so they can go into the CC BY-SA dataset): **149 names
   for 109 of the 321 taxa** (47 genera, 62 species). 21 more names were found and left out,
@@ -85,6 +87,16 @@ The [notes](#notes-in-generayaml) are mostly the names of chemicals ("Saponinas"
 calcio insolubles"), but some matter to a pet's owner: "Toxina desconocida; puede causar
 insuficiencia renal en los gatos". They're translated with the profiles (decision 3), but
 can be decided on their own.
+
+### Decided (2026-11-26)
+
+1. **Plants without a Spanish name: only the scientific name** (option B). In any language
+   other than English, a plant without common names in that language shows none, so it's
+   shown by its scientific name. Applied in `translated_names` (`taxonomy/models.py`).
+2. **Regional names: as proposed** (option A). All 149 names are applied.
+3. **The care profiles' Spanish: after a native speaker has read it** (option A). Not
+   applied yet; the profiles stay in English until then.
+4. **Toxicity notes: the same as the profiles.** Not applied yet.
 
 ## Also noted
 

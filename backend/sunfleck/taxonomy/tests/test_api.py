@@ -83,16 +83,39 @@ def test_crops_say_when_to_sow_plant_out_and_harvest(client_as: ClientAs) -> Non
     assert monstera["crop"] is None
 
 
-@pytest.mark.django_db
-def test_names_fall_back_to_english(client_as: ClientAs, household: Household) -> None:
+def _speaking(client_as: ClientAs, household: Household, locale: str) -> Client:
     client = client_as(Role.VIEWER)
     user = household.memberships.get().user
-    user.locale = "de"
+    user.locale = locale
     user.save()
+    return client
+
+
+@pytest.mark.django_db
+def test_common_names_in_spanish(client_as: ClientAs, household: Household) -> None:
+    client = _speaking(client_as, household, "es")
+
+    monstera = client.get("/api/v1/species", {"q": "monstera deliciosa"}).json()[0]
+    # Spanish names are searchable, and English ones still are.
+    avocado = client.get("/api/v1/species", {"q": "aguacate"}).json()[0]
+    by_english = client.get("/api/v1/species", {"q": "swiss cheese plant"}).json()[0]
+
+    assert monstera["common_name"] == "costilla de Adán"
+    assert monstera["common_names"] == ["costilla de Adán", "cerimán", "mano de tigre"]
+    assert avocado["scientific_name"] == "Persea americana"
+    assert by_english["scientific_name"] == "Monstera deliciosa"
+
+
+@pytest.mark.django_db
+def test_no_english_names_in_another_language(client_as: ClientAs, household: Household) -> None:
+    client = _speaking(client_as, household, "de")
 
     result = client.get("/api/v1/species", {"q": "monstera deliciosa"}).json()[0]
 
-    assert result["common_name"] == "Swiss cheese plant"
+    # Shown by its scientific name, rather than "Swiss cheese plant" in German text; the care
+    # profile's text still falls back to English, until it's translated.
+    assert (result["common_name"], result["common_names"]) == (None, [])
+    assert result["care_profile"]["name"] == "Tropical aroid"
 
 
 @pytest.mark.django_db

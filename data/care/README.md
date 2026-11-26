@@ -140,4 +140,6 @@ history, so the starting values only need to be reasonable, but citations and re
 them better for everyone.
 
 Common names in other languages are welcome too: add them under their language code (`de`,
-`fr`, `nl`, ...).
+`fr`, `nl`, ...). The Spanish ones (`es`) come from Wikidata, which is CC0
+([how they were chosen](../../docs/spanish-care-data-2026-11.md)). A plant without names in the
+person's language is shown by its scientific name, never with names in another language.

@@ -18,13 +18,14 @@ def translated(text: dict[str, str], language: str) -> str:
 
 
 def translated_names(names: dict[str, list[str]], language: str) -> list[str]:
-    """Common names in `language`, else English."""
-    return (
-        names.get(language)
-        or names.get(language.split("-")[0])
-        or names.get(FALLBACK_LANGUAGE)
-        or []
-    )
+    """Common names in `language` (or its base language). English ones only for English: in
+    another language, a plant without names in it is shown by its scientific name, rather than
+    with English words in the middle of the text (docs/spanish-care-data-2026-11.md)."""
+    base = language.split("-")[0]
+    found = names.get(language) or names.get(base)
+    if found:
+        return found
+    return names.get(FALLBACK_LANGUAGE, []) if base == FALLBACK_LANGUAGE else []
 
 
 class CareArchetype(models.Model):
