@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   AppShell,
   Button,
   Container,
@@ -102,17 +101,19 @@ export function AppLayout() {
             {wide && <HeaderNavigation />}
           </Group>
           <Group gap="xs" wrap="nowrap">
-            <ActionIcon
+            {/* The word, not only the gear: in the usability test, people looked for Settings
+                in their profile, Today, the care guide and Plants first. */}
+            <Button
               component={Link}
               to="/settings"
               variant="subtle"
               color="gray"
-              size="lg"
               radius="xl"
-              aria-label={t("nav.settings")}
+              px="xs"
+              leftSection={<IconSettings size={20} />}
             >
-              <IconSettings size={22} />
-            </ActionIcon>
+              {t("nav.settings")}
+            </Button>
             <Menu position="bottom-end" width={200}>
               <Menu.Target>
                 {/* The name shown (on wider screens) is part of the button's name, as people

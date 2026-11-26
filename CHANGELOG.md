@@ -32,6 +32,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ### Changed
 
+- **Settings says its name**: the gear at the top is now labelled **Settings**. In the usability
+  test, people looked for it in their profile, Today, the care guide and Plants first (#248).
 - **Notifications say when nothing will be sent**: until this device or another way is added,
   the times say that nothing is sent yet, and so does saving them. On an iPhone or iPad, **This
   device** lists the steps to add Sunfleck to the Home Screen. In the usability test, everyone
