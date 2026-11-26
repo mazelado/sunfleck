@@ -6,7 +6,7 @@ import { useErrorMessage } from "../../api/useErrorMessage";
 import { useCareTypeName } from "./useCareTypeName";
 import { useUndoable } from "./useUndoable";
 
-/** Log care for a plant in one tap, with an undo. */
+/** Log care for a plant in one tap, with an undo, and a way to add details or another day. */
 export function useQuickLog(plantId: number, plantName: string) {
   const { t } = useTranslation();
   const { done } = useCareTypeName();
@@ -17,7 +17,7 @@ export function useQuickLog(plantId: number, plantName: string) {
   async function log(type: CareType) {
     try {
       const event = await logCare.mutateAsync({ care_type_id: type.id, notes: "", skipped: false });
-      undoable(t("care.logged", { action: done(type), plant: plantName }), [event]);
+      undoable(t("care.logged", { action: done(type), plant: plantName }), [event], plantId);
     } catch (error) {
       notifications.show({ color: "red", message: errorMessage(error) });
     }

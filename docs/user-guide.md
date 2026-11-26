@@ -187,8 +187,9 @@ lists the latest harvests. Exports include them.
   off (tomorrow, in 3 days, in a week, or another day), changes the schedule, or logs it
   with details.
 - **Logging care**: tap the care's button on a plant's page, **More care** under the rows for
-  other care, or the check mark on Today. To add notes or log care you did earlier, use
-  **Add earlier care**.
+  other care, or the check mark on Today. Its confirmation offers **Undo**, and **Add details
+  or another day…** to add how much water you gave, the soil, notes, or the day it was really
+  done. To log care you did earlier, you can also use **Add earlier care**.
   The **timeline** on the plant's page shows everything, with its photos.
 - **Care types**: water, fertilize, repot, prune, mist, rotate, clean leaves and check for
   pests are built in. Add your own under **Care types**, e.g. "Bottom water" (which you can
