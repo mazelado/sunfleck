@@ -1,7 +1,7 @@
 # Toxicity to pets: November 2026 review
 
 Finishing the toxicity flags in the care dataset, for the 1.2 Lavender release
-([roadmap](roadmap.md#lavender-trust-planned)). 0.5 Echinacea flagged "the common houseplant
+([roadmap](roadmap.md#lavender-trust-released)). 0.5 Echinacea flagged "the common houseplant
 genera first"; the rest was never done, including every outdoor and edible plant added in 0.7
 Gardenia. **Approved and applied on 2026-11-20** (dataset 2026.11.6): every addition below,
 with the recommended option for each [decision](#decided-2026-11-20).
