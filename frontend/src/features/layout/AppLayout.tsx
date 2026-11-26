@@ -31,6 +31,7 @@ import { Logo } from "../../components/Logo";
 import { PageBarContext } from "../../components/pageBar";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
+import { CareDetailsHost } from "../care/CareDetailsHost";
 
 interface Destination {
   to: string;
@@ -203,6 +204,7 @@ export function AppLayout() {
             <Outlet />
           </PageBarContext.Provider>
         </Container>
+        <CareDetailsHost />
       </AppShell.Main>
       {!wide && (
         <AppShell.Footer>
