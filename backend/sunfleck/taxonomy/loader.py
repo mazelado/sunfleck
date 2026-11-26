@@ -103,6 +103,8 @@ def _save_taxon(
         synonyms=entry.get("synonyms", []),
         note=entry.get("note", {}),
         toxicity=entry.get("toxicity") or (genus_entry or {}).get("toxicity", {}),
+        harmful_to_people=entry.get("harmful_to_people")
+        or (genus_entry or {}).get("harmful_to_people", {}),
         crop=entry.get("crop") or (genus_entry or {}).get("crop", {}),
         archetype=archetype,
     )
@@ -119,6 +121,7 @@ def _save_taxon(
                 "synonyms",
                 "note",
                 "toxicity",
+                "harmful_to_people",
                 "crop",
                 "archetype",
                 "search_text",

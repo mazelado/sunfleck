@@ -1578,6 +1578,60 @@
         "title": "GlanceOut",
         "type": "object"
       },
+      "HarmToPeopleOut": {
+        "description": "Known harm to people, as a source states it. None means unknown, never \"safe\".",
+        "properties": {
+          "if_eaten": {
+            "anyOf": [
+              {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How serious it is if eaten; None when only touching it is known to harm.",
+            "title": "If Eaten"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "skin": {
+            "description": "Touching it, or its sap, irritates skin or causes an allergy.",
+            "title": "Skin",
+            "type": "boolean"
+          },
+          "sources": {
+            "description": "The page of each source that says so.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "if_eaten",
+          "skin",
+          "sources",
+          "note"
+        ],
+        "title": "HarmToPeopleOut",
+        "type": "object"
+      },
       "HarvestIn": {
         "properties": {
           "amount": {
@@ -4066,6 +4120,17 @@
             ],
             "title": "Common Name"
           },
+          "harmful_to_people": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HarmToPeopleOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Known harm to people; None means unknown, never safe."
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -5682,6 +5747,16 @@
             "title": "Family",
             "type": "string"
           },
+          "harmful_to_people": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HarmToPeopleOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -5794,6 +5869,16 @@
           "family": {
             "title": "Family",
             "type": "string"
+          },
+          "harmful_to_people": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HarmToPeopleOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "id": {
             "title": "Id",

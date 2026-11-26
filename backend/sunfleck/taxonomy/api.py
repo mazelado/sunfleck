@@ -112,6 +112,17 @@ class ToxicityOut(Schema):
     note: str | None
 
 
+class HarmToPeopleOut(Schema):
+    """Known harm to people, as a source states it. None means unknown, never "safe"."""
+
+    if_eaten: Literal["low", "medium", "high"] | None = Field(
+        description="How serious it is if eaten; None when only touching it is known to harm."
+    )
+    skin: bool = Field(description="Touching it, or its sap, irritates skin or causes an allergy.")
+    sources: list[str] = Field(description="The page of each source that says so.")
+    note: str | None
+
+
 class CropStepOut(Schema):
     action: Literal["sow_indoors", "sow_outdoors", "plant_out"]
     after: Literal["last_frost", "first_frost"] = Field(description="The frost date it's timed by.")
@@ -144,6 +155,7 @@ class SpeciesOut(Schema):
     note: str | None
     care_profile: CareProfileRef | None
     toxicity: ToxicityOut | None = None
+    harmful_to_people: HarmToPeopleOut | None = None
     crop: CropOut | None = None
 
 
@@ -230,6 +242,7 @@ def species_out(taxon: Taxon, lang: str) -> SpeciesOut:
         note=translated(taxon.note, lang) or None,
         care_profile=care_profile_ref(taxon.archetype, lang),
         toxicity=toxicity_out(taxon, lang),
+        harmful_to_people=harm_to_people_out(taxon, lang),
         crop=crop_out(taxon, lang),
     )
 
@@ -246,6 +259,19 @@ def crop_out(taxon: Taxon, lang: str) -> CropOut | None:
         ],
         harvest_days=list(harvest) if harvest else None,
         note=translated(crop.get("note", {}), lang) or None,
+    )
+
+
+def harm_to_people_out(taxon: Taxon, lang: str) -> HarmToPeopleOut | None:
+    """Also used by the plants API."""
+    harm = taxon.harmful_to_people
+    if not harm:
+        return None
+    return HarmToPeopleOut(
+        if_eaten=harm.get("if_eaten"),
+        skin=harm.get("skin") is True,
+        sources=list(harm.get("sources", [])),
+        note=translated(harm.get("note", {}), lang) or None,
     )
 
 

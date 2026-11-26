@@ -94,6 +94,38 @@ A genus or species can say it's **known to be toxic** to cats and dogs, with the
   species. When species differ, put it on those species. A species without its own
   `toxicity` takes its genus's.
 
+### Harm to people
+
+A genus or species can say it's **known to be harmful to people**: how serious it is if eaten,
+whether touching it is a problem, or both, with its sources.
+
+```yaml
+- genus: Example
+  harmful_to_people:
+    if_eaten: medium     # low, medium or high, as the source rates it
+    skin: true           # touching it, or its sap, irritates skin or causes an allergy
+    sources:
+      - https://plants.ces.ncsu.edu/plants/<genus-species>/
+    note:
+      en: Calcium oxalate crystals   # optional: what the source names as the toxic part
+```
+
+- **The same rules as for pets:** only "harmful", never "safe"; every entry has a source;
+  on the genus only when the source covers the genus. A species without its own
+  `harmful_to_people` takes its genus's. It's separate from `toxicity`, so a species' own pet
+  entry doesn't hide its genus's entry for people.
+- **Sources:** the plant's page at the
+  [NC State Extension Plant Toolbox](https://plants.ces.ncsu.edu/) (its poison severity and
+  whether it causes contact dermatitis), and the RHS's
+  [potentially harmful garden plants](https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants),
+  whose categories A, B and C are recorded as high, medium ("toxic if eaten") and low
+  ("harmful if eaten") where NC State has no rating. Record `skin` when either says so.
+- **Food crops and herbs** record `if_eaten` only where a part people might eat is harmful,
+  and the note says which part (potato's leaves and green tubers, raw beans); otherwise only
+  `skin`, where a source says so.
+- The November 2026 review explains each entry:
+  [toxicity to people](../../docs/toxicity-people-review-2026-11.md).
+
 ### Crop timing
 
 A genus or species grown from seed in a season can say **when to sow, plant out and harvest
