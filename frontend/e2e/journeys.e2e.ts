@@ -10,7 +10,8 @@ const ADA = { name: "Ada", email: "ada@example.com", password: "a long and unusu
 
 // "Set up a place, a room with a window and a first plant": fewer page changes than adding a
 // room with a window and adding a plant, the old way (7 together).
-const SETUP_BUDGET: Cost = { taps: 9, fields: 4, pages: 2 };
+// One tap more in 1.3, for "What do you grow?" (an Admin's first question in a new household).
+const SETUP_BUDGET: Cost = { taps: 10, fields: 4, pages: 2 };
 
 let page: Page;
 
@@ -46,23 +47,27 @@ test("sets up a place, a room with a window and a first plant, step by step", as
   // From Today's first steps, through the first-run flow (docs/usability.md).
   await withinBudget(page, SETUP_BUDGET, async (effort) => {
     await effort.tap(page.getByRole("link", { name: "Add a home or garden" }));
-    await expect(page.getByText("Step 1 of 4")).toBeVisible();
+    // Houseplants only: Garden and Collection stay off.
+    await expect(page.getByText("Step 1 of 5")).toBeVisible();
+    await effort.tap(page.getByRole("button", { name: "Next: where they live" }));
+
+    await expect(page.getByText("Step 2 of 5")).toBeVisible();
     await effort.type(page.getByRole("textbox", { name: "Latitude" }), "52.37");
     await effort.type(page.getByRole("textbox", { name: "Longitude" }), "4.89");
     await effort.tap(page.getByRole("button", { name: "Next: the room" }));
 
-    await expect(page.getByText("Step 2 of 4")).toBeVisible();
+    await expect(page.getByText("Step 3 of 5")).toBeVisible();
     await effort.type(page.getByRole("textbox", { name: /^Name/ }), "Living room");
     await effort.choose(page.getByRole("combobox", { name: /Direction it faces/ }), "south");
     await effort.tap(page.getByRole("button", { name: "Next: the plant" }));
 
-    await expect(page.getByText("Step 3 of 4")).toBeVisible();
+    await expect(page.getByText("Step 4 of 5")).toBeVisible();
     await effort.type(page.getByRole("combobox", { name: /^Species/ }), "monstera");
     await effort.tap(page.getByRole("option", { name: /Monstera deliciosa/ }));
     await expect(page.getByRole("textbox", { name: /^Name/ })).toHaveValue("Swiss cheese plant");
     await effort.tap(page.getByRole("button", { name: "Next: its last watering" }));
 
-    await expect(page.getByText("Step 4 of 4")).toBeVisible();
+    await expect(page.getByText("Step 5 of 5")).toBeVisible();
     await effort.tap(page.getByText("A few days ago", { exact: true })); // a chip
     await effort.tap(page.getByRole("button", { name: "Finish" }));
 

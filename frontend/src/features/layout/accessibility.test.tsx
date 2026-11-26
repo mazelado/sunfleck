@@ -10,7 +10,7 @@ import { ada, listOf, server, signInAs } from "../../test/server";
 vi.mock("../places/MapPicker", () => ({ default: () => null }));
 
 const pages: [string, string, string][] = [
-  ["First-run flow", "/welcome", "Where do your plants live?"],
+  ["First-run flow", "/welcome", "What do you grow?"],
   ["Today", "/", "Today"],
   ["Plants", "/plants", "Plants"],
   ["Seeds", "/plants/seeds", "Seeds"],

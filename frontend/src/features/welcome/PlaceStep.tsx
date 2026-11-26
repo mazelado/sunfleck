@@ -14,11 +14,12 @@ interface PlaceStepProps {
   site?: Site;
   step: number;
   of: number;
+  onBack?: () => void;
   onDone: (site: Site) => void;
 }
 
 /** "Where do your plants live?": a place's name and where it is (for its weather and light). */
-export function PlaceStep({ site, step, of, onDone }: PlaceStepProps) {
+export function PlaceStep({ site, step, of, onBack, onDone }: PlaceStepProps) {
   const { t } = useTranslation();
   const createSite = useCreateSite();
   const updateSite = useUpdateSite(site?.id ?? 0);
@@ -62,6 +63,7 @@ export function PlaceStep({ site, step, of, onDone }: PlaceStepProps) {
       next={t("welcome.place.next")}
       saving={save.isPending}
       onSubmit={handleSubmit}
+      onBack={onBack}
     >
       <ErrorAlert error={save.error} />
       <TextInput
