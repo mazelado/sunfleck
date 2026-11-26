@@ -34,7 +34,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 - **Putting off care is in plain sight on a plant's page**: when care is due, the **⋯** next to
   its button is now a **Later** button, as on Today. In the usability test, it was looked for
-  under **Add a schedule** first (#242).
+  under **Add a schedule** first (#254).
 - **Notifications say when nothing will be sent**: until this device or another way is added,
   the times say that nothing is sent yet, and so does saving them. On an iPhone or iPad, **This
   device** lists the steps to add Sunfleck to the Home Screen. In the usability test, everyone
