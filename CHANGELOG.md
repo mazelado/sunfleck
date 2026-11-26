@@ -14,7 +14,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **Add details right after one tap**: when care is logged with its button or Today's check
   mark, the confirmation now offers **Add details or another day…**, next to **Undo**, to add
   how much water was given, how the soil was, or the day it was really done. In the usability
-  test, people logged yesterday's watering as today, or left out the amount (#243, #249).
+  test, people logged yesterday's watering as today, or left out the amount (#250).
 
 - **A plant's care history, next to what Sunfleck predicted**: **History**, next to **Why?** on
   each care schedule, shows when the care was done, how many days before or after it was due,
