@@ -64,7 +64,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **0.9 Iris** | [AI assistant](#iris-ai-assistant-released) | Released 2026-11-06 |
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
 | **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-released) | Released 2026-11-20 |
-| **1.2 Lavender** | [Trust](#lavender-trust-planned) | Planned |
+| **1.2 Lavender** | [Trust](#lavender-trust-released) | Released 2026-11-26 |
 | **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-planned) | Planned |
 | **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-planned) | Planned |
 | **1.5 Orchid** | [Fertilizer](#orchid-fertilizer-planned) | Planned |
@@ -201,7 +201,7 @@ Split from Hibiscus (0.8), not yet scheduled.
 - A supplies inventory for soil and pots, with optional reminders to restock. (Fertilizers
   are planned in [Orchid](#orchid-fertilizer-planned).)
 - Statistics for the whole household. (A plant's own watering history is planned in
-  [Lavender](#lavender-trust-planned).)
+  [Lavender](#lavender-trust-released).)
 - A growth time-lapse from photos.
 
 ### Iris: AI assistant (released)
@@ -273,14 +273,15 @@ How it's built, so that more depth doesn't make the app harder:
   and automation is set up there.
 - **English and Spanish.** Other languages are welcome, as contributions.
 
-### Lavender: trust (planned)
+### Lavender: trust (released)
 
 Checking that what Sunfleck already says is right, before it says more.
 
 - **A second usability test, on phones,** with the 1.0 [test plan](usability-test.md). The
   fixes from the first round are in 1.0, but no one has checked that they work.
   [Round 2](usability-test.md#round-2-12) checks each of them, and adds tasks for the care
-  history.
+  history. Three people took part ([results](usability-test-results-1.2-round-2.md)); the
+  problems it found that were rated major are fixed in 1.2, with most of the minor ones.
 - **Care profiles checked against sources.** The eight used by the maintainer's own plants
   were checked first and shipped in 1.1 ([review](care-review-2026-11.md)); the other 22, and
   a new profile for busy Lizzies, are checked in [part 2](care-review-2026-11-part-2.md). Each

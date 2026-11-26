@@ -9,6 +9,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-26
+
+**Lavender.** Trust: every care profile checked against published sources, toxicity to pets
+for many more plants, a plant's care history next to what was predicted, and fixes from a
+second usability test, on phones.
+
 ### Added
 
 - **Add details right after one tap**: when care is logged with its button or Today's check
@@ -770,7 +776,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mazelado/sunfleck/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/mazelado/sunfleck/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/mazelado/sunfleck/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/mazelado/sunfleck/compare/v1.0.1...v1.0.2

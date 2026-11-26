@@ -1,7 +1,7 @@
 # Care profile review: November 2026, part 2
 
 The second check of Sunfleck's care profiles against published sources, for the 1.2 Lavender
-release ([roadmap](roadmap.md#lavender-trust-planned)). It covers the 22 profiles still marked
+release ([roadmap](roadmap.md#lavender-trust-released)). It covers the 22 profiles still marked
 `draft` after [part 1](care-review-2026-11.md). **Approved and applied on 2026-11-20** (dataset
 2026.11.5): every change proposed below, with the [decisions](#decided-2026-11-20) at the end.
 All 22 profiles, and the new `shade_bedding`, are now marked `reviewed`.

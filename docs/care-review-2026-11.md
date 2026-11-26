@@ -1,7 +1,7 @@
 # Care profile review: November 2026
 
 The first check of Sunfleck's care profiles against published sources, for the 1.2 Lavender
-release ([roadmap](roadmap.md#lavender-trust-planned)). It covers the six profiles used by the
+release ([roadmap](roadmap.md#lavender-trust-released)). It covers the six profiles used by the
 maintainer's plants. **Approved and applied on 2026-11-16** (dataset 2026.11.4): every change
 proposed below, with the decisions at the end. The eight profiles involved, including two new
 ones, are now marked `reviewed`.
