@@ -462,8 +462,10 @@ class _Importer:
 
     def run(self, data: schema.Export) -> Summary:
         self.household.name = data.household
+        self.household.garden = data.garden
+        self.household.collection = data.collection
         _check(self.household, "household")
-        self.household.save(update_fields=["name", "updated_at"])
+        self.household.save(update_fields=["name", "garden", "collection", "updated_at"])
         self.import_members(data.members)
         self.import_care_types(data.care_types)
         self.import_sites(data.sites)

@@ -60,6 +60,7 @@ def ada(member_of: Callable[[Role], Membership]) -> Membership:
 def filled(household: Household, ada: Membership) -> Household:
     """A household with one of everything."""
     household.name = "Fern Gully"
+    household.garden = True
     household.save()
     site = Site.objects.create(
         household=household,
@@ -269,7 +270,7 @@ def test_an_export_imports_into_a_new_household_unchanged(
     summary = importer.import_into(target, io.BytesIO(data))
 
     target.refresh_from_db()
-    assert target.name == "Fern Gully"
+    assert (target.name, target.garden, target.collection) == ("Fern Gully", True, False)
     assert comparable(target) == before
     assert (summary.sites, summary.plants, summary.photos, summary.care_events) == (1, 2, 2, 2)
     # Care is credited to the member with the same email.
@@ -377,6 +378,17 @@ def test_exports_from_before_lineage_import(filled: Household) -> None:
 
     mystery = Plant.objects.get(household=target, nickname="Mystery")
     assert (mystery.parent, mystery.propagation_method) == (None, "")
+
+
+def test_exports_from_before_the_area_switches_turn_every_area_on(filled: Household) -> None:
+    def drop_areas(exported: dict[str, Any]) -> None:
+        del exported["garden"], exported["collection"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_areas)))
+
+    target.refresh_from_db()
+    assert (target.garden, target.collection) == (True, True)
 
 
 def test_exports_from_before_seeds_import(filled: Household) -> None:

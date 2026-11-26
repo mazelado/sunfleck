@@ -66,7 +66,9 @@
   },
   "models": {
     "accounts.Household": [
+      "collection",
       "created_at",
+      "garden",
       "id",
       "name",
       "updated_at"

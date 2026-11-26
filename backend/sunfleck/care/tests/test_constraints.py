@@ -78,7 +78,8 @@ def test_a_second_care_type_made_at_the_same_moment_gets_the_usual_error(
 @pytest.mark.django_db(transaction=True)
 def test_upgrading_numbers_names_that_were_taken_twice() -> None:
     executor = MigrationExecutor(connection)
-    before = [("care", "0009_care_event_estimated")]
+    # Later migrations of other apps are rolled back too, so the tables match the old models.
+    before = [("care", "0009_care_event_estimated"), ("accounts", "0003_avatar_source")]
     after = [("care", "0010_care_type_names_unique_restrict_events")]
     executor.migrate(before)
     old = executor.loader.project_state(before).apps

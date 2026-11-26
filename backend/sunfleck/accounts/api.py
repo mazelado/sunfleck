@@ -55,6 +55,10 @@ class EmailSchema(Schema):
 class HouseholdOut(Schema):
     id: int
     name: str
+    garden: bool = Field(description="Whether the Garden area (seeds, sowing, harvests) is on.")
+    collection: bool = Field(
+        description="Whether the Collection area (propagation, wishlist, labels) is on."
+    )
 
 
 class AvatarCropOut(Schema):
@@ -118,7 +122,9 @@ class SetupIn(EmailSchema):
 
 
 class HouseholdUpdate(Schema):
-    name: str = Field(min_length=1, max_length=100)
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    garden: bool | None = None
+    collection: bool | None = None
 
 
 class MemberOut(Schema):
@@ -225,12 +231,17 @@ def _me(user: User) -> MeOut:
         else None,
         locale=user.locale,
         unit_system=UnitSystem(user.unit_system),
-        household=(
-            HouseholdOut(id=membership.household.pk, name=membership.household.name)
-            if membership
-            else None
-        ),
+        household=_household(membership.household) if membership else None,
         role=Role(membership.role) if membership else None,
+    )
+
+
+def _household(household: Household) -> HouseholdOut:
+    return HouseholdOut(
+        id=household.pk,
+        name=household.name,
+        garden=household.garden,
+        collection=household.collection,
     )
 
 
@@ -419,16 +430,19 @@ def get_avatar(request: HttpRequest, user_id: int) -> FileResponse:
 
 @router.get("/household", response=HouseholdOut)
 def get_household(request: HttpRequest) -> HouseholdOut:
-    household = require_role(request, Role.VIEWER).household
-    return HouseholdOut(id=household.pk, name=household.name)
+    return _household(require_role(request, Role.VIEWER).household)
 
 
 @router.patch("/household", response=HouseholdOut)
 def update_household(request: HttpRequest, data: HouseholdUpdate) -> HouseholdOut:
     household = require_role(request, Role.ADMIN).household
-    household.name = data.name.strip()
-    household.save(update_fields=["name", "updated_at"])
-    return HouseholdOut(id=household.pk, name=household.name)
+    changes = data.model_dump(exclude_none=True)
+    if "name" in changes:
+        changes["name"] = changes["name"].strip()
+    for field, value in changes.items():
+        setattr(household, field, value)
+    household.save(update_fields=[*changes, "updated_at"])
+    return _household(household)
 
 
 @router.get("/household/members", response=list[MemberOut])

@@ -1875,6 +1875,16 @@
       },
       "HouseholdOut": {
         "properties": {
+          "collection": {
+            "description": "Whether the Collection area (propagation, wishlist, labels) is on.",
+            "title": "Collection",
+            "type": "boolean"
+          },
+          "garden": {
+            "description": "Whether the Garden area (seeds, sowing, harvests) is on.",
+            "title": "Garden",
+            "type": "boolean"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -1886,23 +1896,51 @@
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "garden",
+          "collection"
         ],
         "title": "HouseholdOut",
         "type": "object"
       },
       "HouseholdUpdate": {
         "properties": {
+          "collection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection"
+          },
+          "garden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Garden"
+          },
           "name": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "Name",
-            "type": "string"
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
           }
         },
-        "required": [
-          "name"
-        ],
         "title": "HouseholdUpdate",
         "type": "object"
       },

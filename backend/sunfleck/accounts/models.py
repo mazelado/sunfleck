@@ -106,6 +106,14 @@ class Household(models.Model):
     """A group of people who share one plant collection. Owns all plant data."""
 
     name = models.CharField(_("name"), max_length=100)
+    # Whole areas of the app, turned on by an Admin. One that's off leaves the navigation and
+    # the forms; its data is kept, and comes back when it's turned on again.
+    garden = models.BooleanField(
+        _("garden"), default=False, help_text=_("Seeds, sowing and harvests.")
+    )
+    collection = models.BooleanField(
+        _("collection"), default=False, help_text=_("Propagation, the wishlist and labels.")
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -155,6 +155,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -469,6 +471,8 @@
     },
     "response": {
       "(body)": "object",
+      "collection": "boolean",
+      "garden": "boolean",
       "id": "integer",
       "name": "string"
     }
@@ -616,6 +620,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -1419,14 +1425,16 @@
   "PATCH /api/v1/household": {
     "request": {
       "fields": {
-        "name": "string"
+        "collection": "boolean|null",
+        "garden": "boolean|null",
+        "name": "null|string"
       },
-      "required": [
-        "name"
-      ]
+      "required": []
     },
     "response": {
       "(body)": "object",
+      "collection": "boolean",
+      "garden": "boolean",
       "id": "integer",
       "name": "string"
     }
@@ -1473,6 +1481,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -1801,6 +1811,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -1867,6 +1879,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -2509,6 +2523,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",
@@ -2904,6 +2920,8 @@
       "display_name": "string",
       "email": "string",
       "household": "null|object",
+      "household.collection": "boolean",
+      "household.garden": "boolean",
       "household.id": "integer",
       "household.name": "string",
       "id": "integer",

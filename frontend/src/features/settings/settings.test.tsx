@@ -310,7 +310,7 @@ describe("household", () => {
     server.use(
       http.patch("*/api/v1/household", async ({ request }) => {
         sent = await request.json();
-        return HttpResponse.json({ id: 1, name: "Fern Gully!" });
+        return HttpResponse.json({ ...ada.household, name: "Fern Gully!" });
       }),
     );
     const { user } = renderApp("/settings/household");

@@ -231,6 +231,7 @@ def test_me_shows_profile_household_and_role(client_as: ClientAs) -> None:
 
     assert data["role"] == "viewer"
     assert data["household"]["name"] == "Green House"
+    assert (data["household"]["garden"], data["household"]["collection"]) == (False, False)
     assert data["unit_system"] == "metric"
 
 
@@ -325,6 +326,29 @@ def test_admin_can_rename_the_household(client_as: ClientAs) -> None:
     response = patch(client_as(Role.ADMIN), "/api/v1/household", {"name": " Jungle "})
 
     assert response.json()["name"] == "Jungle"
+
+
+@pytest.mark.django_db
+def test_admin_turns_areas_on_and_off_without_renaming(client_as: ClientAs) -> None:
+    client = client_as(Role.ADMIN)
+
+    turned_on = patch(client, "/api/v1/household", {"garden": True, "collection": True})
+    garden_off = patch(client, "/api/v1/household", {"garden": False})
+
+    assert turned_on.json()["collection"] is True
+    data = garden_off.json()
+    assert (data["name"], data["garden"], data["collection"]) == ("Green House", False, True)
+    household = Household.objects.get()
+    assert (household.garden, household.collection) == (False, True)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("role", [Role.VIEWER, Role.GARDENER])
+def test_only_admins_can_turn_areas_on(client_as: ClientAs, role: Role) -> None:
+    response = patch(client_as(role), "/api/v1/household", {"garden": True})
+
+    assert response.status_code == 403
+    assert Household.objects.get().garden is False
 
 
 @pytest.mark.django_db
