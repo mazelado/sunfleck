@@ -78,7 +78,7 @@ export function PlantPage() {
           <Grid.Col span={5}>
             <Stack gap="lg" className="sunfleck-sticky">
               {identity}
-              <PlantAbout plant={data} />
+              <PlantAbout plant={data} canEdit={canEdit} />
             </Stack>
           </Grid.Col>
           <Grid.Col span={7}>
@@ -89,7 +89,7 @@ export function PlantPage() {
         <Stack gap="lg">
           {identity}
           {care}
-          <PlantAbout plant={data} />
+          <PlantAbout plant={data} canEdit={canEdit} />
         </Stack>
       )}
       {openPhoto && (
