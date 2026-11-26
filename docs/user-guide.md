@@ -37,8 +37,8 @@ Places and Plants.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
 
 The main pages, **Today**, **Plants**, **Places** and the **Care guide**, are in the tab bar
-at the bottom on a phone, and at the top on a wider screen. **Settings** (the gear at the top
-right) has your household and inviting people, reminders, care types and, for Admins, plugins
+at the bottom on a phone, and at the top on a wider screen. **Settings**, at the top right,
+has your household and inviting people, reminders, care types and, for Admins, plugins
 and export. Your profile and signing out are in the account menu, beside it.
 
 On a phone, a page inside another one (a plant, a room, one of the settings) has a back arrow
@@ -106,14 +106,16 @@ right. Every page also has a link back above its title on a wider screen.
 - Add its **pot** (width, and height if you like; material) and **soil**: plants in small or
   terracotta pots dry out sooner. With the pot's size, the plant's watering schedule also says
   roughly how much water to give each time. Without a height, a standard pot (about as tall as
-  it is wide) is assumed.
+  it is wide) is assumed. After repotting, **Change** next to the pot under **About** on the
+  plant's page goes straight to its size.
 - **When it was last cared for**: adding a plant asks roughly when it was last watered and
   fertilized, so its first due dates and care bars start from there. A rough answer is
   enough; it's shown in its history as "Estimated when added". For a plant added before, log
   its last watering with **Log with details** and set the date.
 - **Photos**: add as many as you like; the first becomes the plant's cover, and so does one
-  added with the camera button on the cover. Photos are made smaller and stripped of their
-  location data when uploaded. Open a photo and choose **Crop** to pick the part its
+  added with **Add a photo** on the cover. Photos are made smaller and stripped of their
+  location data when uploaded. Choose **Crop** in the message after adding one, or open a
+  photo and choose **Crop**, to pick the part its
   thumbnails and the plant's cover show: drag the photo under the frame and zoom with the
   slider (or pinch, or the arrow keys). The whole photo is always kept, so you can change the
   crop later, or choose **Show the whole photo**.
