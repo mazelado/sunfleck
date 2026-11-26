@@ -606,6 +606,10 @@
       }
     },
     "pot": "Pot",
+    "changePot": "Change",
+    "changePotLabel": "Change the pot size",
+    "addPot": "Add",
+    "addPotLabel": "Add the pot size",
     "potDiameter": "Pot diameter",
     "potHeight": "Pot height",
     "potSizeHelp": "Used to work out how much water to give. Without a height, Sunfleck assumes a standard pot, about as tall as it is wide.",

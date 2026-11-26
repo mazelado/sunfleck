@@ -106,7 +106,8 @@ right. Every page also has a link back above its title on a wider screen.
 - Add its **pot** (width, and height if you like; material) and **soil**: plants in small or
   terracotta pots dry out sooner. With the pot's size, the plant's watering schedule also says
   roughly how much water to give each time. Without a height, a standard pot (about as tall as
-  it is wide) is assumed.
+  it is wide) is assumed. After repotting, **Change** next to the pot under **About** on the
+  plant's page goes straight to its size.
 - **When it was last cared for**: adding a plant asks roughly when it was last watered and
   fertilized, so its first due dates and care bars start from there. A rough answer is
   enough; it's shown in its history as "Estimated when added". For a plant added before, log
