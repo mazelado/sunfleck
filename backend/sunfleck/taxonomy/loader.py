@@ -12,7 +12,7 @@ from typing import Any
 from django.db import transaction
 
 from sunfleck.taxonomy.dataset import Dataset, load_dataset
-from sunfleck.taxonomy.models import CareArchetype, CareDataset, Taxon, TaxonRank
+from sunfleck.taxonomy.models import CareArchetype, CareDataset, Taxon, TaxonRank, fold
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ def _save_taxon(
         crop=entry.get("crop") or (genus_entry or {}).get("crop", {}),
         archetype=archetype,
     )
-    taxon.search_text = "\n".join(name.lower() for name in taxon.all_names())
+    taxon.search_text = "\n".join(fold(name) for name in taxon.all_names())
     Taxon.objects.update_or_create(
         scientific_name=scientific_name,
         defaults={

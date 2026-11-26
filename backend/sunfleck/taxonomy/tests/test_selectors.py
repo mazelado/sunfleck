@@ -34,6 +34,20 @@ def test_common_and_older_names_find_the_current_name(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("query", "expected"),
+    [
+        ("arandano azul", ("Vaccinium corymbosum", "arándano azul")),
+        ("ARÁNDANO", ("Vaccinium corymbosum", "arándano azul")),
+        ("pina", ("Ananas", "piña")),
+        ("costilla de adan", ("Monstera deliciosa", "costilla de Adán")),
+    ],
+)
+def test_accents_and_case_dont_matter(query: str, expected: tuple[str, str]) -> None:
+    assert expected in _names(query)
+
+
+@pytest.mark.django_db
 def test_exact_matches_come_before_partial_ones() -> None:
     names = _names("pothos")
 

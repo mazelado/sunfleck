@@ -263,6 +263,19 @@ def test_list_is_paged_searchable_and_filterable(
 
 
 @pytest.mark.django_db
+def test_plants_are_found_by_their_species_names_without_accents(
+    client_as: ClientAs, household: Household
+) -> None:
+    rubber = Taxon.objects.get(scientific_name="Ficus elastica")
+    PlantFactory.create(household=household, nickname="Big one", taxon=rubber)
+    PlantFactory.create(household=household, nickname="Basil")
+
+    found = client_as(Role.VIEWER).get("/api/v1/plants", {"q": "arbol del caucho"}).json()
+
+    assert [p["nickname"] for p in found["items"]] == ["Big one"]
+
+
+@pytest.mark.django_db
 def test_plants_without_a_care_schedule_are_marked_and_filterable(
     client_as: ClientAs, household: Household
 ) -> None:

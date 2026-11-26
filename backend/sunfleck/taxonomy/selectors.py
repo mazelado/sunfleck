@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from sunfleck.taxonomy.models import Taxon
+from sunfleck.taxonomy.models import Taxon, fold
 
 MIN_QUERY_LENGTH = 2
 
@@ -15,8 +15,9 @@ class SearchHit:
 
 
 def _score(name: str, query: str) -> int | None:
-    """How well `name` matches: 0 exactly, 1 at its start, 2 at a word's start, 3 inside."""
-    name = name.lower()
+    """How well `name` matches `query` (folded): 0 exactly, 1 at its start, 2 at a word's start,
+    3 inside."""
+    name = fold(name)
     if name == query:
         return 0
     if name.startswith(query):
@@ -28,8 +29,8 @@ def _score(name: str, query: str) -> int | None:
 
 def search_taxa(query: str, limit: int = 20) -> list[SearchHit]:
     """Genera and species whose scientific, older, or common name (in any language) matches
-    `query`, best matches first."""
-    query = " ".join(query.lower().split())
+    `query`, best matches first. Case and accents don't matter."""
+    query = " ".join(fold(query).split())
     if len(query) < MIN_QUERY_LENGTH:
         return []
     ranked = []
