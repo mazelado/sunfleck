@@ -112,6 +112,39 @@ describe("logging care", () => {
     expect(deleted).toBe(true);
   });
 
+  it("adds how much was given, or another day, from the confirmation", async () => {
+    signInAs(gardener);
+    withPlant();
+    let updated: Record<string, unknown> = {};
+    server.use(
+      http.get("*/api/v1/plants/7/schedules", () => HttpResponse.json([])),
+      http.post("*/api/v1/plants/7/care-events", () =>
+        HttpResponse.json(careEvent({ id: 21, performed_at: new Date().toISOString() }), {
+          status: 201,
+        }),
+      ),
+      http.put("*/api/v1/care-events/21", async ({ request }) => {
+        updated = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(careEvent({ id: 21, amount_ml: 250 }));
+      }),
+    );
+    const { user } = renderApp("/plants/7");
+
+    // In the usability test, people stopped after the water button, without the amount.
+    await user.click(await screen.findByRole("button", { name: "Water" }));
+    await user.click(await screen.findByRole("button", { name: "Add details or another day…" }));
+
+    const dialog = await screen.findByRole("dialog", { name: "Edit care" });
+    expect(within(dialog).getByLabelText(/When/)).not.toHaveValue("");
+    await user.type(within(dialog).getByRole("textbox", { name: /How much water/ }), "250");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(updated).toMatchObject({ care_type_id: water.id, amount_ml: 250 });
+    });
+    expect(screen.queryByRole("dialog", { name: "Edit care" })).toBeNull();
+  });
+
   it("logs other care from the menu", async () => {
     signInAs(gardener);
     withPlant();
