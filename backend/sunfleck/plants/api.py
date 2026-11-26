@@ -49,7 +49,14 @@ from sunfleck.plants.models import (
     SoilType,
     Wish,
 )
-from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
+from sunfleck.taxonomy.api import (
+    HarmToPeopleOut,
+    ToxicityOut,
+    care_profile_ref,
+    harm_to_people_out,
+    language,
+    toxicity_out,
+)
 from sunfleck.taxonomy.models import Taxon, fold, translated_names
 
 logger = logging.getLogger(__name__)
@@ -169,6 +176,9 @@ class PlantSpeciesOut(Schema):
     common_name: str | None
     toxicity: ToxicityOut | None = Field(
         default=None, description="Known toxicity to pets; None means unknown, never safe."
+    )
+    harmful_to_people: HarmToPeopleOut | None = Field(
+        default=None, description="Known harm to people; None means unknown, never safe."
     )
 
 
@@ -381,6 +391,7 @@ def _taxon_out(taxon: Taxon | None, lang: str) -> PlantSpeciesOut | None:
         scientific_name=taxon.scientific_name,
         common_name=names[0] if names else None,
         toxicity=toxicity_out(taxon, lang),
+        harmful_to_people=harm_to_people_out(taxon, lang),
     )
 
 

@@ -171,6 +171,25 @@ def _set(path: list[str], value: Any) -> Callable[[Any], None]:
             "'sources' is a required property",
         ),
         (
+            # Harm to people: a level or skin, from a source; never "none" or "safe".
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(
+                    harmful_to_people={"if_eaten": "none", "sources": ["https://example.org"]}
+                ),
+            ),
+            "'none' is not one of",
+        ),
+        (
+            lambda root: _edit_yaml(
+                root / "genera.yaml",
+                lambda data: _genus(data, "Monstera").update(
+                    harmful_to_people={"sources": ["https://example.org"]}
+                ),
+            ),
+            "harmful_to_people",
+        ),
+        (
             lambda root: _edit_yaml(
                 root / "genera.yaml",
                 lambda data: _genus(data, "Monstera").update(

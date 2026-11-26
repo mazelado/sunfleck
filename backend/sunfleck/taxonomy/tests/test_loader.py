@@ -66,6 +66,29 @@ def test_toxicity_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> 
 
 
 @pytest.mark.django_db
+def test_harm_to_people_is_kept_apart_from_toxicity_to_pets(dataset_copy: Path) -> None:
+    harm = {"if_eaten": "low", "skin": True, "sources": ["https://example.org/monstera"]}
+
+    def change(genera: list[dict[str, Any]]) -> None:
+        monstera = next(entry for entry in genera if entry["genus"] == "Monstera")
+        monstera["harmful_to_people"] = harm
+        # Deliciosa has its own toxicity to pets, but none of its own for people: it still
+        # takes its genus's, which it wouldn't if both were in one block.
+        monstera["species"][0].pop("harmful_to_people", None)
+        monstera["species"][0]["toxicity"] = {"cats": "toxic", "sources": ["https://example.org"]}
+
+    _edit_genera(dataset_copy, change)
+    _set_version(dataset_copy, "2099.1.0")
+    load_care_data(dataset_copy)
+
+    deliciosa = Taxon.objects.get(scientific_name="Monstera deliciosa")
+    assert deliciosa.harmful_to_people == harm
+    assert deliciosa.toxicity == {"cats": "toxic", "sources": ["https://example.org"]}
+    # Not in the dataset: unknown.
+    assert Taxon.objects.get(scientific_name="Lithops").harmful_to_people == {}
+
+
+@pytest.mark.django_db
 def test_crop_timing_is_loaded_and_species_take_their_genus(dataset_copy: Path) -> None:
     sow = {"steps": [{"action": "sow_outdoors", "after": "last_frost", "weeks": [0, 4]}]}
 

@@ -2367,6 +2367,29 @@ export interface components {
             light: components["schemas"]["LightLevelOut"] | null;
             water: components["schemas"]["CareLevelOut"] | null;
         };
+        /**
+         * HarmToPeopleOut
+         * @description Known harm to people, as a source states it. None means unknown, never "safe".
+         */
+        HarmToPeopleOut: {
+            /**
+             * If Eaten
+             * @description How serious it is if eaten; None when only touching it is known to harm.
+             */
+            if_eaten: ("low" | "medium" | "high") | null;
+            /** Note */
+            note: string | null;
+            /**
+             * Skin
+             * @description Touching it, or its sap, irritates skin or causes an allergy.
+             */
+            skin: boolean;
+            /**
+             * Sources
+             * @description The page of each source that says so.
+             */
+            sources: string[];
+        };
         /** HarvestIn */
         HarvestIn: {
             /** Amount */
@@ -3209,6 +3232,8 @@ export interface components {
         PlantSpeciesOut: {
             /** Common Name */
             common_name: string | null;
+            /** @description Known harm to people; None means unknown, never safe. */
+            harmful_to_people?: components["schemas"]["HarmToPeopleOut"] | null;
             /** Id */
             id: number;
             /** Scientific Name */
@@ -3865,6 +3890,7 @@ export interface components {
             crop?: components["schemas"]["CropOut"] | null;
             /** Family */
             family: string;
+            harmful_to_people?: components["schemas"]["HarmToPeopleOut"] | null;
             /** Id */
             id: number;
             /**
@@ -3897,6 +3923,7 @@ export interface components {
             crop?: components["schemas"]["CropOut"] | null;
             /** Family */
             family: string;
+            harmful_to_people?: components["schemas"]["HarmToPeopleOut"] | null;
             /** Id */
             id: number;
             /** Note */

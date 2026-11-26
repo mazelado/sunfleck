@@ -22,6 +22,7 @@
         "synonyms": { "type": "array", "items": { "$ref": "#/$defs/genusName" }, "uniqueItems": true },
         "note": { "$ref": "#/$defs/translated" },
         "toxicity": { "$ref": "#/$defs/toxicity" },
+        "harmful_to_people": { "$ref": "#/$defs/harmfulToPeople" },
         "crop": { "$ref": "#/$defs/crop" },
         "species": { "type": "array", "items": { "$ref": "#/$defs/species" } }
       }
@@ -37,6 +38,7 @@
         "archetype": { "$ref": "#/$defs/archetypeKey" },
         "note": { "$ref": "#/$defs/translated" },
         "toxicity": { "$ref": "#/$defs/toxicity" },
+        "harmful_to_people": { "$ref": "#/$defs/harmfulToPeople" },
         "crop": { "$ref": "#/$defs/crop" }
       }
     },
@@ -88,6 +90,31 @@
         "dogs": { "const": "toxic" },
         "sources": {
           "description": "The page of each source that names this plant as toxic, e.g. its ASPCA entry.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^https://" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "note": { "$ref": "#/$defs/translated" }
+      }
+    },
+    "harmfulToPeople": {
+      "description": "Known harm to people, only as a source states it. Absent means unknown, never safe.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources"],
+      "anyOf": [{ "required": ["if_eaten"] }, { "required": ["skin"] }],
+      "properties": {
+        "if_eaten": {
+          "description": "How serious it is if eaten, as the source rates it.",
+          "enum": ["low", "medium", "high"]
+        },
+        "skin": {
+          "description": "Touching it, or its sap, irritates skin or causes an allergy.",
+          "const": true
+        },
+        "sources": {
+          "description": "The page of each source that says so, e.g. the plant's NC State Plant Toolbox page.",
           "type": "array",
           "items": { "type": "string", "pattern": "^https://" },
           "minItems": 1,

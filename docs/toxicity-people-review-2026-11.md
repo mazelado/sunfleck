@@ -3,8 +3,9 @@
 Toxicity to people in the care dataset, for the 1.3 Monstera release
 ([roadmap](roadmap.md#monstera-simple-by-default-planned)), with the same rules as for pets:
 "known to be harmful" with its source, or *unknown*, never "safe". Unlike pets, it says **how
-serious** it is and **whether touching the plant** is a problem too. **Proposed, for the
-maintainer to decide on; nothing in `data/care/` has changed yet.**
+serious** it is and **whether touching the plant** is a problem too. **Decided and applied
+on 2026-11-26** (dataset 2026.11.9): every recommended option, for 101 plants
+([decisions](#decided-2026-11-26)).
 
 - **Checked:** 2026-11-26, every genus and species in `genera.yaml` (189 genera, 132 species)
   against the [NC State Extension Plant Toolbox](https://plants.ces.ncsu.edu/)'s page for it,
@@ -96,6 +97,19 @@ irritate skin or cause an allergy: peace lily (*Spathiphyllum*), taro
 - **A. Record skin when either source says so** (recommended): it's "known to be harmful"
   from a source, which is the rule.
 - **B. Only when both say so.**
+
+### Decided (2026-11-26)
+
+1. **A field of its own, `harmful_to_people`** (option A), with `if_eaten`, `skin`, `sources`
+   and `note`.
+2. **NC State's three levels, and the RHS's where NC State has none** (option A).
+3. **Food crops and herbs: only where a part people might eat is harmful** (option A):
+   potato, tomato, aubergine and beans record `if_eaten`; the other crops and herbs record
+   only `skin`, where a source says so.
+4. **Skin when either source says so** (option A).
+
+Applied to 101 plants: 86 with a level if eaten (62 low, 20 medium, 4 high), 15 for skin
+only, 78 with `skin` in all.
 
 ## Proposed flags
 

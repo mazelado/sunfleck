@@ -15,6 +15,18 @@ def send(client: Client, method: str, url: str, data: dict[str, Any] | None = No
     return client.generic(method, url, json.dumps(data or {}), content_type="application/json")
 
 
+# Monstera deliciosa's entry in the dataset: harmful if eaten (low), and its sap to skin.
+MONSTERA_HARM = {
+    "if_eaten": "low",
+    "skin": True,
+    "sources": [
+        "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/",
+        "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+    ],
+    "note": "Calcium oxalate crystals",
+}
+
+
 def _taxon(name: str) -> Taxon:
     return Taxon.objects.get(scientific_name=name)
 
@@ -41,6 +53,7 @@ def test_search_species(client_as: ClientAs) -> None:
             ],
             "note": "Insoluble calcium oxalates",
         },
+        "harmful_to_people": MONSTERA_HARM,
         "crop": None,
         "matched_name": "Swiss cheese plant",
     }
@@ -115,7 +128,36 @@ def test_no_english_names_in_another_language(client_as: ClientAs, household: Ho
     # Shown by its scientific name, rather than "Swiss cheese plant" in German text; the care
     # profile's text still falls back to English, until it's translated.
     assert (result["common_name"], result["common_names"]) == (None, [])
+    assert result["harmful_to_people"]["note"] == "Calcium oxalate crystals"
     assert result["care_profile"]["name"] == "Tropical aroid"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("name", "if_eaten", "skin"),
+    [
+        ("Dieffenbachia seguine", "high", True),  # its own, from NC State
+        ("Agave", None, True),  # skin only, from the RHS
+        ("Solanum tuberosum", "high", False),  # a crop where a part people might eat is harmful
+        ("Lactuca sativa", None, True),  # a crop: only what touching it does
+    ],
+)
+def test_harm_to_people(client_as: ClientAs, name: str, if_eaten: str | None, skin: bool) -> None:
+    result = client_as(Role.VIEWER).get(f"/api/v1/species/{_taxon(name).pk}").json()
+
+    harm = result["harmful_to_people"]
+    assert (harm["if_eaten"], harm["skin"]) == (if_eaten, skin)
+    assert harm["sources"]
+
+
+@pytest.mark.django_db
+def test_harm_to_people_is_unknown_without_a_source(client_as: ClientAs) -> None:
+    # NC State rates spinach low, but that's about eating a lot of it: not recorded (food crops
+    # and herbs), so unknown, never "safe". Lithops: no source says anything.
+    client = client_as(Role.VIEWER)
+
+    for name in ("Spinacia oleracea", "Lithops"):
+        assert client.get(f"/api/v1/species/{_taxon(name).pk}").json()["harmful_to_people"] is None
 
 
 @pytest.mark.django_db
@@ -200,6 +242,7 @@ def test_plant_gets_its_species_care_profile(client_as: ClientAs) -> None:
             ],
             "note": "Insoluble calcium oxalates",
         },
+        "harmful_to_people": MONSTERA_HARM,
     }
     assert plant["care_profile"] == {
         "key": "tropical_aroid",

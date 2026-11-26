@@ -13,6 +13,13 @@ genera:
   common_names:
     en:
     - monstera
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/monstera/
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Monstera deliciosa
     common_names:
@@ -30,6 +37,14 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant
       note:
         en: Insoluble calcium oxalates
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/monstera-deliciosa/
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: Calcium oxalate crystals
   - name: Monstera adansonii
     common_names:
       en:
@@ -38,6 +53,13 @@ genera:
     toxicity:
       cats: toxic
       dogs: toxic
+      sources:
+      - https://plants.ces.ncsu.edu/plants/monstera-adansonii/
+      note:
+        en: Calcium oxalate crystals
+    harmful_to_people:
+      if_eaten: low
+      skin: true
       sources:
       - https://plants.ces.ncsu.edu/plants/monstera-adansonii/
       note:
@@ -57,6 +79,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/heartleaf-philodendron
     note:
       en: Insoluble calcium oxalates
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/philodendron/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Philodendron hederaceum
     common_names:
@@ -64,16 +94,37 @@ genera:
       - heartleaf philodendron
     synonyms:
     - Philodendron scandens
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/philodendron-hederaceum/
+      note:
+        en: Calcium oxalate crystals
   - name: Philodendron erubescens
     common_names:
       en:
       - blushing philodendron
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/philodendron-erubescens/
+      note:
+        en: Calcium oxalate crystals
 - genus: Thaumatophyllum
   family: Araceae
   archetype: tropical_aroid
   common_names:
     en:
     - tree philodendron
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/thaumatophyllum/
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Thaumatophyllum bipinnatifidum
     common_names:
@@ -90,12 +141,26 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/tree-philodendron
       note:
         en: Calcium oxalate crystals
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/thaumatophyllum-bipinnatifidum/
+      note:
+        en: Calcium oxalate crystals
 - genus: Epipremnum
   family: Araceae
   archetype: tropical_aroid
   common_names:
     en:
     - pothos
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: harmful if eaten; irritates skin and eyes"
   species:
   - name: Epipremnum aureum
     common_names:
@@ -114,6 +179,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/golden-pothos
       note:
         en: Insoluble calcium oxalates
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/epipremnum-aureum/
+      note:
+        en: Calcium oxalate crystals
 - genus: Scindapsus
   family: Araceae
   archetype: tropical_aroid
@@ -141,6 +213,13 @@ genera:
     common_names:
       en:
       - mini monstera
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/rhaphidophora-tetrasperma/
+      note:
+        en: Calcium oxalate crystals
 - genus: Anthurium
   family: Araceae
   archetype: tropical_aroid
@@ -157,18 +236,40 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/flamingo-flower
     note:
       en: Insoluble calcium oxalates. ASPCA's entry names the related species Anthurium scherzeranum.
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/anthurium/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Anthurium andraeanum
     common_names:
       en:
       - flamingo flower
       - laceleaf
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/anthurium-andraeanum/
+      note:
+        en: Calcium oxalate crystals
 - genus: Syngonium
   family: Araceae
   archetype: tropical_aroid
   common_names:
     en:
     - arrowhead plant
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: harmful if eaten; irritates skin and eyes"
   species:
   - name: Syngonium podophyllum
     common_names:
@@ -182,6 +283,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/arrow-head-vine
       note:
         en: Insoluble calcium oxalates
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/syngonium-podophyllum/
+      note:
+        en: Calcium oxalate crystals
 - genus: Aglaonema
   family: Araceae
   archetype: tropical_aroid
@@ -195,6 +303,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/chinese-evergreen
     note:
       en: Insoluble calcium oxalates. ASPCA's entry names the related species Aglaonema modestum.
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/aglaonema/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Aglaonema commutatum
     common_names:
@@ -216,11 +332,25 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/dumbcane
     note:
       en: Insoluble calcium oxalates and a proteolytic enzyme
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: harmful if eaten; irritates skin and eyes"
   species:
   - name: Dieffenbachia seguine
     common_names:
       en:
       - dumb cane
+    harmful_to_people:
+      if_eaten: high
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/dieffenbachia-seguine/
+      note:
+        en: Calcium oxalate crystals and oxalic acid
 - genus: Spathiphyllum
   family: Araceae
   archetype: tropical_aroid
@@ -236,6 +366,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/peace-lily
     note:
       en: Insoluble calcium oxalates
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/spathiphyllum/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Spathiphyllum wallisii
     common_names:
@@ -247,6 +385,13 @@ genera:
   common_names:
     en:
     - homalomena
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/homalomena/
+    note:
+      en: Calcium oxalate crystals
 - genus: Calathea
   family: Marantaceae
   archetype: humid_tropical_foliage
@@ -312,6 +457,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/alocasia
     note:
       en: Insoluble calcium oxalates
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/alocasia/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Alocasia zebrina
     common_names:
@@ -324,6 +477,12 @@ genera:
     en:
     - elephant ear
     - taro
+  harmful_to_people:
+    if_eaten: medium
+    sources:
+    - https://plants.ces.ncsu.edu/plants/colocasia/
+    note:
+      en: Calcium oxalate crystals
   species:
   - name: Colocasia esculenta
     common_names:
@@ -337,6 +496,14 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/elephant-ears-colocasia-esculenta
       note:
         en: Insoluble calcium oxalates
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/colocasia-esculenta/
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: Calcium oxalate crystals
 - genus: Caladium
   family: Araceae
   archetype: humid_tropical_foliage
@@ -352,6 +519,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/caladium
     note:
       en: Insoluble calcium oxalates
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/caladium/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Calcium oxalate crystals
 - genus: Fittonia
   family: Acanthaceae
   archetype: humid_tropical_foliage
@@ -381,6 +556,13 @@ genera:
   common_names:
     en:
     - ZZ plant
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: harmful if eaten; irritates skin and can cause an allergy"
   species:
   - name: Zamioculcas zamiifolia
     common_names:
@@ -394,6 +576,12 @@ genera:
       - https://plants.ces.ncsu.edu/plants/zamioculcas-zamiifolia/
       note:
         en: Calcium oxalate
+    harmful_to_people:
+      if_eaten: medium
+      sources:
+      - https://plants.ces.ncsu.edu/plants/zamioculcas-zamiifolia/
+      note:
+        en: Calcium oxalate crystals
 - genus: Sansevieria
   family: Asparagaceae
   archetype: low_light_tough
@@ -409,6 +597,12 @@ genera:
     dogs: toxic
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/snake-plant
+    note:
+      en: Saponins
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://plants.ces.ncsu.edu/plants/sansevieria/
     note:
       en: Saponins
 - genus: Aspidistra
@@ -443,12 +637,27 @@ genera:
     en:
     - spiderwort
     - inch plant
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/tradescantia/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Not identified
   species:
   - name: Tradescantia zebrina
     common_names:
       en:
       - inch plant
       - wandering dude
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/tradescantia-zebrina/
+      note:
+        en: Not identified
   - name: Tradescantia fluminensis
     common_names:
       en:
@@ -460,6 +669,13 @@ genera:
       dogs: toxic
       sources:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/inch-plant
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/tradescantia-fluminensis/
+      note:
+        en: Not identified
 - genus: Pilea
   family: Urticaceae
   archetype: easy_foliage
@@ -482,6 +698,13 @@ genera:
     es:
     - hiedra
     - yedra
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: harmful if eaten; irritates skin and can cause an allergy"
   species:
   - name: Hedera helix
     common_names:
@@ -498,6 +721,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/english-ivy
       note:
         en: Triterpenoid saponins (hederagenin)
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/hedera-helix/
+      note:
+        en: Triterpenoid saponins and polyacetylenes
 - genus: Plectranthus
   family: Lamiaceae
   archetype: easy_foliage
@@ -560,11 +790,24 @@ genera:
   common_names:
     en:
     - fig
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/ficus/
+    note:
+      en: Ficin and furanocoumarins
   species:
   - name: Ficus lyrata
     common_names:
       en:
       - fiddle-leaf fig
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/ficus-lyrata/
+      note:
+        en: Insoluble calcium oxalates
   - name: Ficus elastica
     common_names:
       en:
@@ -587,6 +830,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/weeping-fig
       note:
         en: Proteolytic enzyme (ficin) and psoralen (ficusin)
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: "Per the RHS: harmful if eaten; can cause a skin allergy"
 - genus: Schefflera
   family: Araliaceae
   archetype: indoor_tree
@@ -600,11 +850,24 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/schefflera
     note:
       en: Calcium oxalate crystals
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: irritates skin"
   species:
   - name: Schefflera arboricola
     common_names:
       en:
       - dwarf umbrella tree
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/schefflera-arboricola/
+      note:
+        en: Calcium oxalate crystals
 - genus: Dracaena
   family: Asparagaceae
   archetype: dracaena
@@ -621,6 +884,12 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/dracaena
     note:
       en: Saponins
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://plants.ces.ncsu.edu/plants/dracaena/
+    note:
+      en: Saponins
   species:
   - name: Dracaena fragrans
     common_names:
@@ -635,6 +904,12 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/corn-plant
       note:
         en: Saponins
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/dracaena-fragrans/
+      note:
+        en: Saponins
   - name: Dracaena marginata
     common_names:
       en:
@@ -645,6 +920,12 @@ genera:
       dogs: toxic
       sources:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/madagascar-dragon-tree
+      note:
+        en: Saponins
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/dracaena-marginata/
       note:
         en: Saponins
   - name: Dracaena trifasciata
@@ -662,6 +943,12 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/snake-plant
       note:
         en: Saponins
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/dracaena-trifasciata/
+      note:
+        en: Saponins
 - genus: Pachira
   family: Malvaceae
   archetype: indoor_tree
@@ -676,6 +963,12 @@ genera:
       - Guiana chestnut
       es:
       - castaño de Guinea
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/pachira-aquatica/
+      note:
+        en: Cyclopropenoid fatty acids, in the seeds
 - genus: Persea
   family: Lauraceae
   archetype: indoor_tree
@@ -715,11 +1008,24 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/bird-paradise-flower
       note:
         en: Gastrointestinal irritants
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/strelitzia-reginae/
+      note:
+        en: Stomach and gut irritants, mainly in the fruit and seeds
   - name: Strelitzia nicolai
     common_names:
       en:
       - white bird of paradise
       - giant bird of paradise
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/strelitzia-nicolai/
+      note:
+        en: Not identified
 - genus: Cordyline
   family: Asparagaceae
   archetype: indoor_tree
@@ -741,6 +1047,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ti-plant
       note:
         en: Saponins
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/cordyline-fruticosa/
+      note:
+        en: Saponins
   - name: Cordyline australis
     common_names:
       en:
@@ -751,6 +1064,12 @@ genera:
       dogs: toxic
       sources:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/giant-dracaena
+      note:
+        en: Saponins
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/cordyline-australis/
       note:
         en: Saponins
 - genus: Polyscias
@@ -764,6 +1083,14 @@ genera:
     dogs: toxic
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/geranium-leaf-aralia
+    note:
+      en: Saponins
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/polyscias/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
     note:
       en: Saponins
 - genus: Fatsia
@@ -797,6 +1124,13 @@ genera:
       - https://www.petpoisonhelpline.com/poison/croton/
       note:
         en: Mild irritation of the mouth and stomach; the sap can irritate skin
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/codiaeum-variegatum/
+      note:
+        en: Diterpene esters
 - genus: Araucaria
   family: Araucariaceae
   archetype: indoor_tree
@@ -844,6 +1178,13 @@ genera:
       en:
       - parlour palm
       - parlor palm
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/chamaedorea-elegans/
+      note:
+        en: Not identified
 - genus: Howea
   family: Arecaceae
   archetype: indoor_palm
@@ -870,6 +1211,12 @@ genera:
       - butterfly palm
       es:
       - palmera amarilla
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/dypsis-lutescens/
+      note:
+        en: Cyanogenic glycosides
 - genus: Rhapis
   family: Arecaceae
   archetype: indoor_palm
@@ -959,6 +1306,13 @@ genera:
     dogs: toxic
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia
+    note:
+      en: Soluble calcium oxalates
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/begonia/
     note:
       en: Soluble calcium oxalates
   species:
@@ -1069,11 +1423,24 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/kalanchoe
     note:
       en: Bufadienolides
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/kalanchoe/
+    note:
+      en: Bufadienolides
   species:
   - name: Kalanchoe blossfeldiana
     common_names:
       en:
       - flaming Katy
+    harmful_to_people:
+      if_eaten: medium
+      sources:
+      - https://plants.ces.ncsu.edu/plants/kalanchoe-blossfeldiana/
+      note:
+        en: Bufadienolides
 - genus: Aeonium
   family: Crassulaceae
   archetype: succulent
@@ -1089,6 +1456,13 @@ genera:
     en:
     - houseleek
     - hens and chicks
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/sempervivum/
+    note:
+      en: Alkaloids
 - genus: Pachyphytum
   family: Crassulaceae
   archetype: succulent
@@ -1107,6 +1481,14 @@ genera:
   common_names:
     en:
     - aloe
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/aloe/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Anthraquinone glycosides
   species:
   - name: Aloe vera
     common_names:
@@ -1122,6 +1504,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/aloe
       note:
         en: Saponins and anthraquinones
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/aloe-vera/
+      note:
+        en: Anthraquinone glycosides
 - genus: Haworthiopsis
   family: Asphodelaceae
   archetype: succulent
@@ -1164,6 +1553,12 @@ genera:
     es:
     - agave
     - maguey
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: irritates skin"
 - genus: Yucca
   family: Asparagaceae
   archetype: succulent
@@ -1177,6 +1572,12 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/yucca
     note:
       en: Saponins
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: can cause a skin allergy"
 - genus: Beaucarnea
   family: Asparagaceae
   archetype: succulent
@@ -1206,6 +1607,13 @@ genera:
       - https://plants.ces.ncsu.edu/plants/curio-rowleyanus/
       note:
         en: Pyrrolizidine alkaloids
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/curio-rowleyanus/
+      note:
+        en: Pyrrolizidine alkaloids
 - genus: Senecio
   family: Asteraceae
   archetype: succulent
@@ -1217,6 +1625,13 @@ genera:
     dogs: toxic
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ragwort
+    note:
+      en: Pyrrolizidine alkaloids
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/senecio/
     note:
       en: Pyrrolizidine alkaloids
 - genus: Lithops
@@ -1234,6 +1649,14 @@ genera:
   common_names:
     en:
     - spurge
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/euphorbia/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Diterpene esters in the milky sap
   species:
   - name: Euphorbia milii
     common_names:
@@ -1249,10 +1672,24 @@ genera:
       - https://www.petpoisonhelpline.com/poison/crown-of-thorns/
       note:
         en: Mild irritation of the mouth and stomach; the sap can irritate skin and eyes
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/euphorbia-milii/
+      note:
+        en: Diterpene esters in the milky sap
   - name: Euphorbia trigona
     common_names:
       en:
       - African milk tree
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/euphorbia-trigona/
+      note:
+        en: Diterpene esters
   - name: Euphorbia tirucalli
     common_names:
       en:
@@ -1265,6 +1702,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/pencil-cactus
       note:
         en: Irritant milky sap
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/euphorbia-tirucalli/
+      note:
+        en: Diterpene esters in the milky sap
 - genus: Portulacaria
   family: Didiereaceae
   archetype: succulent
@@ -1294,6 +1738,14 @@ genera:
   common_names:
     en:
     - desert rose
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/adenium/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Cardiac glycosides
   species:
   - name: Adenium obesum
     common_names:
@@ -1304,6 +1756,13 @@ genera:
       dogs: toxic
       sources:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/desert-rose
+      note:
+        en: Cardiac glycosides
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/adenium-obesum/
       note:
         en: Cardiac glycosides
 - genus: Mammillaria
@@ -1322,6 +1781,12 @@ genera:
     - nopal
     - chumbera
     - tuna
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: irritates skin and eyes"
   species:
   - name: Opuntia microdasys
     common_names:
@@ -1454,6 +1919,12 @@ genera:
     - boat orchid
     es:
     - orquídea barco
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: can cause a skin allergy"
 - genus: Paphiopedilum
   family: Orchidaceae
   archetype: epiphytic_orchid
@@ -1533,6 +2004,13 @@ genera:
       es:
       - piña
       - ananá
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/ananas-comosus/
+      note:
+        en: Bromelain and calcium oxalate crystals
 - genus: Tillandsia
   family: Bromeliaceae
   archetype: air_plant
@@ -1622,6 +2100,12 @@ genera:
       - romero
     synonyms:
     - Rosmarinus officinalis
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: "Per the RHS: can cause a skin allergy"
   - name: Salvia officinalis
     common_names:
       en:
@@ -1876,6 +2360,12 @@ genera:
         after: last_frost
         weeks: [1, 3]
       harvest_days: [60, 85]
+    harmful_to_people:
+      if_eaten: medium
+      sources:
+      - https://plants.ces.ncsu.edu/plants/solanum-lycopersicum/
+      note:
+        en: Tomatine and solanine, in the leaves and stems
   - name: Solanum melongena
     common_names:
       en:
@@ -1892,6 +2382,12 @@ genera:
         after: last_frost
         weeks: [2, 4]
       harvest_days: [70, 90]
+    harmful_to_people:
+      if_eaten: high
+      sources:
+      - https://plants.ces.ncsu.edu/plants/solanum-melongena/
+      note:
+        en: Solanine and other alkaloids, in the leaves
   - name: Solanum tuberosum
     common_names:
       en:
@@ -1906,6 +2402,13 @@ genera:
         after: last_frost
         weeks: [-4, -1]
       harvest_days: [90, 120]
+    harmful_to_people:
+      if_eaten: high
+      sources:
+      - https://plants.ces.ncsu.edu/plants/solanum-tuberosum/
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: Solanine and other alkaloids, in the leaves, stems and green tubers
 - genus: Capsicum
   family: Solanaceae
   archetype: fruiting_vegetable
@@ -2003,6 +2506,12 @@ genera:
   common_names:
     en:
     - bean
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: raw beans and pods are harmful if eaten"
   species:
   - name: Phaseolus vulgaris
     common_names:
@@ -2019,6 +2528,12 @@ genera:
         after: last_frost
         weeks: [1, 8]
       harvest_days: [55, 70]
+    harmful_to_people:
+      if_eaten: medium
+      sources:
+      - https://plants.ces.ncsu.edu/plants/phaseolus-vulgaris/
+      note:
+        en: Phytohaemagglutinin, a lectin, in raw beans
   - name: Phaseolus coccineus
     common_names:
       en:
@@ -2031,6 +2546,12 @@ genera:
         after: last_frost
         weeks: [1, 5]
       harvest_days: [70, 90]
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/phaseolus-coccineus/
+      note:
+        en: Traces of phytohaemagglutinin, a lectin, in raw beans
 - genus: Pisum
   family: Fabaceae
   archetype: fruiting_vegetable
@@ -2086,6 +2607,12 @@ genera:
         after: last_frost
         weeks: [-4, 12]
       harvest_days: [45, 65]
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/lactuca-sativa/
+      note:
+        en: Lactucin and lactucopicrin, in the milky sap
 - genus: Spinacia
   family: Amaranthaceae
   archetype: leafy_vegetable
@@ -2170,6 +2697,12 @@ genera:
         after: last_frost
         weeks: [-3, 8]
       harvest_days: [70, 80]
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/daucus-carota/
+      note:
+        en: Falcarinol
 - genus: Raphanus
   family: Brassicaceae
   archetype: root_vegetable
@@ -2189,6 +2722,12 @@ genera:
         after: last_frost
         weeks: [-4, 8]
       harvest_days: [25, 30]
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/raphanus-sativus/
+      note:
+        en: Isothiocyanates
 - genus: Beta
   family: Amaranthaceae
   archetype: root_vegetable
@@ -2229,6 +2768,12 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/orange
     note:
       en: Essential oils and psoralens
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: the sap or fruit can burn skin in sunlight"
   species:
   - name: Citrus × limon
     common_names:
@@ -2237,10 +2782,22 @@ genera:
       es:
       - limonero
       - limón
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/citrus-x-limon/
+      note:
+        en: Essential oils and psoralens
   - name: Citrus × sinensis
     common_names:
       en:
       - sweet orange
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/
+      note:
+        en: Essential oils and psoralens
   - name: Citrus japonica
     common_names:
       en:
@@ -2262,12 +2819,26 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/hydrangea
     note:
       en: Cyanogenic glycoside
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/hydrangea/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Cyanogenic glycosides
   species:
   - name: Hydrangea macrophylla
     common_names:
       en:
       - bigleaf hydrangea
       - mophead hydrangea
+    harmful_to_people:
+      if_eaten: low
+      sources:
+      - https://plants.ces.ncsu.edu/plants/hydrangea-macrophylla/
+      note:
+        en: Cyanogenic glycosides
 - genus: Rosa
   family: Rosaceae
   archetype: temperate_shrub
@@ -2292,6 +2863,13 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/boxwood
     note:
       en: Alkaloids
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/buxus/
+    note:
+      en: Steroidal alkaloids
   species:
   - name: Buxus sempervirens
     common_names:
@@ -2300,6 +2878,13 @@ genera:
       - boxwood
       es:
       - boj común
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/buxus-sempervirens/
+      note:
+        en: Steroidal alkaloids
 - genus: Rhododendron
   family: Ericaceae
   archetype: temperate_shrub
@@ -2314,6 +2899,13 @@ genera:
     dogs: toxic
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rhododendron
+    note:
+      en: Grayanotoxins
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://plants.ces.ncsu.edu/plants/rhododendron/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
     note:
       en: Grayanotoxins
 - genus: Camellia
@@ -2352,6 +2944,12 @@ genera:
     sources:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/holly
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/english-holly
+    note:
+      en: Saponins
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://plants.ces.ncsu.edu/plants/ilex/
     note:
       en: Saponins
 - genus: Vaccinium
@@ -2476,6 +3074,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/iris
     note:
       en: Pentacyclic terpenoids
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/iris/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Pentacyclic terpenoids and iridin
 - genus: Paeonia
   family: Paeoniaceae
   archetype: sun_perennial
@@ -2538,6 +3144,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/hellebore
     note:
       en: Bufadienolides and other glycosides, protoanemonin
+  harmful_to_people:
+    if_eaten: high
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/helleborus/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: A glycoside and a saponin
 - genus: Dryopteris
   family: Dryopteridaceae
   archetype: shade_perennial
@@ -2584,6 +3198,13 @@ genera:
     - marigold
     es:
     - clavel chino
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/tagetes/
+    note:
+      en: Thiophenes, which make skin sensitive to sunlight
   species:
   - name: Tagetes patula
     common_names:
@@ -2597,6 +3218,13 @@ genera:
       - action: plant_out
         after: last_frost
         weeks: [1, 2]
+    harmful_to_people:
+      if_eaten: low
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/tagetes-patula/
+      note:
+        en: Thiophenes, which make skin sensitive to sunlight
 - genus: Impatiens
   family: Balsaminaceae
   archetype: bedding_annual
@@ -2634,6 +3262,13 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/geranium
     note:
       en: Geraniol, linalool
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/pelargonium/
+    note:
+      en: Geraniol, linalool
 - genus: Lobelia
   family: Campanulaceae
   archetype: bedding_annual
@@ -2648,6 +3283,14 @@ genera:
     - action: plant_out
       after: last_frost
       weeks: [1, 2]
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/lobelia/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Lobeline and other alkaloids
 - genus: Calibrachoa
   family: Solanaceae
   archetype: bedding_annual
@@ -2673,6 +3316,12 @@ genera:
       - action: sow_outdoors
         after: last_frost
         weeks: [1, 4]
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: "Per the RHS: can cause a skin allergy"
 - genus: Zinnia
   family: Asteraceae
   archetype: bedding_annual
@@ -2734,6 +3383,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/tulip
     note:
       en: Tulipalin A and B
+  harmful_to_people:
+    if_eaten: low
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/tulipa/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Tulipalin and other allergens
 - genus: Narcissus
   family: Amaryllidaceae
   archetype: spring_bulb
@@ -2749,6 +3406,14 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/daffodil
     note:
       en: Lycorine and other alkaloids
+  harmful_to_people:
+    if_eaten: medium
+    skin: true
+    sources:
+    - https://plants.ces.ncsu.edu/plants/narcissus/
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: Lycorine and other alkaloids, and calcium oxalate crystals
 - genus: Hyacinthus
   family: Asparagaceae
   archetype: spring_bulb
@@ -2757,6 +3422,12 @@ genera:
     - hyacinth
     es:
     - jacinto
+  harmful_to_people:
+    skin: true
+    sources:
+    - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+    note:
+      en: "Per the RHS: irritates skin"
   species:
   - name: Hyacinthus orientalis
     common_names:
@@ -2769,6 +3440,13 @@ genera:
       - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/hyacinth
       note:
         en: Alkaloids, possibly like the daffodil's
+    harmful_to_people:
+      if_eaten: medium
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/hyacinthus-orientalis/
+      note:
+        en: Lycorine and other alkaloids
 - genus: Crocus
   family: Iridaceae
   archetype: spring_bulb
@@ -2796,6 +3474,12 @@ genera:
     - https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/chives
     note:
       en: N-propyl disulfide
+  harmful_to_people:
+    if_eaten: low
+    sources:
+    - https://plants.ces.ncsu.edu/plants/allium/
+    note:
+      en: Sulfur compounds such as N-propyl disulfide
   species:
   - name: Allium schoenoprasum
     common_names:
@@ -2839,3 +3523,10 @@ genera:
         after: first_frost
         weeks: [-6, -2]
       harvest_days: [240, 270]
+    harmful_to_people:
+      skin: true
+      sources:
+      - https://plants.ces.ncsu.edu/plants/allium-sativum/
+      - https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants
+      note:
+        en: Sulfur compounds such as N-propyl disulfide
