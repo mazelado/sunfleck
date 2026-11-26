@@ -44,6 +44,7 @@ export function TaskRow({ task, canEdit }: { task: Task; canEdit: boolean }) {
           ? t("today.skipped", labels)
           : t("care.logged", { action: done(task.care_type), plant: task.plant.nickname }),
         [event],
+        task.plant.id,
       );
     } catch (error) {
       setLeaving(false);

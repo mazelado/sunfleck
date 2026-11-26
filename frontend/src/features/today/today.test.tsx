@@ -229,6 +229,51 @@ describe("today", () => {
     });
   });
 
+  it("adds details to care done in one tap, after its row has gone", async () => {
+    signInAs(gardener);
+    withToday();
+    let updated: Record<string, unknown> = {};
+    server.use(
+      http.post("*/api/v1/plants/1/care-events", () =>
+        HttpResponse.json(event(99, 1), { status: 201 }),
+      ),
+      http.get("*/api/v1/plants/1/schedules", () => HttpResponse.json([])),
+      http.put("*/api/v1/care-events/99", async ({ request }) => {
+        updated = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(event(99, 1));
+      }),
+    );
+    const { user } = renderApp("/");
+
+    await user.click(await screen.findByRole("button", { name: "Done: Water Monty" }));
+    const toast = (await screen.findByText("Watered: Monty")).closest(".mantine-Notification-root");
+    if (!(toast instanceof HTMLElement)) throw new Error("No confirmation");
+    await user.click(within(toast).getByRole("button", { name: "Add details or another day…" }));
+
+    const dialog = await screen.findByRole("dialog", { name: "Edit care" });
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => {
+      expect(updated).toMatchObject({ care_type_id: water.id });
+    });
+  });
+
+  it("doesn't offer details for care skipped", async () => {
+    signInAs(gardener);
+    withToday();
+    server.use(
+      http.post("*/api/v1/plants/1/care-events", () =>
+        HttpResponse.json({ ...event(99, 1), skipped: true }, { status: 201 }),
+      ),
+    );
+    const { user } = renderApp("/");
+
+    await user.click(await screen.findByRole("button", { name: "Later: Water Monty" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Skip this time" }));
+
+    expect(await screen.findByRole("button", { name: "Undo" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Add details or another day…" })).toBeNull();
+  });
+
   it("waters everything in a room at once", async () => {
     signInAs(gardener);
     withToday();
