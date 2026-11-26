@@ -31,7 +31,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   when it's known to be harmful to people, as they already did for pets: how serious it is if
   eaten, and whether touching it irritates skin, for 101 plants, from NC State's Plant Toolbox
   and the RHS. Food crops count only a part people might eat, such as a potato's green tubers.
-  It's never "safe": a plant without it says it isn't known.
+  It's never "safe": a plant without it says it isn't known (#268, #269, #270).
 
 ### Changed
 
