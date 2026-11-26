@@ -15,7 +15,14 @@ import { useTranslation } from "react-i18next";
 
 import { type Direction, type LightSource, useSaveLightSource } from "../../api/places";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { cmToDisplay, dailyLightIntegral, displayToCm, hoursOn, lengthUnit } from "../../lib/units";
+import {
+  cmToDisplay,
+  dailyLightIntegral,
+  displayToCm,
+  hoursOn,
+  lengthUnit,
+  formatNumber,
+} from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { useApplyFieldErrors } from "../auth/serverErrors";
 
@@ -74,7 +81,7 @@ export function LightSourceForm({
   onClose,
   onSaved,
 }: LightSourceFormProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const applyFieldErrors = useApplyFieldErrors();
   const units = useUnits();
   const save = useSaveLightSource(locationId);
@@ -234,8 +241,8 @@ export function LightSourceForm({
               {dli !== null && hours !== null && (
                 <Text size="sm" role="status">
                   {t("places.dliPreview", {
-                    dli,
-                    hours: Math.round(hours * 10) / 10,
+                    dli: formatNumber(dli, i18n.language),
+                    hours: formatNumber(hours, i18n.language),
                     distance: `${String(
                       values.brightness === "custom" && values.measuredAt !== ""
                         ? values.measuredAt

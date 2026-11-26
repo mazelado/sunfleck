@@ -10,11 +10,11 @@ import type {
   Suggestion,
 } from "../../api/schedules";
 import {
-  celsiusToDisplay,
   cmToDisplay,
+  formatNumber,
   formatPrecipitation,
+  formatTemperature,
   lengthUnit,
-  temperatureUnit,
   waterDepth,
   waterVolume,
 } from "../../lib/units";
@@ -81,8 +81,8 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
   const number = (key: string) => Number(details[key]);
   const date = (key: string) =>
     typeof details[key] === "string" ? formatDate(details[key], locale) : null;
-  const temperature = (celsius: number) =>
-    `${String(celsiusToDisplay(celsius, units))}${temperatureUnit(units)}`;
+  const temperature = (celsius: number) => formatTemperature(celsius, units, locale);
+  const rain = (mm: number) => formatPrecipitation(mm, units, locale);
   const season = () => t(`guide.seasons.${String(details.season) as "spring"}`);
 
   const text = (): string => {
@@ -99,8 +99,8 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
         return t("schedules.factors.restSeasonAhead", { date: date("resumes_on") ?? "" });
       case "light":
         return t("schedules.factors.light", {
-          dli: number("dli"),
-          expected: number("expected"),
+          dli: formatNumber(number("dli"), locale),
+          expected: formatNumber(number("expected"), locale),
         });
       case "no_light_info":
         return details.indoor
@@ -174,18 +174,18 @@ export function explainFactor(factor: Factor, { t, locale, units }: ExplainConte
       // From the weather plugin.
       case "rain":
         return t("schedules.factors.rain", {
-          amount: formatPrecipitation(number("mm"), units),
+          amount: rain(number("mm")),
         });
       case "rain_forecast":
         return t("schedules.factors.rainForecast", {
           when: date("on") ?? "",
-          amount: formatPrecipitation(number("mm"), units),
+          amount: rain(number("mm")),
         });
       case "water_balance": {
         const amounts = {
-          used: formatPrecipitation(number("used_mm"), units),
-          rain: formatPrecipitation(number("rain_mm"), units),
-          capacity: formatPrecipitation(number("capacity_mm"), units),
+          used: rain(number("used_mm")),
+          rain: rain(number("rain_mm")),
+          capacity: rain(number("capacity_mm")),
         };
         const dryOn = date("dry_on");
         return dryOn

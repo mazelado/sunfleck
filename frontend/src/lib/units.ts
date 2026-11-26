@@ -23,13 +23,28 @@ export function temperatureUnit(units: UnitSystem): string {
   return units === "imperial" ? "°F" : "°C";
 }
 
+/**
+ * A number as people write it in their language: "3.6" in English, "3,6" in Spanish. For any
+ * number shown that may have decimals, rather than `String()`, which always writes a point.
+ */
+export function formatNumber(value: number, locale: string, maximumFractionDigits = 1): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits }).format(value);
+}
+
+/** A temperature in the person's units and language: "21.5°C", "21,5°C" or "71°F". */
+export function formatTemperature(celsius: number, units: UnitSystem, locale: string): string {
+  return `${formatNumber(celsiusToDisplay(celsius, units), locale)}${temperatureUnit(units)}`;
+}
+
 export function lengthUnit(units: UnitSystem): string {
   return units === "imperial" ? "in" : "cm";
 }
 
-/** Rain: "4 mm", or "0.16 in" in imperial units. */
-export function formatPrecipitation(mm: number, units: UnitSystem): string {
-  return units === "imperial" ? `${String(round(mm / 25.4, 2))} in` : `${String(round(mm, 1))} mm`;
+/** Rain: "2.4 mm" (or "2,4 mm"), or "0.16 in" in imperial units. */
+export function formatPrecipitation(mm: number, units: UnitSystem, locale: string): string {
+  return units === "imperial"
+    ? `${formatNumber(mm / 25.4, locale, 2)} in`
+    : `${formatNumber(mm, locale)} mm`;
 }
 
 /** An amount of water, rounded to what's easy to measure in a kitchen. */

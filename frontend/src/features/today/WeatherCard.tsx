@@ -3,7 +3,7 @@ import { IconSnowflake } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
 import type { SiteConditions } from "../../api/today";
-import { celsiusToDisplay, formatPrecipitation, temperatureUnit } from "../../lib/units";
+import { formatPrecipitation, formatTemperature } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { addDays } from "./grouping";
 import { WEATHER_ICONS, weatherKind } from "./weatherCodes";
@@ -16,8 +16,7 @@ const SOURCES: Record<string, string> = {
 export function WeatherCard({ conditions }: { conditions: SiteConditions }) {
   const { t, i18n } = useTranslation();
   const units = useUnits();
-  const degrees = (celsius: number) =>
-    `${String(celsiusToDisplay(celsius, units))}${temperatureUnit(units)}`;
+  const degrees = (celsius: number) => formatTemperature(celsius, units, i18n.language);
   const kind = conditions.weather_code === null ? null : weatherKind(conditions.weather_code);
   const WeatherIcon = kind ? WEATHER_ICONS[kind] : null;
   const today = [
@@ -28,7 +27,9 @@ export function WeatherCard({ conditions }: { conditions: SiteConditions }) {
         })
       : null,
     conditions.precipitation_mm
-      ? t("weather.rain", { amount: formatPrecipitation(conditions.precipitation_mm, units) })
+      ? t("weather.rain", {
+          amount: formatPrecipitation(conditions.precipitation_mm, units, i18n.language),
+        })
       : null,
   ].filter(Boolean);
   const siteToday = conditions.today;
