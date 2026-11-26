@@ -20,6 +20,9 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 - **"What do you grow?"**: in a new household, the step-by-step setup first asks an Admin
   whether they grow outdoor and edible plants, or a collection, and turns on Garden or
   Collection to match. Houseplants need neither (#259).
+- **Sunfleck in Spanish**: choose **Español** under **Profile → Language**. Before signing
+  in, a browser set to Spanish gets it too. This first part covers signing in, setting up,
+  Today, logging care, and the household and profile settings; the rest of the app follows.
 
 ## [1.2.0] - 2026-11-26
 

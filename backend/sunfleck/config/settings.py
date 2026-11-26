@@ -255,7 +255,7 @@ PUSH_SERVICE_HOSTS = [
 LANGUAGE_CODE = "en"
 # The languages Sunfleck is translated into: the same as the app's own translation files
 # (frontend/src/i18n/locales), which a test checks. See docs/translating.md.
-LANGUAGES = [("en", "English")]
+LANGUAGES = [("en", "English"), ("es", "Español")]
 # The server's translations (emails, notifications): sunfleck/locale/<language>/LC_MESSAGES.
 LOCALE_PATHS = [BASE_DIR / "sunfleck" / "locale"]
 TIME_ZONE = env_str("TIME_ZONE", "UTC")
