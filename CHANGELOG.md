@@ -22,7 +22,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   Collection to match. Houseplants need neither (#259).
 - **Sunfleck in Spanish**: choose **Español** under **Profile → Language**. Before signing
   in, a browser set to Spanish gets it too. The whole app is translated; emails, notifications
-  and the care guide's plant names and profiles are still in English (#260, #261).
+  and the care guide's plant names and profiles are still in English (#260, #261, #262).
 
 ## [1.2.0] - 2026-11-26
 
