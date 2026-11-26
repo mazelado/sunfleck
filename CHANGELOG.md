@@ -24,7 +24,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   in, a browser set to Spanish gets it too. The whole app is translated, with numbers written
   the Spanish way ("3,6"), and so are the emails and notifications: the daily digest, frost
   warnings, invitations and the calendar. The care guide's plant names and profiles are still
-  in English (#260, #261, #262, #263).
+  in English (#260, #261, #262, #263, #264).
 
 ## [1.2.0] - 2026-11-26
 
