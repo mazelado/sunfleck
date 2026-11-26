@@ -874,6 +874,31 @@ describe("plant page", () => {
     expect(screen.queryByRole("button", { name: "What's wrong?" })).not.toBeInTheDocument();
   });
 
+  it("warns, near the top, when its species is known to harm people", async () => {
+    signInAs(gardener);
+    withSites([home]);
+    withPlant(
+      plant({
+        species: {
+          id: 3,
+          scientific_name: "Dieffenbachia seguine",
+          common_name: "dumb cane",
+          harmful_to_people: {
+            if_eaten: "high",
+            skin: true,
+            sources: ["https://plants.ces.ncsu.edu/plants/dieffenbachia-seguine/"],
+            note: null,
+          },
+        },
+      }),
+    );
+    renderApp("/plants/7");
+
+    expect(await screen.findByText("Seriously harmful to people if eaten")).toBeVisible();
+    // Not known isn't said on every plant's page, only in the care guide.
+    expect(screen.queryByText(/not known/)).not.toBeInTheDocument();
+  });
+
   it("leaves out propagating and labels when the household has Collection off", async () => {
     const household = { id: 1, name: "Fern Gully", garden: true, collection: false };
     signInAs({ ...gardener, household });

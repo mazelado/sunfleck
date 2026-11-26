@@ -14,6 +14,7 @@ import { FullPageLoader } from "../../components/FullPageLoader";
 import { useAreas } from "../../lib/useAreas";
 import { CareProfileFacts } from "./CareProfileFacts";
 import { CropTiming } from "./CropTiming";
+import { HarmToPeopleNotice } from "./HarmToPeople";
 import { ToxicityNotice } from "./Toxicity";
 
 /** A genus or species: its names, and the care its profile suggests. */
@@ -78,6 +79,7 @@ export function SpeciesPage() {
       )}
       <ErrorAlert error={saveWish.error} />
       <ToxicityNotice toxicity={data.toxicity} showUnknown />
+      <HarmToPeopleNotice harm={data.harmful_to_people} showUnknown />
       <Paper withBorder radius="lg" p="lg">
         <Stack gap="xs">
           {details.map(([label, value]) => (

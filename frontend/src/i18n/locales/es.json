@@ -982,7 +982,15 @@
     "cats": "gatos",
     "dogs": "perros",
     "source": "Fuente:",
-    "unknown": "Toxicidad para mascotas: no se conoce. Eso no significa que sea segura: consulta a tu veterinario o la lista de la ASPCA."
+    "unknown": "Toxicidad para mascotas: no se conoce. Eso no significa que sea segura: consulta a tu veterinario o la lista de la ASPCA.",
+    "people": {
+      "low": "Ligeramente dañina para las personas si se come",
+      "medium": "Dañina para las personas si se come",
+      "high": "Muy dañina para las personas si se come",
+      "skin": "Su savia puede irritar la piel o causar alergia: usa guantes para manipularla.",
+      "skinOnly": "Tocarla puede irritar la piel o causar alergia",
+      "unknown": "Toxicidad para las personas: no se conoce. Eso no significa que sea segura: si alguien la ha comido, llama a un centro de toxicología."
+    }
   },
   "calendar": {
     "title": "Calendario de siembra",

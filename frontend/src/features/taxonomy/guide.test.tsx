@@ -180,6 +180,69 @@ describe("care guide", () => {
     );
   });
 
+  it("shows known harm to people: how serious if eaten, and touching it", async () => {
+    signInAs(gardener);
+    withReferenceData();
+    server.use(
+      http.get("*/api/v1/species/3", () =>
+        HttpResponse.json({
+          ...deliciosa,
+          harmful_to_people: {
+            if_eaten: "high",
+            skin: true,
+            sources: ["https://plants.ces.ncsu.edu/plants/dieffenbachia-seguine/"],
+            note: "Calcium oxalate crystals and oxalic acid",
+          },
+        }),
+      ),
+    );
+
+    renderApp("/guide/species/3");
+
+    expect(await screen.findByText("Seriously harmful to people if eaten")).toBeVisible();
+    expect(
+      screen.getByText("Its sap can irritate skin or cause an allergy: wear gloves to handle it."),
+    ).toBeVisible();
+    expect(screen.getByText("Calcium oxalate crystals and oxalic acid")).toBeVisible();
+    expect(screen.getByRole("link", { name: "plants.ces.ncsu.edu" })).toHaveAttribute(
+      "href",
+      "https://plants.ces.ncsu.edu/plants/dieffenbachia-seguine/",
+    );
+  });
+
+  it("says when only touching a plant is known to harm, or that nothing is known", async () => {
+    signInAs(gardener);
+    withReferenceData();
+    server.use(
+      http.get("*/api/v1/species/3", () =>
+        HttpResponse.json({
+          ...deliciosa,
+          harmful_to_people: {
+            if_eaten: null,
+            skin: true,
+            sources: [
+              "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+            ],
+            note: null,
+          },
+        }),
+      ),
+    );
+    const { unmount } = renderApp("/guide/species/3");
+
+    expect(
+      await screen.findByText("Touching it can irritate skin or cause an allergy"),
+    ).toBeVisible();
+    expect(screen.queryByText(/if eaten/)).not.toBeInTheDocument();
+    unmount();
+
+    server.use(http.get("*/api/v1/species/3", () => HttpResponse.json(deliciosa)));
+    renderApp("/guide/species/3");
+
+    // Unknown is said as such: never "safe".
+    expect(await screen.findByText(/^Toxicity to people: not known/)).toBeVisible();
+  });
+
   it("says when to sow, plant out and harvest a crop", async () => {
     signInAs(gardener);
     withReferenceData();

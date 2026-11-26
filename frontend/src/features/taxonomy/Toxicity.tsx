@@ -1,18 +1,11 @@
-import { Alert, Anchor, Group, Text } from "@mantine/core";
+import { Alert, Text } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
 import type { components } from "../../api/schema";
+import { ToxicitySources } from "./ToxicitySources";
 
 type Toxicity = components["schemas"]["ToxicityOut"];
-
-function host(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
 
 /**
  * Known toxicity to pets, with its sources. Without it, says that it's not known, which
@@ -47,14 +40,7 @@ export function ToxicityNotice({
       title={t("toxicity.title", { animals })}
     >
       {toxicity.note && <Text size="sm">{toxicity.note}</Text>}
-      <Group gap={6}>
-        <Text size="sm">{t("toxicity.source")}</Text>
-        {toxicity.sources.map((source) => (
-          <Anchor key={source} href={source} target="_blank" rel="noreferrer" size="sm">
-            {host(source)}
-          </Anchor>
-        ))}
-      </Group>
+      <ToxicitySources sources={toxicity.sources} />
     </Alert>
   );
 }
