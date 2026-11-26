@@ -43,7 +43,10 @@ export function NotificationsPage() {
           <OtherChannels />
         </Stack>
       </Paper>
-      <PreferencesForm preferences={data.data.preferences} />
+      <PreferencesForm
+        preferences={data.data.preferences}
+        hasChannels={data.data.channels.length > 0}
+      />
       <DigestPreview />
       <CalendarFeed />
     </Stack>

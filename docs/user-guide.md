@@ -239,7 +239,8 @@ Settings. Under **Notifications**, each person chooses where theirs go and when:
 
 - **This device**: **Get notifications on this device** sends them as notifications from
   Sunfleck itself, with no other app. Do it on each phone or computer you want them on. On
-  iPhone and iPad, add Sunfleck to the Home Screen first and turn them on from there. The
+  iPhone and iPad, add Sunfleck to the Home Screen first (the page lists the steps) and turn
+  them on from there. The
   device then shows in the list like the channels below, where you can test, rename or pause
   it.
 - **Other ways** (folded under **Other ways: ntfy, Telegram, email…**): ntfy, Telegram, email,
@@ -253,7 +254,7 @@ Settings. Under **Notifications**, each person chooses where theirs go and when:
   `ntfys://ntfy.example.com/that-topic?token=yourtoken`.
 - **When**: a **daily digest** of what needs care (and frost warnings), at the time you choose,
   in your time zone, and optionally an **evening reminder** of what's still not done. Nothing
-  is sent on days with nothing to do.
+  is sent on days with nothing to do, nor until this device or another way is added above.
 - **Calendar**: **Get a calendar address** to see the next two weeks of care in Google
   Calendar, Apple Calendar or another calendar app (add it there as a calendar "from URL" or
   "subscription"). The address is shown only once, and anyone who has it can see your plants'
@@ -264,7 +265,8 @@ Settings. Under **Notifications**, each person chooses where theirs go and when:
 ## Your household
 
 Everyone in a household shares its places and plants. Admins invite people from
-**Household**, with one of three roles:
+**Household**: type their email under **Invite someone** and press **Create invitation**, with
+one of three roles:
 
 | Role | Can |
 |---|---|

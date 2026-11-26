@@ -285,6 +285,51 @@ describe("household", () => {
     expect(sent).toEqual({ email: "new@example.com", role: "gardener" });
   });
 
+  it("asks before leaving with an email typed but nobody invited", async () => {
+    signInAs(ada);
+    withMembers([adaMember]);
+    withInvitations();
+    const { user } = renderApp("/settings/household");
+
+    await user.type(await screen.findByLabelText(/Their email address/), "new@example.com");
+    await user.click(screen.getAllByRole("link", { name: "Plants" })[0] as HTMLElement);
+
+    const dialog = await screen.findByRole("dialog", { name: "Leave without inviting them?" });
+    expect(
+      within(dialog).getByText(/nobody is invited until you press Create invitation/),
+    ).toBeVisible();
+    await user.click(within(dialog).getByRole("button", { name: "Keep editing" }));
+    expect(screen.getByLabelText(/Their email address/)).toHaveValue("new@example.com");
+  });
+
+  it("keeps the household name's Save off until the name changes", async () => {
+    signInAs(ada);
+    withMembers([adaMember]);
+    withInvitations();
+    let sent: unknown;
+    server.use(
+      http.patch("*/api/v1/household", async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json({ id: 1, name: "Fern Gully!" });
+      }),
+    );
+    const { user } = renderApp("/settings/household");
+
+    const name = await screen.findByRole("textbox", { name: "Household name" });
+    const save = screen.getByRole("button", { name: "Save" });
+    expect(save).toBeDisabled();
+    await user.type(name, "!");
+    expect(save).toBeEnabled();
+    await user.click(save);
+
+    await waitFor(() => {
+      expect(sent).toEqual({ name: "Fern Gully!" });
+    });
+    await waitFor(() => {
+      expect(save).toBeDisabled();
+    });
+  });
+
   it("lists pending invitations and revokes one", async () => {
     signInAs(ada);
     withMembers([adaMember]);

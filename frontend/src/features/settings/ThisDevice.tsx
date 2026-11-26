@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Button, Group, List, Paper, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconBell } from "@tabler/icons-react";
 import { useState } from "react";
@@ -55,14 +55,25 @@ export function ThisDevice() {
               {t("notifications.push.turnOn")}
             </Button>
           </Group>
+        ) : support === "needs_install" ? (
+          // On an iPhone in Safari there's nothing to press here, so spell out the steps: in
+          // the usability test, people took the times below for the whole setup.
+          <Stack gap={4}>
+            <Text size="sm" fw={500}>
+              {t("notifications.push.needsInstall")}
+            </Text>
+            <List type="ordered" size="sm" spacing={4}>
+              <List.Item>{t("install.iosShare")}</List.Item>
+              <List.Item>{t("install.iosAdd")}</List.Item>
+              <List.Item>{t("notifications.push.openFromHomeScreen")}</List.Item>
+            </List>
+          </Stack>
         ) : (
           <Text size="sm">
             {t(
-              support === "needs_install"
-                ? "notifications.push.needsInstall"
-                : support === "blocked"
-                  ? "notifications.push.blocked"
-                  : "notifications.push.unsupported",
+              support === "blocked"
+                ? "notifications.push.blocked"
+                : "notifications.push.unsupported",
             )}
           </Text>
         )}

@@ -1,6 +1,17 @@
-import { Button, Group, Paper, Select, Stack, Switch, TextInput, Title } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Paper,
+  Select,
+  Stack,
+  Switch,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { IconBellOff } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +25,13 @@ interface PreferencesValues {
   timezone: string;
 }
 
-export function PreferencesForm({ preferences }: { preferences: NotificationPreferences }) {
+interface Props {
+  preferences: NotificationPreferences;
+  /** Whether anything would be sent: without a channel, the times alone do nothing. */
+  hasChannels: boolean;
+}
+
+export function PreferencesForm({ preferences, hasChannels }: Props) {
   const { t } = useTranslation();
   const update = useUpdatePreferences();
   const applyFieldErrors = useApplyFieldErrors();
@@ -43,7 +60,10 @@ export function PreferencesForm({ preferences }: { preferences: NotificationPref
         reminder_time: values.reminder ? values.reminder_time : null,
         timezone: values.timezone,
       });
-      notifications.show({ message: t("notifications.saved") });
+      notifications.show({
+        color: hasChannels ? undefined : "yellow",
+        message: t(hasChannels ? "notifications.saved" : "notifications.savedNothingSent"),
+      });
     } catch (error) {
       applyFieldErrors(form, error);
     }
@@ -56,6 +76,11 @@ export function PreferencesForm({ preferences }: { preferences: NotificationPref
           <Title order={2} fz="h4">
             {t("notifications.when")}
           </Title>
+          {!hasChannels && (
+            <Alert variant="light" color="yellow" icon={<IconBellOff />}>
+              {t("notifications.nothingSent")}
+            </Alert>
+          )}
           <TextInput
             type="time"
             label={t("notifications.digestTime")}

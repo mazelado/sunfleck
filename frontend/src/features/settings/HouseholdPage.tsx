@@ -64,6 +64,7 @@ function HouseholdNameForm({ name }: { name: string }) {
   const handleSubmit = form.onSubmit(async (values) => {
     try {
       await updateHousehold.mutateAsync(values.name);
+      form.resetDirty();
       notifications.show({ color: "green", message: t("common.saved") });
     } catch {
       // The error is shown by ErrorAlert.
@@ -84,7 +85,9 @@ function HouseholdNameForm({ name }: { name: string }) {
               style={{ flex: 1 }}
               {...form.getInputProps("name")}
             />
-            <Button type="submit" loading={updateHousehold.isPending}>
+            {/* Off until the name changes: in the usability test, people typed an invitee's
+                email, then pressed this Save, the last on the page, instead of inviting. */}
+            <Button type="submit" loading={updateHousehold.isPending} disabled={!form.isDirty()}>
               {t("common.save")}
             </Button>
           </Group>
