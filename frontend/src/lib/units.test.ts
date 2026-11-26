@@ -6,6 +6,9 @@ import {
   dailyLightIntegral,
   displayToCelsius,
   displayToCm,
+  formatNumber,
+  formatPrecipitation,
+  formatTemperature,
   hoursOn,
   waterDepth,
   waterFromMl,
@@ -19,6 +22,20 @@ describe("units", () => {
     expect(celsiusToDisplay(20, "imperial")).toBe(68);
     expect(displayToCelsius(68, "imperial")).toBe(20);
     expect(displayToCelsius(61, "imperial")).toBe(16.1);
+  });
+
+  it("writes numbers as people do in their language", () => {
+    expect(formatNumber(3.6, "en")).toBe("3.6");
+    expect(formatNumber(3.6, "es")).toBe("3,6");
+    expect(formatNumber(3.64, "es")).toBe("3,6");
+    expect(formatNumber(0.157, "es", 2)).toBe("0,16");
+    expect(formatNumber(12, "es")).toBe("12");
+    expect(formatTemperature(21.5, "metric", "es")).toBe("21,5°C");
+    expect(formatTemperature(21.5, "metric", "en")).toBe("21.5°C");
+    expect(formatTemperature(20, "imperial", "es")).toBe("68°F");
+    expect(formatPrecipitation(2.4, "metric", "es")).toBe("2,4 mm");
+    expect(formatPrecipitation(2.4, "metric", "en")).toBe("2.4 mm");
+    expect(formatPrecipitation(4, "imperial", "es")).toBe("0,16 in");
   });
 
   it("converts lengths for display and back", () => {

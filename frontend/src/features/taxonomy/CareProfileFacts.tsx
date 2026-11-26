@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import type { CareProfile } from "../../api/taxonomy";
-import { celsiusToDisplay, temperatureUnit } from "../../lib/units";
+import { formatNumber, formatTemperature } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { forHemisphere, formatMonths } from "./months";
 
@@ -37,8 +37,7 @@ export function CareProfileFacts({ profile, southern = false }: CareProfileFacts
   const { t, i18n } = useTranslation();
   const units = useUnits();
   const months = (list: number[]) => formatMonths(forHemisphere(list, southern), i18n.language);
-  const temperature = (celsius: number) =>
-    `${String(celsiusToDisplay(celsius, units))}${temperatureUnit(units)}`;
+  const temperature = (celsius: number) => formatTemperature(celsius, units, i18n.language);
 
   const days = Object.values(profile.watering.interval_days).filter(
     (value): value is number => value !== null,
@@ -60,9 +59,9 @@ export function CareProfileFacts({ profile, southern = false }: CareProfileFacts
       t("guide.light"),
       t(`guide.lightLevel.${lightLevel(profile.light.dli_ideal)}`),
       t("guide.dli", {
-        min: profile.light.dli_min,
-        max: profile.light.dli_max,
-        ideal: profile.light.dli_ideal,
+        min: formatNumber(profile.light.dli_min, i18n.language),
+        max: formatNumber(profile.light.dli_max, i18n.language),
+        ideal: formatNumber(profile.light.dli_ideal, i18n.language),
       }),
     ],
     [IconMist, t("guide.humidity"), t(`guide.humidityLevel.${profile.humidity}`)],

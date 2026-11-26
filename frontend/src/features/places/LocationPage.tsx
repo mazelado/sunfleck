@@ -17,7 +17,7 @@ import { ConfirmDeleteButton } from "../../components/ConfirmDeleteButton";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useCanEdit } from "../../lib/useCanEdit";
-import { cmToDisplay, lengthUnit } from "../../lib/units";
+import { cmToDisplay, lengthUnit, formatNumber } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { useAreas } from "../../lib/useAreas";
 import { LocationPlants } from "../plants/LocationPlants";
@@ -29,7 +29,7 @@ import { useSiteHome } from "./useSiteHome";
 type Dialog = { kind: "window" | "grow_light"; light?: LightSource } | null;
 
 export function LocationPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const areas = useAreas();
   const params = useParams();
   const found = useLocation(Number(params.siteId), Number(params.locationId));
@@ -52,7 +52,7 @@ export function LocationPage() {
   }
   const { site, data: location } = found;
   const path = `/places/${String(site.id)}/locations/${String(location.id)}`;
-  const conditions = describeConditions(location, t, units);
+  const conditions = describeConditions(location, t, units, i18n.language);
 
   return (
     <Stack gap="lg">
@@ -131,7 +131,7 @@ export function LocationPage() {
                           </Text>
                         )}
                       </Text>
-                      {describeLight(light, t).map((line) => (
+                      {describeLight(light, t, i18n.language).map((line) => (
                         <Text key={line} size="sm" c="dimmed">
                           {line}
                         </Text>
@@ -214,7 +214,7 @@ export function LocationPage() {
 
 /** A window's light through the year at a typical distance, or a grow light's. */
 function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const units = useUnits();
   if (!source) {
     return null;
@@ -223,7 +223,10 @@ function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
   if (source.kind !== "window") {
     return (
       <Text size="sm" c="dimmed">
-        {t("light.growLightAllYear", { light: word(source.dli.spring), dli: source.dli.spring })}
+        {t("light.growLightAllYear", {
+          light: word(source.dli.spring),
+          dli: formatNumber(source.dli.spring, i18n.language),
+        })}
       </Text>
     );
   }
@@ -243,7 +246,12 @@ function SourceThroughYear({ source }: { source: SourceLight | undefined }) {
         })}
       </Text>
       <Text size="xs" c="dimmed">
-        {t("light.seasonValues", { ...source.dli })}
+        {t("light.seasonValues", {
+          spring: formatNumber(source.dli.spring, i18n.language),
+          summer: formatNumber(source.dli.summer, i18n.language),
+          autumn: formatNumber(source.dli.autumn, i18n.language),
+          winter: formatNumber(source.dli.winter, i18n.language),
+        })}
       </Text>
     </>
   );

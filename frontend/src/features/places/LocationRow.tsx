@@ -9,7 +9,7 @@ import { describeConditions } from "./describe";
 
 /** A room or spot in a list: indoor or outdoor, and the light it has, opening its page. */
 export function LocationRow({ siteId, location }: { siteId: number; location: Location }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const units = useUnits();
   const indoor = location.kind === "indoor";
   const lights = location.light_sources.map(
@@ -24,7 +24,7 @@ export function LocationRow({ siteId, location }: { siteId: number; location: Lo
     t(`places.${location.kind}`),
     ...(indoor
       ? [lights.length > 0 ? lights.join(", ") : t("places.noLightYet")]
-      : describeConditions(location, t, units)),
+      : describeConditions(location, t, units, i18n.language)),
   ].join(" · ");
   return (
     <RowLink

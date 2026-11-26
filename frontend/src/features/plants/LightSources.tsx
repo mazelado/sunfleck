@@ -3,7 +3,7 @@ import { IconBulb, IconWindow } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
 import type { Plant, PlantLightReport } from "../../api/plants";
-import { cmToDisplay, lengthUnit } from "../../lib/units";
+import { cmToDisplay, lengthUnit, formatNumber } from "../../lib/units";
 import { useUnits } from "../../lib/useUnits";
 import { describeLight, lightWord } from "../places/describe";
 
@@ -16,7 +16,7 @@ export function LightSources({
   plant: Plant;
   report?: PlantLightReport | null;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const units = useUnits();
   if (plant.light_sources.length === 0) {
     return (
@@ -28,7 +28,7 @@ export function LightSources({
   return (
     <Stack gap="sm">
       {plant.light_sources.map(({ light_source: light, distance_cm }) => {
-        const lines = describeLight(light, t);
+        const lines = describeLight(light, t, i18n.language);
         if (distance_cm !== null) {
           lines.push(
             t(
@@ -43,7 +43,12 @@ export function LightSources({
         const given = report?.sources.find((source) => source.id === light.id);
         if (report && given) {
           const dli = given.dli[report.current_season as keyof typeof given.dli];
-          lines.push(t("light.givesNow", { light: t(`light.words.${lightWord(dli)}`), dli }));
+          lines.push(
+            t("light.givesNow", {
+              light: t(`light.words.${lightWord(dli)}`),
+              dli: formatNumber(dli, i18n.language),
+            }),
+          );
         }
         return (
           <Group key={light.id} gap="sm" wrap="nowrap" align="flex-start">

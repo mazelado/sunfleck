@@ -2,15 +2,20 @@ import type { TFunction } from "i18next";
 
 import type { LightSource, Location } from "../../api/places";
 import {
-  celsiusToDisplay,
   cmToDisplay,
+  formatNumber,
+  formatTemperature,
   lengthUnit,
-  temperatureUnit,
   type UnitSystem,
 } from "../../lib/units";
 
 /** One-line descriptions of places data, shared by the list and detail pages. */
-export function describeConditions(location: Location, t: TFunction, units: UnitSystem): string[] {
+export function describeConditions(
+  location: Location,
+  t: TFunction,
+  units: UnitSystem,
+  locale: string,
+): string[] {
   const parts: string[] = [];
   if (location.kind === "outdoor") {
     if (location.bed_type) {
@@ -32,16 +37,15 @@ export function describeConditions(location: Location, t: TFunction, units: Unit
     return parts;
   }
   const { temperature_min_c: low, temperature_max_c: high } = location;
-  const unit = temperatureUnit(units);
   if (low !== null && high !== null) {
     parts.push(
       t("places.temperatureRange", {
-        min: `${String(celsiusToDisplay(low, units))}${unit}`,
-        max: `${String(celsiusToDisplay(high, units))}${unit}`,
+        min: formatTemperature(low, units, locale),
+        max: formatTemperature(high, units, locale),
       }),
     );
   } else if (low !== null || high !== null) {
-    parts.push(`${String(celsiusToDisplay((low ?? high) as number, units))}${unit}`);
+    parts.push(formatTemperature((low ?? high) as number, units, locale));
   }
   if (location.humidity) {
     parts.push(t(`places.humidity${pascal(location.humidity)}` as "places.humidityLow"));
@@ -49,7 +53,7 @@ export function describeConditions(location: Location, t: TFunction, units: Unit
   return parts;
 }
 
-export function describeLight(light: LightSource, t: TFunction): string[] {
+export function describeLight(light: LightSource, t: TFunction, locale: string): string[] {
   if (light.kind === "window") {
     return [t("places.windowSummary", { direction: t(`directions.${light.direction ?? "N"}`) })];
   }
@@ -61,7 +65,12 @@ export function describeLight(light: LightSource, t: TFunction): string[] {
     }),
   ];
   if (light.dli !== null && light.hours_per_day !== null) {
-    parts.push(t("places.growLightDli", { hours: light.hours_per_day, dli: light.dli }));
+    parts.push(
+      t("places.growLightDli", {
+        hours: formatNumber(light.hours_per_day, locale),
+        dli: formatNumber(light.dli, locale),
+      }),
+    );
   }
   return parts;
 }

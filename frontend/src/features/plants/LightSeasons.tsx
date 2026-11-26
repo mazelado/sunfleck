@@ -2,6 +2,7 @@ import { Stack, Table, Text, VisuallyHidden } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
 import type { PlantLightReport } from "../../api/plants";
+import { formatNumber } from "../../lib/units";
 import { lightWord } from "../places/describe";
 import { VERDICT_COLOR, type Verdict } from "./lightVerdict";
 
@@ -12,12 +13,12 @@ type Season = "spring" | "summer" | "autumn" | "winter";
  * numbers (mol/m²/day) dimmed beside them for those who want them.
  */
 export function LightSeasons({ report }: { report: PlantLightReport }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const amount = (dli: number) => (
     <>
       {t(`light.words.${lightWord(dli)}`)}{" "}
       <Text span size="xs" c="dimmed">
-        {dli}
+        {formatNumber(dli, i18n.language)}
       </Text>
     </>
   );

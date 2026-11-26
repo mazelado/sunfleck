@@ -27,7 +27,7 @@ export function LightPicker({
   onChange,
   onAddLight,
 }: LightPickerProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   if (location.kind === "outdoor") {
     return (
       <Text size="sm" c="dimmed">
@@ -68,7 +68,7 @@ export function LightPicker({
                   <span>{name}</span>
                 </Group>
               }
-              description={describeLight(light, t).join(" · ")}
+              description={describeLight(light, t, i18n.language).join(" · ")}
             />
             {choice.checked && (
               <NumberInput
