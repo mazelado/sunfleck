@@ -22,7 +22,8 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   Collection to match. Houseplants need neither (#259).
 - **Sunfleck in Spanish**: choose **Español** under **Profile → Language**. Before signing
   in, a browser set to Spanish gets it too. This first part covers signing in, setting up,
-  Today, logging care, and the household and profile settings; the rest of the app follows.
+  Today, logging care, and the household and profile settings; the rest of the app follows
+  (#260).
 
 ## [1.2.0] - 2026-11-26
 
