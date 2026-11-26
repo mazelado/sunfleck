@@ -50,7 +50,7 @@ from sunfleck.plants.models import (
     Wish,
 )
 from sunfleck.taxonomy.api import ToxicityOut, care_profile_ref, language, toxicity_out
-from sunfleck.taxonomy.models import Taxon, translated_names
+from sunfleck.taxonomy.models import Taxon, fold, translated_names
 
 logger = logging.getLogger(__name__)
 
@@ -548,7 +548,7 @@ def list_plants(request: HttpRequest, filters: Query[PlantFilters]) -> PlantPage
         query = filters.q.strip()
         # By the plant's name, or its species' names (scientific, older, or common).
         plants = plants.filter(
-            Q(nickname__icontains=query) | Q(taxon__search_text__contains=query.lower())
+            Q(nickname__icontains=query) | Q(taxon__search_text__contains=fold(query))
         )
     if filters.location_id is not None:
         plants = plants.filter(location_id=filters.location_id)

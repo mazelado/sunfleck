@@ -14,7 +14,7 @@ from sunfleck.core.images import MAX_UPLOAD_BYTES, ImageError, jpeg_for_identifi
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
 from sunfleck.plugins.types import Candidate, Identification, PhotoToIdentify
-from sunfleck.taxonomy.models import Taxon, TaxonRank
+from sunfleck.taxonomy.models import Taxon, TaxonRank, fold
 
 HOOK = "identify_plant"
 MAX_PHOTOS = 5
@@ -108,7 +108,7 @@ def _find(candidate: Candidate) -> Taxon | None:
     genus = candidate.genus or name.split(" ")[0]
     possible = Taxon.objects.select_related("archetype").filter(
         Q(scientific_name__iexact=name)
-        | Q(search_text__contains=name.lower())
+        | Q(search_text__contains=fold(name))
         | Q(scientific_name__iexact=genus, rank=TaxonRank.GENUS)
     )
     species = genus_taxon = None

@@ -28,6 +28,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   scientific names rather than in English; the care profiles are still in English
   (#260, #261, #262, #263, #264, #266).
 
+### Changed
+
+- **Searching for a plant ignores accents**: "arandano" finds *arándano azul*, and "pina"
+  finds *piña*, in the care guide, a plant's species and the Plants page's search by species
+  (#267).
+
 ## [1.2.0] - 2026-11-26
 
 **Lavender.** Trust: every care profile checked against published sources, toxicity to pets

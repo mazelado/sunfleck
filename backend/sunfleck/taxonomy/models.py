@@ -4,10 +4,19 @@ Shared by all households and read-only in the app: it's replaced whenever a new 
 the dataset is loaded (see sunfleck.taxonomy.loader).
 """
 
+import unicodedata
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 FALLBACK_LANGUAGE = "en"
+
+
+def fold(text: str) -> str:
+    """Text as plant names are searched: lower case and without accents, so that "arandano"
+    finds "arándano" and "pina" finds "piña". Used for both `search_text` and queries."""
+    decomposed = unicodedata.normalize("NFKD", text.casefold())
+    return "".join(char for char in decomposed if not unicodedata.combining(char))
 
 
 def translated(text: dict[str, str], language: str) -> str:
@@ -80,7 +89,8 @@ class Taxon(models.Model):
         related_name="taxa",
         verbose_name=_("care profile"),
     )
-    # Every name (scientific, older, and common in every language), lowercased, for search.
+    # Every name (scientific, older, and common in every language), folded (see `fold`), for
+    # search.
     search_text = models.TextField(editable=False)
 
     class Meta:
