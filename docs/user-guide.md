@@ -37,8 +37,8 @@ Places and Plants.
 5. Each day, the **Today** page lists what needs care. Tap the check mark when it's done.
 
 The main pages, **Today**, **Plants**, **Places** and the **Care guide**, are in the tab bar
-at the bottom on a phone, and at the top on a wider screen. **Settings** (the gear at the top
-right) has your household and inviting people, reminders, care types and, for Admins, plugins
+at the bottom on a phone, and at the top on a wider screen. **Settings**, at the top right,
+has your household and inviting people, reminders, care types and, for Admins, plugins
 and export. Your profile and signing out are in the account menu, beside it.
 
 On a phone, a page inside another one (a plant, a room, one of the settings) has a back arrow
