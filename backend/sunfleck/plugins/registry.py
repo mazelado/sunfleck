@@ -87,7 +87,19 @@ class Registry:
 
         With `expect`, answers of another type are left out and reported as the plugin's error.
         """
-        return list(self._answers(hook, household, expect, **kwargs))
+        return list(self._answers(hook, household, expect, None, **kwargs))
+
+    def call_one(
+        self,
+        hook: str,
+        household: Household,
+        plugin_id: str,
+        expect: type | None = None,
+        **kwargs: Any,
+    ) -> list[Answer]:
+        """As `call`, but only that plugin's hook (if it's on for the household): for asking
+        each plugin about its own things, such as the sensors chosen from it."""
+        return list(self._answers(hook, household, expect, plugin_id, **kwargs))
 
     def call_first(
         self, hook: str, household: Household, expect: type | None = None, **kwargs: Any
@@ -99,15 +111,23 @@ class Registry:
         As for `call`, a plugin that fails or answers the wrong type is skipped (and its error
         reported), and the next one is asked.
         """
-        return next(self._answers(hook, household, expect, **kwargs), None)
+        return next(self._answers(hook, household, expect, None, **kwargs), None)
 
     def _answers(
-        self, hook: str, household: Household, expect: type | None, **kwargs: Any
+        self,
+        hook: str,
+        household: Household,
+        expect: type | None,
+        only: str | None,
+        **kwargs: Any,
     ) -> Iterator[Answer]:
-        """The plugins' answers, calling each plugin only when the previous answers are used."""
+        """The plugins' answers (or just plugin `only`'s), calling each plugin only when the
+        previous answers are used."""
         from sunfleck.plugins import services  # services imports this module
 
-        implementers = self.implementers(hook)
+        implementers = [
+            plugin_id for plugin_id in self.implementers(hook) if only in (None, plugin_id)
+        ]
         if not implementers:
             return
         states = services.states(household, implementers)
