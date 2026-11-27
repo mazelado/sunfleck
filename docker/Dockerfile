@@ -62,8 +62,9 @@ USER sunfleck
 VOLUME /data
 EXPOSE 8000
 
+# The web server answers its health endpoint; the worker shows it has finished a job recently.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=4)"]
+    CMD ["python", "-m", "sunfleck.core.healthcheck"]
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["web"]

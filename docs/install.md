@@ -290,8 +290,10 @@ Set in `.env`; run `docker compose up -d` after changing them.
   `CSRF_TRUSTED_ORIGINS`; behind a reverse proxy, also set `SUNFLECK_BEHIND_PROXY=true`.
 - **"Sunfleck can't be reached"** in the installed app: the server isn't running or the phone
   has no connection. `docker compose ps` shows whether it's up.
-- **No reminders arrive**: check the worker is running (`docker compose ps`), then use
-  **Send a test** on the Notifications page, which shows the error if sending fails.
+- **No reminders arrive**: check the worker is running and healthy (`docker compose ps`), then
+  use **Send a test** on the Notifications page, which shows the error if sending fails. The
+  worker is "unhealthy" when it hasn't finished a job for 30 minutes (it runs one at least
+  every 15); `docker compose logs worker` usually says why.
 - **"…isn't writable by user ID 1000"**: Sunfleck runs as user 1000, and something in its data
   belongs to another user, usually because a command was run as root. Give it back with:
 
