@@ -9,6 +9,15 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Security
+
+- **Sunfleck's containers run without special rights**: the Compose file drops all of the
+  Linux capabilities Docker gives a container by default, and stops anything inside from
+  gaining new ones (e.g. through a setuid program). Sunfleck needs none of them. Download the
+  new `compose.yaml` to get this. The command that gives the data back to Sunfleck, when
+  something in it belongs to root, now adds back the two capabilities it needs; the error
+  message and the [troubleshooting](docs/install.md#troubleshooting) show it.
+
 ## [1.4.0] - 2026-11-27
 
 **Nasturtium.** Sensors, to look at: a plant's soil moisture, light, temperature and humidity

@@ -63,6 +63,10 @@ runs. What it does to keep that safe, and what the people running it should know
 
   So someone you invite could make the server send requests to other machines on your
   network. Invite people you trust, as you would with a key to the house.
+- **The Docker containers** run Sunfleck as user 1000, not root, and with the Compose file
+  they have none of Linux's special rights (capabilities) and can't gain any. If someone
+  found a way to run commands inside Sunfleck, they could still read and change its data, but
+  little else.
 - **Plugins** run inside Sunfleck with its full access, like any software you install: use the
   built-in ones, or ones you trust. They're off until an Admin turns them on, and each says
   exactly what it sends where.

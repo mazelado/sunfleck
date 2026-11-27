@@ -26,6 +26,14 @@ services:
       # Checked here too, so that a missing key stops `docker compose up` with this message,
       # not with a container that's only reported as "unhealthy".
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env, to a long random string (openssl rand -base64 48)}
+    # Sunfleck needs no special rights inside its container, so it gets none: none of the
+    # Linux capabilities Docker gives by default, and no way to gain any (e.g. through a
+    # setuid program). `docker compose run` gets these limits too, even as root, so a command
+    # that needs a capability adds it back with --cap-add (see docs/install.md).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
   # Background jobs (reminders, weather, nightly recalculation), from the same image and data.
   worker:
@@ -38,6 +46,10 @@ services:
     volumes:
       - sunfleck-data:/data
     env_file: .env
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
 volumes:
   sunfleck-data:

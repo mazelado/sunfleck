@@ -293,10 +293,16 @@ Set in `.env`; run `docker compose up -d` after changing them.
 - **No reminders arrive**: check the worker is running (`docker compose ps`), then use
   **Send a test** on the Notifications page, which shows the error if sending fails.
 - **"…isn't writable by user ID 1000"**: Sunfleck runs as user 1000, and something in its data
-  belongs to another user, usually because a command was run as root. Give it back with
-  `docker compose run --rm -u root --entrypoint chown sunfleck -R 1000:999 /data`, or, when
-  using a folder instead of the volume, `sudo chown -R 1000:999 <folder>`. The message shows the
-  exact command.
+  belongs to another user, usually because a command was run as root. Give it back with:
+
+  ```bash
+  docker compose run --rm -u root --cap-add CHOWN --cap-add DAC_READ_SEARCH \
+    --entrypoint chown sunfleck -R 1000:999 /data
+  ```
+
+  When using a folder instead of the volume, run `sudo chown -R 1000:999 <folder>`. The
+  message shows the exact command. (Sunfleck's containers have none of Linux's special
+  rights, so even root needs these two to change owners and open every folder.)
 - **The first account's password is forgotten** and email isn't set up: other Admins can't
   make a reset link for that account, so set a new password on the server with
   `docker compose run --rm sunfleck manage changepassword <email>`.
