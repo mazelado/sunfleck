@@ -16,6 +16,7 @@ from sunfleck.places.api import router as places_router
 from sunfleck.plants.api import router as plants_router
 from sunfleck.plugins.api import router as plugins_router
 from sunfleck.plugins.registry import registry
+from sunfleck.sensors.api import router as sensors_router
 from sunfleck.taxonomy.api import router as taxonomy_router
 
 api = NinjaAPI(title="Sunfleck API", version=__version__, urls_namespace="api-v1")
@@ -31,6 +32,7 @@ api.add_router("/", notifications_router)
 api.add_router("/", dataio_router)
 api.add_router("/", garden_router)
 api.add_router("/", ai_router)
+api.add_router("/", sensors_router)
 
 
 def plugin_router(plugin_id: str) -> Router:

@@ -39,6 +39,8 @@ from sunfleck.places.models import LightSource, Location, Site
 from sunfleck.plants import services as plants
 from sunfleck.plants.models import Plant, Wish
 from sunfleck.plants.tests.factories import image_bytes
+from sunfleck.sensors import kinds
+from sunfleck.sensors.models import PlantSensor, SensorDay
 
 pytestmark = pytest.mark.django_db
 
@@ -116,6 +118,10 @@ BODIES: dict[tuple[str, str], Any] = {
     ("POST", "/api/v1/plants/{plant_id}/care-events"): {"care_type_id": "{water_id}"},
     ("POST", "/api/v1/plants/{plant_id}/conversations"): {"question": "How often?"},
     ("PUT", "/api/v1/plants/{plant_id}/cover"): {"photo_id": "{photo_id}"},
+    ("PUT", "/api/v1/plants/{plant_id}/sensors/{kind}"): {
+        "plugin_id": "homeassistant",
+        "sensor_id": "sensor.monty_soil_moisture",
+    },
     ("POST", "/api/v1/plants/{plant_id}/diagnosis"): {"file": FILE},
     ("POST", "/api/v1/plants/{plant_id}/harvests"): {"harvested_on": "2026-04-01"},
     ("POST", "/api/v1/plants/{plant_id}/photos"): {"file": FILE},
@@ -186,7 +192,7 @@ class World:
     household: Household
     admin: Membership
     viewer: Membership
-    ids: dict[str, int]
+    ids: dict[str, int | str]
 
 
 def make_household(name: str) -> World:
@@ -219,10 +225,20 @@ def make_household(name: str) -> World:
         role=Role.VIEWER,
         invited_by=admin.user,
     )
+    sensor = PlantSensor.objects.create(
+        plant=plant,
+        kind=kinds.SOIL_MOISTURE,
+        plugin_id="homeassistant",
+        sensor_id="sensor.monty_soil_moisture",
+        name="Monty soil moisture",
+    )
+    SensorDay.objects.create(
+        sensor=sensor, date=date(2026, 4, 1), low=30, high=50, mean=40, last=35, count=96
+    )
     channel = NotificationChannel.objects.create(
         user=viewer.user, label="Phone", url_encrypted=encrypt("ntfy://ntfy.sh/x"), service="ntfy"
     )
-    ids = {
+    ids: dict[str, int | str] = {
         "site_id": site.pk,
         "location_id": location.pk,
         "light_id": light.pk,
@@ -239,6 +255,8 @@ def make_household(name: str) -> World:
         "member_id": viewer.pk,
         "user_id": viewer.user.pk,
         "channel_id": channel.pk,
+        # Not an id, but in the path like one: a kind of sensor the plant has.
+        "kind": sensor.kind,
         # Built-in care types, the same for everyone, for bodies that name one.
         "water_id": builtin("water").pk,
         "fertilize_id": builtin("fertilize").pk,
@@ -246,7 +264,7 @@ def make_household(name: str) -> World:
     return World(household, admin, viewer, ids)
 
 
-def fill(value: Any, ids: dict[str, int]) -> Any:
+def fill(value: Any, ids: dict[str, int | str]) -> Any:
     """The example with `{name}` replaced by that id."""
     if isinstance(value, str) and re.fullmatch(r"{\w+}", value):
         return ids[value[1:-1]]
@@ -257,7 +275,7 @@ def fill(value: Any, ids: dict[str, int]) -> Any:
     return value
 
 
-def call(client: Client, endpoint: Endpoint, ids: dict[str, int]) -> Any:
+def call(client: Client, endpoint: Endpoint, ids: dict[str, int | str]) -> Any:
     url = endpoint.path.format(**{param: ids.get(param, 1) for param in endpoint.params})
     body = fill(BODIES.get((endpoint.method, endpoint.path)), ids)
     if body is not None and FILE in body.values():
