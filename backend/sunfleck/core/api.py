@@ -61,6 +61,9 @@ RELEASE_NAMES = {
     "0.8": "Hibiscus",
     "0.9": "Iris",
     "1.0": "Jasmine",
+    "1.1": "Kalanchoe",
+    "1.2": "Lavender",
+    "1.3": "Monstera",
 }
 
 

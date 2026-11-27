@@ -1,7 +1,7 @@
 # Toxicity to people: November 2026 review
 
 Toxicity to people in the care dataset, for the 1.3 Monstera release
-([roadmap](roadmap.md#monstera-simple-by-default-planned)), with the same rules as for pets:
+([roadmap](roadmap.md#monstera-simple-by-default-released)), with the same rules as for pets:
 "known to be harmful" with its source, or *unknown*, never "safe". Unlike pets, it says **how
 serious** it is and **whether touching the plant** is a problem too. **Decided and applied
 on 2026-11-26** (dataset 2026.11.9): every recommended option, for 101 plants

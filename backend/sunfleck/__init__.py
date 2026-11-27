@@ -1,3 +1,3 @@
 """Sunfleck: self-hosted plant care for indoor and outdoor plants."""
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"

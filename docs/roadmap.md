@@ -65,7 +65,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **1.0 Jasmine** | [Mature and beautiful](#jasmine-mature-and-beautiful-released) | Released 2026-11-14 |
 | **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-released) | Released 2026-11-20 |
 | **1.2 Lavender** | [Trust](#lavender-trust-released) | Released 2026-11-26 |
-| **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-planned) | Planned |
+| **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-released) | Released 2026-11-27 |
 | **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-planned) | Planned |
 | **1.5 Orchid** | [Fertilizer](#orchid-fertilizer-planned) | Planned |
 | **1.6 Peony** | [Sensors that inform](#peony-sensors-that-inform-planned) | Planned |
@@ -176,7 +176,7 @@ Split from Gardenia (0.7), not yet scheduled.
 
 - A simple **garden map** of the beds and what grows in them.
 - Companion planting hints (as a plugin with its own data).
-- Toxicity to people moved to [Monstera](#monstera-simple-by-default-planned) (1.3).
+- Toxicity to people moved to [Monstera](#monstera-simple-by-default-released) (1.3).
 
 ### Hibiscus: collector features (released)
 
@@ -300,20 +300,31 @@ Checking that what Sunfleck already says is right, before it says more.
 - **A plant's watering history:** when it was watered and how much (#222), next to what was
   predicted.
 
-### Monstera: simple by default (planned)
+### Monstera: simple by default (released)
 
-- **Garden and Collection switches** for the household, set by an Admin. An area that's off
-  leaves the navigation and the forms; its data is kept, and comes back with it.
-- **"What do you grow?"** in the step-by-step setup (houseplants, outdoor and edible plants,
-  a collection), which sets the switches.
-- **Spanish,** for the app and for the care dataset's common names (from Wikidata, CC0). It
-  comes before the explanations grow, so they're written once for both languages.
-- **Toxicity to people** in the dataset, with the same rules as for pets: "known to be
-  harmful" with its source, or "unknown", never "safe". Unlike pets, it says how serious it is
-  and whether touching the plant is a problem too (e.g. *Euphorbia* sap). There's no single
-  list like the ASPCA's, so it's checked against several, such as NC State's Plant Toolbox,
-  the RHS's list of potentially harmful garden plants and poison control centres, in a review
-  first, as for pets.
+Sunfleck stays simple for someone with a few houseplants, and speaks Spanish.
+
+- **Garden and Collection switches** for the household, set by an Admin under **Settings →
+  Household → Parts of the app**. An area that's off leaves the navigation, the pages and the
+  forms; its data is kept, and comes back with it. Households from before 1.3 keep both on.
+- **"What do you grow?"** first in the step-by-step setup of a new household: outdoor and
+  edible plants turn on Garden, a collection turns on Collection, and houseplants need neither.
+- **Spanish,** for the whole app, its numbers ("3,6"), and the emails and notifications, with a
+  glossary in [translating](translating.md#spanish) and a native speaker's review of gender
+  agreement. In the care dataset, Spanish common names from Wikidata (CC0) for 109 plants
+  ([proposal](spanish-care-data-2026-11.md)); a plant without one shows its scientific name, not
+  its English one. Plant search ignores accents. The care profiles' and notes' Spanish is
+  drafted, and goes in after a native speaker has read it.
+- **Toxicity to people,** with the same rules as for pets: "known to be harmful" with its source,
+  or "unknown", never "safe". It says how serious it is if eaten, and whether touching it is a
+  problem. Checked against NC State's Plant Toolbox and the RHS's list in a
+  [review](toxicity-people-review-2026-11.md): 101 plants. Food crops count only a part people
+  might eat (a potato's green tubers, raw beans). Poison control centres, which the plan also
+  named, are left for a later review.
+- **Round 2 of the usability test, finished:** its last three problems were decided
+  ([results](usability-test-results-1.2-round-2.md)): two left as they are, and one not
+  reproduced on a real iPhone. That check found the tab bar and **Save** floating above the
+  keyboard while typing, which is fixed.
 
 ### Nasturtium: sensors, to look at (planned)
 
