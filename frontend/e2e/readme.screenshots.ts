@@ -32,7 +32,9 @@ async function shot(page: Page, name: string) {
 
 for (const scheme of ["light", "dark"] as const) {
   test(`README screenshots (${scheme})`, async ({ page }) => {
-    await page.emulateMedia({ colorScheme: scheme });
+    // Reduced motion: the app then skips its cards' fade-in, which a screenshot would catch
+    // halfway, washed out.
+    await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" });
     const suffix = scheme === "dark" ? "-dark" : "";
     await signIn(page);
     await shot(page, `today${suffix}`);
