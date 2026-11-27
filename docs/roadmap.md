@@ -66,7 +66,7 @@ ships in one release or a few, and when plans change, only the release plan belo
 | **1.1 Kalanchoe** | [Care details](#kalanchoe-care-details-released) | Released 2026-11-20 |
 | **1.2 Lavender** | [Trust](#lavender-trust-released) | Released 2026-11-26 |
 | **1.3 Monstera** | [Simple by default](#monstera-simple-by-default-released) | Released 2026-11-27 |
-| **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-planned) | Planned |
+| **1.4 Nasturtium** | [Sensors, to look at](#nasturtium-sensors-to-look-at-released) | Released 2026-11-27 |
 | **1.5 Orchid** | [Fertilizer](#orchid-fertilizer-planned) | Planned |
 | **1.6 Peony** | [Sensors that inform](#peony-sensors-that-inform-planned) | Planned |
 | **2.0 Quince** | [Depth when you want it, complete](#quince-depth-when-you-want-it-complete-planned) | Planned |
@@ -144,7 +144,7 @@ Optional plugins: off until an Admin turns them on, and each says exactly what i
 Split from Fuchsia (0.6), not yet scheduled.
 
 - Sensor readings from Home Assistant are now planned: see
-  [Nasturtium](#nasturtium-sensors-to-look-at-planned) and
+  [Nasturtium](#nasturtium-sensors-to-look-at-released) and
   [Peony](#peony-sensors-that-inform-planned). Reading MQTT directly, without Home
   Assistant, stays here.
 - **OIDC single sign-on** (Authentik, Keycloak, Authelia, Pocket ID and others).
@@ -326,9 +326,10 @@ Sunfleck stays simple for someone with a few houseplants, and speaks Spanish.
   reproduced on a real iPhone. That check found the tab bar and **Save** floating above the
   keyboard while typing, which is fixed.
 
-### Nasturtium: sensors, to look at (planned)
+### Nasturtium: sensors, to look at (released)
 
-How it's built is in [the plan](sensors-plan-2026-11.md), as decided.
+A plant's sensors, read through Home Assistant, on its page. How it's built is in
+[the plan](sensors-plan-2026-11.md), as decided.
 
 - **A Home Assistant plugin** that reads a plant's soil moisture, and light, temperature and
   humidity where there's a sensor, from the entities chosen for it. Any sensor Home Assistant
@@ -337,6 +338,10 @@ How it's built is in [the plan](sensors-plan-2026-11.md), as decided.
   the full history, so Sunfleck stays light on a Raspberry Pi.
 - **Not used by the predictions yet.** A soil sensor reads differently in every pot and soil,
   so its readings are collected next to the "How was the soil?" answers first.
+- **Plugins can offer sensors** with two new hooks, `sensor_choices` and `read_sensors`, so a
+  later source (MQTT, for example) fits the same card.
+- **Soil moisture was tested against a fake Home Assistant server only,** not a real plant
+  sensor; temperature and humidity entities can be tried with any Home Assistant.
 
 ### Orchid: fertilizer (planned)
 
