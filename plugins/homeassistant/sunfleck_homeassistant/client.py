@@ -69,7 +69,9 @@ def get(url: str, token: str) -> Response:
         with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as answer:  # noqa: S310
             return Response(answer.status, answer.read())
     except urllib.error.HTTPError as exc:
-        return Response(exc.code, exc.read())
+        # An error answer holds the connection open, like a good one: close it.
+        with exc:
+            return Response(exc.code, exc.read())
 
 
 def check(base_url: str, token: str) -> SettingsCheck:
