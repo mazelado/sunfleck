@@ -59,6 +59,10 @@ Spanish (`es`) is one translation for every Spanish-speaking country, so:
 - **Keep it short where space is tight** (the tab bar, buttons beside a plant's name), and check
   it on a 375px-wide phone: _Guía_ in the tab bar, _Luego_ for **Later**.
 - **Roles keep one form**, as in the rest of the interface: _Admin_, _Jardinero_, _Lector_.
+- **Make every article and adjective agree with its noun.** Where one would go with two nouns
+  of different genders, repeat it for each: _nueva casa o nuevo jardín_, _esta habitación o
+  este espacio_, not _nueva casa o jardín_. Where the noun isn't in the text, agree with the
+  one the screen means: _Todos_ above care profiles (_perfiles_), _Todas_ above plants.
 
 The same English word is always translated the same way:
 
