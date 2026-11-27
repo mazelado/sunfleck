@@ -283,6 +283,12 @@ body,
   border-radius: 0 0 var(--mantine-radius-lg) var(--mantine-radius-lg);
 }
 
+/* While an iPhone's keyboard is open (useOnScreenKeyboard), Save would float above it, or hide
+   behind it: it stays at the end of the form then, and sticks again once the keyboard closes. */
+html[data-keyboard="open"] .sunfleck-form-actions {
+  position: static;
+}
+
 html:has(.sunfleck-form-actions) {
   scroll-padding-bottom: calc(var(--app-shell-footer-offset, 0rem) + 6rem);
 }

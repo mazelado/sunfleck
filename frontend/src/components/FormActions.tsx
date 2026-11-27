@@ -15,8 +15,10 @@ interface FormActionsProps {
 
 /**
  * A form's Save (and Cancel), kept in view at the bottom of the screen while the form is (above
- * the tab bar on phones), so nobody thinks they're done halfway down a long form. It belongs in
- * a card's form, as its last child: it spans the card's width and rounds its bottom corners.
+ * the tab bar on phones), so nobody thinks they're done halfway down a long form. While an
+ * iPhone's keyboard is open, it stays at the end of the form instead (see useOnScreenKeyboard).
+ * It belongs in a card's form, as its last child: it spans the card's width and rounds its
+ * bottom corners.
  */
 export function FormActions({ saving, cancelTo, extra, saveLabel }: FormActionsProps) {
   const { t } = useTranslation();
