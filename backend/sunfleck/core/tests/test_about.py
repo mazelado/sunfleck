@@ -45,7 +45,21 @@ def test_about_needs_sign_in(client: Client) -> None:
 
 @pytest.mark.parametrize(
     ("version", "name"),
-    [("0.4.0", "Dahlia"), ("0.4.2", "Dahlia"), ("1.0.0", "Jasmine"), ("2.0.0", None)],
+    [
+        ("0.4.0", "Dahlia"),
+        ("0.4.2", "Dahlia"),
+        ("1.0.0", "Jasmine"),
+        ("1.3.0", "Monstera"),
+        ("2.0.0", None),
+    ],
 )
 def test_release_name_comes_from_the_minor_version(version: str, name: str | None) -> None:
     assert release_name(version) == name
+
+
+def test_the_released_version_has_its_plant_name() -> None:
+    # A new minor version needs its name in RELEASE_NAMES (see docs/development.md, Releasing);
+    # 1.1 and 1.2 went without one. Development versions (e.g. 1.4.0.dev0) don't need it yet.
+    if "dev" in __version__:
+        pytest.skip("a development version")
+    assert release_name(__version__) is not None

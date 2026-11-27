@@ -293,7 +293,8 @@ To release:
 1. In a pull request, move the changelog's *Unreleased* notes under a new version heading
    (with the release name first, e.g. `**Bougainvillea.**`), and
    set the version in `backend/pyproject.toml`, `backend/sunfleck/__init__.py` and
-   `frontend/package.json`, then update the lock files (`uv lock` in `backend`, and
+   `frontend/package.json` (and, for a new minor version, add its plant name to
+   `RELEASE_NAMES` in `backend/sunfleck/core/api.py`, which About shows), then update the lock files (`uv lock` in `backend`, and
    `npm install --package-lock-only` in `frontend`) and the API types (`make api-types`).
    Merge it.
 2. Tag the merged commit on `main` and push the tag:

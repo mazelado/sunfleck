@@ -190,7 +190,7 @@ That makes **63 flags** in all.
   toxic to pets.
 - **Poinsettia** (*Euphorbia pulcherrima*), when a care profile for it has been checked
   against sources.
-- **Toxicity to people** is planned for [1.3 Monstera](roadmap.md#monstera-simple-by-default-planned),
+- **Toxicity to people** is planned for [1.3 Monstera](roadmap.md#monstera-simple-by-default-released),
   with its own sources.
 
 ## Sources

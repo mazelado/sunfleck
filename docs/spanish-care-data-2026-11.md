@@ -1,7 +1,7 @@
 # The care dataset in Spanish: November 2026 proposal
 
 The last part of Spanish for the 1.3 Monstera release
-([roadmap](roadmap.md#monstera-simple-by-default-planned)): the app, its emails and its
+([roadmap](roadmap.md#monstera-simple-by-default-released)): the app, its emails and its
 numbers are in Spanish already (#260–#264), but the care guide still shows plant names and
 care profiles in English. This proposes Spanish for both, for the maintainer to decide on
 before anything in `data/care/` changes, as for the [care](care-review-2026-11.md) and
