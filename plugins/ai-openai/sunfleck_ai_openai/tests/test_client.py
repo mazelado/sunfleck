@@ -1,5 +1,9 @@
 import dataclasses
 import json
+import urllib.error
+import urllib.request
+from email.message import Message
+from io import BytesIO
 from typing import Any
 
 import pytest
@@ -281,3 +285,17 @@ def test_only_http_addresses_are_opened(server: FakeServer) -> None:
 
     assert answer.problem == "missing_settings"
     assert server.requests == []
+
+
+def test_error_answers_are_read_and_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    body = BytesIO(b"no")
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> None:
+        raise urllib.error.HTTPError(request.full_url, 401, "Unauthorized", Message(), body)
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+
+    assert client.post("https://ai.example/v1/chat/completions", {}, "key") == client.Response(
+        401, b"no"
+    )
+    assert body.closed
