@@ -16,6 +16,7 @@ from sunfleck.core.errors import ServiceError
 from sunfleck.plants.models import Plant
 from sunfleck.plants.time import plant_local
 from sunfleck.plugins.registry import registry
+from sunfleck.sensors.services import keep_soil_reading
 
 # Phones' and servers' clocks differ a little; allow for it before calling a time "future".
 CLOCK_TOLERANCE = timedelta(minutes=5)
@@ -161,7 +162,8 @@ def _apply_event(event: CareEvent, household: Household, data: CareEventData) ->
 
 
 def log_care(plant: Plant, data: CareEventData, user: User | None) -> CareEvent:
-    """Record care given to a plant, by default just now.
+    """Record care given to a plant, by default just now. With a "How was the soil?" answer,
+    the plant's soil moisture reading from the hour before is kept with it.
 
     Raises:
         CareError: If the care type isn't one of the household's, the time is in the future,
@@ -170,6 +172,8 @@ def log_care(plant: Plant, data: CareEventData, user: User | None) -> CareEvent:
     """
     event = CareEvent(plant=plant, performed_by=user)
     _apply_event(event, plant.household, data)
+    if event.feedback:
+        keep_soil_reading(event)
     registry.call("on_care_event_logged", plant.household, event=event)
     return event
 
@@ -200,6 +204,7 @@ def update_care_event(event: CareEvent, data: CareEventData) -> CareEvent:
         CareError: As for `log_care`.
     """
     _apply_event(event, event.plant.household, data)
+    keep_soil_reading(event)
     return event
 
 

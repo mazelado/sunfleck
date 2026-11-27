@@ -101,3 +101,34 @@ def test_a_plugin_failing_to_read_sensors_is_left_out_and_its_error_kept(
     assert registry.call("read_sensors", household, sensor_ids=["sensor.monstera_soil"]) == []
     state = services.states(household)["gauge"]
     assert state.last_error == "read_sensors: RuntimeError: the gauge is offline"
+
+
+def test_one_plugin_can_be_asked_with_the_households_settings(
+    household: Household, gauge: GaugeHooks
+) -> None:
+    other = GaugeHooks()
+    registry.add(PluginInfo("other", "Other", "1", "1", settings_schema=GaugeSettings), other)
+    try:
+        services.update(household, "gauge", True, {"room": "Kitchen"})
+        services.update(household, "other", True, {})
+
+        [answer] = registry.call_one("sensor_choices", household, "gauge", expect=list)
+        nothing = registry.call_one("sensor_choices", HouseholdFactory.create(), "gauge")
+    finally:
+        registry.remove("other")
+
+    assert answer.plugin_id == "gauge"
+    assert answer.result[1].name == "Kitchen temperature"
+    assert nothing == []
+    assert other.asked == []
+
+
+def test_one_plugin_failing_has_its_error_kept(household: Household, gauge: GaugeHooks) -> None:
+    services.update(household, "gauge", True, {})
+    gauge.fail = True
+
+    answers = registry.call_one("read_sensors", household, "gauge", sensor_ids=["sensor.x"])
+
+    assert answers == []
+    state = services.states(household)["gauge"]
+    assert state.last_error == "read_sensors: RuntimeError: the gauge is offline"

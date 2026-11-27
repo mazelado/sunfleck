@@ -145,7 +145,10 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
   temperature in °C and humidity in % relative humidity (0 to 100). Convert others (e.g. °F)
   in the plugin. A sensor's `kind` is a plain string, so more kinds may be added later; list
   only sensors of the kinds above. Sunfleck keeps which sensor a plant uses, the latest
-  reading and a daily summary itself: the plugin only answers what it's asked.
+  reading and a daily summary itself: the plugin only answers what it's asked. A reading
+  whose `measured_at` is more than 3 hours old is kept as the latest one, but left out of the
+  daily summary, so report when the sensor last reported, not when you asked it. A reading
+  that isn't newer than the last one kept is counted once, however often it's read.
 - After your data changes what a prediction would say (e.g. new weather), call
   `mark_site_out_of_date(site)` so the site's plants are recalculated.
 - The app explains a factor by its `code`; codes it doesn't know are shown as they are, until
