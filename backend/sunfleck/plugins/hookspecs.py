@@ -21,6 +21,8 @@ from sunfleck.plugins.types import (
     Identification,
     PeriodicJob,
     PhotoToIdentify,
+    SensorChoice,
+    SensorReading,
     SettingsCheck,
     SiteConditions,
 )
@@ -102,4 +104,22 @@ def check_settings(settings: BaseModel | None) -> SettingsCheck | None:
     Called when an Admin clicks **Test** on the Plugins page, with the settings in the form,
     which may not be saved yet, and whether or not the plugin is on. Plugins without this hook
     have no Test button. Keep it quick and cheap: it's only run when asked.
+    """
+
+
+@hookspec
+def sensor_choices(settings: BaseModel | None) -> list[SensorChoice]:  # type: ignore[empty-body]
+    """The sensors the plugin can read, for choosing one for a plant.
+
+    Called when an Editor chooses a sensor for a plant, so keep it quick. Leave out sensors
+    of other kinds than those `SensorChoice` lists.
+    """
+
+
+@hookspec
+def read_sensors(sensor_ids: list[str], settings: BaseModel | None) -> list[SensorReading]:  # type: ignore[empty-body]
+    """The current readings of these sensors (ids from `sensor_choices`), in Sunfleck's units.
+
+    Called in the worker, every 15 minutes, with every sensor the household chose from this
+    plugin (each id once). Leave out ids it doesn't know or can't read.
     """

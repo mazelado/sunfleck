@@ -17,6 +17,8 @@
     "PhotoToIdentify",
     "PluginInfo",
     "Profile",
+    "SensorChoice",
+    "SensorReading",
     "SettingsCheck",
     "SiteConditions",
     "hookimpl",
@@ -55,10 +57,17 @@
       "plant",
       "settings"
     ],
+    "read_sensors": [
+      "sensor_ids",
+      "settings"
+    ],
     "register_api": [
       "router"
     ],
     "register_periodic_jobs": [],
+    "sensor_choices": [
+      "settings"
+    ],
     "site_conditions": [
       "site",
       "settings"
@@ -250,6 +259,16 @@
       "temperature_ideal_max",
       "temperature_ideal_min",
       "watering_days"
+    ],
+    "SensorChoice": [
+      "id",
+      "kind",
+      "name"
+    ],
+    "SensorReading": [
+      "id",
+      "measured_at",
+      "value"
     ],
     "SettingsCheck": [
       "details",
