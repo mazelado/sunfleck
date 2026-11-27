@@ -1,6 +1,6 @@
 # Sensors, to look at (1.4 Nasturtium): a plan to decide on
 
-This plan is for the maintainer to decide on before any code is written. 1.4 adds the first
+This plan was for the maintainer to decide on before any code was written; the decisions are [at the end](#decided-2026-11-27). 1.4 adds the first
 thing to the plugin API since 1.0, and anything added there must stay for all of 1.x. So the
 choices below are hard to undo once they ship.
 
@@ -182,3 +182,15 @@ Then the release (1.4.0 Nasturtium) as for 1.3.
    `homeassistant`, named "Home Assistant", since Peony adds to it.
 3. Is there a Home Assistant with a plant sensor to try the plugin against before the release,
    as the iPhone was for 1.3? Tests use a fake server; a real one would catch what they miss.
+
+### Decided (2026-11-27)
+
+1. **Decisions 1 to 7: as recommended** (option A each time). Sunfleck owns sensors, and asks
+   plugins through `sensor_choices` and `read_sensors`; readings every 15 minutes, with a
+   daily summary kept for every day; the soil reading kept with each watering that has an
+   answer; sensors chosen per plant.
+2. **The plugin is "Home Assistant"**, id `homeassistant`, in `plugins/homeassistant`.
+3. **A real Home Assistant, without a plant sensor yet.** Before the release, the plugin is
+   tried against it for connecting, **Test**, and listing and reading whatever temperature or
+   humidity entities it has (e.g. from the weather integration or a phone). Soil moisture is
+   checked against the fake server only, and the release notes say so.
