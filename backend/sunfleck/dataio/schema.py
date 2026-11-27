@@ -107,6 +107,14 @@ class Photo(Model):
     crop_height: float | None = None
 
 
+class CareReading(Model):
+    """A sensor's reading kept with care, e.g. the soil moisture just before watering."""
+
+    kind: str
+    value: float
+    measured_at: datetime
+
+
 class CareEvent(Model):
     care_type: CareTypeRef
     performed_at: datetime
@@ -119,6 +127,8 @@ class CareEvent(Model):
     estimated: bool = False
     # Watering only: how much water was given, in ml (added in 1.1).
     amount_ml: int | None = None
+    # Added in 1.4.
+    readings: list[CareReading] = Field(default_factory=list)
 
 
 class Harvest(Model):
@@ -173,6 +183,31 @@ class Schedule(Model):
     predictions: list[Prediction] = Field(default_factory=list)
 
 
+class SensorDay(Model):
+    """A summary of a sensor's readings on one day, in the plant's time zone."""
+
+    date: date
+    low: float
+    high: float
+    mean: float
+    last: float
+    count: int
+
+
+class PlantSensor(Model):
+    """A sensor chosen for a plant. `sensor_id` is the plugin's own id for it, so it keeps
+    working when imported into a Sunfleck whose plugin reads the same source."""
+
+    kind: str
+    plugin_id: str
+    sensor_id: str
+    name: str
+    value: float | None
+    measured_at: datetime | None
+    created_at: datetime
+    days: list[SensorDay] = Field(default_factory=list)
+
+
 class Plant(Model):
     ref: int
     nickname: str
@@ -199,6 +234,8 @@ class Plant(Model):
     propagation_method: str = ""
     # Added in 0.9: conversations with the AI about it.
     conversations: list[Conversation] = Field(default_factory=list)
+    # Added in 1.4: the sensors chosen for it, with their daily summaries.
+    sensors: list[PlantSensor] = Field(default_factory=list)
 
 
 class PluginSettings(Model):
