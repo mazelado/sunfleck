@@ -23,6 +23,8 @@ __all__ = [
     "PeriodicJob",
     "PhotoToIdentify",
     "Profile",
+    "SensorChoice",
+    "SensorReading",
     "SettingsCheck",
     "SiteConditions",
 ]
@@ -196,3 +198,35 @@ class SettingsCheck:
 
     problem: str | None = None
     details: str = ""
+
+
+@dataclass(frozen=True)
+class SensorChoice:
+    """A sensor a plugin can read, for an Editor to choose for a plant (see the
+    `sensor_choices` hook).
+
+    `kind` is what it measures: `soil_moisture`, `illuminance`, `temperature` or `humidity`.
+    It's a plain string, not a fixed list, so more kinds may be added later.
+    """
+
+    # The plugin's own id for it, e.g. a Home Assistant entity id.
+    id: str
+    # Shown when choosing, e.g. "Monstera soil moisture".
+    name: str
+    kind: str
+
+
+@dataclass(frozen=True)
+class SensorReading:
+    """A sensor's current value, in Sunfleck's unit for its kind (see the `read_sensors` hook).
+
+    The units: `soil_moisture` in % (0 to 100), `illuminance` in lx, `temperature` in °C and
+    `humidity` in % relative humidity (0 to 100). Convert others (e.g. °F) before answering.
+    """
+
+    # The sensor's id, as in its SensorChoice.
+    id: str
+    # None while the sensor is unavailable.
+    value: float | None
+    # When the sensor last reported the value (timezone-aware).
+    measured_at: datetime

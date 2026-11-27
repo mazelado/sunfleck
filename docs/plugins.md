@@ -123,6 +123,8 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 | `identify_plant(photos, language, settings)` | When someone identifies a plant from photos (1 to 5, of the same plant) | An `Identification`: `Candidate`s by scientific name with a score from 0 to 1, or a `problem` (`missing_api_key`, `invalid_api_key`, `quota_exceeded`, `unavailable`) to tell the person about |
 | `check_settings(settings)` | When an Admin clicks **Test** on the Plugins page, with the settings in the form (maybe not saved yet), whether or not the plugin is on. Without this hook, the plugin has no Test button | A `SettingsCheck`: no `problem` if it works, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`), and `details` shown as they are (e.g. which model answered). If it raises, the Admin sees `failed` with the error. Keep it quick and cheap |
 | `complete_json(task, settings)` | When Sunfleck needs an AI answer, only when someone asks for one (e.g. a care profile suggestion, a diagnosis from a photo, or a question about a plant, with the conversation so far in the task's `prompt`); the first enabled plugin answers | An `AiAnswer`: `data` (a JSON object matching the `AiTask`'s `schema`, which Sunfleck checks again) and an `attribution`, or a `problem` (`missing_settings`, `invalid_api_key`, `quota_exceeded`, `unavailable`, `invalid_answer`, or `unsupported` for a task with `images` the model can't look at). A task's `images` are `AiImage`s: JPEGs at most 1568 px on their long edge, without metadata |
+| `sensor_choices(settings)` | When an Editor chooses a sensor for a plant, so keep it quick | `SensorChoice`s: the plugin's own `id` for each sensor (e.g. a Home Assistant entity id), a `name` to show, and its `kind` (`soil_moisture`, `illuminance`, `temperature` or `humidity`) |
+| `read_sensors(sensor_ids, settings)` | Every 15 minutes, in the worker, with the ids (from `sensor_choices`) of the sensors the household chose from this plugin, each once | `SensorReading`s: the `id`, the `value` in Sunfleck's unit for the kind (None while the sensor is unavailable), and when the sensor reported it (`measured_at`, timezone-aware). Leave out ids it doesn't know or can't read |
 
 - Hooks are only called for households that turned the plugin on, with that household's
   `settings` (None if the plugin has no settings). For `complete_json`, `identify_plant` and
@@ -139,6 +141,11 @@ def care_factors(context: CareContext, settings: Settings) -> list[Adjustment]:
 - **Fail gracefully.** If a hook raises an exception, Sunfleck logs it, shows it to Admins on
   the Plugins page, and carries on without that plugin's answer. Still, prefer catching
   expected failures (a service being down) yourself and returning nothing.
+- **Sensors** are read in Sunfleck's units: soil moisture in % (0 to 100), illuminance in lx,
+  temperature in °C and humidity in % relative humidity (0 to 100). Convert others (e.g. °F)
+  in the plugin. A sensor's `kind` is a plain string, so more kinds may be added later; list
+  only sensors of the kinds above. Sunfleck keeps which sensor a plant uses, the latest
+  reading and a daily summary itself: the plugin only answers what it's asked.
 - After your data changes what a prediction would say (e.g. new weather), call
   `mark_site_out_of_date(site)` so the site's plants are recalculated.
 - The app explains a factor by its `code`; codes it doesn't know are shown as they are, until
