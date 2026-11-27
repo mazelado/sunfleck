@@ -21,7 +21,9 @@ fi
 if [ -n "$not_writable" ]; then
   echo "Error: $not_writable isn't writable by user ID $(id -u), which Sunfleck runs as." >&2
   echo "Give everything in $data_dir back to Sunfleck. In the folder with compose.yaml, run:" >&2
-  echo "  docker compose run --rm -u root --entrypoint chown sunfleck -R $owner $data_dir" >&2
+  # compose.yaml drops all capabilities; these two let root change owners and open any folder.
+  echo "  docker compose run --rm -u root --cap-add CHOWN --cap-add DAC_READ_SEARCH \\" >&2
+  echo "    --entrypoint chown sunfleck -R $owner $data_dir" >&2
   echo "If $data_dir is a folder on your computer instead: sudo chown -R $owner <folder>" >&2
   exit 1
 fi
