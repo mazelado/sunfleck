@@ -136,7 +136,8 @@ participant's phone in before part B starts, so the password isn't part of the t
 
 **Plugins:** leave AI and plant identification off; they need accounts and cost money, and
 the test is about the app itself. The weather plugin is on in the demo household, from a
-stored forecast.
+stored forecast. The Garden and Collection areas are on too, so the Plants tab shows Seeds and
+Wishlist; no task needs them.
 
 ## The session
 

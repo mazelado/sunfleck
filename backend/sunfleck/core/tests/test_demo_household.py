@@ -5,7 +5,7 @@ import pytest
 import time_machine
 from django.core.management import CommandError, call_command
 
-from sunfleck.accounts.models import User
+from sunfleck.accounts.models import Household, User
 from sunfleck.care import learning, selectors
 from sunfleck.care.models import CareSchedule
 from sunfleck.plants.models import Plant
@@ -23,6 +23,14 @@ def test_the_demo_household_has_plants_with_photos_and_schedules() -> None:
     assert plants.count() == 5
     assert all(plant.cover_photo_id for plant in plants)
     assert CareSchedule.objects.filter(next_due__isnull=False).count() == 10
+
+
+def test_the_demo_household_has_the_garden_and_collection_on() -> None:
+    # So the README's screenshots show the Plants / Seeds / Wishlist switch.
+    call_command("demo_household", photos=PHOTOS)
+
+    household = Household.objects.get()
+    assert (household.garden, household.collection) == (True, True)
 
 
 @pytest.mark.parametrize("month", [1, 4, 7, 10])
