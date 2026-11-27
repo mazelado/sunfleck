@@ -328,6 +328,8 @@ Sunfleck stays simple for someone with a few houseplants, and speaks Spanish.
 
 ### Nasturtium: sensors, to look at (planned)
 
+How it's built is [a plan to decide on](sensors-plan-2026-11.md).
+
 - **A Home Assistant plugin** that reads a plant's soil moisture, and light, temperature and
   humidity where there's a sensor, from the entities chosen for it. Any sensor Home Assistant
   knows works.
