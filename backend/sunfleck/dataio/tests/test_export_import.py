@@ -35,6 +35,13 @@ from sunfleck.plants import services as plant_services
 from sunfleck.plants.models import Photo, Plant, PlantLight, Wish
 from sunfleck.plants.tests.factories import image_bytes
 from sunfleck.plugins import services as plugin_services
+from sunfleck.sensors import kinds
+from sunfleck.sensors.models import CareReading, PlantSensor, SensorDay
+from sunfleck.sensors.tests.factories import (
+    CareReadingFactory,
+    PlantSensorFactory,
+    SensorDayFactory,
+)
 from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 ClientAs = Callable[[Role], Client]
@@ -193,6 +200,22 @@ def filled(household: Household, ada: Membership) -> Household:
         link="https://plants.example.com/monstera",
         notes="Half-moon, not Thai Constellation",
     )
+    soil = PlantSensorFactory.create(plant=monty)
+    PlantSensor.objects.filter(pk=soil.pk).update(created_at=datetime(2026, 4, 20, 8, tzinfo=UTC))
+    SensorDayFactory.create(sensor=soil, date=date(2026, 4, 30))
+    SensorDayFactory.create(sensor=soil, date=date(2026, 5, 1), low=12.5, last=12.5)
+    # Not read yet.
+    PlantSensorFactory.create(
+        plant=monty,
+        kind=kinds.TEMPERATURE,
+        sensor_id="sensor.living_room_temperature",
+        name="Living room temperature",
+        value=None,
+        measured_at=None,
+    )
+    CareReadingFactory.create(
+        event=CareEvent.objects.get(plant=monty, feedback=Feedback.TOO_DRY), value=12.5
+    )
     return household
 
 
@@ -338,6 +361,59 @@ def test_exports_from_before_conversations_import(filled: Household) -> None:
     importer.import_into(target, io.BytesIO(data))
 
     assert not Conversation.objects.filter(plant__household=target).exists()
+
+
+def _sensors(household: Household) -> list[tuple[Any, ...]]:
+    return list(
+        PlantSensor.objects.filter(plant__household=household)
+        .order_by("kind")
+        .values_list("kind", "plugin_id", "sensor_id", "name", "value", "measured_at", "created_at")
+    )
+
+
+def _sensor_days(household: Household) -> list[tuple[Any, ...]]:
+    return list(
+        SensorDay.objects.filter(sensor__plant__household=household)
+        .order_by("sensor__kind", "date")
+        .values_list("sensor__kind", "date", "low", "high", "mean", "last", "count")
+    )
+
+
+def _care_readings(household: Household) -> list[tuple[Any, ...]]:
+    return list(
+        CareReading.objects.filter(event__plant__household=household)
+        .order_by("event__performed_at", "kind")
+        .values_list("event__feedback", "kind", "value", "measured_at")
+    )
+
+
+def test_sensors_their_summaries_and_readings_kept_with_care_are_kept(filled: Household) -> None:
+    target = new_household()
+    importer.import_into(target, io.BytesIO(export_bytes(filled)))
+
+    assert _sensors(target) == _sensors(filled)
+    assert len(_sensors(target)) == 2
+    assert _sensors(target)[0][-1] == datetime(2026, 4, 20, 8, tzinfo=UTC)
+    assert _sensor_days(target) == _sensor_days(filled)
+    assert len(_sensor_days(target)) == 2
+    assert _care_readings(target) == [
+        ("too_dry", "soil_moisture", 12.5, datetime(2026, 5, 1, 8, 45, tzinfo=UTC))
+    ]
+
+
+def test_exports_from_before_sensors_import(filled: Household) -> None:
+    def drop_sensors(exported: dict[str, Any]) -> None:
+        for plant in exported["plants"]:
+            del plant["sensors"]
+            for event in plant["care_events"]:
+                del event["readings"]
+
+    target = new_household()
+    importer.import_into(target, io.BytesIO(rewrite(export_bytes(filled), drop_sensors)))
+
+    assert CareEvent.objects.filter(plant__household=target).count() == 2
+    assert _sensors(target) == []
+    assert _care_readings(target) == []
 
 
 def test_exports_from_before_grow_light_distances_import(filled: Household) -> None:
@@ -549,6 +625,17 @@ def first_plant(exported: dict[str, Any]) -> dict[str, Any]:
         (
             lambda e: first_plant(e)["schedules"][0]["predictions"][0].update(interval_days=-1),
             "past prediction for 'Monty'",
+        ),
+        (lambda e: first_plant(e)["sensors"][0].update(kind="k" * 33), "sensor of 'Monty'"),
+        (
+            lambda e: first_plant(e)["sensors"][0]["days"][0].update(count=-1),
+            "sensor of 'Monty'",
+        ),
+        # Two of a kind: refused by the database.
+        (lambda e: first_plant(e)["sensors"][1].update(kind="soil_moisture"), "export: "),
+        (
+            lambda e: first_plant(e)["care_events"][0]["readings"][0].update(kind="k" * 33),
+            "reading kept with care of 'Monty'",
         ),
     ],
 )

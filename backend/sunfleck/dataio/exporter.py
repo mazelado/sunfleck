@@ -20,6 +20,7 @@ from sunfleck.garden.models import Harvest, SeedPacket
 from sunfleck.places.models import Site
 from sunfleck.plants.models import Photo, Plant, Wish
 from sunfleck.plugins import services as plugin_services
+from sunfleck.sensors.models import CareReading, PlantSensor, SensorDay
 from sunfleck.taxonomy.models import CareDataset
 
 COPY_CHUNK_BYTES = 1024 * 1024
@@ -131,6 +132,12 @@ def _plant(plant: Plant) -> schema.Plant:
                 amount_ml=event.amount_ml,
                 skipped=event.skipped,
                 estimated=event.estimated,
+                readings=[
+                    schema.CareReading(
+                        kind=reading.kind, value=reading.value, measured_at=reading.measured_at
+                    )
+                    for reading in event.readings.all()
+                ],
             )
             for event in plant.care_events.all()  # prefetched by build()
         ],
@@ -162,6 +169,29 @@ def _plant(plant: Plant) -> schema.Plant:
                 ],
             )
             for conversation in plant.conversations.all()
+        ],
+        sensors=[
+            schema.PlantSensor(
+                kind=sensor.kind,
+                plugin_id=sensor.plugin_id,
+                sensor_id=sensor.sensor_id,
+                name=sensor.name,
+                value=sensor.value,
+                measured_at=sensor.measured_at,
+                created_at=sensor.created_at,
+                days=[
+                    schema.SensorDay(
+                        date=day.date,
+                        low=day.low,
+                        high=day.high,
+                        mean=day.mean,
+                        last=day.last,
+                        count=day.count,
+                    )
+                    for day in sensor.days.all()
+                ],
+            )
+            for sensor in plant.sensors.all()
         ],
         schedules=[
             schema.Schedule(
@@ -202,15 +232,23 @@ def build(household: Household) -> schema.Export:
             Prefetch("photos", queryset=Photo.objects.order_by("taken_at", "pk")),
             Prefetch(
                 "care_events",
-                queryset=CareEvent.objects.select_related("care_type").order_by(
-                    "performed_at", "pk"
-                ),
+                queryset=CareEvent.objects.select_related("care_type")
+                .prefetch_related(
+                    Prefetch("readings", queryset=CareReading.objects.order_by("kind", "pk"))
+                )
+                .order_by("performed_at", "pk"),
             ),
             Prefetch("harvests", queryset=Harvest.objects.order_by("harvested_on", "pk")),
             Prefetch(
                 "conversations",
                 queryset=Conversation.objects.order_by("created_at", "pk").prefetch_related(
                     "messages"
+                ),
+            ),
+            Prefetch(
+                "sensors",
+                queryset=PlantSensor.objects.order_by("kind", "pk").prefetch_related(
+                    Prefetch("days", queryset=SensorDay.objects.order_by("date", "pk"))
                 ),
             ),
             Prefetch(

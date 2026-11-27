@@ -38,6 +38,7 @@ from sunfleck.places.models import LightSource, Location, Site
 from sunfleck.plants.models import Photo, Plant, PlantLight, Wish
 from sunfleck.plugins import services as plugin_services
 from sunfleck.plugins.registry import registry
+from sunfleck.sensors.models import CareReading, PlantSensor, SensorDay
 from sunfleck.taxonomy.models import CareArchetype, Taxon
 
 MAX_DATA_BYTES = 200 * 1024 * 1024
@@ -332,6 +333,18 @@ class _Importer:
         # In bulk: plugins aren't told about care logged long ago.
         CareEvent.objects.bulk_create(events)
         self.summary.care_events += len(events)
+        readings = []
+        for event, event_item in zip(events, item.care_events, strict=True):
+            for reading_item in event_item.readings:
+                reading = CareReading(
+                    event=event,
+                    kind=reading_item.kind,
+                    value=reading_item.value,
+                    measured_at=reading_item.measured_at,
+                )
+                _check(reading, f"reading kept with care of {item.nickname!r}")
+                readings.append(reading)
+        CareReading.objects.bulk_create(readings)
 
         for harvest_item in item.harvests:
             harvest = Harvest(
@@ -349,6 +362,9 @@ class _Importer:
 
         for conversation_item in item.conversations:
             self.import_conversation(plant, conversation_item)
+
+        for sensor_item in item.sensors:
+            self.import_sensor(plant, sensor_item)
 
         for schedule_item in item.schedules:
             schedule = CareSchedule(
@@ -405,6 +421,38 @@ class _Importer:
             _check(message, where)
             messages.append(message)
         Message.objects.bulk_create(messages)
+
+    def import_sensor(self, plant: Plant, item: schema.PlantSensor) -> None:
+        where = f"sensor of {plant.nickname!r}"
+        # The sensor's id is the plugin's own: with the same source (e.g. the same Home
+        # Assistant), it keeps working; otherwise the plugin won't find it when reading.
+        sensor = PlantSensor(
+            plant=plant,
+            kind=item.kind,
+            plugin_id=item.plugin_id,
+            sensor_id=item.sensor_id,
+            name=item.name,
+            value=item.value,
+            measured_at=item.measured_at,
+        )
+        _check(sensor, where)
+        sensor.save()
+        PlantSensor.objects.filter(pk=sensor.pk).update(created_at=item.created_at)
+        days = [
+            SensorDay(
+                sensor=sensor,
+                date=day.date,
+                low=day.low,
+                high=day.high,
+                mean=day.mean,
+                last=day.last,
+                count=day.count,
+            )
+            for day in item.days
+        ]
+        for day in days:
+            _check(day, where)
+        SensorDay.objects.bulk_create(days)
 
     def member(self, ref: int | None) -> User | None:
         return self.members.get(ref) if ref is not None else None
