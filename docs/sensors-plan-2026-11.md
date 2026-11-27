@@ -1,8 +1,9 @@
-# Sensors, to look at (1.4 Nasturtium): a plan to decide on
+# Sensors, to look at (1.4 Nasturtium): the plan
 
-This plan was for the maintainer to decide on before any code was written; the decisions are [at the end](#decided-2026-11-27). 1.4 adds the first
-thing to the plugin API since 1.0, and anything added there must stay for all of 1.x. So the
-choices below are hard to undo once they ship.
+This plan was for the maintainer to decide on before any code was written; the decisions are
+[at the end](#decided-2026-11-27). 1.4 adds the first thing to the plugin API since 1.0, and
+anything added there must stay for all of 1.x. So the choices below are hard to undo once they
+ship.
 
 What the [roadmap](roadmap.md#nasturtium-sensors-to-look-at-planned) promises for 1.4:
 
