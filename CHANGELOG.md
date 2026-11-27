@@ -24,7 +24,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   Its health check asked for the web server, which runs in the other container. Now it's
   healthy when it has finished a job in the last 30 minutes, so "unhealthy" means reminders
   and other background jobs have stopped. No need to download a new `compose.yaml`: the
-  check is in the image.
+  check is in the image (#288).
 
 ## [1.4.0] - 2026-11-27
 
