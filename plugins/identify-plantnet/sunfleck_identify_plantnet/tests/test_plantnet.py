@@ -3,7 +3,10 @@ import email.parser
 import json
 import urllib.error
 import urllib.parse
+import urllib.request
 from collections.abc import Callable
+from email.message import Message
+from io import BytesIO
 from typing import Any
 
 import pytest
@@ -312,3 +315,17 @@ def test_testing_without_a_key_asks_for_one(service: FakePlantNet) -> None:
 
     assert found.problem == "missing_settings"
     assert service.requests == []
+
+
+def test_error_answers_are_read_and_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    body = BytesIO(b"no")
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> None:
+        raise urllib.error.HTTPError(request.full_url, 401, "Unauthorized", Message(), body)
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+
+    assert plantnet.post(
+        "https://my-api.plantnet.org/v2/identify/all", b"", "text/plain"
+    ) == plantnet.Response(401, b"no")
+    assert body.closed
