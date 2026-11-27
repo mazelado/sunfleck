@@ -268,6 +268,12 @@ Not found on Wikidata by their scientific names: *Schefflera arboricola*, *Menth
 
 ## Care profiles
 
+Checked for gender agreement and meaning on 2026-11-27, after a native speaker's review of the
+app's Spanish (#272). Three drafts were corrected: *dracaena* (*se conforman con menos luz*,
+which *aguantan menos luz* said the opposite of), the tropical pitcher plant's name (*Planta de
+jarra tropical*, as its Wikidata name), and the note on *Sansevieria* (*Ahora forma parte de
+Dracaena*, the reviewer's wording, without the gender *incluida* gave the genus).
+
 Each profile's English, then the proposed Spanish (in bold).
 
 #### `air_plant`: Air plant → **Planta del aire**
@@ -314,7 +320,7 @@ Each profile's English, then the proposed Spanish (in bold).
 #### `dracaena`: Dracaena → **Dracena**
 
 - Corn plants and dragon trees: bright indirect light, though they cope with less than most indoor trees; let the soil dry a little between waterings, but not right through.
-- **Palos de Brasil y dragos: luz indirecta brillante, aunque aguantan menos luz que la mayoría de los árboles de interior; deja que la tierra se seque un poco entre riegos, pero no del todo.**
+- **Palos de Brasil y dragos: luz indirecta brillante, aunque se conforman con menos luz que la mayoría de los árboles de interior; deja que la tierra se seque un poco entre riegos, pero no del todo.**
 - *Notes:* Fluoride browns the leaf tips: use a fertilizer low in fluoride and boron, and rinse perlite before potting with it.
 - **El flúor quema las puntas de las hojas: usa un abono bajo en flúor y boro, y enjuaga la perlita antes de usarla para plantar.**
 
@@ -438,7 +444,7 @@ Each profile's English, then the proposed Spanish (in bold).
 - Ferns from humid forests: keep the soil lightly moist and the air humid; dry soil quickly browns the fronds.
 - **Helechos de bosques húmedos: mantén la tierra ligeramente húmeda y el aire húmedo; la tierra seca enseguida quema las frondas.**
 
-#### `tropical_pitcher_plant`: Tropical pitcher plant → **Planta jarro tropical**
+#### `tropical_pitcher_plant`: Tropical pitcher plant → **Planta de jarra tropical**
 
 - Nepenthes: warm, humid, bright indirect light, and moist but airy moss-based mix.
 - **Nepenthes: calor, humedad, luz indirecta brillante, y una mezcla a base de musgo, húmeda pero aireada.**
@@ -461,7 +467,7 @@ Each distinct note once; the same Spanish goes everywhere it's used.
 | Insoluble calcium oxalates. ASPCA's entry names the related species Aglaonema modestum. | Oxalatos de calcio insolubles. La ficha de la ASPCA nombra la especie emparentada Aglaonema modestum. |
 | Insoluble calcium oxalates and a proteolytic enzyme | Oxalatos de calcio insolubles y una enzima proteolítica |
 | Calcium oxalate | Oxalato de calcio |
-| Now included in Dracaena, but kept separate here: snake plants need much drier care than cane dracaenas. | Ahora incluida en Dracaena, pero aquí se mantiene aparte: las lenguas de suegra necesitan mucho menos riego que las dracenas de caña. |
+| Now included in Dracaena, but kept separate here: snake plants need much drier care than cane dracaenas. | Ahora forma parte de Dracaena, pero aquí se mantiene aparte: las lenguas de suegra necesitan mucho menos riego que las dracenas de caña. |
 | Triterpenoid saponins (hederagenin) | Saponinas triterpénicas (hederagenina) |
 | Proteolytic enzyme (ficin) and psoralen (ficusin) | Enzima proteolítica (ficina) y psoraleno (ficusina) |
 | Mild irritation of the mouth and stomach; the sap can irritate skin | Irritación leve de la boca y el estómago; la savia puede irritar la piel |
@@ -492,6 +498,70 @@ Each distinct note once; the same Spanish goes everywhere it's used.
 | Lycorine and other alkaloids | Licorina y otros alcaloides |
 | Alkaloids, possibly like the daffodil's | Alcaloides, posiblemente como los del narciso |
 | N-propyl disulfide | Disulfuro de n-propilo |
+
+### Notes on toxicity to people
+
+Added on 2026-11-27, for the notes in `harmful_to_people` (from the
+[toxicity to people review](toxicity-people-review-2026-11.md)), which came after the decisions
+above. Like the profiles and the notes for pets, they wait for a native speaker to read them
+([decision 3](#3-the-care-profiles-text)), and show in English until then. Each distinct note
+once; the same Spanish goes everywhere it's used.
+
+- "Según la RHS: **dañina** si se come" agrees with *planta*, as the app's own notice does
+  ("Dañina para las personas si se come").
+- "Not identified" is "Sin identificar", which has no gender.
+- Where one adjective goes with a masculine and a feminine noun, it's masculine plural:
+  "los granos y las vainas son **dañinos** si se comen **crudos**".
+
+| English | Spanish |
+|---|---|
+| Calcium oxalate crystals | Cristales de oxalato de calcio |
+| Saponins | Saponinas |
+| Not identified | Sin identificar |
+| Per the RHS: can cause a skin allergy | Según la RHS: puede causar alergia en la piel |
+| Per the RHS: harmful if eaten; irritates skin and eyes | Según la RHS: dañina si se come; irrita la piel y los ojos |
+| Per the RHS: irritates skin | Según la RHS: irrita la piel |
+| Cyanogenic glycosides | Glucósidos cianogénicos |
+| Diterpene esters in the milky sap | Ésteres diterpénicos en la savia lechosa |
+| Per the RHS: harmful if eaten; irritates skin and can cause an allergy | Según la RHS: dañina si se come; irrita la piel y puede causar alergia |
+| Diterpene esters | Ésteres diterpénicos |
+| Bufadienolides | Bufadienólidos |
+| Anthraquinone glycosides | Glucósidos antraquinónicos |
+| Pyrrolizidine alkaloids | Alcaloides de pirrolizidina |
+| Cardiac glycosides | Glucósidos cardíacos |
+| Essential oils and psoralens | Aceites esenciales y psoralenos |
+| Steroidal alkaloids | Alcaloides esteroideos |
+| Thiophenes, which make skin sensitive to sunlight | Tiofenos, que hacen la piel sensible al sol |
+| Sulfur compounds such as N-propyl disulfide | Compuestos de azufre como el disulfuro de n-propilo |
+| Calcium oxalate crystals and oxalic acid | Cristales de oxalato de calcio y ácido oxálico |
+| Triterpenoid saponins and polyacetylenes | Saponinas triterpénicas y poliacetilenos |
+| Ficin and furanocoumarins | Ficina y furanocumarinas |
+| Insoluble calcium oxalates | Oxalatos de calcio insolubles |
+| Per the RHS: harmful if eaten; can cause a skin allergy | Según la RHS: dañina si se come; puede causar alergia en la piel |
+| Cyclopropenoid fatty acids, in the seeds | Ácidos grasos ciclopropenoides, en las semillas |
+| Stomach and gut irritants, mainly in the fruit and seeds | Irritantes del estómago y del intestino, sobre todo en el fruto y las semillas |
+| Soluble calcium oxalates | Oxalatos de calcio solubles |
+| Alkaloids | Alcaloides |
+| Per the RHS: irritates skin and eyes | Según la RHS: irrita la piel y los ojos |
+| Bromelain and calcium oxalate crystals | Bromelina y cristales de oxalato de calcio |
+| Tomatine and solanine, in the leaves and stems | Tomatina y solanina, en las hojas y los tallos |
+| Solanine and other alkaloids, in the leaves | Solanina y otros alcaloides, en las hojas |
+| Solanine and other alkaloids, in the leaves, stems and green tubers | Solanina y otros alcaloides, en las hojas, los tallos y los tubérculos verdes |
+| Per the RHS: raw beans and pods are harmful if eaten | Según la RHS: los granos y las vainas son dañinos si se comen crudos |
+| Phytohaemagglutinin, a lectin, in raw beans | Fitohemaglutinina, una lectina, en los granos crudos |
+| Traces of phytohaemagglutinin, a lectin, in raw beans | Trazas de fitohemaglutinina, una lectina, en los granos crudos |
+| Lactucin and lactucopicrin, in the milky sap | Lactucina y lactucopicrina, en la savia lechosa |
+| Falcarinol | Falcarinol |
+| Isothiocyanates | Isotiocianatos |
+| Per the RHS: the sap or fruit can burn skin in sunlight | Según la RHS: la savia o el fruto pueden quemar la piel al sol |
+| Grayanotoxins | Grayanotoxinas |
+| Pentacyclic terpenoids and iridin | Terpenoides pentacíclicos e iridina |
+| A glycoside and a saponin | Un glucósido y una saponina |
+| Geraniol, linalool | Geraniol, linalol |
+| Lobeline and other alkaloids | Lobelina y otros alcaloides |
+| Tulipalin and other allergens | Tulipalina y otros alérgenos |
+| Lycorine and other alkaloids, and calcium oxalate crystals | Licorina y otros alcaloides, y cristales de oxalato de calcio |
+| Lycorine and other alkaloids | Licorina y otros alcaloides |
 
 ## Sources
 
