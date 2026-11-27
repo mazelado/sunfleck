@@ -39,6 +39,12 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   finds *piña*, in the care guide, a plant's species and the Plants page's search by species
   (#267).
 
+### Fixed
+
+- **Typing on an iPhone**: while the keyboard is open, the tab bar and a form's **Save** no
+  longer float above it with the page showing below. The tab bar hides, and **Save** stays at
+  the end of the form, until the keyboard closes.
+
 ## [1.2.0] - 2026-11-26
 
 **Lavender.** Trust: every care profile checked against published sources, toxicity to pets

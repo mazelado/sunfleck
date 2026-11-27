@@ -31,6 +31,7 @@ import { Logo } from "../../components/Logo";
 import { PageBarContext } from "../../components/pageBar";
 import { PersonAvatar } from "../../components/PersonAvatar";
 import { useInstall } from "../../lib/useInstall";
+import { useOnScreenKeyboard } from "../../lib/useOnScreenKeyboard";
 import { CareDetailsHost } from "../care/CareDetailsHost";
 
 interface Destination {
@@ -62,6 +63,8 @@ export function AppLayout() {
   const [iosHelp, setIosHelp] = useState(false);
   // Mantine's "sm" breakpoint. Phones (and narrow windows) get the tab bar.
   const wide = useMediaQuery("(min-width: 48em)", false, { getInitialValueInEffect: false });
+  // While an iPhone's keyboard is open, the tab bar would float above it: hide it then.
+  const keyboard = useOnScreenKeyboard();
   // On phones, a sub-page draws its way back, title and menu in the top bar (PageHeader).
   const [barTarget, setBarTarget] = useState<HTMLElement | null>(null);
   const [subPage, setSubPage] = useState(false);
@@ -74,7 +77,7 @@ export function AppLayout() {
   return (
     <AppShell
       header={{ height: 60 }}
-      footer={{ height: TAB_BAR_HEIGHT, collapsed: wide }}
+      footer={{ height: TAB_BAR_HEIGHT, collapsed: wide || keyboard }}
       padding="md"
     >
       <AppShell.Header>
