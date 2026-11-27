@@ -9,6 +9,11 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-27
+
+**Nasturtium.** Sensors, to look at: a plant's soil moisture, light, temperature and humidity
+from Home Assistant, on its page.
+
 ### Added
 
 - **Sensors on a plant's page**: with the new **Home Assistant** plugin turned on (an Admin
@@ -831,7 +836,8 @@ plants between locations, and finding plants without a care routine.
 - **Docker image** for `linux/amd64` and `linux/arm64`, with SQLite by default, PostgreSQL and
   Redis optional, and a background worker.
 
-[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/mazelado/sunfleck/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/mazelado/sunfleck/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/mazelado/sunfleck/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/mazelado/sunfleck/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/mazelado/sunfleck/compare/v1.0.3...v1.1.0

@@ -5,7 +5,7 @@ This plan was for the maintainer to decide on before any code was written; the d
 anything added there must stay for all of 1.x. So the choices below are hard to undo once they
 ship.
 
-What the [roadmap](roadmap.md#nasturtium-sensors-to-look-at-planned) promises for 1.4:
+What the [roadmap](roadmap.md#nasturtium-sensors-to-look-at-released) promises for 1.4:
 
 - **A Home Assistant plugin** that reads a plant's soil moisture, and its light, temperature
   and humidity where there's a sensor, from the entities chosen for it. Any sensor Home

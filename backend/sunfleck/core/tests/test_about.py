@@ -50,6 +50,7 @@ def test_about_needs_sign_in(client: Client) -> None:
         ("0.4.2", "Dahlia"),
         ("1.0.0", "Jasmine"),
         ("1.3.0", "Monstera"),
+        ("1.4.0", "Nasturtium"),
         ("2.0.0", None),
     ],
 )

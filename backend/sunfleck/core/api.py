@@ -64,6 +64,7 @@ RELEASE_NAMES = {
     "1.1": "Kalanchoe",
     "1.2": "Lavender",
     "1.3": "Monstera",
+    "1.4": "Nasturtium",
 }
 
 
