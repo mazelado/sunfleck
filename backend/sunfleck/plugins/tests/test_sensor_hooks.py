@@ -63,7 +63,8 @@ def test_plugins_list_the_sensors_they_can_read(household: Household, gauge: Gau
         SensorChoice("sensor.monstera_soil", "Monstera soil moisture", "soil_moisture"),
         SensorChoice("sensor.thermometer", "Kitchen temperature", "temperature"),
     ]
-    assert registry.implementers("sensor_choices") == ["gauge"]
+    # The built-in Home Assistant plugin implements it too, but is off.
+    assert "gauge" in registry.implementers("sensor_choices")
 
 
 def test_plugins_read_the_sensors_they_know(household: Household, gauge: GaugeHooks) -> None:

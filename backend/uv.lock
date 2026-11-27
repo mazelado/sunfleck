@@ -2573,6 +2573,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "sunfleck-ai-anthropic" },
     { name = "sunfleck-ai-openai" },
+    { name = "sunfleck-homeassistant" },
     { name = "sunfleck-identify-plantnet" },
     { name = "sunfleck-weather-openmeteo" },
     { name = "whitenoise" },
@@ -2625,6 +2626,7 @@ requires-dist = [
     { name = "redis", marker = "extra == 'redis'", specifier = ">=5.2" },
     { name = "sunfleck-ai-anthropic", editable = "../plugins/ai-anthropic" },
     { name = "sunfleck-ai-openai", editable = "../plugins/ai-openai" },
+    { name = "sunfleck-homeassistant", editable = "../plugins/homeassistant" },
     { name = "sunfleck-identify-plantnet", editable = "../plugins/identify-plantnet" },
     { name = "sunfleck-weather-openmeteo", editable = "../plugins/weather-openmeteo" },
     { name = "whitenoise", specifier = ">=6.12" },
@@ -2663,6 +2665,11 @@ requires-dist = [{ name = "anthropic", specifier = ">=2.2,<3" }]
 name = "sunfleck-ai-openai"
 version = "0.1.0"
 source = { editable = "../plugins/ai-openai" }
+
+[[package]]
+name = "sunfleck-homeassistant"
+version = "0.1.0"
+source = { editable = "../plugins/homeassistant" }
 
 [[package]]
 name = "sunfleck-identify-plantnet"
