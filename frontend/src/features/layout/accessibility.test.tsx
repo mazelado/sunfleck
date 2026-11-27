@@ -3,8 +3,11 @@ import { http, HttpResponse } from "msw";
 import { describe, expect, it, vi } from "vitest";
 
 import { accessibilityProblems } from "../../test/axe";
+import { montyPlant, withPlant } from "../../test/plant";
 import { renderApp } from "../../test/render";
 import { ada, listOf, server, signInAs } from "../../test/server";
+import { localToday } from "../sensors/chartDays";
+import { addDays } from "../today/grouping";
 
 // Leaflet can't draw maps in the test environment.
 vi.mock("../places/MapPicker", () => ({ default: () => null }));
@@ -36,6 +39,49 @@ describe("accessibility", () => {
     );
     renderApp(path);
     await screen.findByRole("heading", { level: 1, name: heading });
+
+    expect(await accessibilityProblems()).toEqual([]);
+  });
+
+  it("a plant's page, with its sensors, has no problems axe can find", async () => {
+    signInAs(ada);
+    withPlant(montyPlant());
+    const today = localToday();
+    server.use(
+      http.get("*/api/v1/plants/7/sensors", () =>
+        HttpResponse.json({
+          items: [
+            {
+              kind: "soil_moisture",
+              plugin_id: "homeassistant",
+              sensor_id: "sensor.monstera_moisture",
+              name: "Monstera moisture",
+              value: 42,
+              measured_at: new Date().toISOString(),
+            },
+          ],
+          count: 1,
+          plugin_on: true,
+        }),
+      ),
+      http.get("*/api/v1/plants/7/sensors/soil_moisture/days", () =>
+        HttpResponse.json(
+          listOf(
+            [0, 1, 3].map((ago) => ({
+              date: addDays(today, -ago),
+              low: 30,
+              high: 60,
+              mean: 45,
+              last: 45,
+              count: 96,
+            })),
+          ),
+        ),
+      ),
+    );
+    renderApp("/plants/7");
+    await screen.findByRole("heading", { level: 1, name: "Monty" });
+    await screen.findByRole("table", { name: "Soil moisture, day by day" });
 
     expect(await accessibilityProblems()).toEqual([]);
   });

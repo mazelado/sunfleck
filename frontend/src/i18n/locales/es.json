@@ -462,7 +462,10 @@
     "chat_unavailable": "No hay ningún complemento de IA activado.",
     "question_empty": "Escribe primero una pregunta.",
     "conversation_too_long": "Esta conversación ha llegado a su longitud máxima. Empieza una nueva.",
-    "conversation_not_found": "Esta conversación no existe. Puede que se haya eliminado."
+    "conversation_not_found": "Esta conversación no existe. Puede que se haya eliminado.",
+    "sensor_not_a_choice": "Los complementos ya no ofrecen este sensor. Vuelve a elegir, por favor.",
+    "sensor_not_found": "Esta planta ya no tiene ese sensor.",
+    "sensor_kind_not_found": "Sunfleck no conoce este tipo de sensor."
   },
   "settings": {
     "title": "Ajustes",
@@ -953,6 +956,46 @@
     },
     "throughTheYear": "A lo largo del año",
     "seasonWords": "Primavera: {{spring}} · Verano: {{summer}} · Otoño: {{autumn}} · Invierno: {{winter}}"
+  },
+  "sensors": {
+    "title": "Sensores",
+    "kinds": {
+      "soil_moisture": "Humedad de la tierra",
+      "illuminance": "Luz",
+      "temperature": "Temperatura",
+      "humidity": "Humedad ambiental"
+    },
+    "none": "Todavía no hay sensores elegidos para {{plant}}.",
+    "pluginOff": "No hay ningún complemento activado que lea sensores, así que estas lecturas no se actualizan.",
+    "noReading": "Todavía sin lecturas",
+    "unavailable": "No disponible",
+    "add": "Añadir un sensor",
+    "menu": "Más acciones del sensor de {{kind}}",
+    "change": "Cambiar el sensor",
+    "changeTitle": "Cambiar el sensor de {{kind}}",
+    "remove": "Quitar",
+    "removeTitle": "¿Quitar el sensor de {{kind}}?",
+    "removeMessage": "Sunfleck deja de leer {{name}} para {{plant}} y olvida las lecturas que guardó de él.",
+    "removed": "Se ha quitado el sensor de {{kind}} de {{plant}}.",
+    "whichKind": "¿Qué debe medir?",
+    "whichSensor": "¿Qué sensor de {{kind}}?",
+    "asking": "Buscando los sensores…",
+    "tryAgain": "Volver a intentarlo",
+    "noChoices": "No hay sensores de {{kind}} para elegir.",
+    "noChoicesHelp": "Aquí aparecen los sensores que pueden leer los complementos. Si falta alguno, un Admin puede revisar el complemento en Ajustes → Complementos.",
+    "choicesChanged": "Los sensores para elegir han cambiado. Vuelve a elegir, por favor.",
+    "use": "Usar este sensor",
+    "replace": "Sustituir",
+    "replaceMessage": "Sunfleck leerá {{new}} en lugar de {{old}} y olvidará las lecturas que guardó de {{old}}.",
+    "chosen": "Se ha guardado el sensor de {{kind}} para {{plant}}.",
+    "chartSummary": "Últimos 30 días: de {{low}} a {{high}}, {{mean}} de media.",
+    "chartTable": "{{kind}}, día a día",
+    "chartStart": "Hace 30 días",
+    "today": "Hoy",
+    "day": "Día",
+    "lowest": "Mínima",
+    "average": "Media",
+    "highest": "Máxima"
   },
   "suggest": {
     "button": "Sugerir con IA",

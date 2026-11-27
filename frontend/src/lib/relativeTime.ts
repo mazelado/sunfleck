@@ -12,6 +12,19 @@ export function relativeDay(iso: string, locale: string, now = new Date()): stri
   return format.format(-Math.round(days / 365), "year");
 }
 
+/**
+ * How long ago, for something that changes during the day (a sensor's reading): "now",
+ * "10 minutes ago", "3 hours ago"; after a day, as relativeDay.
+ */
+export function relativeTime(iso: string, locale: string, now = new Date()): string {
+  const minutes = Math.floor((now.getTime() - new Date(iso).getTime()) / 60_000);
+  const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (minutes < 1) return format.format(0, "second");
+  if (minutes < 60) return format.format(-minutes, "minute");
+  if (minutes < 24 * 60) return format.format(-Math.floor(minutes / 60), "hour");
+  return relativeDay(iso, locale, now);
+}
+
 function startOfDay(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }

@@ -10,6 +10,7 @@ the weather, and they get better as you tell it how the soil was.
 - [Seeds](#seeds)
 - [Harvests](#harvests)
 - [Care, and when it's due](#care-and-when-its-due)
+- [Sensors](#sensors)
 - [The Today page](#the-today-page)
 - [Notifications](#notifications)
 - [Your household](#your-household)
@@ -236,6 +237,36 @@ lists the latest harvests. Exports include them.
   changes if you accept, and you can go back to Sunfleck's own estimate at any time.
 - **Snooze or skip**: on Today, the ⋯ menu skips a task this time, or snoozes it for a day,
   three days or a week.
+
+## Sensors
+
+If you have plant sensors in Home Assistant (a soil moisture sensor such as a Mi Flora, or a
+room's temperature, humidity or light sensor), Sunfleck can show their readings on your
+plants' pages.
+
+1. **Set up the Home Assistant plugin** (an Admin): in Home Assistant, open your profile, then
+   the **Security** tab, and create a **long-lived access token**. In Sunfleck, under
+   **Plugins** → **Home Assistant**, turn it on and fill in the server's address (e.g.
+   `http://homeassistant.local:8123`) and the token. **Test** checks both. Its
+   [setup guide](../plugins/homeassistant/README.md) has the details.
+2. **Choose sensors for a plant** (a Gardener or an Admin): once the plugin is on, a plant's
+   page has a **Sensors** card. **Add a sensor**, choose what it measures (soil moisture,
+   light, temperature or humidity), then one of the sensors Home Assistant has for it. A plant
+   has at most one sensor of each kind; one sensor can be used for several plants, e.g. a
+   room's temperature. The **⋯** menu next to a sensor changes it or removes it. Both forget
+   the readings Sunfleck kept from that sensor, so it asks first.
+
+The card shows, for each sensor, its latest reading and how old it is ("42% · 10 minutes
+ago", temperatures in your units), or **No reading yet** or **Unavailable**, and the sensor's
+name. Below it, a small chart shows the last 30 days: each day's lowest to highest reading,
+the average as a line, and a gap for days without readings. The same is written out under
+the chart. Readings are collected every 15 minutes, and Sunfleck keeps a summary of each day;
+Home Assistant keeps the full history.
+
+Viewers see the readings, but can't choose sensors. Without a sensor plugin turned on, plants
+have no **Sensors** card. **Readings don't change the care predictions yet**: Sunfleck keeps
+the latest soil moisture reading with each "How was the soil?" answer, so that 1.6 can
+learn from them. Exports include each plant's sensors and their daily summaries.
 
 ## The Today page
 

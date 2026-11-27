@@ -9,6 +9,20 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 ## [Unreleased]
 
+### Added
+
+- **Sensors on a plant's page**: with the new **Home Assistant** plugin turned on (an Admin
+  sets the server's address and a long-lived access token under **Plugins**), a Gardener or
+  an Admin chooses a plant's sensors on its page: soil moisture, light, temperature and
+  humidity, one of each. Its **Sensors** card shows each one's latest reading and how old it
+  is ("42% · 10 minutes ago"), and the last 30 days as a small chart, also written out in
+  words. Sunfleck reads the sensors every 15 minutes, keeps a summary of each day, and keeps
+  the soil moisture with each "How was the soil?" answer; all of it is in exports. Readings
+  don't change the care predictions yet (that's 1.6 Peony). Soil moisture has only been
+  tested against a fake Home Assistant server so far, not a real plant sensor
+  (#279, #280, #281, #282, #283, #284). Plugins can offer sensors with the new
+  `sensor_choices` and `read_sensors` hooks.
+
 ## [1.3.0] - 2026-11-27
 
 **Monstera.** Simple by default: Garden and Collection turned on only when a household wants

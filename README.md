@@ -36,6 +36,8 @@ season and the weather, and learns from how you find the soil.
 - **Weather-aware** (optional plugin, Open-Meteo): outdoor watering waits after rain and comes
   sooner in heat, with frost warnings.
 - **Plant identification** (optional plugin, Pl@ntNet): identify a plant from a photo.
+- **Sensors** (optional plugin, Home Assistant): a plant's soil moisture, light, temperature
+  and humidity on its page, with the last 30 days.
 - **A care guide** of care profiles for over 300 genera and species, with common names.
 - **For the whole household**: invite others as Admin, Gardener or Viewer; each chooses
   their language, units (metric or imperial) and notifications.
