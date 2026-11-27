@@ -18,6 +18,14 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   something in it belongs to root, now adds back the two capabilities it needs; the error
   message and the [troubleshooting](docs/install.md#troubleshooting) show it (#287).
 
+### Fixed
+
+- **The background worker no longer always shows as "unhealthy"** in `docker compose ps`.
+  Its health check asked for the web server, which runs in the other container. Now it's
+  healthy when it has finished a job in the last 30 minutes, so "unhealthy" means reminders
+  and other background jobs have stopped. No need to download a new `compose.yaml`: the
+  check is in the image (#288).
+
 ## [1.4.0] - 2026-11-27
 
 **Nasturtium.** Sensors, to look at: a plant's soil moisture, light, temperature and humidity

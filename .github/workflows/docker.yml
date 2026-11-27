@@ -53,6 +53,25 @@ jobs:
           curl --fail --silent http://localhost:8000/api/v1/health
           curl --fail --silent http://localhost:8000/ | grep --quiet '<div id="root">'
           curl --fail --silent http://localhost:8000/plants/1 | grep --quiet '<div id="root">'
+      # Its health check differs from the web server's: it has to have finished a job recently.
+      - name: Check the worker reports healthy, and unhealthy once it stops finishing jobs
+        run: |
+          docker run --detach --name worker --volumes-from sunfleck --env SECRET_KEY=ci-only \
+            --cap-drop ALL --security-opt no-new-privileges:true sunfleck:ci worker
+          for _ in $(seq 1 30); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' worker)
+            echo "Health: $status"
+            [ "$status" = healthy ] && break
+            sleep 5
+          done
+          [ "$status" = healthy ] || { docker logs worker; exit 1; }
+          docker exec worker touch -d '-45 minutes' /tmp/sunfleck-worker-heartbeat
+          if docker exec worker python -m sunfleck.core.healthcheck; then
+            echo "A worker that hasn't finished a job for 45 minutes was reported healthy" >&2
+            exit 1
+          fi
+          docker logs worker
+          docker rm --force worker  # the next steps replace its job queue
       - name: Check the job queue left by older images is removed
         run: |
           docker run --rm --volumes-from sunfleck --user root --entrypoint chown sunfleck:ci \
