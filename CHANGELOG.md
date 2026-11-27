@@ -43,7 +43,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
 
 - **Typing on an iPhone**: while the keyboard is open, the tab bar and a form's **Save** no
   longer float above it with the page showing below. The tab bar hides, and **Save** stays at
-  the end of the form, until the keyboard closes.
+  the end of the form, until the keyboard closes (#273).
 
 ## [1.2.0] - 2026-11-26
 
