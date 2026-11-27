@@ -1107,6 +1107,39 @@
         "title": "ChatMessageOut",
         "type": "object"
       },
+      "ChoicesQuery": {
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only sensors of this kind.",
+            "title": "Kind"
+          },
+          "limit": {
+            "default": 500,
+            "description": "How many to return; everything up to 500 by default.",
+            "maximum": 500,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "How many to skip.",
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "ChoicesQuery",
+        "type": "object"
+      },
       "ContainerMaterial": {
         "description": "What the plant grows in. Porous pots (terracotta, fabric) dry out faster.",
         "enum": [
@@ -4107,6 +4140,94 @@
         "title": "PlantRefOut",
         "type": "object"
       },
+      "PlantSensorOut": {
+        "properties": {
+          "kind": {
+            "description": "What it measures: soil_moisture (%), illuminance (lx), temperature (°C) or humidity (%); more kinds may be added.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "measured_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the sensor last reported.",
+            "title": "Measured At"
+          },
+          "name": {
+            "description": "As the plugin named it when it was chosen.",
+            "title": "Name",
+            "type": "string"
+          },
+          "plugin_id": {
+            "description": "The plugin it's read through.",
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "sensor_id": {
+            "description": "The plugin's own id for it.",
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The latest reading, in the kind's unit; none until it's first read, or while the sensor is unavailable.",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "kind",
+          "plugin_id",
+          "sensor_id",
+          "name",
+          "value",
+          "measured_at"
+        ],
+        "title": "PlantSensorOut",
+        "type": "object"
+      },
+      "PlantSensorsOut": {
+        "properties": {
+          "count": {
+            "description": "How many sensors the plant has, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "description": "By kind; at most one of each.",
+            "items": {
+              "$ref": "#/components/schemas/PlantSensorOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "plugin_on": {
+            "description": "Whether a plugin that offers sensors is on for the household.",
+            "title": "Plugin On",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "plugin_on"
+        ],
+        "title": "PlantSensorsOut",
+        "type": "object"
+      },
       "PlantSpeciesOut": {
         "properties": {
           "common_name": {
@@ -5136,6 +5257,147 @@
           "count"
         ],
         "title": "SeedPage",
+        "type": "object"
+      },
+      "SensorChoiceOut": {
+        "properties": {
+          "kind": {
+            "description": "soil_moisture (%), illuminance (lx), temperature (°C) or humidity (%); more kinds may be added.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plugin_id": {
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "sensor_id": {
+            "description": "The plugin's own id for it.",
+            "title": "Sensor Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "sensor_id",
+          "name",
+          "kind"
+        ],
+        "title": "SensorChoiceOut",
+        "type": "object"
+      },
+      "SensorChoicesOut": {
+        "properties": {
+          "count": {
+            "description": "How many sensors there are to choose from.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "description": "By name.",
+            "items": {
+              "$ref": "#/components/schemas/SensorChoiceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "SensorChoicesOut",
+        "type": "object"
+      },
+      "SensorDayOut": {
+        "properties": {
+          "count": {
+            "description": "How many readings there were that day.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "date": {
+            "description": "The plant's local day.",
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "high": {
+            "title": "High",
+            "type": "number"
+          },
+          "last": {
+            "description": "The day's last reading.",
+            "title": "Last",
+            "type": "number"
+          },
+          "low": {
+            "title": "Low",
+            "type": "number"
+          },
+          "mean": {
+            "description": "The average of the day's readings.",
+            "title": "Mean",
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "low",
+          "high",
+          "mean",
+          "last",
+          "count"
+        ],
+        "title": "SensorDayOut",
+        "type": "object"
+      },
+      "SensorDaysOut": {
+        "properties": {
+          "count": {
+            "description": "How many days there are, across all pages.",
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "description": "The newest first.",
+            "items": {
+              "$ref": "#/components/schemas/SensorDayOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ],
+        "title": "SensorDaysOut",
+        "type": "object"
+      },
+      "SensorIn": {
+        "properties": {
+          "plugin_id": {
+            "description": "As in the sensor choices.",
+            "maxLength": 64,
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "sensor_id": {
+            "description": "As in the sensor choices.",
+            "maxLength": 255,
+            "title": "Sensor Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "sensor_id"
+        ],
+        "title": "SensorIn",
         "type": "object"
       },
       "SettingsCheckOut": {
@@ -10236,6 +10498,240 @@
         ]
       }
     },
+    "/api/v1/plants/{plant_id}/sensors": {
+      "get": {
+        "description": "The plant's chosen sensors, with their latest readings.",
+        "operationId": "sunfleck_sensors_api_list_plant_sensors",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantSensorsOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Plant Sensors",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/sensors/{kind}": {
+      "delete": {
+        "description": "Stop reading the plant's sensor of this kind, and forget its daily summaries.",
+        "operationId": "sunfleck_sensors_api_remove_plant_sensor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "title": "Kind",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Remove Plant Sensor",
+        "tags": [
+          "sensors"
+        ]
+      },
+      "put": {
+        "description": "Choose the plant's sensor of this kind, from the sensor choices. Choosing another\nsensor than the plant has replaces it, and its daily summaries start afresh.",
+        "operationId": "sunfleck_sensors_api_choose_plant_sensor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "title": "Kind",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantSensorOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Choose Plant Sensor",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
+    "/api/v1/plants/{plant_id}/sensors/{kind}/days": {
+      "get": {
+        "description": "A summary of the sensor's readings for each day, the newest first.",
+        "operationId": "sunfleck_sensors_api_list_sensor_days",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plant_id",
+            "required": true,
+            "schema": {
+              "title": "Plant Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorDaysOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Sensor Days",
+        "tags": [
+          "sensors"
+        ]
+      }
+    },
     "/api/v1/plants/{plant_id}/timeline": {
       "get": {
         "description": "The plant's care and photos, newest first, a page at a time.",
@@ -10637,6 +11133,80 @@
         "summary": "Seeds Sown",
         "tags": [
           "garden"
+        ]
+      }
+    },
+    "/api/v1/sensors/choices": {
+      "get": {
+        "description": "The sensors the plugins that are on can read, for choosing one for a plant. Each plugin\nis asked now; one that fails is left out, and its error shown on its settings page.",
+        "operationId": "sunfleck_sensors_api_list_sensor_choices",
+        "parameters": [
+          {
+            "description": "How many to return; everything up to 500 by default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "description": "How many to return; everything up to 500 by default.",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "How many to skip.",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "How many to skip.",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Only sensors of this kind.",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only sensors of this kind.",
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorChoicesOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Sensor Choices",
+        "tags": [
+          "sensors"
         ]
       }
     },

@@ -205,6 +205,19 @@
     },
     "response": {}
   },
+  "DELETE /api/v1/plants/{plant_id}/sensors/{kind}": {
+    "request": {
+      "fields": {
+        "path:kind": "string",
+        "path:plant_id": "integer"
+      },
+      "required": [
+        "path:kind",
+        "path:plant_id"
+      ]
+    },
+    "response": {}
+  },
   "DELETE /api/v1/seeds/{seed_id}": {
     "request": {
       "fields": {
@@ -1053,6 +1066,55 @@
       "[].started_on": "string"
     }
   },
+  "GET /api/v1/plants/{plant_id}/sensors": {
+    "request": {
+      "fields": {
+        "path:plant_id": "integer",
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
+      "required": [
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].kind": "string",
+      "items[].measured_at": "null|string",
+      "items[].name": "string",
+      "items[].plugin_id": "string",
+      "items[].sensor_id": "string",
+      "items[].value": "null|number",
+      "plugin_on": "boolean"
+    }
+  },
+  "GET /api/v1/plants/{plant_id}/sensors/{kind}/days": {
+    "request": {
+      "fields": {
+        "path:kind": "string",
+        "path:plant_id": "integer",
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
+      "required": [
+        "path:kind",
+        "path:plant_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].count": "integer",
+      "items[].date": "string",
+      "items[].high": "number",
+      "items[].last": "number",
+      "items[].low": "number",
+      "items[].mean": "number"
+    }
+  },
   "GET /api/v1/plants/{plant_id}/timeline": {
     "request": {
       "fields": {
@@ -1179,6 +1241,25 @@
       "items[].species.toxicity.note": "null|string",
       "items[].species.toxicity.sources": "array",
       "items[].variety": "string"
+    }
+  },
+  "GET /api/v1/sensors/choices": {
+    "request": {
+      "fields": {
+        "query:kind": "null|string",
+        "query:limit": "integer",
+        "query:offset": "integer"
+      },
+      "required": []
+    },
+    "response": {
+      "(body)": "object",
+      "count": "integer",
+      "items": "array",
+      "items[].kind": "string",
+      "items[].name": "string",
+      "items[].plugin_id": "string",
+      "items[].sensor_id": "string"
     }
   },
   "GET /api/v1/setup": {
@@ -3300,6 +3381,31 @@
       "species.toxicity.note": "null|string",
       "species.toxicity.sources": "array",
       "status": "string"
+    }
+  },
+  "PUT /api/v1/plants/{plant_id}/sensors/{kind}": {
+    "request": {
+      "fields": {
+        "path:kind": "string",
+        "path:plant_id": "integer",
+        "plugin_id": "string",
+        "sensor_id": "string"
+      },
+      "required": [
+        "path:kind",
+        "path:plant_id",
+        "plugin_id",
+        "sensor_id"
+      ]
+    },
+    "response": {
+      "(body)": "object",
+      "kind": "string",
+      "measured_at": "null|string",
+      "name": "string",
+      "plugin_id": "string",
+      "sensor_id": "string",
+      "value": "null|number"
     }
   },
   "PUT /api/v1/plugins/{plugin_id}": {

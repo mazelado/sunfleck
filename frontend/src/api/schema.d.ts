@@ -1362,6 +1362,71 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plants/{plant_id}/sensors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plant Sensors
+         * @description The plant's chosen sensors, with their latest readings.
+         */
+        get: operations["sunfleck_sensors_api_list_plant_sensors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/sensors/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Choose Plant Sensor
+         * @description Choose the plant's sensor of this kind, from the sensor choices. Choosing another
+         *     sensor than the plant has replaces it, and its daily summaries start afresh.
+         */
+        put: operations["sunfleck_sensors_api_choose_plant_sensor"];
+        post?: never;
+        /**
+         * Remove Plant Sensor
+         * @description Stop reading the plant's sensor of this kind, and forget its daily summaries.
+         */
+        delete: operations["sunfleck_sensors_api_remove_plant_sensor"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/plants/{plant_id}/sensors/{kind}/days": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sensor Days
+         * @description A summary of the sensor's readings for each day, the newest first.
+         */
+        get: operations["sunfleck_sensors_api_list_sensor_days"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plants/{plant_id}/timeline": {
         parameters: {
             query?: never;
@@ -1493,6 +1558,27 @@ export interface paths {
          * @description The seeds were sown today: add the seedlings as a plant, of the seeds' species.
          */
         post: operations["sunfleck_garden_api_seeds_sown"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sensors/choices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sensor Choices
+         * @description The sensors the plugins that are on can read, for choosing one for a plant. Each plugin
+         *     is asked now; one that fails is left out, and its error shown on its settings page.
+         */
+        get: operations["sunfleck_sensors_api_list_sensor_choices"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2159,6 +2245,26 @@ export interface components {
             role: components["schemas"]["MessageRole"];
             /** Text */
             text: string;
+        };
+        /** ChoicesQuery */
+        ChoicesQuery: {
+            /**
+             * Kind
+             * @description Only sensors of this kind.
+             */
+            kind?: string | null;
+            /**
+             * Limit
+             * @description How many to return; everything up to 500 by default.
+             * @default 500
+             */
+            limit: number;
+            /**
+             * Offset
+             * @description How many to skip.
+             * @default 0
+             */
+            offset: number;
         };
         /**
          * ContainerMaterial
@@ -3228,6 +3334,57 @@ export interface components {
             /** Nickname */
             nickname: string;
         };
+        /** PlantSensorOut */
+        PlantSensorOut: {
+            /**
+             * Kind
+             * @description What it measures: soil_moisture (%), illuminance (lx), temperature (°C) or humidity (%); more kinds may be added.
+             */
+            kind: string;
+            /**
+             * Measured At
+             * @description When the sensor last reported.
+             */
+            measured_at: string | null;
+            /**
+             * Name
+             * @description As the plugin named it when it was chosen.
+             */
+            name: string;
+            /**
+             * Plugin Id
+             * @description The plugin it's read through.
+             */
+            plugin_id: string;
+            /**
+             * Sensor Id
+             * @description The plugin's own id for it.
+             */
+            sensor_id: string;
+            /**
+             * Value
+             * @description The latest reading, in the kind's unit; none until it's first read, or while the sensor is unavailable.
+             */
+            value: number | null;
+        };
+        /** PlantSensorsOut */
+        PlantSensorsOut: {
+            /**
+             * Count
+             * @description How many sensors the plant has, across all pages.
+             */
+            count: number;
+            /**
+             * Items
+             * @description By kind; at most one of each.
+             */
+            items: components["schemas"]["PlantSensorOut"][];
+            /**
+             * Plugin On
+             * @description Whether a plugin that offers sensors is on for the household.
+             */
+            plugin_on: boolean;
+        };
         /** PlantSpeciesOut */
         PlantSpeciesOut: {
             /** Common Name */
@@ -3635,6 +3792,90 @@ export interface components {
             count: number;
             /** Items */
             items: components["schemas"]["SeedOut"][];
+        };
+        /** SensorChoiceOut */
+        SensorChoiceOut: {
+            /**
+             * Kind
+             * @description soil_moisture (%), illuminance (lx), temperature (°C) or humidity (%); more kinds may be added.
+             */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Plugin Id */
+            plugin_id: string;
+            /**
+             * Sensor Id
+             * @description The plugin's own id for it.
+             */
+            sensor_id: string;
+        };
+        /** SensorChoicesOut */
+        SensorChoicesOut: {
+            /**
+             * Count
+             * @description How many sensors there are to choose from.
+             */
+            count: number;
+            /**
+             * Items
+             * @description By name.
+             */
+            items: components["schemas"]["SensorChoiceOut"][];
+        };
+        /** SensorDayOut */
+        SensorDayOut: {
+            /**
+             * Count
+             * @description How many readings there were that day.
+             */
+            count: number;
+            /**
+             * Date
+             * Format: date
+             * @description The plant's local day.
+             */
+            date: string;
+            /** High */
+            high: number;
+            /**
+             * Last
+             * @description The day's last reading.
+             */
+            last: number;
+            /** Low */
+            low: number;
+            /**
+             * Mean
+             * @description The average of the day's readings.
+             */
+            mean: number;
+        };
+        /** SensorDaysOut */
+        SensorDaysOut: {
+            /**
+             * Count
+             * @description How many days there are, across all pages.
+             */
+            count: number;
+            /**
+             * Items
+             * @description The newest first.
+             */
+            items: components["schemas"]["SensorDayOut"][];
+        };
+        /** SensorIn */
+        SensorIn: {
+            /**
+             * Plugin Id
+             * @description As in the sensor choices.
+             */
+            plugin_id: string;
+            /**
+             * Sensor Id
+             * @description As in the sensor choices.
+             */
+            sensor_id: string;
         };
         /** SettingsCheckOut */
         SettingsCheckOut: {
@@ -6369,6 +6610,109 @@ export interface operations {
             };
         };
     };
+    sunfleck_sensors_api_list_plant_sensors: {
+        parameters: {
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                plant_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantSensorsOut"];
+                };
+            };
+        };
+    };
+    sunfleck_sensors_api_choose_plant_sensor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SensorIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlantSensorOut"];
+                };
+            };
+        };
+    };
+    sunfleck_sensors_api_remove_plant_sensor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plant_id: number;
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    sunfleck_sensors_api_list_sensor_days: {
+        parameters: {
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                plant_id: number;
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SensorDaysOut"];
+                };
+            };
+        };
+    };
     sunfleck_care_api_plant_timeline: {
         parameters: {
             query?: {
@@ -6583,6 +6927,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SownOut"];
+                };
+            };
+        };
+    };
+    sunfleck_sensors_api_list_sensor_choices: {
+        parameters: {
+            query?: {
+                /** @description How many to return; everything up to 500 by default. */
+                limit?: number;
+                /** @description How many to skip. */
+                offset?: number;
+                /** @description Only sensors of this kind. */
+                kind?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SensorChoicesOut"];
                 };
             };
         };
