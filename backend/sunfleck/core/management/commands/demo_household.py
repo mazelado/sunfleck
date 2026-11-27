@@ -2,7 +2,8 @@
 
     python manage.py demo_household --photos ../docs/screenshots/photos
 
-Makes the first account (ada@example.com, unless given), a home with two rooms and their
+Makes the first account (ada@example.com, unless given), with the Garden and Collection areas
+on (so the screenshots show the Plants / Seeds / Wishlist switch), a home with two rooms and their
 windows, five plants with photos and care history (the golden pothos with two months of it,
 for its History), and today's weather (with the weather
 plugin on, from a stored forecast, so nothing is fetched). Only on an empty database.
@@ -84,6 +85,9 @@ class Command(BaseCommand):
             household_name="Fern Gully",
         )
         household = user.memberships.get().household
+        # Off by default for new households; on here, so every part of the app can be shown.
+        household.garden = household.collection = True
+        household.save(update_fields=["garden", "collection", "updated_at"])
         site = places.create_site(
             household, places.SiteData("Home", latitude=52.37, longitude=4.89, timezone=TIMEZONE)
         )
