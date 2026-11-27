@@ -278,7 +278,10 @@
     "chat_unavailable": "No AI plugin is turned on.",
     "question_empty": "Write a question first.",
     "conversation_too_long": "This conversation is as long as it can get. Start a new one.",
-    "conversation_not_found": "This conversation doesn't exist. It may have been deleted."
+    "conversation_not_found": "This conversation doesn't exist. It may have been deleted.",
+    "sensor_not_a_choice": "The plugins don't offer this sensor any more. Please choose again.",
+    "sensor_not_found": "This plant has no such sensor any more.",
+    "sensor_kind_not_found": "Sunfleck doesn't know this kind of sensor."
   },
   "places": {
     "title": "Places",
@@ -1344,6 +1347,46 @@
     },
     "throughTheYear": "Through the year",
     "seasonWords": "Spring: {{spring}} · Summer: {{summer}} · Autumn: {{autumn}} · Winter: {{winter}}"
+  },
+  "sensors": {
+    "title": "Sensors",
+    "kinds": {
+      "soil_moisture": "Soil moisture",
+      "illuminance": "Light",
+      "temperature": "Temperature",
+      "humidity": "Humidity"
+    },
+    "none": "No sensors are chosen for {{plant}} yet.",
+    "pluginOff": "No plugin that reads sensors is on, so these readings aren't updated.",
+    "noReading": "No reading yet",
+    "unavailable": "Unavailable",
+    "add": "Add a sensor",
+    "menu": "More actions for the {{kind}} sensor",
+    "change": "Change sensor",
+    "changeTitle": "Change the {{kind}} sensor",
+    "remove": "Remove",
+    "removeTitle": "Remove the {{kind}} sensor?",
+    "removeMessage": "Sunfleck stops reading {{name}} for {{plant}}, and forgets the readings it kept from it.",
+    "removed": "Removed the {{kind}} sensor from {{plant}}.",
+    "whichKind": "What should it measure?",
+    "whichSensor": "Which {{kind}} sensor?",
+    "asking": "Asking for the sensors…",
+    "tryAgain": "Try again",
+    "noChoices": "There are no {{kind}} sensors to choose from.",
+    "noChoicesHelp": "The sensors that plugins can read show up here. If one is missing, an Admin can check the plugin under Settings → Plugins.",
+    "choicesChanged": "The sensors to choose from have changed. Please choose again.",
+    "use": "Use this sensor",
+    "replace": "Replace",
+    "replaceMessage": "Sunfleck will read {{new}} instead of {{old}}, and forget the readings it kept from {{old}}.",
+    "chosen": "Saved the {{kind}} sensor for {{plant}}.",
+    "chartSummary": "Last 30 days: from {{low}} to {{high}}, {{mean}} on average.",
+    "chartTable": "{{kind}}, day by day",
+    "chartStart": "30 days ago",
+    "today": "Today",
+    "day": "Day",
+    "lowest": "Lowest",
+    "average": "Average",
+    "highest": "Highest"
   },
   "routine": {
     "suggest": "You've been watering about every {{yours}} days, but the schedule says every {{schedule}}. Match the schedule to your routine?",

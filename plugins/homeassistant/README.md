@@ -32,7 +32,7 @@ Other entities (lights, switches, `binary_sensor.…` leak sensors, batteries) a
    and says how many sensors it found, or what went wrong (an address it can't reach, a
    refused token). Then save.
 
-Editors then choose a sensor of each kind for a plant on its page.
+Gardeners and Admins then choose a sensor of each kind for a plant on its page.
 
 ## What it sends
 
@@ -41,7 +41,7 @@ of the sensors being read** (e.g. `sensor.monstera_soil_moisture`). Nothing abou
 plants or household leaves Sunfleck.
 
 - Every 15 minutes, while a plant uses one of its sensors, the worker reads them.
-- When an Editor chooses a sensor, and when an Admin clicks **Test**, it asks Home Assistant
+- When a Gardener or Admin chooses a sensor, and when an Admin clicks **Test**, it asks Home Assistant
   for the list of its entities.
 
 If Home Assistant can't be reached or refuses the token, Admins see the error on the Plugins

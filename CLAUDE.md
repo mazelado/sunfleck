@@ -21,10 +21,12 @@ backend/sunfleck/        Django project (run everything backend-side from backen
                          images, crypto; stability/ (API + plugin interface baselines);
                          tests/test_isolation.py (sweeps every endpoint)
   accounts/ places/ plants/ care/ garden/ notifications/ ai/ taxonomy/ dataio/ plugins/
+  sensors/               a plant's chosen sensors, their latest readings and daily summaries
   prediction/            the care prediction engine: plain Python, no Django models
   testing.py             factory_boy factories
 plugins/                 built-in plugins, each its own package (weather-openmeteo,
-                         identify-plantnet, ai-openai, ai-anthropic), installed editable
+                         identify-plantnet, ai-openai, ai-anthropic, homeassistant),
+                         installed editable
 frontend/src/
   api/                   one module per area; openapi.json + schema.d.ts are GENERATED
   features/<area>/       pages and components, tests beside them (*.test.tsx)

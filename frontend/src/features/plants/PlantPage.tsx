@@ -10,6 +10,7 @@ import { useAreas } from "../../lib/useAreas";
 import { CareCard } from "../care/CareCard";
 import { PlantTimeline } from "../care/PlantTimeline";
 import { PlantHarvests } from "../garden/PlantHarvests";
+import { SensorsCard } from "../sensors/SensorsCard";
 import { HarmToPeopleNotice } from "../taxonomy/HarmToPeople";
 import { ToxicityNotice } from "../taxonomy/Toxicity";
 import { DiagnosePlant } from "./DiagnosePlant";
@@ -62,6 +63,7 @@ export function PlantPage() {
       {canEdit && <DiagnosePlant plantId={data.id} plantName={data.nickname} />}
       <PlantConversations plantId={data.id} plantName={data.nickname} canEdit={canEdit} />
       <LightCard plant={data} />
+      <SensorsCard plantId={data.id} plantName={data.nickname} canEdit={canEdit} />
       <PlantPhotos
         plant={data}
         canEdit={canEdit}

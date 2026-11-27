@@ -79,6 +79,10 @@ export const server = setupServer(
   ),
   http.get("*/api/v1/plants/:plantId/schedules", () => HttpResponse.json([])),
   http.get("*/api/v1/plants/:plantId/routine-suggestion", () => HttpResponse.json([])),
+  // No plugin that reads sensors is on, so the plant page has no Sensors card.
+  http.get("*/api/v1/plants/:plantId/sensors", () =>
+    HttpResponse.json({ items: [], count: 0, plugin_on: false }),
+  ),
   http.get("*/api/v1/plants/:plantId/timeline", () =>
     HttpResponse.json({ items: [], next_cursor: null }),
   ),
