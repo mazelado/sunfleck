@@ -332,6 +332,10 @@ away: open one with the arrow next to its name, or just turn it on.
 - **AI (Claude)**: the same, through Anthropic's Claude models, with your own API key from
   [console.anthropic.com](https://console.anthropic.com). Claude Sonnet by default. See its
   [setup guide](../plugins/ai-anthropic/README.md).
+- **Home Assistant**: plants' soil moisture, and the light, temperature and humidity around
+  them, from the sensors you have in Home Assistant. It needs the server's address and a
+  long-lived access token, and sends Home Assistant only the token and which sensors to read.
+  See its [setup guide](../plugins/homeassistant/README.md).
 
 ## Export and import
 

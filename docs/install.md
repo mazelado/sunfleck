@@ -168,6 +168,9 @@ encryption. Special characters in the user name or password must be URL-encoded 
     someone asks. Claude needs an API key from
     [console.anthropic.com](https://console.anthropic.com), billed per use, and reaches
     `api.anthropic.com`.
+  - **Home Assistant**: soil moisture, light, temperature and humidity for plants, from the
+    sensors in your Home Assistant. Needs its address and a long-lived access token; it
+    reaches only that server. See its [setup guide](../plugins/homeassistant/README.md).
   - **Other plugins** are installed into the image: see
     [Installing a plugin](plugins.md#5-installing).
 
