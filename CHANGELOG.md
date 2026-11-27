@@ -16,7 +16,7 @@ make a backup ([how to upgrade](docs/install.md#upgrading)).
   gaining new ones (e.g. through a setuid program). Sunfleck needs none of them. Download the
   new `compose.yaml` to get this. The command that gives the data back to Sunfleck, when
   something in it belongs to root, now adds back the two capabilities it needs; the error
-  message and the [troubleshooting](docs/install.md#troubleshooting) show it.
+  message and the [troubleshooting](docs/install.md#troubleshooting) show it (#287).
 
 ## [1.4.0] - 2026-11-27
 
