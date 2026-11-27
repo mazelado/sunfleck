@@ -50,7 +50,7 @@ them, Sunfleck in Spanish, and toxicity to people next to toxicity to pets.
   longer float above it with the page showing below. The tab bar hides, and **Save** stays at
   the end of the form, until the keyboard closes (#273).
 - **About names the release again**: it showed no plant name after 1.0 Jasmine. It now says
-  1.3.0 (Monstera), and a test checks that every new version has its name.
+  1.3.0 (Monstera), and a test checks that every new version has its name (#276).
 
 ## [1.2.0] - 2026-11-26
 
